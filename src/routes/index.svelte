@@ -17,11 +17,13 @@
 	}
 
 	async function getYTAudio() {
+		console.log("calling getYTAudio")
 		const response = await ytAPI("getYTAudio")
-		const reader = response.body.getReader()
-		
+		const audioFile = await response.text()
+
 		audioLoaded = true
-		return audioFile;
+		console.log(audioFile)
+		return Promise.resolve(audioFile);
 	}
 
 	function ytAPI(method) {
@@ -41,7 +43,7 @@
 
 {#if audioLoaded}
 	<h1>audio is loaded</h1>
-	{#await getYTAudio then audioFile}
+	{#await getYTAudio() then audioFile}
 		<p>{audioFile}</p>
 	{/await}
 {:else}

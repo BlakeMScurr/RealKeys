@@ -1,6 +1,6 @@
 const { exec } = require('child_process');
 const fs = require("fs");
-
+var path = require("path");
 
 export function post(request, response) {
     console.log("getting audio request for: " + request.body.videoID)
@@ -26,17 +26,8 @@ export function post(request, response) {
                         cleanup()
                         return;
                     }
-                    let audioFile = files[0]
-
-                    var stat = fs.statSync(audioFile);
-
-                    response.writeHead(200, {
-                        'Content-Type': 'audio/mpeg',
-                        'Content-Length': stat.size
-                    });
-                
-                    var readStream = fs.createReadStream(audioFile);
-                    readStream.pipe(response);
+                    let audioFile = path.resolve(files[0])
+                    response.sendFile(audioFile)
                 })
                 cleanup()
             });
