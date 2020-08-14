@@ -1,4 +1,6 @@
 <script>
+	import {Howl, Howler} from 'howler';
+
 	let url = "https://www.youtube.com/watch?v=reLjhAAPsPc";
 	const ytPrefix = 'https://www.youtube.com/watch?v='
 	$: videoID = url.startsWith(ytPrefix)? url.replace(ytPrefix, ""): "";
@@ -11,28 +13,33 @@
 		if (typeof fetch !== 'undefined') {
 			const response = await ytAPI("getYTTitle")
 			const json = await response.json()
-			console.log(json.title)
 			return json.title;
 		}
 	}
 
 	async function getYTAudio() {
-		console.log("calling getYTAudio")
-		const response = await ytAPI("getYTAudio")
-		const audioFile = await response.text()
+		let howlPromise = new Promise((resolve, reject) => {
+			let sound;
+			sound = new Howl({
+				src: ['getYTAudio/' + videoID],
+				format: 'mp3',
+				onload: () => {
+					resolve(sound)
+				},
+			});
+		})
 
 		audioLoaded = true
-		console.log(audioFile)
-		return Promise.resolve(audioFile);
+		return howlPromise;
 	}
 
 	function ytAPI(method) {
 		return fetch(method, {
-			method: 'POST',
+			method: 'GET',
 			headers: {
 				'Content-Type': 'application/json'
 			},
-			body: JSON.stringify({videoID: videoID})
+			body: JSON.stringify()
 		})
 	}
 </script>
@@ -42,9 +49,10 @@
 </svelte:head>
 
 {#if audioLoaded}
-	<h1>audio is loaded</h1>
-	{#await getYTAudio() then audioFile}
-		<p>{audioFile}</p>
+	{#await getYTAudio()} 
+		<h1>Waiting on audio processing . . .</h1>
+	{:then audioPlayer}
+		<button on:click={()=>audioPlayer.play()}>Play</button>
 	{/await}
 {:else}
 	<label>

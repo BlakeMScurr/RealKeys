@@ -1,8 +1,6 @@
 const fetch = require('node-fetch');
 
-export function post(req, res) {
-    console.log("got title request with url" + req.body.videoID)
-    
+export function get(req, res) {
     var options = {
         host: "www.youtube.com",
         path: "" + req.body.videoID,
