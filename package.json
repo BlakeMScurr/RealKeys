@@ -12,8 +12,12 @@
     "test": "run-p --race dev cy:run"
   },
   "dependencies": {
+    "@rollup/plugin-json": "^4.1.0",
     "compression": "^1.7.1",
+    "express": "^4.17.1",
+    "node-fetch": "^2.6.0",
     "polka": "next",
+    "request": "^2.81.0",
     "sirv": "^1.0.0"
   },
   "devDependencies": {
