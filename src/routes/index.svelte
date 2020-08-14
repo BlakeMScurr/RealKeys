@@ -1,24 +1,11 @@
 <script>
-	let url = "https://www.youtube.com/watch?v=V1bFr2SWP1I";
+	let url = "https://www.youtube.com/watch?v=reLjhAAPsPc";
 	const ytPrefix = 'https://www.youtube.com/watch?v='
 	$: videoID = url.startsWith(ytPrefix)? url.replace(ytPrefix, ""): "";
 	$: thumbnailURL = "http://img.youtube.com/vi/" + videoID + "/0.jpg" ;
 	$: videoTitlePromise = getYTTitle(videoID)
 
-	// function getYTTitle() {
-		// fetch('getYTTitle', {
-		// 	method: 'GET',
-		// 	headers: {
-		// 		'Content-Type': "application/json"
-		// 	},
-		// 	body: JSON.stringify({videoID: videoID})
-		// })
-
-		// console.log(p)
-
-		// return "asdfasdf"
-		
-	// }
+	let audioLoaded = false
 
 	async function getYTTitle() {
 		if (typeof fetch !== 'undefined') {
@@ -29,8 +16,12 @@
 		}
 	}
 
-	function getYTAudio() {
-		ytAPI("postYTLink")
+	async function getYTAudio() {
+		const response = await ytAPI("getYTAudio")
+		const reader = response.body.getReader()
+		
+		audioLoaded = true
+		return audioFile;
 	}
 
 	function ytAPI(method) {
@@ -48,20 +39,25 @@
 	<title>Sapper project template</title>
 </svelte:head>
 
-<label>
-	YouTube Link
-	<input bind:value={url}>
-</label>
+{#if audioLoaded}
+	<h1>audio is loaded</h1>
+	{#await getYTAudio then audioFile}
+		<p>{audioFile}</p>
+	{/await}
+{:else}
+	<label>
+		YouTube Link
+		<input bind:value={url}>
+	</label>
 
-<button on:click={getYTAudio}>
-	Prepare Audio
-</button>
+	<button on:click={getYTAudio}>
+		Prepare Audio
+	</button>
+
+	<hr>
 
 	{#await videoTitlePromise then videoTitle}
 		<h1>{videoTitle}</h1>
 	{/await}
 	<img src={thumbnailURL} alt="YouTube Thumbnail">
-
-<!-- TODO: get title youtube https://stackoverflow.com/questions/10596745/fetching-youtube-video-title-from-known-video-id -->
-
-
+{/if}
