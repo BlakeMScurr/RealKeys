@@ -19,6 +19,7 @@
     "node-fetch": "^2.6.0",
     "polka": "next",
     "request": "^2.81.0",
+    "rimraf": "^3.0.2",
     "sirv": "^1.0.0"
   },
   "devDependencies": {

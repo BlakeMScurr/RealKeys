@@ -1,11 +1,21 @@
 const { exec } = require('child_process');
 const fs = require("fs");
-var path = require("path");
+const path = require("path");
+const rimraf = require('rimraf');
 
 export function get(request, response) {
     const { videoID } = request.params;
     fs.mkdtemp('temp-', (err, tmpdir) => {
-        const cleanup = () => {fs.rmdirSync(tmpdir, { recursive: true });}
+        const cleanup = () => {
+            process.chdir("..")
+            rimraf(path.resolve(tmpdir), (error) => {
+                if (fs.existsSync(path.resolve(tmpdir))) { // TODO: why does this get called when it clearly succeeds?
+                    console.log("could not remove " + tmpdir)
+                    console.log(error)
+                }
+            });
+        }
+
         if (fs.existsSync(tmpdir)) {
             process.chdir(tmpdir)
 
@@ -23,8 +33,8 @@ export function get(request, response) {
                     }
                     let audioFile = path.resolve(files[0])
                     response.sendFile(audioFile)
+                    cleanup()
                 })
-                cleanup()
             });
         } else {
             cleanup()
