@@ -3,7 +3,7 @@ const fs = require("fs");
 var path = require("path");
 
 export function get(request, response) {
-    const { videoID } = request.params
+    const { videoID } = request.params;
     fs.mkdtemp('temp-', (err, tmpdir) => {
         const cleanup = () => {fs.rmdirSync(tmpdir, { recursive: true });}
         if (fs.existsSync(tmpdir)) {

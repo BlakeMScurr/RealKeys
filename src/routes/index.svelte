@@ -1,17 +1,39 @@
 <script>
-	import {Howl, Howler} from 'howler';
+	import { Howl } from 'howler';
 
 	let url = "https://www.youtube.com/watch?v=reLjhAAPsPc";
 	const ytPrefix = 'https://www.youtube.com/watch?v='
 	$: videoID = url.startsWith(ytPrefix)? url.replace(ytPrefix, ""): "";
 	$: thumbnailURL = "http://img.youtube.com/vi/" + videoID + "/0.jpg" ;
-	$: videoTitlePromise = getYTTitle(videoID)
 
 	let audioLoaded = false
 
-	async function getYTTitle() {
+	async function getYTThumbnail(videoID) {
 		if (typeof fetch !== 'undefined') {
-			const response = await ytAPI("getYTTitle")
+			const response = await fetch("getYTAsset/thumbnail/" + videoID, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/octet-stream'
+				},
+			})
+			const image = await response.blob()
+
+			let data = await image.arrayBuffer()
+			let base64String = btoa(String.fromCharCode(...new Uint8Array(data)));
+			
+			return 'data:image/jpeg;base64,' + base64String;
+		}
+	}
+
+	async function getYTTitle(videoID) {
+		if (typeof fetch !== 'undefined') {
+			const response = await fetch("getYTAsset/title/" + videoID, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+			})
+
 			const json = await response.json()
 			return json.title;
 		}
@@ -31,16 +53,6 @@
 
 		audioLoaded = true
 		return howlPromise;
-	}
-
-	function ytAPI(method) {
-		return fetch(method, {
-			method: 'GET',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify()
-		})
 	}
 </script>
 
@@ -66,8 +78,11 @@
 
 	<hr>
 
-	{#await videoTitlePromise then videoTitle}
+	{#await getYTTitle(videoID) then videoTitle}
 		<h1>{videoTitle}</h1>
 	{/await}
-	<img src={thumbnailURL} alt="YouTube Thumbnail">
+
+	{#await getYTThumbnail(videoID) then thumbnail}
+		<img src={thumbnail} alt="YouTube Thumbnail">
+	{/await}
 {/if}
