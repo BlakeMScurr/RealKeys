@@ -19,9 +19,12 @@
 
 	let audioChosen = false
 
-	async function getYTThumbnail(videoID) {
+	async function getAssets(videoID) {
+		let title;
+		let thumbnail;
 		if (typeof fetch !== 'undefined') {
-			const response = await fetch("getYTAsset/thumbnail/" + videoID, {
+			// get thumbnail
+			let response = await fetch("getYTAsset/thumbnail/" + videoID, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/octet-stream'
@@ -32,13 +35,10 @@
 			let data = await image.arrayBuffer()
 			let base64String = btoa(String.fromCharCode(...new Uint8Array(data)));
 			
-			return 'data:image/jpeg;base64,' + base64String;
-		}
-	}
+			thumbnail = 'data:image/jpeg;base64,' + base64String;
 
-	async function getYTTitle(videoID) {
-		if (typeof fetch !== 'undefined') {
-			const response = await fetch("getYTAsset/title/" + videoID, {
+			// get title
+			response = await fetch("getYTAsset/title/" + videoID, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
@@ -46,8 +46,9 @@
 			})
 
 			const json = await response.json()
-			return json.title;
+			title = json.title;
 		}
+		return {thumbnail: thumbnail, title: title}
 	}
 
 	async function getYTAudio() {
@@ -82,17 +83,10 @@
 		<input bind:value={url}>
 	</label>
 
-	<button on:click={() => {audioChosen = true}}>
-		Prepare Audio
-	</button>
-
 	<hr>
 
-	{#await getYTTitle(videoID) then videoTitle}
-		<h1>{videoTitle}</h1>
-	{/await}
-
-	{#await getYTThumbnail(videoID) then thumbnail}
-		<img src={thumbnail} alt="YouTube Thumbnail">
+	{#await getAssets(videoID) then assets}
+		<h1>{assets.title}</h1>
+		<img src={assets.thumbnail} alt="YouTube Thumbnail">
 	{/await}
 {/if}
