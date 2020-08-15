@@ -6,7 +6,7 @@
 	$: videoID = url.startsWith(ytPrefix)? url.replace(ytPrefix, ""): "";
 	$: thumbnailURL = "http://img.youtube.com/vi/" + videoID + "/0.jpg" ;
 
-	let audioLoaded = false
+	let audioChosen = false
 
 	async function getYTThumbnail(videoID) {
 		if (typeof fetch !== 'undefined') {
@@ -51,7 +51,6 @@
 			});
 		})
 
-		audioLoaded = true
 		return howlPromise;
 	}
 </script>
@@ -60,7 +59,7 @@
 	<title>Sapper project template</title>
 </svelte:head>
 
-{#if audioLoaded}
+{#if audioChosen}
 	{#await getYTAudio()} 
 		<h1>Waiting on audio processing . . .</h1>
 	{:then audioPlayer}
@@ -72,7 +71,7 @@
 		<input bind:value={url}>
 	</label>
 
-	<button on:click={getYTAudio}>
+	<button on:click={() => {audioChosen = true}}>
 		Prepare Audio
 	</button>
 
