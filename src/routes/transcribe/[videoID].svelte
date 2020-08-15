@@ -71,22 +71,20 @@
 	<title>Sapper project template</title>
 </svelte:head>
 
-{#if audioChosen}
+<label>
+	YouTube Link
+	<input bind:value={url}>
+</label>
+
+<hr>
+
+{#await getAssets(videoID) then assets}
+	<h1>{assets.title}</h1>
+	<img src={assets.thumbnail} alt="YouTube Thumbnail">
+
 	{#await getYTAudio()} 
 		<h1>Waiting on audio processing . . .</h1>
 	{:then audioPlayer}
 		<button on:click={()=>audioPlayer.play()}>Play</button>
 	{/await}
-{:else}
-	<label>
-		YouTube Link
-		<input bind:value={url}>
-	</label>
-
-	<hr>
-
-	{#await getAssets(videoID) then assets}
-		<h1>{assets.title}</h1>
-		<img src={assets.thumbnail} alt="YouTube Thumbnail">
-	{/await}
-{/if}
+{/await}
