@@ -50,21 +50,6 @@
 		}		
 		return {thumbnail: thumbnail, title: title}
 	}
-
-	async function getYTAudio() {
-		let howlPromise = new Promise((resolve, reject) => {
-			let sound;
-			sound = new Howl({
-				src: ['getYTAudio/' + videoID],
-				format: 'mp3',
-				onload: () => {
-					resolve(sound)
-				},
-			});
-		})
-
-		return howlPromise;
-	}
 </script>
 
 <style>
@@ -102,11 +87,7 @@
 	</div>
 	<br>
 
-	{#await getYTAudio()}
-		<h3>Loading Audio . . .</h3>
-	{:then audioPlayer}
-		<AudioPlayer audioPlayer={audioPlayer}></AudioPlayer>
-	{/await}
+	<AudioPlayer videoID={videoID}></AudioPlayer>
 
 {:catch error}
 	<p>Invalid video URL</p>
