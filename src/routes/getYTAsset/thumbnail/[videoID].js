@@ -8,10 +8,11 @@ export function post(req, res) {
         path: "" + videoID,
     }
 
-    fetch('http://img.youtube.com/vi/'+videoID+'/0.jpg')
+    fetch('http://img.youtube.com/vi/'+videoID+'/1.jpg')
         .then(res => res.buffer())
         .then(image => {
             res.writeHead(200, {'Content-Type': 'image/jpeg'});
             res.end(image);
-        });
+        })
+        .catch(error => res.status(400).send('Could not find video thumbnail'))
 }

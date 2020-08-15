@@ -10,5 +10,6 @@ export function post(req, res) {
 
     fetch('http://www.youtube.com/oembed?url=http://www.youtube.com/watch?v='+videoID+'&format=json')
         .then(res => res.json())
-        .then(json => res.json({title: json.title}));    
+        .then(json => res.json({title: json.title}))
+        .catch(error => res.status(400).send('Could not find video title'))
 }

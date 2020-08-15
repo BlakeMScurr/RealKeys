@@ -6,11 +6,11 @@
 
 <script>
 	import { Howl } from 'howler';
-
 	import { stores } from '@sapper/app';
+	import AudioPlayer from '../../components/AudioPlayer.svelte'
+
 	const { page } = stores();
 	export let videoID
-	console.log("videoID: " + videoID)
 
 	const ytPrefix = 'https://www.youtube.com/watch?v='
 	let url = ytPrefix + videoID
@@ -47,7 +47,7 @@
 
 			const json = await response.json()
 			title = json.title;
-		}
+		}		
 		return {thumbnail: thumbnail, title: title}
 	}
 
@@ -67,6 +67,23 @@
 	}
 </script>
 
+<style>
+	.thumbnail {
+		display: inline;
+				vertical-align: middle;
+
+	}
+	.title {
+		display: inline;
+				vertical-align: middle;
+
+	}
+
+	.titleHolder {
+		vertical-align: middle;
+	}
+</style>
+
 <svelte:head>
 	<title>Sapper project template</title>
 </svelte:head>
@@ -79,12 +96,18 @@
 <hr>
 
 {#await getAssets(videoID) then assets}
-	<h1>{assets.title}</h1>
-	<img src={assets.thumbnail} alt="YouTube Thumbnail">
+	<div class="titleHolder">
+		<img class="thumbnail" src={assets.thumbnail} alt="YouTube Thumbnail">
+		<h2 class="title">{assets.title}</h2>
+	</div>
+	<br>
 
-	{#await getYTAudio()} 
-		<h1>Waiting on audio processing . . .</h1>
+	{#await getYTAudio()}
+		<h3>Loading Audio . . .</h3>
 	{:then audioPlayer}
-		<button on:click={()=>audioPlayer.play()}>Play</button>
+		<AudioPlayer audioPlayer={audioPlayer}></AudioPlayer>
 	{/await}
+
+{:catch error}
+	<p>Invalid video URL</p>
 {/await}
