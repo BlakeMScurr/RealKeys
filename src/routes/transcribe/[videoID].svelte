@@ -5,7 +5,6 @@
 </script>
 
 <script>
-	import { Howl } from 'howler';
 	import { stores } from '@sapper/app';
 	import AudioPlayer from '../../components/AudioPlayer.svelte'
 
@@ -54,17 +53,11 @@
 
 <style>
 	.thumbnail {
-		display: inline;
-				vertical-align: middle;
-
+		vertical-align: middle;
 	}
+
 	.title {
 		display: inline;
-				vertical-align: middle;
-
-	}
-
-	.titleHolder {
 		vertical-align: middle;
 	}
 </style>
@@ -81,10 +74,8 @@
 <hr>
 
 {#await getAssets(videoID) then assets}
-	<div class="titleHolder">
-		<img class="thumbnail" src={assets.thumbnail} alt="YouTube Thumbnail">
-		<h2 class="title">{assets.title}</h2>
-	</div>
+	<img class="thumbnail" src={assets.thumbnail} alt="YouTube Thumbnail">
+	<h2 class="title">{assets.title}</h2>
 	<br>
 
 	<AudioPlayer videoID={videoID}></AudioPlayer>
