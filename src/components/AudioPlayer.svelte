@@ -7,6 +7,29 @@
     let playing = false
     let position = 0;
     let duration = 0;
+    let speed = 1;
+
+    document.addEventListener("keydown", event => {
+        switch (event.keyCode) {
+            case 32:
+                if (playing) {
+                    pause()
+                } else {
+                    play()
+                }
+                break;
+            case 37: // left arrow
+                let newLeftPost = audioPlayer.seek() - 0.5
+                position = newLeftPost
+                audioPlayer.seek(newLeftPost)
+                break;
+            case 39: // right arrow
+                let newRightPos = audioPlayer.seek() + 0.5
+                position = newRightPos
+                audioPlayer.seek(newRightPos)
+                break;
+        }
+    });
 
     function renderSeconds(seconds) {
         seconds = seconds.toFixed(1)
@@ -30,7 +53,7 @@
     let positionInterval
     function play() {
         positionInterval = setInterval(()=>{
-            position += 0.01
+            position += 0.01 * speed
         }, 10)
         playing = true
         audioPlayer.play()
@@ -51,15 +74,16 @@
 		let howlPromise = new Promise((resolve, reject) => {
 			let sound;
 			sound = new Howl({
-				src: ['getYTAudio/' + videoID],
+                src: ['getYTAudio/' + videoID],
 				format: 'mp3',
 				onload: () => {
-					resolve(sound)
+                    resolve(sound)
                 },
                 onend: () => {
                     pause()
                     position = 0;
-                }
+                },
+                html5: true, // html5 being forced gives us rate change without pitch increase as per https://github.com/goldfire/howler.js/issues/586#issuecomment-237240859
 			});
 		})
 
@@ -98,6 +122,11 @@
     {:else}
         <button on:click={play}>Play</button>
     {/if}
+    <label>
+    Speed:
+        <input type="number" min=0.5 max=4.0 step=0.25 on:change={audioPlayer.rate(speed)} bind:value={speed}>
+    </label>
+
     <div id="playbackArea">
         <label>
             <input id="timeSlider" type="range" min=0 max={duration} step="any" on:change={audioPlayer.seek(position)} bind:value={position}> <!-- TODO: visualise waveform with https://github.com/bbc/waveform-data.js or https://css-tricks.com/making-an-audio-waveform-visualizer-with-vanilla-javascript/ -->
