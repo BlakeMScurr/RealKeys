@@ -12,6 +12,7 @@
 
     let canvas;
     let ctx
+    let minzoomarea = 30;
     onMount(() => {
         ctx = canvas.getContext('2d');
         setCanvasWidth(ctx)
@@ -74,26 +75,41 @@
         }
     }
 
-    function handleMouseMove (event) {
+    document.addEventListener("mousemove", (event) => {
         if (mouseDown) {
             let pos = getRelativePosition(event.clientX, event.clientY)
             let oldCentre = (startpx + endpx) / 2
+
+            // move the zoomarea to the left or right
             let dx = pos.x - lastMouseX
             setZoomAreaToCentre(oldCentre + dx)
+
+            // change the zoom area size
+            let dy = lastMouseY - pos.y
+            console.log(dy)
+            if (endpx - startpx > minzoomarea + 2 * dx) {
+                startpx -= dy
+                endpx += dy
+                startpx = startpx < 0 ? 0 : startpx;
+                let w = canvas.getBoundingClientRect().width;
+                endpx = endpx > w ? w : endpx;
+                console.log(startpx, endpx)
+            }
+
             drawZoomWindow()
             lastMouseX = pos.x
             lastMouseY = pos.y
         }
-    }
+    })
 
-    function handleMouseUp (event) {
+    document.addEventListener("mouseup", (event) => {
         switch (event.button) {
             case 0:
                 mouseDown = false;
             default:
                 // only handle left clicks
         }
-    }
+    })
 
     function setZoomAreaToCentre(centre) {
         // recentre the zoomarea to the new centre with its old size
@@ -116,4 +132,4 @@
     }
 </style>
 
-<canvas id="beatarea" bind:this={canvas} on:mousedown={handleMouseDown} on:mouseup={handleMouseUp} on:mousemove={handleMouseMove}></canvas>
+<canvas id="beatarea" bind:this={canvas} on:mousedown={handleMouseDown}></canvas>
