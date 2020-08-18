@@ -1,5 +1,6 @@
 <script>
     import { Howl } from 'howler';
+    import ZoomArea from '../components/ZoomArea.svelte'
 
     export let videoID;
 
@@ -112,6 +113,8 @@
         width: 100%;
     }    
 </style>
+
+<ZoomArea></ZoomArea>
 
 {#await getYTAudio(videoID)}
 	<h3>Loading Audio . . .</h3>
