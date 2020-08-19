@@ -13,13 +13,13 @@ export const Default = () => ({
 export const StartRepeat = () => ({
   Component: Bar,
   props: {
-    type: "startrepeat",
+    type: "s",
   },
 });
 
 export const EndRepeat = () => ({
   Component: Bar,
   props: {
-    type: "endrepeat",
+    type: "e",
   },
 });

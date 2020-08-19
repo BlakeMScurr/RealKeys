@@ -86,14 +86,12 @@
 
             // change the zoom area size
             let dy = lastMouseY - pos.y
-            console.log(dy)
             if (endpx - startpx > minzoomarea + 2 * dx) {
                 startpx -= dy
                 endpx += dy
                 startpx = startpx < 0 ? 0 : startpx;
                 let w = canvas.getBoundingClientRect().width;
                 endpx = endpx > w ? w : endpx;
-                console.log(startpx, endpx)
             }
 
             drawZoomWindow()

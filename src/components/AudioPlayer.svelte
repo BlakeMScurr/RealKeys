@@ -1,6 +1,7 @@
 <script>
     import { Howl } from 'howler';
     import ZoomArea from '../components/ZoomArea.svelte'
+    import Bars from '../components/Bars.svelte'
 
     export let videoID;
 
@@ -114,8 +115,6 @@
     }    
 </style>
 
-<ZoomArea></ZoomArea>
-
 {#await getYTAudio(videoID)}
 	<h3>Loading Audio . . .</h3>
 {:then loadedPlayer}
@@ -131,6 +130,8 @@
     </label>
 
     <div id="playbackArea">
+        <ZoomArea></ZoomArea>
+        <Bars></Bars>
         <label>
             <input id="timeSlider" type="range" min=0 max={duration} step="any" on:change={audioPlayer.seek(position)} bind:value={position}> <!-- TODO: visualise waveform with https://github.com/bbc/waveform-data.js or https://css-tricks.com/making-an-audio-waveform-visualizer-with-vanilla-javascript/ -->
         </label>

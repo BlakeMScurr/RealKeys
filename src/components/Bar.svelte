@@ -9,6 +9,10 @@
         background-color: white;
     }
 
+    #container:hover {
+        cursor: move;
+    }
+
     div {
         background-color: black;
         display: inline-block;
@@ -27,7 +31,7 @@
     .dotholder {
         position: relative;
         height: 100%;
-        background-color: white;
+        background-color:rgba(255,255,255,0.0);
         width: 8px;
     }
 
@@ -49,17 +53,17 @@
     }
 </style>
 
-<div id="container"> 
+<div id="container" draggable={type != ""}> 
     {#if type == ""}
         <div class="thin"></div>
-    {:else if type == "startrepeat"}
+    {:else if type == "s"}
         <div class="thick"></div>
         <div class="thin"></div>
         <div class=dotholder>
             <div class="dot high"></div>
             <div class="dot low"></div>
         </div>
-    {:else if type == "endrepeat"}
+    {:else if type == "e"}
         <div class=dotholder>
             <div class="dot high"></div>
             <div class="dot low"></div>
