@@ -5,7 +5,7 @@
 <style>
     /* TODO: eliminate need for container, it's just required for storybook */
     #container {
-        height: 100px;
+        height: 50px;
         background-color: white;
     }
 
@@ -20,7 +20,7 @@
 
     .thin {
         height: 100%;
-        width: 1.5px;
+        width: 1px;
     }
 
     .thick {
@@ -44,11 +44,9 @@
     }
 
     .low {
-        top: calc(18.75% + 4px);
-        /* top: calc(81.25% - 4px); */
+        top: calc(18.75% + 2px);
     }
     .high {
-        /* top: calc(18.75% + 4px); */
         top: calc(81.25% - 12px)
     }
 </style>

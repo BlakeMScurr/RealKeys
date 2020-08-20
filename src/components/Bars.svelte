@@ -1,10 +1,30 @@
 <script>
     import Bar from "../components/Bar.svelte"
+    import { onMount } from 'svelte';
 
     export let bars = ["s", "e"];
+    
+    let w;
+
+    function handleResize(node) {
+        w = node.clientWidth
+    }
+
+    // import { watchResize } from "svelte-watch-resize"
+    
+    let mounted = false;
+    let watchResize;
+    onMount(async () => {
+        w = document.getElementById("barlines").clientWidth;
+        const resizeModule = await import("svelte-watch-resize");
+        watchResize = resizeModule.watchResize
+        mounted = true
+    })
 
     // TODO: move this to well unit tested typescript file
-    function validate(bars) {
+    // TODO: rename, since this determines widths and autocorrects
+    // TODO: refactor to be far less lenient and instead show an issue/apology/communication screen - this is necessary for fast feedback and development improvement
+    function validate(bars, width) {
         let validBars = bars.slice()
         let barLineTypes = validBars.map(bar => bar.type)
         let lengthsAfterBarLine = validBars.map(bar => bar.length)
@@ -72,7 +92,29 @@
             barLineTypes[end] = "s"
         }
 
-        return barLineTypes
+        // remove the width of the last barline
+        switch (barLineTypes[barLineTypes.length-1]) {
+            case "e":
+                width -= 25 // end bars have width 25
+                lengthsAfterBarLine[lengthsAfterBarLine.length-1] = 25 / width
+                break;
+            case "":
+                width -= 1 // regular bars have width 1
+                lengthsAfterBarLine[lengthsAfterBarLine.length-1] = 1 / width
+                break;
+            default:
+                throw new Error("invalid final bar: " + barLineTypes[barLineTypes.length-1])
+        }
+
+        console.log("actually resetting widths")
+        return barLineTypes.map((type, i) => {
+            let barWidth = lengthsAfterBarLine[i] * width
+            if (i == lengthsAfterBarLine.length - 1) { barWidth = Math.round(barWidth)} // if the last bar is 24.9999999 or whatever, the end bar deforms
+            return {
+                type: type,
+                width: barWidth,
+            }
+        })
     }
 
     function getAllIndices(arr, val) {
@@ -91,20 +133,41 @@
         justify-content: flex-start;
     }
 
+    /* .barholder {
+        width: 40px;
+    } */
+
     .crossline { /* TODO: lower crossline z-index so the cursor to move the barline still exists on the cross line */
         position: relative;
         background-color: BLACK;
         height: 2px;
         top: 25px;
         width: 100%;
+        z-index: 1;
     }
 </style>
 
 <div class="container">
     <div class="crossline"></div>
-    <div id="barlines">
-        {#each validate(bars) as type}
-            <Bar {type}></Bar>
-        {/each}
-    </div>
+    {#if !mounted}
+        <div id="barlines"> <!-- TODO: why did bind:clientWidth={w} give NaN? -->
+            {#if w !== undefined}
+                {#each validate(bars, w) as bar}
+                    <div class="barholder" style={"width:" + bar.width + "px"}>
+                        <Bar type={bar.type}></Bar>
+                    </div>
+                {/each}
+            {/if}
+        </div>
+    {:else}
+        <div id="barlines" use:watchResize={handleResize}> <!-- TODO: why did bind:clientWidth={w} give NaN? -->
+            {#if w !== undefined}
+                {#each validate(bars, w) as bar}
+                    <div class="barholder" style={"width:" + bar.width + "px"}>
+                        <Bar type={bar.type}></Bar>
+                    </div>
+                {/each}
+            {/if}
+        </div>
+    {/if}
 </div>
