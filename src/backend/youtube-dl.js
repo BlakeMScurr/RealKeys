@@ -13,13 +13,13 @@ export function downloadYouTubeVideo(videoID) {
         process.chdir(tmpdir)
 
         // TODO: switch to mp3 for linux
-        execSync('youtube-dl -x --audio-format=m4a https://www.youtube.com/watch?v=' + videoID)
+        execSync('youtube-dl -x --audio-format=mp3 https://www.youtube.com/watch?v=' + videoID)
         let files = fs.readdirSync("./")
         if (files.length != 1) {
             return {cleanup: cleanup(tmpdir), file: ""};
         }
 
-        let audioFile = path.resolve("ytaudio.m4a")
+        let audioFile = path.resolve("ytaudio.mp3")
         fs.renameSync(path.resolve(files[0]), audioFile)
         return {cleanup: cleanup(tmpdir), audioFile: audioFile};
     }
@@ -29,12 +29,12 @@ export function downloadYouTubeVideo(videoID) {
 
 function cleanup (tmpdir) {
     return () => {
-        // process.chdir("..")
-        // rimraf(path.resolve(tmpdir), (error) => {
-        //     if (fs.existsSync(path.resolve(tmpdir))) { // TODO: why does this get called when it clearly succeeds?
-        //         console.log("could not remove " + tmpdir)
-        //         console.log(error)
-        //     }
-        // });
+        process.chdir("..")
+        rimraf(path.resolve(tmpdir), (error) => {
+            if (fs.existsSync(path.resolve(tmpdir))) { // TODO: why does this get called when it clearly succeeds?
+                console.log("could not remove " + tmpdir)
+                console.log(error)
+            }
+        });
     }
 }
