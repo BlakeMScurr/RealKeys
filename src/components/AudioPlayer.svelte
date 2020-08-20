@@ -2,6 +2,7 @@
     import { Howl } from 'howler';
     import ZoomArea from '../components/ZoomArea.svelte'
     import Bars from '../components/Bars.svelte'
+    import Metronome from '../components/track/Metronome.svelte'
 
     export let videoID;
 
@@ -11,24 +12,8 @@
     let position = 0;
     let duration = 0;
     let speed = 1;
-    let metronomeOn = true;
-
-    let tick = new Howl({
-        src: ['getSound/tick'],
-        format: 'mp3',
-    });
-
-    let tickbars; // TODO: remove this huge absolutely fucking disgusting hack, I hate it
     let lastTickPlayer = 0;
-    let tickRoundingFactor = 100;
-    function playTick(position) {
-        console.log(metronomeOn && tickbars != undefined)
-        console.log(tickbars)
-        if (metronomeOn && tickbars !== undefined && tickbars.includes(Math.round((position) * tickRoundingFactor) / tickRoundingFactor)) {
-            tick.play()
-            console.log("playing tick")
-        }
-    }
+    let precision = 100; // rounding factor
 
     document.addEventListener("keydown", event => {
         switch (event.keyCode) {
@@ -74,8 +59,7 @@
     let positionInterval
     function play() {
         positionInterval = setInterval(()=>{
-            position += 0.01 * speed
-            playTick(position)
+            position += 1/precision * speed
         }, 10)
         playing = true
         audioPlayer.play()
@@ -119,12 +103,17 @@
         return json
     }
 
-    function makeBarLines(beats) {
-        tickbars = beats.slice(0, beats.length-1).map(beat => { // TODO: remove rancid shit
-            let rounded = Math.round((beat) * tickRoundingFactor) / tickRoundingFactor
-            return rounded
-        })
+    function round(num) {
+        return Math.round((num) * precision) / precision
+    }
 
+    function roundBeats(beats) {
+        return beats.slice(0, beats.length-1).map(beat => {
+            return round(beat)
+        })
+    }
+
+    function makeBarLines(beats) {
         // make bar ends proportion of total length
         // TODO: clarify beat/bar ambiguity
         // requires audioplayer to be loaded
@@ -211,11 +200,8 @@ Speed:
         <Bars></Bars>
     {:then beats}
         <!-- TODO: get actual bars, not just beats -->
-        <Bars bars={makeBarLines(beats)}></Bars> 
-        <label>
-            Metronome:
-            <input type="checkbox" bind:checked={metronomeOn}>
-        </label>
+        <Bars bars={makeBarLines(beats)}></Bars>
+        <Metronome time={round(position)} ticks={roundBeats(beats)}></Metronome>
     {/await}
     <label>
         <input id="timeSlider" type="range" min=0 max={duration} step="any" on:change={audioPlayer.seek(position)} bind:value={position}> <!-- TODO: visualise waveform with https://github.com/bbc/waveform-data.js or https://css-tricks.com/making-an-audio-waveform-visualizer-with-vanilla-javascript/ -->
