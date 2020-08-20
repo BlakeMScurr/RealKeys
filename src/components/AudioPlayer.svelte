@@ -11,14 +11,32 @@
     let position = 0;
     let duration = 0;
     let speed = 1;
+    let metronomeOn = true;
+
+    let tick = new Howl({
+        src: ['getSound/tick'],
+        format: 'mp3',
+    });
+
+    let tickbars; // TODO: remove this huge absolutely fucking disgusting hack, I hate it
+    let lastTickPlayer = 0;
+    let tickRoundingFactor = 100;
+    function playTick(position) {
+        if (metronomeOn && tickbars !== undefined && tickbars.includes(Math.round((position + Number.EPSILON) * tickRoundingFactor) / tickRoundingFactor)) {
+            tick.play()
+            console.log("playing tick")
+        }
+    }
 
     document.addEventListener("keydown", event => {
         switch (event.keyCode) {
             case 32:
-                if (playing) {
-                    pause()
-                } else {
-                    play()
+                if (audioLoaded) {
+                    if (playing) {
+                        pause()
+                    } else {
+                        play()
+                    }
                 }
                 break;
             case 37: // left arrow
@@ -51,12 +69,11 @@
         return hours + ":" + minutes + ":" + seconds
     }
 
-
-
     let positionInterval
     function play() {
         positionInterval = setInterval(()=>{
             position += 0.01 * speed
+            playTick(position)
         }, 10)
         playing = true
         audioPlayer.play()
@@ -101,6 +118,8 @@
     }
 
     function makeBarLines(beats) {
+        tickbars = beats.slice(0, beats.length-1).map(beat => { return Math.round((beat + Number.EPSILON) * tickRoundingFactor) / tickRoundingFactor}) // TODO: remove rancid shit
+
         // make bar ends proportion of total length
         // TODO: clarify beat/bar ambiguity
         // requires audioplayer to be loaded
@@ -110,6 +129,7 @@
             return  bar/duration
         })
         barEnds.push(1)
+
         
         // get bar lengths from ends
         let lastpos = 0;
@@ -187,6 +207,10 @@ Speed:
     {:then beats}
         <!-- TODO: get actual bars, not just beats -->
         <Bars bars={makeBarLines(beats)}></Bars> 
+        <label>
+            Metronome:
+            <input type="checkbox" bind:checked={metronomeOn}>
+        </label>
     {/await}
     <label>
         <input id="timeSlider" type="range" min=0 max={duration} step="any" on:change={audioPlayer.seek(position)} bind:value={position}> <!-- TODO: visualise waveform with https://github.com/bbc/waveform-data.js or https://css-tricks.com/making-an-audio-waveform-visualizer-with-vanilla-javascript/ -->
