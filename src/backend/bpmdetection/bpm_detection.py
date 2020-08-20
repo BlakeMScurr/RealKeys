@@ -1,3 +1,5 @@
+# From https://github.com/scaperot/the-BPM-detector-python
+
 # Copyright 2012 Free Software Foundation, Inc.
 #
 # This file is part of The BPM Detector Python
