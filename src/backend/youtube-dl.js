@@ -12,7 +12,7 @@ export function downloadYouTubeVideo(videoID) {
     if (fs.existsSync(tmpdir)) {
         process.chdir(tmpdir)
 
-        execSync('youtube-dl -x https://www.youtube.com/watch?v=' + videoID)
+        execSync('youtube-dl -x --audio-format=mp3 https://www.youtube.com/watch?v=' + videoID)
         let files = fs.readdirSync("./")
         if (files.length != 1) {
             return {cleanup: cleanup(tmpdir), file: ""};

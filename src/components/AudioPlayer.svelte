@@ -97,18 +97,46 @@
     async function getBeats(videoID) {
         let response = await fetch("getYTAudio/beats/" + videoID)
         let json = await response.json()
-        console.log(json)
         return json
     }
 
     function makeBarLines(beats) {
-        return [
-            {type:"s", length: 0.25},
-            {type:"", length: 0.25},
-            {type:"", length: 0.25},
-            {type:"", length: 0.25},
-            {type:"e", length: 0},
-        ]
+        // make bar ends proportion of total length
+        // TODO: clarify beat/bar ambiguity
+        // requires audioplayer to be loaded
+        let duration = beats[beats.length-1]
+        console.log("duration:", duration)
+        let barEnds = beats.slice().map(bar => {
+            return  bar/duration
+        })
+        barEnds.push(1)
+        
+        // get bar lengths from ends
+        let lastpos = 0;
+        let barLengths = [];
+        // TODO: idiomatic js array method, i.e., map(), reduce(), filter() etc
+        for (let i = 0; i < barEnds.length; i++) {
+            const end = barEnds[i];
+            barLengths.push(end - lastpos)
+            lastpos = end
+        }
+
+        // start final bar
+        barLengths.push(0)
+
+        // make bar structs
+        let bars = barLengths.map(len => {
+            return {
+                type: "",
+                length: len,
+            }
+        })
+
+        // set bar types
+        bars[0].type = "s"
+        bars[bars.length-1].type = "e"
+
+        return bars
     }
 </script>
 
