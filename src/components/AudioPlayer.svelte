@@ -22,7 +22,9 @@
     let lastTickPlayer = 0;
     let tickRoundingFactor = 100;
     function playTick(position) {
-        if (metronomeOn && tickbars !== undefined && tickbars.includes(Math.round((position + Number.EPSILON) * tickRoundingFactor) / tickRoundingFactor)) {
+        console.log(metronomeOn && tickbars != undefined)
+        console.log(tickbars)
+        if (metronomeOn && tickbars !== undefined && tickbars.includes(Math.round((position) * tickRoundingFactor) / tickRoundingFactor)) {
             tick.play()
             console.log("playing tick")
         }
@@ -118,7 +120,10 @@
     }
 
     function makeBarLines(beats) {
-        tickbars = beats.slice(0, beats.length-1).map(beat => { return Math.round((beat + Number.EPSILON) * tickRoundingFactor) / tickRoundingFactor}) // TODO: remove rancid shit
+        tickbars = beats.slice(0, beats.length-1).map(beat => { // TODO: remove rancid shit
+            let rounded = Math.round((beat) * tickRoundingFactor) / tickRoundingFactor
+            return rounded
+        })
 
         // make bar ends proportion of total length
         // TODO: clarify beat/bar ambiguity
@@ -126,7 +131,7 @@
         let duration = beats[beats.length-1]
         console.log("duration:", duration)
         let barEnds = beats.slice().map(bar => {
-            return  bar/duration
+            return bar/duration
         })
         barEnds.push(1)
 

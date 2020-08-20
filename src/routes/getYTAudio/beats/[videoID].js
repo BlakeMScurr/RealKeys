@@ -12,7 +12,9 @@ export function get(request, response) {
     let beats = rawBeats.toString().trim().split("\n")
 
     // add on total length
-    const stream = fs.createReadStream(audioFile);
+    // convert to m4a to get length on mac
+    execSync('ffmpeg -i ' + audioFile + " " + audioFile + ".m4a") // TODO: it's a bit ugly to have x.mp3..m4a so we should remove this whole hack
+    const stream = fs.createReadStream(audioFile + ".m4a");
     getAudioDurationInSeconds(stream).then((duration) => {
         beats.push(duration.toString())
         
