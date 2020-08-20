@@ -6,19 +6,8 @@
     
     let w;
 
-    function handleResize(node) {
-        w = node.clientWidth
-    }
-
-    // import { watchResize } from "svelte-watch-resize"
-    
-    let mounted = false;
-    let watchResize;
     onMount(async () => {
         w = document.getElementById("barlines").clientWidth;
-        const resizeModule = await import("svelte-watch-resize");
-        watchResize = resizeModule.watchResize
-        mounted = true
     })
 
     // TODO: move this to well unit tested typescript file
@@ -106,10 +95,12 @@
                 throw new Error("invalid final bar: " + barLineTypes[barLineTypes.length-1])
         }
 
-        console.log("actually resetting widths")
         return barLineTypes.map((type, i) => {
             let barWidth = lengthsAfterBarLine[i] * width
-            if (i == lengthsAfterBarLine.length - 1) { barWidth = Math.round(barWidth)} // if the last bar is 24.9999999 or whatever, the end bar deforms
+            // TODO: for some reason, on the real page (not storybook) if we set the width to an invalid value rather than 25px
+            // it will remain 25px (due to the leftover space for it) and it will suddenly stop spilling over to the next line, despite
+            // not having changed width
+            if (i == lengthsAfterBarLine.length - 1) { barWidth = "remander"} 
             return {
                 type: type,
                 width: barWidth,
@@ -133,9 +124,9 @@
         justify-content: flex-start;
     }
 
-    /* .barholder {
-        width: 40px;
-    } */
+    .barholder {
+        height: 50px;
+    }
 
     .crossline { /* TODO: lower crossline z-index so the cursor to move the barline still exists on the cross line */
         position: relative;
@@ -149,25 +140,13 @@
 
 <div class="container">
     <div class="crossline"></div>
-    {#if !mounted}
-        <div id="barlines"> <!-- TODO: why did bind:clientWidth={w} give NaN? -->
-            {#if w !== undefined}
-                {#each validate(bars, w) as bar}
-                    <div class="barholder" style={"width:" + bar.width + "px"}>
-                        <Bar type={bar.type}></Bar>
-                    </div>
-                {/each}
-            {/if}
-        </div>
-    {:else}
-        <div id="barlines" use:watchResize={handleResize}> <!-- TODO: why did bind:clientWidth={w} give NaN? -->
-            {#if w !== undefined}
-                {#each validate(bars, w) as bar}
-                    <div class="barholder" style={"width:" + bar.width + "px"}>
-                        <Bar type={bar.type}></Bar>
-                    </div>
-                {/each}
-            {/if}
-        </div>
-    {/if}
+    <div id="barlines" bind:clientWidth={w}> <!-- TODO: why did bind:clientWidth={w} give NaN? -->
+        {#if w !== undefined}
+            {#each validate(bars, w) as bar}
+                <div class="barholder" style={"width:" + bar.width + "px"}>
+                    <Bar type={bar.type}></Bar>
+                </div>
+            {/each}
+        {/if}
+    </div>
 </div>

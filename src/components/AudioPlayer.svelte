@@ -6,6 +6,7 @@
     export let videoID;
 
     let audioPlayer;
+    let audioLoaded = false;
     let playing = false
     let position = 0;
     let duration = 0;
@@ -68,6 +69,7 @@
     }
 
     function setAudio(node, player) {
+        audioLoaded = true
         audioPlayer = player
         duration = audioPlayer.duration()
     }
@@ -90,6 +92,23 @@
 		})
 
 		return howlPromise;
+    }
+
+    async function getBeats(videoID) {
+        let response = await fetch("getYTAudio/beats/" + videoID)
+        let json = await response.json()
+        console.log(json)
+        return json
+    }
+
+    function makeBarLines(beats) {
+        return [
+            {type:"s", length: 0.25},
+            {type:"", length: 0.25},
+            {type:"", length: 0.25},
+            {type:"", length: 0.25},
+            {type:"e", length: 0},
+        ]
     }
 </script>
 
@@ -119,23 +138,32 @@
 	<h3>Loading Audio . . .</h3>
 {:then loadedPlayer}
     <p id="hack" use:setAudio={loadedPlayer}></p> <!-- TODO: remove hack designed to pass the audio to the component's state once the promise is ready -->
-    {#if playing}
-        <button on:click={pause}>Pause</button>
-    {:else}
-        <button on:click={play}>Play</button>
-    {/if}
-    <label>
-    Speed:
-        <input type="number" min=0.5 max=4.0 step=0.25 on:change={audioPlayer.rate(speed)} bind:value={speed}>
-    </label>
-
-    <div id="playbackArea">
-        <ZoomArea></ZoomArea>
-        <Bars></Bars>
-        <label>
-            <input id="timeSlider" type="range" min=0 max={duration} step="any" on:change={audioPlayer.seek(position)} bind:value={position}> <!-- TODO: visualise waveform with https://github.com/bbc/waveform-data.js or https://css-tricks.com/making-an-audio-waveform-visualizer-with-vanilla-javascript/ -->
-        </label>
-    </div>
-    <p id="positionDuration">{renderSeconds(position)}/{renderSeconds(duration)}</p>
 {/await}
+
+{#if !audioPlayer}
+    <button on:click={play} disabled>Play</button>
+{:else if playing}
+    <button on:click={pause}>Pause</button>
+{:else}
+    <button on:click={play}>Play</button>
+{/if}
+<label>
+Speed:
+    <input type="number" min=0.5 max=4.0 step=0.25 on:change={audioPlayer.rate(speed)} bind:value={speed}>
+</label>
+
+<div id="playbackArea">
+    <ZoomArea></ZoomArea>
+    {#await getBeats(videoID)}
+        <Bars></Bars>
+    {:then beats}
+        <!-- TODO: get actual bars, not just beats -->
+        <Bars bars={makeBarLines(beats)}></Bars> 
+    {/await}
+    <label>
+        <input id="timeSlider" type="range" min=0 max={duration} step="any" on:change={audioPlayer.seek(position)} bind:value={position}> <!-- TODO: visualise waveform with https://github.com/bbc/waveform-data.js or https://css-tricks.com/making-an-audio-waveform-visualizer-with-vanilla-javascript/ -->
+    </label>
+</div>
+<p id="positionDuration">{renderSeconds(position)}/{renderSeconds(duration)}</p>
+
 
