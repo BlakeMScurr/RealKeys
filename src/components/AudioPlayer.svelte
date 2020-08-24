@@ -13,7 +13,7 @@
     let duration = 0;
     let speed = 1;
     let lastTickPlayer = 0;
-    let precision = 100; // rounding factor
+    let seeked = false;
 
     document.addEventListener("keydown", event => {
         switch (event.keyCode) {
@@ -29,15 +29,20 @@
             case 37: // left arrow
                 let newLeftPost = audioPlayer.seek() - 0.5
                 position = newLeftPost
-                audioPlayer.seek(newLeftPost)
+                seek(newLeftPost)
                 break;
             case 39: // right arrow
                 let newRightPos = audioPlayer.seek() + 0.5
                 position = newRightPos
-                audioPlayer.seek(newRightPos)
+                seek(newRightPos)
                 break;
         }
     });
+
+    function seek(position) {
+        audioPlayer.seek(position)
+        seeked = true
+    }
 
     function renderSeconds(seconds) {
         seconds = seconds.toFixed(1)
@@ -59,7 +64,8 @@
     let positionInterval
     function play() {
         positionInterval = setInterval(()=>{
-            position += 1/precision * speed
+            position += 1/100 * speed
+            seeked = false
         }, 10)
         playing = true
         audioPlayer.play()
@@ -101,16 +107,6 @@
         let response = await fetch("getYTAudio/beats/" + videoID)
         let json = await response.json()
         return json
-    }
-
-    function round(num) {
-        return Math.round((num) * precision) / precision
-    }
-
-    function roundBeats(beats) {
-        return beats.slice(0, beats.length-1).map(beat => {
-            return round(beat)
-        })
     }
 
     function makeBarLines(beats) {
@@ -201,10 +197,10 @@ Speed:
     {:then beats}
         <!-- TODO: get actual bars, not just beats -->
         <Bars bars={makeBarLines(beats)}></Bars>
-        <Metronome time={round(position)} ticks={roundBeats(beats)}></Metronome>
+        <Metronome time={position} playing={playing} ticks={beats} seeked={seeked}></Metronome>
     {/await}
     <label>
-        <input id="timeSlider" type="range" min=0 max={duration} step="any" on:change={audioPlayer.seek(position)} bind:value={position}> <!-- TODO: visualise waveform with https://github.com/bbc/waveform-data.js or https://css-tricks.com/making-an-audio-waveform-visualizer-with-vanilla-javascript/ -->
+        <input id="timeSlider" type="range" min=0 max={duration} step="any" on:change={seek(position)} bind:value={position}> <!-- TODO: visualise waveform with https://github.com/bbc/waveform-data.js or https://css-tricks.com/making-an-audio-waveform-visualizer-with-vanilla-javascript/ -->
     </label>
 </div>
 <p id="positionDuration">{renderSeconds(position)}/{renderSeconds(duration)}</p>
