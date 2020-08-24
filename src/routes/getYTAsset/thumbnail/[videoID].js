@@ -3,6 +3,11 @@ const fetch = require('node-fetch');
 export function post(req, res) {
     const { videoID } = req.params;
 
+    if (videoID.startsWith("testdata-")) {
+        res.end()
+        return
+    }
+
     var options = {
         host: "www.youtube.com",
         path: "" + videoID,
