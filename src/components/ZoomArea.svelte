@@ -3,11 +3,11 @@
 
     // start and end are the start and end of the content in the zoom area
     // they are given as percentages
-    // export let start = 0;
-    // export let end = 1;
+    export let start = 0;
+    export let end = 1;
 
     // startpx and endpx represent the starting and end points for the zoom area in terms of coordinates from the canvas
-    let startpx = 0;
+    let startpx;
     let endpx;
 
     let canvas;
@@ -17,11 +17,22 @@
         ctx = canvas.getContext('2d');
         setCanvasWidth(ctx)
         // set the width of the visible zoom window
-        endpx = canvas.getBoundingClientRect().width/5;
+        let w = canvas.getBoundingClientRect().width 
+        endpx = w * end;
+        startpx = w * start;
 
         // initial drawing
         drawZoomWindow()
     });
+
+    // update external start/end
+    $: {
+        if (canvas !== undefined) {
+            let w = canvas.getBoundingClientRect().width
+            start = startpx/w
+            end = endpx/w
+        }
+    }
 
     // TODO: run on resize
     function setCanvasWidth(ctx) {
@@ -84,13 +95,18 @@
             let dx = pos.x - lastMouseX
             setZoomAreaToCentre(oldCentre + dx)
 
-            // change the zoom area size
             let dy = lastMouseY - pos.y
-            if (endpx - startpx > minzoomarea + 2 * dx) {
+            if (endpx - startpx >= minzoomarea || dy > 0) { // if the area is at or below minimum size, don't shrink it
+                // if the new area will be below minimum size, only shrink to minimum
+                if ((endpx + dy) - (startpx - dy) < minzoomarea) {
+                    dy = (minzoomarea - (endpx - startpx)) / 2
+                }
+
+                // change the box size
                 startpx -= dy
                 endpx += dy
-                startpx = startpx < 0 ? 0 : startpx;
                 let w = canvas.getBoundingClientRect().width;
+                startpx = startpx < 0 ? 0 : startpx;
                 endpx = endpx > w ? w : endpx;
             }
 
