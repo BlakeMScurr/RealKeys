@@ -101,9 +101,11 @@
             // it will remain 25px (due to the leftover space for it) and it will suddenly stop spilling over to the next line, despite
             // not having changed width
             if (i == lengthsAfterBarLine.length - 1) { barWidth = "remander"} 
+
             return {
                 type: type,
                 width: barWidth,
+                number: i < barLineTypes.length -1 ? i + 1: '',
             }
         })
     }
@@ -136,6 +138,25 @@
         width: 100%;
         z-index: 1;
     }
+
+    .barnumber {
+        position: absolute;
+        margin-top: 0;
+        top: -5px;
+    }
+
+    .start {
+        margin-left: 22px;
+    }
+
+    .end {
+        margin-left: 30px;
+    }
+
+    .default {
+        margin-left: 3px;
+        top: -3px;
+    }
 </style>
 
 <div class="container">
@@ -144,6 +165,13 @@
         {#if w !== undefined}
             {#each validate(bars, w) as bar}
                 <div class="barholder" style={"width:" + bar.width + "px"}>
+                    {#if bar.type === ""}
+                        <p class="barnumber default">{bar.number}</p>
+                    {:else if bar.type === "s"}
+                        <p class="barnumber start">{bar.number}</p>
+                    {:else}
+                        <p class="barnumber end">{bar.number}</p>
+                    {/if}
                     <Bar type={bar.type}></Bar>
                 </div>
             {/each}
