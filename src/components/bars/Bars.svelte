@@ -3,7 +3,7 @@
     import { setWidths, validate } from "./bars.js"
     import { onMount } from 'svelte';
 
-    export let bars = ["s", "e"];
+    export let bars;
     export let zoomStart = 0;
     export let zoomEnd = 1;
     
