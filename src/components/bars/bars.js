@@ -82,7 +82,7 @@ export function setWidths(bars, width) {
 
             return {
                 type: type,
-                width: barWidth,
+                width: barWidth, // TODO: s/width/length or at least make it consistent somehow
                 number: i < types.length -1 ? i + 1: '', // TODO: s/number/label
             }
         })),
@@ -107,6 +107,44 @@ export function reduceClutter(bars, width) {
                 }
             }
         }
+    }
+
+    return newbars.filter((bar)=>{
+        return bar.type != "x"
+    })
+}
+
+function strip(number) { // fixing some floating point arithmetic problems
+    const bigNum = 1000000
+    return Math.round(number*bigNum)/bigNum
+}
+
+export function zoom(bars, start, end) {
+    if (start >= end) {
+        throw new Error("start after end")
+    }
+    let newbars = bars.slice()
+    let startWidth = 0;
+    for (let i = 0; i < newbars.length; i++) {
+        let nbil = newbars[i].length
+        // mark for deletion newbars that:
+        if (startWidth + newbars[i].length <= start || // end before the start of the zoom area
+            startWidth > end) { // or start after the end of the zoom area
+            newbars[i].type = "x"
+        }
+
+        // truncate newbars that
+        // - start before the start of the zoom area and end after the start of the zoom area
+        if (startWidth < start && startWidth + newbars[i].length > start) {
+            newbars[i].length = strip((startWidth + newbars[i].length) - start)
+        }
+        // - start before the end of the zoom area and end after the end of the zoom area
+        if (startWidth < end && startWidth + newbars[i].length > end) {
+            newbars[i].length = strip(end - startWidth)
+        }
+
+        // increment accumulator
+        startWidth += nbil
     }
 
     return newbars.filter((bar)=>{

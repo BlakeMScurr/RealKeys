@@ -1,4 +1,4 @@
-import { validate, even, setWidths, reduceClutter } from "./bars.js"
+import { validate, even, setWidths, reduceClutter, zoom } from "./bars.js"
 
 test("Even", () => {
     expect(even(["s", "", "e"])).toEqual(
@@ -212,7 +212,7 @@ test("ErrorLengthSumTooHigh", ()=>{
     ])).toEqual("total bar length too long: 1.5")
 })
 
-test("ErrorLastBarLineNonZero", ()=>{
+test("ErrorLastBarLineNonZero", () => {
     expect(validate([
         { type: "s", length: 0.5 },
         { type: "e", length: 0.5 }
@@ -220,9 +220,9 @@ test("ErrorLastBarLineNonZero", ()=>{
 })
 
 // cluttering tests
-test("Cluttering", ()=> {
+test("Cluttering", () => {
     let eightBars = even(["s", "", "", "", "", "", "", "", "e"]);
-    for (let i = 0; i < eightBars.length; i++) {
+    for (let i = 0; i < eightBars.length; i++) { // this little dumb thing just changes length to width because the bar type before and after applying width transformations are inconsistent. TODO: stop doing that
         eightBars[i].width = eightBars[i].length * 360;
         delete eightBars[i].length;
     }
@@ -254,4 +254,39 @@ test("Cluttering", ()=> {
             "width": 0,
         },
     ])
+})
+
+test("Zoom", () => {
+    let dc = (bars)=>{return JSON.parse(JSON.stringify(bars))} // deep copy
+    
+    let fourBars = even(["s", "", "", "", "e"]);
+    expect(zoom(dc(fourBars), 0, 1)).toEqual(fourBars)
+    expect(()=>{zoom(dc(fourBars), 1, 0)}).toThrow("start after end")
+    expect(zoom(dc(fourBars), 0.5, 1)).toEqual(
+        [
+            {"number": 3, "type": "", "length": 0.25},
+            {"number": 4, "type": "", "length": 0.25},
+            {"number": 5, "type": "e", "length": 0},
+        ],
+    )
+    expect(zoom(dc(fourBars), 0.49, 1)).toEqual(
+        [
+            {"number": 2, "type": "", "length": 0.01},
+            {"number": 3, "type": "", "length": 0.25},
+            {"number": 4, "type": "", "length": 0.25},
+            {"number": 5, "type": "e", "length": 0},
+        ],
+    )
+    expect(zoom(dc(fourBars), 0.5, 0.75)).toEqual(
+        [
+            {"number": 3, "type": "", "length": 0.25},
+            {"number": 4, "type": "", "length": 0.25},
+        ],
+    )
+    expect(zoom(dc(fourBars), 0.5, 0.76)).toEqual(
+        [
+            {"number": 3, "type": "", "length": 0.25},
+            {"number": 4, "type": "", "length": 0.01},
+        ],
+    )
 })
