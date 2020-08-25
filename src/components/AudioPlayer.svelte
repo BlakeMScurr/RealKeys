@@ -1,7 +1,7 @@
 <script>
     import { Howl } from 'howler';
     import ZoomArea from '../components/ZoomArea.svelte'
-    import Bars from '../components/Bars.svelte'
+    import Bars from '../components/bars/Bars.svelte'
     import Metronome from '../components/track/Metronome.svelte'
 
     export let videoID;
