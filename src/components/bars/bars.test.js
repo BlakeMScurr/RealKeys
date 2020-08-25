@@ -1,11 +1,11 @@
-import { validate, even, setWidths } from "./bars.js"
+import { validate, even, setWidths, reduceClutter } from "./bars.js"
 
 test("Even", () => {
     expect(even(["s", "", "e"])).toEqual(
         [
-            {"length": 0.5, "type": "s"},
-            {"length": 0.5, "type": ""},
-            {"length": 0, "type": "e"}
+            {"length": 0.5, "type": "s", number: 1},
+            {"length": 0.5, "type": "", number: 2},
+            {"length": 0, "type": "e", number: 3}
         ]
     )
 })
@@ -217,4 +217,41 @@ test("ErrorLastBarLineNonZero", ()=>{
         { type: "s", length: 0.5 },
         { type: "e", length: 0.5 }
     ])).toEqual("length after final bar line must be zero, got: 0.5")
+})
+
+// cluttering tests
+test("Cluttering", ()=> {
+    let eightBars = even(["s", "", "", "", "", "", "", "", "e"]);
+    for (let i = 0; i < eightBars.length; i++) {
+        eightBars[i].width = eightBars[i].length * 360;
+        delete eightBars[i].length;
+    }
+
+    expect(reduceClutter(eightBars, 360)).toEqual([
+        {
+            "number": 1,
+            "type": "s",
+            "width": 90,
+        },
+        {
+            "number": 3,
+            "type": "",
+            "width": 90,
+        },
+        {
+            "number": 5,
+            "type": "",
+            "width": 90,
+        },
+        {
+            "number": 7,
+            "type": "",
+            "width": 90,
+        },
+        {
+            "number": 9,
+            "type": "e",
+            "width": 0,
+        },
+    ])
 })

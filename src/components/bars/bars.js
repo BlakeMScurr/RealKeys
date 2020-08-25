@@ -3,7 +3,8 @@ export function even(barlines) {
     return barlines.map((bar, i) => {
         return {
             type: bar,
-            length: i < barlines.length - 1? 1 / (barlines.length - 1): 0
+            length: i < barlines.length - 1? 1 / (barlines.length - 1): 0,
+            number: i+1,
         }
     })
 }
@@ -87,4 +88,28 @@ export function setWidths(bars, width) {
         }),
         error: "",
     }
+}
+
+// reduce clutter takes a set of validated bars and removes unnecessary bar numbers and bars that
+// will look too cluttering on the given width
+const minimumBarWidth = 50;
+export function reduceClutter(bars, width) {
+    let newbars = bars.slice()
+
+    for (let i = 0; i < newbars.length - 1; i++) {
+        if (newbars[i].type != "x" && newbars[i].width < minimumBarWidth) { // x signifies bars to be deleted, TODO: delete them elegantly in the first pass
+            outerloop:
+            for (let j = i+1; j < newbars.length; j++) {
+                newbars[i].width += newbars[j].width
+                newbars[j].type = "x"
+                if (newbars[i].width >= minimumBarWidth) {
+                    break outerloop
+                }
+            }
+        }
+    }
+
+    return newbars.filter((bar)=>{
+        return bar.type != "x"
+    })
 }
