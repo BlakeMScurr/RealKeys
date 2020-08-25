@@ -62,3 +62,11 @@ export const ErrorState = () => ({
         bars: even(["", "e"],),
     }
 })
+
+// decluttering
+export const Dense = () => ({
+    Component: Bars,
+    props: {
+        bars: even(["s"].concat(new Array(31).fill(""), ["e"]))
+    }
+})

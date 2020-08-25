@@ -73,7 +73,7 @@ export function setWidths(bars, width) {
     }
 
     return {
-        bars: types.map((type, i) => {
+        bars: reduceClutter(types.map((type, i) => {
             let barWidth = widths[i] * width
             // TODO: for some reason, on the real page (not storybook) if we set the width to an invalid value rather than 25px
             // it will remain 25px (due to the leftover space for it) and it will suddenly stop spilling over to the next line, despite
@@ -85,7 +85,7 @@ export function setWidths(bars, width) {
                 width: barWidth,
                 number: i < types.length -1 ? i + 1: '', // TODO: s/number/label
             }
-        }),
+        })),
         error: "",
     }
 }
@@ -99,7 +99,7 @@ export function reduceClutter(bars, width) {
     for (let i = 0; i < newbars.length - 1; i++) {
         if (newbars[i].type != "x" && newbars[i].width < minimumBarWidth) { // x signifies bars to be deleted, TODO: delete them elegantly in the first pass
             outerloop:
-            for (let j = i+1; j < newbars.length; j++) {
+            for (let j = i+1; j < newbars.length - 1; j++) {
                 newbars[i].width += newbars[j].width
                 newbars[j].type = "x"
                 if (newbars[i].width >= minimumBarWidth) {
