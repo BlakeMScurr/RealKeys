@@ -48,7 +48,7 @@ export function validate(bars) {
 // TODO: typescript
 // TODO: rename, since this determines widths and autocorrects
 // TODO: refactor to be far less lenient and instead show an issue/apology/communication screen - this is necessary for fast feedback and development improvement
-export function setWidths(bars, width) {
+export function setWidths(bars, width, start=0, end=1) {
     let types = bars.map(bar => bar.type)
     let widths = bars.map(bar => bar.length) // lengths after each bar line
 
@@ -72,20 +72,23 @@ export function setWidths(bars, width) {
             break;
     }
 
-    return {
-        bars: reduceClutter(types.map((type, i) => {
-            let barWidth = widths[i] * width
-            // TODO: for some reason, on the real page (not storybook) if we set the width to an invalid value rather than 25px
-            // it will remain 25px (due to the leftover space for it) and it will suddenly stop spilling over to the next line, despite
-            // not having changed width
-            if (i == widths.length - 1) { barWidth = "remainder"} 
+    let widenedBars = types.map((type, i) => {
+        let barWidth = widths[i] * width
+        // TODO: for some reason, on the real page (not storybook) if we set the width to an invalid value rather than 25px
+        // it will remain 25px (due to the leftover space for it) and it will suddenly stop spilling over to the next line, despite
+        // not having changed width
+        if (i == widths.length - 1) { barWidth = "remainder"} 
 
-            return {
-                type: type,
-                width: barWidth, // TODO: s/width/length or at least make it consistent somehow
-                number: i < types.length -1 ? i + 1: '', // TODO: s/number/label
-            }
-        })),
+        return {
+            type: type,
+            width: barWidth, // TODO: s/width/length or at least make it consistent somehow
+            number: i < types.length -1 ? i + 1: '', // TODO: s/number/label
+        }
+    })
+    let zoomedbars = zoom(widenedBars, start * width, end * width, width)
+    
+    return {
+        bars: reduceClutter(zoomedbars),
         error: "",
     }
 }
@@ -119,35 +122,39 @@ function strip(number) { // fixing some floating point arithmetic problems
     return Math.round(number*bigNum)/bigNum
 }
 
-export function zoom(bars, start, end) {
+export function zoom(bars, start, end, width) {
     if (start >= end) {
         throw new Error("start after end")
     }
     let newbars = bars.slice()
     let startWidth = 0;
     for (let i = 0; i < newbars.length; i++) {
-        let nbil = newbars[i].length
+        let nbil = newbars[i].width
         // mark for deletion newbars that:
-        if (startWidth + newbars[i].length <= start || // end before the start of the zoom area
+        if (startWidth + newbars[i].width <= start || // end before the start of the zoom area
             startWidth > end) { // or start after the end of the zoom area
             newbars[i].type = "x"
         }
 
         // truncate newbars that
         // - start before the start of the zoom area and end after the start of the zoom area
-        if (startWidth < start && startWidth + newbars[i].length > start) {
-            newbars[i].length = strip((startWidth + newbars[i].length) - start)
+        if (startWidth <= start && startWidth + newbars[i].width >= start) {
+            newbars[i].width = strip((startWidth + newbars[i].width) - start)
         }
         // - start before the end of the zoom area and end after the end of the zoom area
-        if (startWidth < end && startWidth + newbars[i].length > end) {
-            newbars[i].length = strip(end - startWidth)
+        if (startWidth <= end && startWidth + newbars[i].width >= end) {
+            newbars[i].width = strip(end - startWidth)
         }
 
         // increment accumulator
         startWidth += nbil
     }
 
+    let scaleFactor = width/(end - start)
     return newbars.filter((bar)=>{
         return bar.type != "x"
+    }).map((bar)=>{
+        bar.width = bar.width == 'remainder' ? 'remainder' : scaleFactor * bar.width
+        return bar
     })
 }

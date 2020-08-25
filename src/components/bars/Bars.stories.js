@@ -70,3 +70,13 @@ export const Dense = () => ({
         bars: even(["s"].concat(new Array(31).fill(""), ["e"]))
     }
 })
+
+// zoom
+export const Zoom = () => ({
+    Component: Bars,
+    props: {
+        bars: even(["s"].concat(new Array(31).fill(""), ["e"])),
+        zoomStart: 0.25,
+        zoomEnd: 0.75,
+    }
+})

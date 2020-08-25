@@ -4,6 +4,8 @@
     import { onMount } from 'svelte';
 
     export let bars = ["s", "e"];
+    export let zoomStart = 0;
+    export let zoomEnd = 1;
     
     let w;
 
@@ -61,7 +63,7 @@
     <div class="crossline"></div>
     <div id="barlines" bind:clientWidth={w}>
         {#if w !== undefined}
-            {#each setWidths(bars, w).bars as bar}
+            {#each setWidths(bars, w, zoomStart, zoomEnd).bars as bar}
                 <div class="barholder" style={"width:" + bar.width + "px"}>
                     {#if bar.type === ""}
                         <p class="barnumber default">{bar.number}</p>

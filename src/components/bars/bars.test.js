@@ -257,36 +257,42 @@ test("Cluttering", () => {
 })
 
 test("Zoom", () => {
-    let dc = (bars)=>{return JSON.parse(JSON.stringify(bars))} // deep copy
-    
-    let fourBars = even(["s", "", "", "", "e"]);
-    expect(zoom(dc(fourBars), 0, 1)).toEqual(fourBars)
-    expect(()=>{zoom(dc(fourBars), 1, 0)}).toThrow("start after end")
-    expect(zoom(dc(fourBars), 0.5, 1)).toEqual(
+    let fourBars = () => { 
+        let b = even(["s", "", "", "", "e"])
+        for (let i = 0; i < b.length; i++) {
+            b[i].width = b[i].length;
+            delete b[i].length;
+        }
+        return b
+    }
+
+    expect(zoom(fourBars(), 0, 1, 1)).toEqual(fourBars())
+    expect(()=>{zoom(fourBars(), 1, 0, 1)}).toThrow("start after end")
+    expect(zoom(fourBars(), 0.5, 1, 1)).toEqual(
         [
-            {"number": 3, "type": "", "length": 0.25},
-            {"number": 4, "type": "", "length": 0.25},
-            {"number": 5, "type": "e", "length": 0},
+            {"number": 3, "type": "", "width": 0.5},
+            {"number": 4, "type": "", "width": 0.5},
+            {"number": 5, "type": "e", "width": 0},
         ],
     )
-    expect(zoom(dc(fourBars), 0.49, 1)).toEqual(
+    expect(zoom(fourBars(), 0.49, 1, 1)).toEqual(
         [
-            {"number": 2, "type": "", "length": 0.01},
-            {"number": 3, "type": "", "length": 0.25},
-            {"number": 4, "type": "", "length": 0.25},
-            {"number": 5, "type": "e", "length": 0},
+            {"number": 2, "type": "", "width": 0.0196078431372549},
+            {"number": 3, "type": "", "width": 0.49019607843137253},
+            {"number": 4, "type": "", "width": 0.49019607843137253},
+            {"number": 5, "type": "e", "width": 0},
         ],
     )
-    expect(zoom(dc(fourBars), 0.5, 0.75)).toEqual(
+    expect(zoom(fourBars(), 0.5, 0.75, 1)).toEqual(
         [
-            {"number": 3, "type": "", "length": 0.25},
-            {"number": 4, "type": "", "length": 0.25},
+            {"number": 3, "type": "", "width": 1},
+            {"number": 4, "type": "", "width": 0},
         ],
     )
-    expect(zoom(dc(fourBars), 0.5, 0.76)).toEqual(
+    expect(zoom(fourBars(), 0.5, 0.76, 1)).toEqual(
         [
-            {"number": 3, "type": "", "length": 0.25},
-            {"number": 4, "type": "", "length": 0.01},
+            {"number": 3, "type": "", "width": 0.9615384615384615},
+            {"number": 4, "type": "", "width": 0.03846153846153846},
         ],
     )
 })
