@@ -60,24 +60,8 @@ export function setWidths(bars, width, start=0, end=1) {
         }
     }
 
-    // remove the width of the last barline
-    switch (types[types.length-1]) {
-        case "e":
-            width -= 25 // end bars have width 25
-            widths[widths.length-1] = 25 / width
-            break;
-        case "":
-            width -= 1 // regular bars have width 1
-            widths[widths.length-1] = 1 / width
-            break;
-    }
-
     let widenedBars = types.map((type, i) => {
         let barWidth = widths[i] * width
-        // TODO: for some reason, on the real page (not storybook) if we set the width to an invalid value rather than 25px
-        // it will remain 25px (due to the leftover space for it) and it will suddenly stop spilling over to the next line, despite
-        // not having changed width
-        if (i == widths.length - 1) { barWidth = "remainder"} 
 
         return {
             type: type,
@@ -85,6 +69,12 @@ export function setWidths(bars, width, start=0, end=1) {
             number: i < types.length -1 ? i + 1: '', // TODO: s/number/label
         }
     })
+
+    // get width of last barline from the previous bar
+    let ebw = endbarwidth(types[types.length-1])
+    widenedBars[widenedBars.length-2].width = widenedBars[widenedBars.length-2].width - ebw
+    widenedBars[widenedBars.length-1].width = ebw
+
     let zoomedbars = zoom(widenedBars, start * width, end * width, width)
     
     return {
@@ -126,14 +116,15 @@ export function zoom(bars, start, end, width) {
     if (start >= end) {
         throw new Error("start after end")
     }
+
     let newbars = bars.slice()
     let startWidth = 0;
     for (let i = 0; i < newbars.length; i++) {
         let nbil = newbars[i].width
         // mark for deletion newbars that:
         if (startWidth + newbars[i].width <= start || // end before the start of the zoom area
-            startWidth > end) { // or start after the end of the zoom area
-            newbars[i].type = "x"
+            startWidth + endbarwidth(newbars[i].type) > end) { // or start after the end of the zoom area
+            newbars[i].delete = true
         }
 
         // truncate newbars that
@@ -150,11 +141,39 @@ export function zoom(bars, start, end, width) {
         startWidth += nbil
     }
 
+    // delete marked bars
+    let truncatedBars = newbars.filter((bar)=>{
+        return !bar.delete
+    })
+
+
     let scaleFactor = width/(end - start)
-    return newbars.filter((bar)=>{
-        return bar.type != "x"
-    }).map((bar)=>{
-        bar.width = bar.width == 'remainder' ? 'remainder' : scaleFactor * bar.width
+    
+    let zb = truncatedBars.map((bar, i)=>{ // make zoomed bars
+        bar.width = scaleFactor * bar.width
         return bar
     })
+    
+    // ensure that the last bar has the proper width
+    return zb
+}
+
+// find the position in pixels at which to render the seek icon, given a percentage position, a width of the whole barlines, and the start and ends of the
+// zoom in percentages.
+export function getSeekPixels(position, width, zoomStart, zoomEnd) {
+    let halfWidthOfSeeker = 10;
+    let posGivenZoom = (position - zoomStart)/(zoomEnd-zoomStart) // find the proper fractional position given the zoom
+    return posGivenZoom * width-halfWidthOfSeeker  // account for the real width
+}
+
+function endbarwidth(bartype) {
+    switch(bartype) {
+        case "s": // TODO: throw error here too - the start bar shouldn't be the last bar
+        case "e":
+            return 25;
+        case "":
+            return 1;
+        default:
+            throw new Error("invalid end bar type " + bartype)
+    }
 }

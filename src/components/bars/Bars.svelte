@@ -1,11 +1,13 @@
 <script>
     import Bar from "./Bar.svelte"
-    import { setWidths, validate } from "./bars.js"
+    import Seeker from "./Seeker.svelte"
+    import { setWidths, validate, getSeekPixels } from "./bars.js"
     import { onMount } from 'svelte';
 
     export let bars;
     export let zoomStart = 0;
     export let zoomEnd = 1;
+    export let position = 0;
     
     let w;
 
@@ -57,9 +59,22 @@
         position: absolute;
         top: 50px;
     }
+
+    .seekerHolder {
+        position: relative;
+        height: 10px;
+        top: 2px;
+        left: var(--left-position);
+        z-index: 1;
+    }
 </style>
 
 <div class="container">
+    {#if zoomStart <= position && position <= zoomEnd}
+        <div class="seekerHolder" style="--left-position: {getSeekPixels(position, w, zoomStart, zoomEnd)+"px"}">
+            <Seeker></Seeker>
+        </div>
+    {/if}
     <div class="crossline"></div>
     <div id="barlines" bind:clientWidth={w}>
         {#if w !== undefined}

@@ -11,6 +11,7 @@ export const OneBar = () => ({
   Component: Bars,
   props: {
       bars: even(["s", "e"]),
+      position: 0,
   }
 });
 
@@ -18,6 +19,7 @@ export const TwoBars = () => ({
   Component: Bars,
   props: {
       bars: even(["s", "", "e"]),
+      position: 0.5,
   }
 });
 
@@ -25,6 +27,7 @@ export const FourBars = () => ({
   Component: Bars,
   props: {
       bars: even(["s", "", "", "", "e"]),
+      position: 0.125,
   }
 });
 
@@ -32,6 +35,7 @@ export const EightBars = () => ({
   Component: Bars,
   props: {
       bars: even(["s", "", "", "", "", "", "", "", "e"]),
+      position: 0.375,
   }
 });
 
@@ -40,6 +44,7 @@ export const RepeatInTheMiddle = () => ({
     Component: Bars,
     props: {
         bars: even(["", "s", "", "e", "", ""]),
+        position: 0.8,
     }
 });
 
@@ -52,6 +57,7 @@ export const Uneven = () => ({
             { type: "", length: 0.667 },
             { type: "e", length: 0 }
         ],
+        position: 1,
     }
 })
 
@@ -78,5 +84,25 @@ export const Zoom = () => ({
         bars: even(["s"].concat(new Array(31).fill(""), ["e"])),
         zoomStart: 0.25,
         zoomEnd: 0.75,
+        position: 0.5,
+    }
+})
+
+export const ZoomPositionOnBound = () => ({
+    Component: Bars,
+    props: {
+        bars: even(["s"].concat(new Array(31).fill(""), ["e"])),
+        zoomStart: 0.25,
+        zoomEnd: 0.75,
+        position: 0.25,
+    }
+})
+export const ZoomPositionOutOfBounds = () => ({
+    Component: Bars,
+    props: {
+        bars: even(["s"].concat(new Array(31).fill(""), ["e"])),
+        zoomStart: 0.25,
+        zoomEnd: 0.75,
+        position: 0,
     }
 })

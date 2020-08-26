@@ -27,7 +27,6 @@
     .up {
         border-bottom: 10px solid blue;
     }
-
 </style>
 
 <div class="container">
