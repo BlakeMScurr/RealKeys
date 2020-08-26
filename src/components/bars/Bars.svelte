@@ -1,7 +1,8 @@
 <script>
     import Bar from "./Bar.svelte"
     import Seeker from "./Seeker.svelte"
-    import { setWidths, validate, getSeekPixels } from "./bars.js"
+    import { setWidths, validate, getSeekPixels, getSeekPercentage } from "./bars.js"
+    import { getRelativePosition } from "../../utils/dom.js"
     import { onMount } from 'svelte';
 
     export let bars;
@@ -10,10 +11,16 @@
     export let position = 0;
     
     let w;
+    let container;
 
     onMount(async () => {
         w = document.getElementById("barlines").clientWidth;
     })
+
+    function handleClick(event) {
+        let pos = getRelativePosition(event.clientX, event.clientY, container)
+        position = getSeekPercentage(pos.x -10, w, zoomStart, zoomEnd)
+    }
 </script>
 
 <style>
@@ -63,13 +70,14 @@
     .seekerHolder {
         position: relative;
         height: 10px;
+        width: 20px;
         top: 2px;
         left: var(--left-position);
         z-index: 1;
     }
 </style>
 
-<div class="container">
+<div class="container" on:click={handleClick} bind:this={container}>
     {#if zoomStart <= position && position <= zoomEnd}
         <div class="seekerHolder" style="--left-position: {getSeekPixels(position, w, zoomStart, zoomEnd)+"px"}">
             <Seeker></Seeker>

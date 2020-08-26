@@ -1,5 +1,6 @@
 <script>
     import { onMount } from 'svelte';
+    import { getRelativePosition } from "../../utils/dom.js"
 
     // start and end are the start and end of the content in the zoom area
     // they are given as percentages
@@ -54,18 +55,6 @@
         ctx.strokeRect(startpx, 0, endpx-startpx, canvas.height)
     }
 
-    // gives coordinates relative to the top left of the canvas rather than the window
-    function getRelativePosition(x, y) {
-        var rect = canvas.getBoundingClientRect();
-        return { x: x - rect.left, y: y - rect.top }
-    }
-
-    // gives coordinates relative to the window rather than the top left of the canvas
-    function getAbsolutePosition(x, y) {
-        var rect = canvas.getBoundingClientRect();
-        return { x: x + rect.left, y: y + rect.top }
-    }
-
     let mouseDown = false;
     let lastMouseX;
     let lastMouseY;
@@ -73,7 +62,7 @@
         switch (event.button) {
             case 0:
                 mouseDown = true;
-                let pos = getRelativePosition(event.clientX, event.clientY)
+                let pos = getRelativePosition(event.clientX, event.clientY, canvas)
                 if (startpx > pos.x || endpx < pos.x) { // if the new centre is not in the current zoomarea
                     setZoomAreaToCentre(pos.x)
                     drawZoomWindow()
@@ -88,7 +77,7 @@
 
     document.addEventListener("mousemove", (event) => {
         if (mouseDown) {
-            let pos = getRelativePosition(event.clientX, event.clientY)
+            let pos = getRelativePosition(event.clientX, event.clientY, canvas)
             let oldCentre = (startpx + endpx) / 2
 
             // move the zoomarea to the left or right

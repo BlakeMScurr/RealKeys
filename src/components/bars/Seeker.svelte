@@ -13,6 +13,7 @@
     .lineholder {
         height: 50px;
         width: 20px;
+        margin: 0;
     }
 
     .line {
