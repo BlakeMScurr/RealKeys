@@ -41,11 +41,12 @@
 
     function handleSeek(event) {
         positionPercentage = event.detail.position
-        seek(positionPercentage)
+        seek(positionPercentage * duration)
     }
 
-    function seek(p) {
-        audioPlayer.seek(p * duration)
+    // seeks a time in seconds
+    function seek(time) {
+        audioPlayer.seek(time)
         seeked = true
     }
 
@@ -123,7 +124,6 @@
             return bar/duration
         })
         barEnds.push(1)
-
         
         // get bar lengths from ends
         let lastpos = 0;
