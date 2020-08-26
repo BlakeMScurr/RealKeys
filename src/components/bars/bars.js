@@ -154,6 +154,8 @@ export function zoom(bars, start, end, width) {
         return bar
     })
     
+    zb[zb.length-1].width += 2 // TODO: why does the prod version overflow if we don't do this?
+
     // ensure that the last bar has the proper width
     return zb
 }

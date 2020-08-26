@@ -38,6 +38,7 @@
 
     .barholder {
         height: 50px;
+        display: inline-block;
     }
 
     .crossline { /* TODO: lower crossline z-index so the cursor to move the barline still exists on the cross line */
