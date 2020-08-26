@@ -1,4 +1,4 @@
-import { validate, even, setWidths, reduceClutter, zoom, getSeekPixels } from "./bars.js"
+import { validate, even, setWidths, reduceClutter, zoom, getSeekPixels, getSeekPercentage } from "./bars.js"
 
 test("Even", () => {
     expect(even(["s", "", "e"])).toEqual(
@@ -296,8 +296,14 @@ test("Zoom", () => { // these tests have more or less become garbage. TODO: make
     // )
 })
 
-test("SeekPixels", ()=>{
+test("Seek", ()=>{
     expect(getSeekPixels(0.5, 100, 0, 1)).toBe(40)
     expect(getSeekPixels(0.25, 200, 0, 1)).toBe(40)
     expect(getSeekPixels(0.5, 100, 0.5, 1)).toBe(-10) // test zoom
+
+    // Test inversion
+    expect(getSeekPercentage(getSeekPixels(0.5, 100, 0, 1), 100, 0, 1)).toBe(0.5)
+    expect(getSeekPercentage(getSeekPixels(0.25, 200, 0, 1), 200, 0, 1)).toBe(0.25)
+    expect(getSeekPercentage(getSeekPixels(0.5, 100, 0.5, 1), 100, 0.5, 1)).toBe(0.5)
+
 })

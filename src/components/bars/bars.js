@@ -160,10 +160,19 @@ export function zoom(bars, start, end, width) {
 
 // find the position in pixels at which to render the seek icon, given a percentage position, a width of the whole barlines, and the start and ends of the
 // zoom in percentages.
-export function getSeekPixels(position, width, zoomStart, zoomEnd) {
-    let halfWidthOfSeeker = 10;
-    let posGivenZoom = (position - zoomStart)/(zoomEnd-zoomStart) // find the proper fractional position given the zoom
-    return posGivenZoom * width-halfWidthOfSeeker  // account for the real width
+const halfWidthOfSeeker = 10;
+export function getSeekPixels(percentage, width, zoomStart, zoomEnd) {
+    let posGivenZoom = (percentage - zoomStart)/(zoomEnd-zoomStart) // find the proper fractional position given the zoom
+    return posGivenZoom * width - halfWidthOfSeeker  // account for the real width
+}
+
+// inverse of getSeekPixels
+export function getSeekPercentage(position, width, zoomStart, zoomEnd) {
+    // from getSeekPixels
+    // (percentage - zoomStart)/(zoomEnd-zoomStart) * width - halfWidthOfSeeker) == position
+    // thus
+    // (position + halfWidthOfSeeker)*(zoomEnd-zoomStart)/width + zoomStart == percentage
+    return (position + halfWidthOfSeeker)*(zoomEnd-zoomStart)/width + zoomStart
 }
 
 function endbarwidth(bartype) {
