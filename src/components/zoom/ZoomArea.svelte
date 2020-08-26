@@ -77,6 +77,7 @@
 
     document.addEventListener("mousemove", (event) => {
         if (mouseDown) {
+            event.preventDefault()
             let pos = getRelativePosition(event.clientX, event.clientY, canvas)
             let oldCentre = (startpx + endpx) / 2
 
