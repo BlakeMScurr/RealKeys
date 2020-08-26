@@ -27,6 +27,23 @@
 			position: position,
 		});
     }
+
+    let startedAt;
+    function handleDragEnter(barNum) {
+        return () => {
+            if (startedAt !== undefined && barNum != startedAt) {
+                bars[barNum].type = bars[startedAt].type
+                bars[startedAt].type = ""
+                startedAt = barNum;
+            }
+        }
+    }
+
+    function handleDragStart(barNum) {
+        return () => {
+            startedAt = barNum
+        }
+    }
 </script>
 
 <style>
@@ -93,8 +110,8 @@
     <div class="crossline"></div>
     <div id="barlines" bind:clientWidth={w}>
         {#if w !== undefined}
-            {#each setWidths(bars, w, zoomStart, zoomEnd).bars as bar}
-                <div class="barholder" style={"width:" + bar.width + "px"}>
+            {#each setWidths(bars, w, zoomStart, zoomEnd).bars as bar, i}
+                <div class="barholder" style={"width:" + bar.width + "px"} on:dragenter={handleDragEnter(i)} on:dragstart={handleDragStart(i)}>
                     {#if bar.type === ""}
                         <p class="barnumber default">{bar.number}</p>
                     {:else if bar.type === "s"}
