@@ -37,9 +37,6 @@
         } else {
             resetTimeouts()
         }
-
-        if (metronomeOn && ticks !== undefined && ticks.includes(time)) {
-        }
     }
 
     function resetTimeouts() {

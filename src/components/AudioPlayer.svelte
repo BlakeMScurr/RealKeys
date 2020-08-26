@@ -1,6 +1,6 @@
 <script>
     import { Howl } from 'howler';
-    import ZoomArea from '../components/ZoomArea.svelte'
+    import ZoomBars from '../components/zoom/ZoomBars.svelte'
     import Bars from '../components/bars/Bars.svelte'
     import Metronome from '../components/track/Metronome.svelte'
 
@@ -9,7 +9,7 @@
     let audioPlayer;
     let audioLoaded = false;
     let playing = false
-    let position = 0;
+    let positionPercentage = 0;
     let duration = 0;
     let speed = 1;
     let lastTickPlayer = 0;
@@ -28,19 +28,24 @@
                 break;
             case 37: // left arrow
                 let newLeftPost = audioPlayer.seek() - 0.5
-                position = newLeftPost
+                positionPercentage = newLeftPost / duration
                 seek(newLeftPost)
                 break;
             case 39: // right arrow
                 let newRightPos = audioPlayer.seek() + 0.5
-                position = newRightPos
+                positionPercentage = newRightPos / duration
                 seek(newRightPos)
                 break;
         }
     });
 
-    function seek(position) {
-        audioPlayer.seek(position)
+    function handleSeek(event) {
+        positionPercentage = event.detail.position
+        seek(positionPercentage)
+    }
+
+    function seek(p) {
+        audioPlayer.seek(p * duration)
         seeked = true
     }
 
@@ -64,7 +69,7 @@
     let positionInterval
     function play() {
         positionInterval = setInterval(()=>{
-            position += 1/100 * speed
+            positionPercentage += (1/100 * speed) / duration
             seeked = false
         }, 10)
         playing = true
@@ -94,7 +99,7 @@
                 },
                 onend: () => {
                     pause()
-                    position = 0;
+                    positionPercentage = 0;
                 },
                 html5: true, // html5 being forced gives us rate change without pitch increase as per https://github.com/goldfire/howler.js/issues/586#issuecomment-237240859
 			});
@@ -114,7 +119,6 @@
         // TODO: clarify beat/bar ambiguity
         // requires audioplayer to be loaded
         let duration = beats[beats.length-1]
-        console.log("duration:", duration)
         let barEnds = beats.slice().map(bar => {
             return bar/duration
         })
@@ -191,18 +195,13 @@ Speed:
 </label>
 
 <div id="playbackArea">
-    <ZoomArea></ZoomArea>
     {#await getBeats(videoID)}
-        <Bars></Bars>
     {:then beats}
         <!-- TODO: get actual bars, not just beats -->
-        <Bars bars={makeBarLines(beats)}></Bars>
-        <Metronome time={position} playing={playing} ticks={beats} seeked={seeked}></Metronome>
+        <ZoomBars bars={makeBarLines(beats)} position={positionPercentage} on:seek={handleSeek}></ZoomBars>
+        <Metronome time={positionPercentage*duration} playing={playing} ticks={beats.slice(1, beats.length - 1)} seeked={seeked}></Metronome>
     {/await}
-    <label>
-        <input id="timeSlider" type="range" min=0 max={duration} step="any" on:change={seek(position)} bind:value={position}> <!-- TODO: visualise waveform with https://github.com/bbc/waveform-data.js or https://css-tricks.com/making-an-audio-waveform-visualizer-with-vanilla-javascript/ -->
-    </label>
 </div>
-<p id="positionDuration">{renderSeconds(position)}/{renderSeconds(duration)}</p>
+<p id="positionDuration">{renderSeconds(positionPercentage*duration)}/{renderSeconds(duration)}</p>
 
 

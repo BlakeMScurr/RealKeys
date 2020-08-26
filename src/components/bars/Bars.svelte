@@ -1,6 +1,8 @@
 <script>
     import Bar from "./Bar.svelte"
     import Seeker from "./Seeker.svelte"
+    import { createEventDispatcher } from 'svelte';
+
     import { setWidths, validate, getSeekPixels, getSeekPercentage } from "./bars.js"
     import { getRelativePosition } from "../../utils/dom.js"
     import { onMount } from 'svelte';
@@ -17,9 +19,13 @@
         w = document.getElementById("barlines").clientWidth;
     })
 
+    const dispatch = createEventDispatcher();
     function handleClick(event) {
         let pos = getRelativePosition(event.clientX, event.clientY, container)
         position = getSeekPercentage(pos.x -10, w, zoomStart, zoomEnd)
+        dispatch('seek', {
+			position: position,
+		});
     }
 </script>
 
