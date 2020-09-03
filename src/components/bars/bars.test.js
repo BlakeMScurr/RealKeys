@@ -24,7 +24,7 @@ test("OneBar", ()=>{
                     "width": 335,
                 },
                 {
-                    "number": "",
+                    "number": 2,
                     "type": "e",
                     "width": 25,
                 },
@@ -49,7 +49,7 @@ test("TwoBars", ()=>{
                     "width": 155,
                 },
                 {
-                    "number": "",
+                    "number": 3,
                     "type": "e",
                     "width": 25,
                 },
@@ -84,7 +84,7 @@ test("FourBars", ()=>{
                     "width": 65,
                 },
                 {
-                    "number": "",
+                    "number": 5,
                     "type": "e",
                     "width": 25,
                 },
@@ -124,7 +124,7 @@ test("RepeatInTheMiddle", ()=>{
                     "width": 71,
                 },
                 {
-                    "number": "",
+                    "number": 6,
                     "type": "",
                     "width": 1,
                 },
@@ -153,7 +153,7 @@ test("UnevenWidths", ()=>{
                     "width": 65,
                 },
                 {
-                    "number": "",
+                    "number": 3,
                     "type": "e",
                     "width": 25,
                 }
@@ -321,7 +321,7 @@ test("Zoom", () => { // these tests have more or less become garbage. TODO: make
         {
           "type": "e",
           "width": 25,
-          "number": ""
+          "number": 7
         }
       ], 0, 674, 674)).toEqual([
         {
@@ -357,7 +357,7 @@ test("Zoom", () => { // these tests have more or less become garbage. TODO: make
         {
         "type": "e",
         "width": 25,
-        "number": ""
+        "number": 7
         }
       ])
 })

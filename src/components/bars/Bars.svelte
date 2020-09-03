@@ -14,6 +14,12 @@
     
     let w;
     let container;
+    let adjustedBars = [];
+    $: {
+        if (bars !== undefined && w !== undefined) {
+            adjustedBars = setWidths(bars, w, zoomStart, zoomEnd).bars;
+        }
+    }
 
     onMount(async () => {
         w = document.getElementById("barlines").clientWidth;
@@ -32,8 +38,8 @@
     function handleDragEnter(barNum) {
         return () => {
             if (startedAt !== undefined && barNum != startedAt) {
-                bars[barNum].type = bars[startedAt].type
-                bars[startedAt].type = ""
+                bars[barNum-1].type = bars[startedAt-1].type
+                bars[startedAt-1].type = ""
                 startedAt = barNum;
             }
         }
@@ -110,14 +116,16 @@
     <div class="crossline"></div>
     <div id="barlines" bind:clientWidth={w}>
         {#if w !== undefined}
-            {#each setWidths(bars, w, zoomStart, zoomEnd).bars as bar, i}
-                <div class="barholder" style={"width:" + bar.width + "px"} on:dragenter={handleDragEnter(i)} on:dragstart={handleDragStart(i)}>
-                    {#if bar.type === ""}
-                        <p class="barnumber default">{bar.number}</p>
-                    {:else if bar.type === "s"}
-                        <p class="barnumber start">{bar.number}</p>
-                    {:else}
-                        <p class="barnumber end">{bar.number}</p>
+            {#each adjustedBars as bar, i}
+                <div class="barholder" style={"width:" + bar.width + "px"} on:dragenter={handleDragEnter(bar.number)} on:dragstart={handleDragStart(bar.number)}>
+                    {#if i != adjustedBars.length - 1}  <!-- final bar should not render its barline -->
+                        {#if bar.type === ""}
+                            <p class="barnumber default">{bar.number}</p>
+                        {:else if bar.type === "s"}
+                            <p class="barnumber start">{bar.number}</p>
+                        {:else}
+                            <p class="barnumber end">{bar.number}</p>
+                        {/if}
                     {/if}
                     <Bar type={bar.type}></Bar>
                 </div>

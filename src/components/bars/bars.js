@@ -74,7 +74,7 @@ export function setWidths(bars, width, start=0, end=1) {
         return {
             type: type,
             width: barWidth, // TODO: s/width/length or at least make it consistent somehow
-            number: i < types.length -1 ? i + 1: '', // TODO: s/number/label
+            number: i + 1, // TODO: s/number/label
         }
     })
 
