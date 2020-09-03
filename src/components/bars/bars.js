@@ -9,6 +9,11 @@ export function even(barlines, width = 1) {
     })
 
     b[b.length-1].width = 0 // last barline has no following width
+
+    // correct imperfect js arithmetic by adding or subtracting from the first bar
+    let totalWidth = b.reduce((acc, curr) => { return acc + curr.width }, 0)
+    b[0].width += width - totalWidth
+
     return b
 }
 
