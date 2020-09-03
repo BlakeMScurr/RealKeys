@@ -130,7 +130,9 @@
         // TODO: idiomatic js array method, i.e., map(), reduce(), filter() etc
         for (let i = 0; i < barEnds.length; i++) {
             const end = barEnds[i];
-            barLengths.push(end - lastpos)
+            if (end - lastpos != 0) {
+                barLengths.push(end - lastpos)
+            }
             lastpos = end
         }
 
