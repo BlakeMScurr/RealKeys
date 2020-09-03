@@ -6,8 +6,6 @@
     export let playing; // whether the audio is currently playing
     export let seeked; // whether a new position was recently jumped to using seek (yes I know the past tense would generally be sought)
 
-    let metronomeOn = true;
-
     let tickSound = new Howl({
         src: ['getSound/tick'],
         format: 'mp3',
@@ -46,8 +44,3 @@
             reset = true
     }
 </script>
-
-<label>
-    Metronome:
-    <input type="checkbox" bind:checked={metronomeOn}>
-</label>

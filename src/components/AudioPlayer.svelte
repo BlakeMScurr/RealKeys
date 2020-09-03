@@ -15,6 +15,11 @@
     let lastTickPlayer = 0;
     let seeked = false;
 
+    let loop = true;
+    let startRepeat = 0;
+    let endRepeat = 1;
+
+
     document.addEventListener("keydown", event => {
         switch (event.keyCode) {
             case 32:
@@ -42,9 +47,16 @@
     function handleSeek(event) {
         positionPercentage = event.detail.position
         seek(positionPercentage * duration)
+        setRepeatIntervals()
     }
 
-    // seeks a time in seconds
+    function handleNewRepeats(event) {
+        startRepeat = event.detail.start
+        endRepeat = event.detail.end
+        setRepeatIntervals()
+    }
+
+// seeks a time in seconds
     function seek(time) {
         audioPlayer.seek(time)
         seeked = true
@@ -68,17 +80,51 @@
     }
 
     let positionInterval
+    let repeatTimeout
+    let repeatInterval
     function play() {
         positionInterval = setInterval(()=>{
             positionPercentage += (1/100 * speed) / duration
             seeked = false
         }, 10)
         playing = true
+        let t = audioPlayer.seek()
         audioPlayer.play()
+        setRepeatIntervals(t)
+    }
+
+    function setRepeatIntervals(ct) {
+        // time argument is a workaround for https://github.com/goldfire/howler.js/issues/1189
+        // as we have to seek before called play() on the howler object in our play function, for whatever reason
+        if (isNaN(ct)) {
+            ct = audioPlayer.seek()
+        }
+        if (playing) {
+            clearInterval(repeatInterval)
+            clearTimeout(repeatTimeout)
+            if (ct < endRepeat * duration) {
+                repeatTimeout = setTimeout(()=>{
+                    seek(startRepeat * duration)
+                    positionPercentage = startRepeat
+                    repeatInterval = setInterval(() => {
+                        seek(startRepeat * duration)
+                        positionPercentage = startRepeat
+                    }, ((endRepeat - startRepeat) * duration) * 1000);
+                }, (ct - endRepeat * duration) * 1000)
+            }
+        }
+    }
+
+    function repeat() {
+        if (!loop) {
+            pause()
+        }
     }
 
     function pause() {
         clearInterval(positionInterval)
+        clearInterval(repeatInterval)
+        clearTimeout(repeatTimeout)
         playing = false
         audioPlayer.pause()
     }
@@ -168,10 +214,6 @@
         display: inline;
     }
 
-    #timeSlider {
-        width: 100%;
-    }
-
     #playbackArea {
         width: 100%;
     }    
@@ -195,11 +237,15 @@ Speed:
     <input type="number" min=0.5 max=4.0 step=0.25 on:change={audioPlayer.rate(speed)} bind:value={speed}>
 </label>
 
+<label>
+Loop:
+    <input type="checkbox" bind:value={loop}>
+</label>
+
 <div id="playbackArea">
-    {#await getBeats(videoID)}
-    {:then beats}
+    {#await getBeats(videoID) then beats}
         <!-- TODO: get actual bars, not just beats -->
-        <ZoomBars bars={makeBarLines(beats)} position={positionPercentage} on:seek={handleSeek}></ZoomBars>
+        <ZoomBars bars={makeBarLines(beats)} position={positionPercentage} on:seek={handleSeek} on:repeat={handleNewRepeats}></ZoomBars>
         <Metronome time={positionPercentage*duration} playing={playing} ticks={beats.slice(1, beats.length - 1)} seeked={seeked}></Metronome>
     {/await}
 </div>

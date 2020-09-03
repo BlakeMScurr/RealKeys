@@ -34,6 +34,22 @@
 		});
     }
 
+    // send repeat positions up to the audio player 
+    let startRepeatRatio;
+    let endRepeatRatio;
+    $: {
+        let widthBefore = (acc, curr) => { return acc + curr.width }
+        let length = bars.reduce(widthBefore, 0)
+        let start = bars.slice(0, find("s", bars)).reduce(widthBefore, 0)
+        let end = bars.slice(0, find("e", bars)).reduce(widthBefore, 0)
+        if (startRepeatRatio != start && endRepeatRatio != end) {
+            dispatch('repeat', {
+                start: start/length,
+                end: end/length,
+            })
+        }
+    }
+
     let startedAt;
     function handleDragEnter(barNum) {
         return () => {
@@ -53,17 +69,19 @@
         }
     }
 
+    // find index of a bar of a given type amongst a set of bars
+    function find(type, someBars) {
+        for (let i = 0; i < someBars.length; i++) {
+            if (someBars[i].type == type){
+                return i
+            }                
+        }
+        throw new Error("couldn't find " + type + " repeat")
+    }
+
     function startBeforeEnd(allBars, from, to) {
         from -= 1
         to -= 1
-
-        let find = (t) => {
-            for (let i = 0; i < allBars.length; i++) {
-                if (allBars[i].type == t){
-                    return i
-                }                
-            }
-        }
 
         let type = allBars[from].type
         let start
@@ -73,10 +91,10 @@
         }
         if (type == "s") {
             start = to
-            end = find("e")
+            end = find("e", allBars)
         }
         if (type == "e") {
-            start = find("s")
+            start = find("s", allBars)
             end = to
         }
         return start < end
