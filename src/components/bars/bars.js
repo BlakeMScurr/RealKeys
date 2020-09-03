@@ -121,13 +121,16 @@ export function giveFinalBarSpace(bars) {
 // reduce clutter takes a set of validated bars and removes unnecessary bar numbers and bars that
 // will look too cluttering on the given width
 const minimumBarWidth = 50;
-export function reduceClutter(bars, width) {
+export function reduceClutter(bars) {
     let newbars = bars.slice()
 
     for (let i = 0; i < newbars.length - 1; i++) {
         if (newbars[i].type != "x" && newbars[i].width < minimumBarWidth) { // x signifies bars to be deleted, TODO: delete them elegantly in the first pass
             outerloop:
             for (let j = i+1; j < newbars.length - 1; j++) {
+                if (newbars[j].type != "") { // don't hide start and end repeat bars, TODO: resolve the resulting shorter surrounding bars more elegantly
+                    break outerloop
+                }
                 newbars[i].width += newbars[j].width
                 newbars[j].type = "x"
                 if (newbars[i].width >= minimumBarWidth) {

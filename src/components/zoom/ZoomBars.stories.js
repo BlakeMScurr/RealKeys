@@ -12,3 +12,9 @@ export const Default = () => ({
         bars: even(["s", "", "", "", "", "", "", "", "e"]),
     }
 })
+export const Big = () => ({
+    Component: ZoomBars,
+    props: {
+        bars: even(["s", ...new Array(100).fill(""),"e"]),
+    }
+})
