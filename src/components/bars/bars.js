@@ -1,9 +1,9 @@
 // takes strings representing bar line types and returns evenly spaced barlines
-export function even(barlines) {
+export function even(barlines, width = 1) {
     return barlines.map((bar, i) => {
         return {
             type: bar,
-            width: i < barlines.length - 1? 1 / (barlines.length - 1): 0,
+            width: i < barlines.length - 1? width / (barlines.length - 1): 0,
             number: i+1,
         }
     })

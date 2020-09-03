@@ -221,10 +221,7 @@ test("ErrorLastBarLineNonZero", () => {
 
 // cluttering tests
 test("Cluttering", () => {
-    let eightBars = even(["s", "", "", "", "", "", "", "", "e"]);
-    for (let i = 0; i < eightBars.length; i++) {
-        eightBars[i].width = eightBars[i].width * 360;
-    }
+    let eightBars = even(["s", "", "", "", "", "", "", "", "e"], 360);
 
     expect(reduceClutter(eightBars, 360)).toEqual([
         {
@@ -257,10 +254,7 @@ test("Cluttering", () => {
 
 test("Zoom", () => { // these tests have more or less become garbage. TODO: make 'em logical again
     let fourBars = () => { 
-        let b = even(["s", "", "", "", "e"])
-        for (let i = 0; i < b.length; i++) {
-            b[i].width = b[i].width * 100;
-        }
+        let b = even(["s", "", "", "", "e"], 100)
         return b
     }
 
