@@ -1,4 +1,4 @@
-import { validate, even, setWidths, reduceClutter, zoom, getSeekPixels, getSeekPercentage } from "./bars.js"
+import { validate, even, setWidths, reduceClutter, zoom, getSeekPixels, getSeekPercentage, giveFinalBarSpace } from "./bars.js"
 
 test("Even", () => {
     expect(even(["s", "", "e"])).toEqual(
@@ -306,4 +306,89 @@ test("Seek", ()=>{
     expect(getSeekPercentage(getSeekPixels(0.25, 200, 0, 1), 200, 0, 1)).toBe(0.25)
     expect(getSeekPercentage(getSeekPixels(0.5, 100, 0.5, 1), 100, 0.5, 1)).toBe(0.5)
 
+})
+
+test("GiveFinalBarSpace", ()=>{
+    expect(giveFinalBarSpace([
+        {
+            type: "s",
+            width: 100,
+            number: 0,
+        },
+        {
+            type: "e",
+            width: 0,
+            number: 1,
+        },
+    ])).toEqual([
+        {
+            type: "s",
+            width: 75,
+            number: 0,
+        },
+        {
+            type: "e",
+            width: 25,
+            number: 1,
+        },
+    ])
+
+    expect(giveFinalBarSpace([
+        {
+            type: "s",
+            width: 20,
+            number: 0,
+        },
+        {
+            type: "",
+            width: 20,
+            number: 1,
+        },
+        {
+            type: "",
+            width: 20,
+            number: 2,
+        },
+        {
+            type: "",
+            width: 20,
+            number: 3,
+        },
+        {
+            type: "",
+            width: 20,
+            number: 4,
+        },
+        {
+            type: "e",
+            width: 0,
+            number: 5,
+        },
+    ])).toEqual([
+        {
+            type: "s",
+            width: 20,
+            number: 0,
+        },
+        {
+            type: "",
+            width: 20,
+            number: 1,
+        },
+        {
+            type: "",
+            width: 20,
+            number: 2,
+        },
+        {
+            type: "",
+            width: 15,
+            number: 3,
+        },
+        {
+            type: "e",
+            width: 25,
+            number: 5,
+        },
+    ])
 })

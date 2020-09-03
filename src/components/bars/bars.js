@@ -71,16 +71,43 @@ export function setWidths(bars, width, start=0, end=1) {
     })
 
     // get width of last barline from the previous bar
-    let ebw = endbarwidth(types[types.length-1])
-    widenedBars[widenedBars.length-2].width = widenedBars[widenedBars.length-2].width - ebw
-    widenedBars[widenedBars.length-1].width = ebw
-
+    widenedBars = giveFinalBarSpace(widenedBars)
     let zoomedbars = zoom(widenedBars, start * width, end * width, width)
-    
+    let declutteredBars = reduceClutter(zoomedbars)
     return {
-        bars: reduceClutter(zoomedbars),
+        bars: declutteredBars,
         error: "",
     }
+}
+
+// The final bar line has a time lenght of zero, but it still has to occupy some space.
+// Get that space from the previous bars.
+export function giveFinalBarSpace(bars) {
+    let types = bars.map(bar => bar.type)
+    let ebw = endbarwidth(types[types.length-1])
+
+    while (bars[bars.length-1].width < ebw) {
+        if (bars[bars.length-2].width < 0) {
+            throw new Error("negative length bar line")
+        }
+
+        // allocate space from second last bars
+        let spaceneeded = ebw - bars[bars.length-1].width
+        if (bars[bars.length-2].width >= spaceneeded) {
+            bars[bars.length-2].width = bars[bars.length-2].width - spaceneeded
+            bars[bars.length-1].width = ebw
+        } else {
+            bars[bars.length-1].width += bars[bars.length-2].width
+            bars[bars.length-2].width = 0
+        }
+
+        // remove second last bar if it lost all its space
+        if (bars[bars.length-2].width == 0) {
+            bars.splice(bars.length-2, 1)
+        }
+    }
+
+    return bars
 }
 
 // reduce clutter takes a set of validated bars and removes unnecessary bar numbers and bars that
