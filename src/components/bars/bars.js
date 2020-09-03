@@ -1,12 +1,15 @@
 // takes strings representing bar line types and returns evenly spaced barlines
 export function even(barlines, width = 1) {
-    return barlines.map((bar, i) => {
+    let b = barlines.map((type, i) => {
         return {
-            type: bar,
-            width: i < barlines.length - 1? width / (barlines.length - 1): 0,
+            type: type,
+            width: width / (barlines.length - 1),
             number: i+1,
         }
     })
+
+    b[b.length-1].width = 0 // last barline has no following width
+    return b
 }
 
 function count(arr, val) {
