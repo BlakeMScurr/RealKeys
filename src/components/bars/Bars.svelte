@@ -38,9 +38,11 @@
     function handleDragEnter(barNum) {
         return () => {
             if (startedAt !== undefined && barNum != startedAt) {
-                bars[barNum-1].type = bars[startedAt-1].type
-                bars[startedAt-1].type = ""
-                startedAt = barNum;
+                if (startBeforeEnd(bars, startedAt, barNum)) { // can't move the start before the end
+                    bars[barNum-1].type = bars[startedAt-1].type
+                    bars[startedAt-1].type = ""
+                    startedAt = barNum;
+                }
             }
         }
     }
@@ -49,6 +51,35 @@
         return () => {
             startedAt = barNum
         }
+    }
+
+    function startBeforeEnd(allBars, from, to) {
+        from -= 1
+        to -= 1
+
+        let find = (t) => {
+            for (let i = 0; i < allBars.length; i++) {
+                if (allBars[i].type == t){
+                    return i
+                }                
+            }
+        }
+
+        let type = allBars[from].type
+        let start
+        let end
+        if (type == "") {
+            throw new Error("type checking with invalid type")
+        }
+        if (type == "s") {
+            start = to
+            end = find("e")
+        }
+        if (type == "e") {
+            start = find("s")
+            end = to
+        }
+        return start < end
     }
 </script>
 
