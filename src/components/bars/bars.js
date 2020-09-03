@@ -3,7 +3,7 @@ export function even(barlines) {
     return barlines.map((bar, i) => {
         return {
             type: bar,
-            length: i < barlines.length - 1? 1 / (barlines.length - 1): 0,
+            width: i < barlines.length - 1? 1 / (barlines.length - 1): 0,
             number: i+1,
         }
     })
@@ -16,7 +16,7 @@ function count(arr, val) {
 // Validate checks that the arrangement of barlines is logical
 export function validate(bars) {
     let types = bars.map(bar => bar.type)
-    let widths = bars.map(bar => bar.length) // lengths after each bar line
+    let widths = bars.map(bar => bar.width) // lengths after each bar line
 
     const lastLength = widths[widths.length - 1]
     if (lastLength != 0) {
@@ -50,7 +50,7 @@ export function validate(bars) {
 // TODO: refactor to be far less lenient and instead show an issue/apology/communication screen - this is necessary for fast feedback and development improvement
 export function setWidths(bars, width, start=0, end=1) {
     let types = bars.map(bar => bar.type)
-    let widths = bars.map(bar => bar.length) // lengths after each bar line
+    let widths = bars.map(bar => bar.width) // lengths after each bar line
 
     let validationError = validate(bars)
     if (validationError != "") {

@@ -3,9 +3,9 @@ import { validate, even, setWidths, reduceClutter, zoom, getSeekPixels, getSeekP
 test("Even", () => {
     expect(even(["s", "", "e"])).toEqual(
         [
-            {"length": 0.5, "type": "s", number: 1},
-            {"length": 0.5, "type": "", number: 2},
-            {"length": 0, "type": "e", number: 3}
+            {"width": 0.5, "type": "s", number: 1},
+            {"width": 0.5, "type": "", number: 2},
+            {"width": 0, "type": "e", number: 3}
         ]
     )
 })
@@ -136,9 +136,9 @@ test("RepeatInTheMiddle", ()=>{
 
 test("UnevenWidths", ()=>{
     expect(setWidths([
-        { type: "s", length: 0.75 },
-        { type: "", length: 0.25 },
-        { type: "e", length: 0 }
+        { type: "s", width: 0.75 },
+        { type: "", width: 0.25 },
+        { type: "e", width: 0 }
     ], widthEndFinalBar)).toEqual(
         {
             bars: [
@@ -198,33 +198,32 @@ test("ErrorStartBeforeEndMultiple", ()=>{
 
 test("ErrorLengthSumTooLow", ()=>{
     expect(validate([
-        { type: "s", length: 0.5 },
-        { type: "", length: 0.25 },
-        { type: "e", length: 0 }
+        { type: "s", width: 0.5 },
+        { type: "", width: 0.25 },
+        { type: "e", width: 0 }
     ])).toEqual("total bar length too short: 0.75")
 })
     
 test("ErrorLengthSumTooHigh", ()=>{
     expect(validate([
-        { type: "s", length: 0.75 },
-        { type: "", length: 0.75 },
-        { type: "e", length: 0 }
+        { type: "s", width: 0.75 },
+        { type: "", width: 0.75 },
+        { type: "e", width: 0 }
     ])).toEqual("total bar length too long: 1.5")
 })
 
 test("ErrorLastBarLineNonZero", () => {
     expect(validate([
-        { type: "s", length: 0.5 },
-        { type: "e", length: 0.5 }
+        { type: "s", width: 0.5 },
+        { type: "e", width: 0.5 }
     ])).toEqual("length after final bar line must be zero, got: 0.5")
 })
 
 // cluttering tests
 test("Cluttering", () => {
     let eightBars = even(["s", "", "", "", "", "", "", "", "e"]);
-    for (let i = 0; i < eightBars.length; i++) { // this little dumb thing just changes length to width because the bar type before and after applying width transformations are inconsistent. TODO: stop doing that
-        eightBars[i].width = eightBars[i].length * 360;
-        delete eightBars[i].length;
+    for (let i = 0; i < eightBars.length; i++) {
+        eightBars[i].width = eightBars[i].width * 360;
     }
 
     expect(reduceClutter(eightBars, 360)).toEqual([
@@ -260,8 +259,7 @@ test("Zoom", () => { // these tests have more or less become garbage. TODO: make
     let fourBars = () => { 
         let b = even(["s", "", "", "", "e"])
         for (let i = 0; i < b.length; i++) {
-            b[i].width = b[i].length * 100;
-            delete b[i].length;
+            b[i].width = b[i].width * 100;
         }
         return b
     }
