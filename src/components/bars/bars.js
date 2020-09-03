@@ -158,7 +158,7 @@ export function zoom(bars, start, end, width) {
         let nbil = newbars[i].width
         // mark for deletion newbars that:
         if (startWidth + newbars[i].width <= start || // end before the start of the zoom area
-            startWidth + endbarwidth(newbars[i].type) > end) { // or start after the end of the zoom area
+            startWidth > end) { // or start after the end of the zoom area
             newbars[i].delete = true
         }
 
@@ -181,18 +181,29 @@ export function zoom(bars, start, end, width) {
         return !bar.delete
     })
 
+    return scale(truncatedBars, width/(end - start))
+}
 
-    let scaleFactor = width/(end - start)
-    
-    let zb = truncatedBars.map((bar, i)=>{ // make zoomed bars
-        bar.width = scaleFactor * bar.width
+// scales bars down by a given factor while keeping start and end repeat bars at sizes above 25
+export function scale(bars, factor) {
+    let bs = bars.map((bar, i)=>{
+        bar.width = factor * bar.width
         return bar
     })
-    
-    zb[zb.length-1].width += 2 // TODO: why does the prod version overflow if we don't do this?
 
-    // ensure that the last bar has the proper width
-    return zb
+    // keep end repeat above 25
+    for (let i = 0; i < bars.length; i++) {
+        const bar = bars[i];
+        let ebw = endbarwidth("e")
+        if (bar.type == "e" && bar.width < ebw) {
+            // TODO: subtract from earlier bars like giveFinalBarSpace function
+            let requiredSpace = ebw - bar.width
+            bars[i].width += requiredSpace
+            bars[i-1].width -= requiredSpace
+        }
+    }
+
+    return bs
 }
 
 // find the position in pixels at which to render the seek icon, given a percentage position, a width of the whole barlines, and the start and ends of the

@@ -26,7 +26,7 @@ test("OneBar", ()=>{
                 {
                     "number": "",
                     "type": "e",
-                    "width": 27,
+                    "width": 25,
                 },
             ],
             error: "",
@@ -51,7 +51,7 @@ test("TwoBars", ()=>{
                 {
                     "number": "",
                     "type": "e",
-                    "width": 27,
+                    "width": 25,
                 },
             ],
             error: "",
@@ -86,7 +86,7 @@ test("FourBars", ()=>{
                 {
                     "number": "",
                     "type": "e",
-                    "width": 27,
+                    "width": 25,
                 },
             ],
             error: "",
@@ -126,7 +126,7 @@ test("RepeatInTheMiddle", ()=>{
                 {
                     "number": "",
                     "type": "",
-                    "width": 3,
+                    "width": 1,
                 },
             ],
             error: "",
@@ -155,7 +155,7 @@ test("UnevenWidths", ()=>{
                 {
                     "number": "",
                     "type": "e",
-                    "width": 27,
+                    "width": 25,
                 }
             ],
             error: "",
@@ -286,6 +286,80 @@ test("Zoom", () => { // these tests have more or less become garbage. TODO: make
     //         {"number": 4, "type": "", "width": 0.03846153846153846},
     //     ],
     // )
+
+    expect(zoom([
+        {
+          "type": "s",
+          "width": 112.3333333333334,
+          "number": 1
+        },
+        {
+          "type": "",
+          "width": 112.33333333333333,
+          "number": 2
+        },
+        {
+          "type": "",
+          "width": 112.33333333333333,
+          "number": 3
+        },
+        {
+          "type": "",
+          "width": 112.33333333333333,
+          "number": 4
+        },
+        {
+          "type": "",
+          "width": 112.33333333333333,
+          "number": 5
+        },
+        {
+          "type": "",
+          "width": 87.33333333333333,
+          "number": 6
+        },
+        {
+          "type": "e",
+          "width": 25,
+          "number": ""
+        }
+      ], 0, 674, 674)).toEqual([
+        {
+          "type": "s",
+          "width": 112.333333,
+          "number": 1
+        },
+        {
+          "type": "",
+          "width": 112.33333333333333,
+          "number": 2
+        },
+        {
+          "type": "",
+          "width": 112.33333333333333,
+          "number": 3
+        },
+        {
+          "type": "",
+          "width": 112.33333333333333,
+          "number": 4
+        },
+        {
+          "type": "",
+          "width": 112.33333333333333,
+          "number": 5
+        },
+        {
+            "type": "",
+            "width": 87.33333333333333,
+            "number": 6
+        },
+        {
+        "type": "e",
+        "width": 25,
+        "number": ""
+        }
+      ])
 })
 
 test("Seek", ()=>{

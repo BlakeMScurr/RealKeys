@@ -126,24 +126,24 @@
         
         // get bar lengths from ends
         let lastpos = 0;
-        let barLengths = [];
+        let barWidths = [];
         // TODO: idiomatic js array method, i.e., map(), reduce(), filter() etc
         for (let i = 0; i < barEnds.length; i++) {
             const end = barEnds[i];
             if (end - lastpos != 0) {
-                barLengths.push(end - lastpos)
+                barWidths.push(end - lastpos)
             }
             lastpos = end
         }
 
         // start final bar
-        barLengths.push(0)
+        barWidths.push(0)
 
         // make bar structs
-        let bars = barLengths.map(len => {
+        let bars = barWidths.map(width => {
             return {
                 type: "",
-                length: len,
+                width: width,
             }
         })
 
