@@ -123,7 +123,6 @@
         let barEnds = beats.slice().map(bar => {
             return bar/duration
         })
-        barEnds.push(1)
         
         // get bar lengths from ends
         let lastpos = 0;
