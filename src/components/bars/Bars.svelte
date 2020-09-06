@@ -111,6 +111,7 @@
     .barholder {
         height: 50px;
         display: inline-block;
+        margin-bottom: 15px;
     }
 
     .crossline { /* TODO: lower crossline z-index so the cursor to move the barline still exists on the cross line */
@@ -161,6 +162,8 @@
         <div class="seekerHolder" style="--left-position: {getSeekPixels(position, w, zoomStart, zoomEnd)+"px"}">
             <Seeker></Seeker>
         </div>
+    {:else}
+        <div class="seekerHolder"></div> <!-- Gives bars constant height regardless of whether seeker is in zoom -->
     {/if}
     <div class="crossline"></div>
     <div id="barlines" bind:clientWidth={w}>
