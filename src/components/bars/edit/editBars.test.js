@@ -1,14 +1,14 @@
-import { createBars } from "./editBars.js"
+import { createUnevenBars, createEvenBars } from "./editBars.js"
 
 test("Empty", ()=>{
-    expect(createBars([], 2, 0)).toEqual([
+    expect(createUnevenBars([], 2, 0)).toEqual([
         {type: "s", width: 1},
         {type: "e", width: 0}
     ])
 })
 
 test("SimpleTap1", ()=>{
-    expect(createBars([1000, 1000], 2, 0)).toEqual([
+    expect(createUnevenBars([1000, 1000], 2, 0)).toEqual([
         {type: "s", width: 0.5},
         {type: "", width: 0.5},
         {type: "e", width: 0}
@@ -16,7 +16,7 @@ test("SimpleTap1", ()=>{
 })
 
 test("SimpleTapOverhang", ()=>{
-    expect(createBars([1000], 2, 0)).toEqual([
+    expect(createUnevenBars([1000], 2, 0)).toEqual([
         {type: "s", width: 0.5},
         {type: "", width: 0.5},
         {type: "e", width: 0}
@@ -24,7 +24,7 @@ test("SimpleTapOverhang", ()=>{
 })
 
 test("Multitap", ()=>{
-    expect(createBars([1000, 1000, 1000, 1000], 4, 0)).toEqual([
+    expect(createUnevenBars([1000, 1000, 1000, 1000], 4, 0)).toEqual([
         {type: "s", width: 0.25},
         {type: "", width: 0.25},
         {type: "", width: 0.25},
@@ -34,7 +34,7 @@ test("Multitap", ()=>{
 })
 
 test("MultitapOverhang", ()=>{
-    expect(createBars([1000, 1000, 1000], 4, 0)).toEqual([
+    expect(createUnevenBars([1000, 1000, 1000], 4, 0)).toEqual([
         {type: "s", width: 0.25},
         {type: "", width: 0.25},
         {type: "", width: 0.25},
@@ -44,7 +44,7 @@ test("MultitapOverhang", ()=>{
 })
 
 test("UnequalRhythm", ()=>{
-    expect(createBars([1000, 2000, 1000], 4, 0)).toEqual(
+    expect(createUnevenBars([1000, 2000, 1000], 4, 0)).toEqual(
         [
             {type: "s", width: 0.25},
             {type: "", width: 0.5},
@@ -55,7 +55,7 @@ test("UnequalRhythm", ()=>{
 })
 
 test("UnequalRhythmOverhang", ()=>{
-    expect(createBars([1000, 2000], 4, 0)).toEqual(
+    expect(createUnevenBars([1000, 2000], 4, 0)).toEqual(
         [
             {type: "s", width: 0.25},
             {type: "", width: 0.5},
@@ -66,7 +66,7 @@ test("UnequalRhythmOverhang", ()=>{
 })
 
 test("OffsetAnchor", ()=>{
-    expect(createBars([], 2, 0.5)).toEqual([
+    expect(createUnevenBars([], 2, 0.5)).toEqual([
         {type: "s", width: 0.5},
         {type: "", width: 0.5},
         {type: "e", width: 0}
@@ -74,7 +74,7 @@ test("OffsetAnchor", ()=>{
 })
 
 test("OffsetAnchorOverhang", ()=>{
-    expect(createBars([1000, 1000], 4, 0.25)).toEqual([
+    expect(createUnevenBars([1000, 1000], 4, 0.25)).toEqual([
         {type: "s", width: 0.25},
         {type: "", width: 0.25},
         {type: "", width: 0.25},
@@ -84,16 +84,50 @@ test("OffsetAnchorOverhang", ()=>{
 })
 
 test("TooLongMatch", ()=>{
-    expect(createBars([1000, 1000, 1000], 1, 0)).toEqual([
+    expect(createUnevenBars([1000, 1000, 1000], 1, 0)).toEqual([
         {type: "s", width: 1},
         {type: "e", width: 0}
     ])
 })
 
 test("TooLongNonMatched", ()=>{
-    expect(createBars([500, 1000, 23554, 3334, 1000], 1, 0)).toEqual([
+    expect(createUnevenBars([500, 1000, 23554, 3334, 1000], 1, 0)).toEqual([
         {type: "s", width: 0.5},
         {type: "", width: 0.5},
         {type: "e", width: 0}
+    ])
+})
+
+test("EvenBasic", ()=>{
+    expect(createEvenBars(0, 60, 5)).toEqual([
+        {type: "s", width: 0.2},
+        {type: "", width: 0.2},
+        {type: "", width: 0.2},
+        {type: "", width: 0.2},
+        {type: "", width: 0.2},
+        {type: "e", width: 0},
+    ])
+})
+
+test("EvenAnchor", ()=>{
+    expect(createEvenBars(0.4, 60, 5)).toEqual([
+        {type: "s", width: 0.2},
+        {type: "", width: 0.2},
+        {type: "", width: 0.2},
+        {type: "", width: 0.2},
+        {type: "", width: 0.2},
+        {type: "e", width: 0},
+    ])
+})
+
+test("EvenTruncatedStartEnd", ()=>{
+    expect(createEvenBars(0.1, 60, 5)).toEqual([
+        {type: "s", width: 0.1},
+        {type: "", width: 0.2},
+        {type: "", width: 0.2},
+        {type: "", width: 0.2},
+        {type: "", width: 0.2},
+        {type: "", width: 0.1},
+        {type: "e", width: 0},
     ])
 })

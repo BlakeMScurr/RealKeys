@@ -1,3 +1,5 @@
+import { strip } from "../../utils/util.js"
+
 // takes strings representing bar line types and returns evenly spaced barlines
 export function even(barlines, width = 1) {
     let b = barlines.map((type, i) => {
@@ -143,11 +145,6 @@ export function reduceClutter(bars) {
     return newbars.filter((bar)=>{
         return bar.type != "x"
     })
-}
-
-function strip(number) { // fixing some floating point arithmetic problems
-    const bigNum = 1000000
-    return Math.round(number*bigNum)/bigNum
 }
 
 export function zoom(bars, start, end, width) {

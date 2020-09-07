@@ -27,12 +27,8 @@ export function get(request, response) {
         execSync('ffmpeg -y -i ' + audioFile + " " + audioFile + ".wav")
         let rawBpm = execSync("bpmdetection.sh " + audioFile + ".wav").toString()
         let bpm = parseFloat(rawBpm.split("Estimated Beats Per Minute: ")[1])
-        console.log("getting beats")
-        console.log("pluses and bpm:")
         console.log(JSON.stringify(pulses), bpm)
         let beats = calculateBeats(pulses.map((pulse)=>{return parseFloat(pulse)}), bpm)
-        console.log("sending beats")
-        console.log(beats)
         response.send(beats)
 
         // cleanup
