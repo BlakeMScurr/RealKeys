@@ -1,5 +1,6 @@
 <script>
     export let bpm = 0;
+    export let tapTimes = []; // length of each bar in milliseconds
 
     let inputDisabled
     let enablerTimeout
@@ -17,8 +18,16 @@
         let currentTime = Date.now()
         if (tapStamps.length > 0 && currentTime - tapStamps[tapStamps.length-1] > timeToReset) {
             tapStamps = []
+            tapTimes = []
         }
         tapStamps.push(currentTime)
+
+        // push out beat times
+        let tt = []
+        for (let i = 1; i < tapStamps.length; i++) {
+            tt.push(tapStamps[i]-tapStamps[i-1])
+        }
+        tapTimes = tt
 
         // calculate bpm
         if (tapStamps.length > 1) {
