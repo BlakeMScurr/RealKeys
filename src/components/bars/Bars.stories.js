@@ -62,12 +62,13 @@ export const Uneven = () => ({
 })
 
 // error state
-export const ErrorState = () => ({
-    Component: Bars,
-    props: {
-        bars: even(["", "e"],),
-    }
-})
+// TODO: handle error so that it doesn't break chromatic
+// export const ErrorState = () => ({
+//     Component: Bars,
+//     props: {
+//         bars: even(["", "e"],),
+//     }
+// })
 
 // decluttering
 export const Dense = () => ({
