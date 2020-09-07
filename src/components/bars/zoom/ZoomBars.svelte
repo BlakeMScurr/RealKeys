@@ -1,6 +1,6 @@
 <script>
     import ZoomArea from "./ZoomArea.svelte"
-    import Bars from "../bars/Bars.svelte"
+    import Bars from "../Bars.svelte"
     import { createEventDispatcher } from 'svelte';
 
     export let bars;

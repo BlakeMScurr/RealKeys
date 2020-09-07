@@ -1,5 +1,5 @@
 import ZoomBars from './ZoomBars.svelte';
-import { even } from "../bars/bars.js";
+import { even } from "../bars.js";
 
 export default {
   title: 'ZoomBars',
