@@ -1,4 +1,4 @@
-import { strip } from "../../utils/util.js"
+import { strip, widthSum } from "../../utils/util.js"
 
 // takes strings representing bar line types and returns evenly spaced barlines
 export function even(barlines, width = 1) {
@@ -13,7 +13,7 @@ export function even(barlines, width = 1) {
     b[b.length-1].width = 0 // last barline has no following width
 
     // correct imperfect js arithmetic by adding or subtracting from the first bar
-    let totalWidth = b.reduce((acc, curr) => { return acc + curr.width }, 0)
+    let totalWidth = widthSum(b)
     b[0].width += width - totalWidth
 
     return b

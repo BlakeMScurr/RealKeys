@@ -5,6 +5,7 @@
 
     import { setWidths, validate, getSeekPixels, getSeekPercentage } from "./bars.js"
     import { getRelativePosition } from "../../utils/dom.js"
+    import { widthSum } from "../../utils/util.js"
     import { onMount } from 'svelte';
 
     export let bars;
@@ -38,10 +39,9 @@
     let startRepeatRatio;
     let endRepeatRatio;
     $: {
-        let widthBefore = (acc, curr) => { return acc + curr.width }
-        let length = bars.reduce(widthBefore, 0)
-        let start = bars.slice(0, find("s", bars)).reduce(widthBefore, 0)
-        let end = bars.slice(0, find("e", bars)).reduce(widthBefore, 0)
+        let length = widthSum(bars)
+        let start = widthSum(bars.slice(0, find("s", bars)))
+        let end = widthSum(bars.slice(0, find("e", bars)))
         if (startRepeatRatio != start && endRepeatRatio != end) {
             dispatch('repeat', {
                 start: start/length,
