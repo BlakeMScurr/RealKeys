@@ -36,13 +36,13 @@ export function calculateBeats(pulses, bpm) {
 // generate beats creates a list of beats based around an anchor pulse and a beat length
 // no beats should be after the final pulse
 export function generateBeats(anchor, final, beatLength) {
+    if (beatLength <= 0) {
+        throw new Error("invalid beat length " + beatLength)
+    }
+
     // move anchor to the start of the song
     while (anchor - beatLength >= 0) {
         anchor -= beatLength
-    }
-
-    if (beatLength <= 0) {
-        throw new Error("invalid beat length " + beatLength)
     }
 
     let beats = []
