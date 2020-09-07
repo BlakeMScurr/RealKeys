@@ -142,11 +142,6 @@
         top: -3px;
     }
 
-    .errordisplay {
-        position: absolute;
-        top: 50px;
-    }
-
     .seekerHolder {
         position: relative;
         height: 10px;
@@ -182,9 +177,9 @@
                     <Bar type={bar.type}></Bar>
                 </div>
             {/each}
-            {#if validate(bars) != ""}
-                <p class="errordisplay">Could not render barlines: {validate(bars)}</p>
-            {/if}
         {/if}
     </div>
+    {#if validate(bars) != ""}
+        <p class="errordisplay">Could not render barlines: {validate(bars)}</p>
+    {/if}
 </div>

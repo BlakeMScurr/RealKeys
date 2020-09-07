@@ -82,3 +82,18 @@ test("OffsetAnchorOverhang", ()=>{
         {type: "e", width: 0}
     ])
 })
+
+test("TooLongMatch", ()=>{
+    expect(createBars([1000, 1000, 1000], 1, 0)).toEqual([
+        {type: "s", width: 1},
+        {type: "e", width: 0}
+    ])
+})
+
+test("TooLongNonMatched", ()=>{
+    expect(createBars([500, 1000, 23554, 3334, 1000], 1, 0)).toEqual([
+        {type: "s", width: 0.5},
+        {type: "", width: 0.5},
+        {type: "e", width: 0}
+    ])
+})

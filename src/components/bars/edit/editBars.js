@@ -21,10 +21,17 @@ export function createBars(tapTimes, songLengthInSeconds, anchorPosition) {
     }
 
     // fill out final bars
-    let totalWidth = bars.reduce((acc, curr) => { return acc + curr.width }, 0)
-    if (totalWidth > 1) {
-        throw new Error("total generated bar lengths too long")
-    } else if (totalWidth < 1) {
+    let totalWidth = 0;
+    for (let i = 0; i < bars.length; i++) {
+        const bar = bars[i];
+        totalWidth += bar.width
+        if (totalWidth > 1) {
+            totalWidth -= bar.width
+            bars = bars.slice(0, i)
+        }
+    }
+
+    if (totalWidth < 1) {
         bars.push({type: "", width:1-totalWidth})
     }
 

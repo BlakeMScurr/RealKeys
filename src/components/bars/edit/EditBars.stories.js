@@ -7,6 +7,6 @@ export default {
     Component: EditBars,
     props: {
         position: 0,
-        songLength: 30,
+        songLength: 10,
     },
 });
