@@ -4,10 +4,16 @@ A resonant curriculum for every musician
 
 ## Piano Hero
 
+A Guitar Hero like interface for learning piano. Plug in your midi keyboard or use your computer keyboard and play along to your favourite YouTube songs.
+
 ## Spotify List
+
+Log in with spotify to get a list of Piano Hero songs ready to play.
+
 Depends on [Piano Hero](Piano Hero)
 
 ## Blind Aural Training
+
 Depends on [Piano Hero](Piano Hero)
 
 ## Fuzzy Piano Hero
