@@ -1,6 +1,6 @@
 <script>
     import { Howl } from 'howler';
-    import ZoomBars from '../components/zoom/ZoomBars.svelte'
+    import ZoomBars from '../components/bars/zoom/ZoomBars.svelte'
     import Bars from '../components/bars/Bars.svelte'
     import Metronome from '../components/track/Metronome.svelte'
 
