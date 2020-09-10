@@ -1,8 +1,8 @@
-name: "Chromatic"
-on: push
+name: Chromatic
+on: [push, pull_request]
 
 jobs:
-  test:
+  chromatic:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
