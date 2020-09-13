@@ -36,7 +36,9 @@ export function validate(bars) {
     // ensure the widths of the bars sum to 1
     let totalLength = widths.reduce((a,b) => a + b, 0)
     if (totalLength != 1) {
-        return "total bar length too " + (totalLength < 1 ? "short" : "long") + ": " + totalLength
+        // TODO: return as an error instead, and refactor all widths to use fractions https://mathjs.org/docs/datatypes/fractions.html
+        console.warn("total bar length too " + (totalLength < 1 ? "short" : "long") + ": " + totalLength)
+        widths[widths.length-1] += totalLength-1
     }
 
     // Error on misplaced bar lines

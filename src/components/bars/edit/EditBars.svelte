@@ -18,6 +18,8 @@
             bars = createEvenBars(position, bpm, songLength)
         }
     }
+
+    // TODO: allow multiple secionts with different tempos
 </script>
 
 <ZoomBars bind:position={position} bars={bars}></ZoomBars>
