@@ -1,4 +1,4 @@
-import { validate, even, setWidths, reduceClutter, zoom, getSeekPixels, getSeekPercentage, giveFinalBarSpace } from "./bars.js"
+import { validate, even, setWidths, reduceClutter, zoom, getSeekPixels, getSeekPercentage, giveFinalBarSpace, positions } from "./bars.js"
 
 test("Even", () => {
     expect(even(["s", "", "e"])).toEqual(
@@ -461,4 +461,14 @@ test("GiveFinalBarSpace", ()=>{
             number: 5,
         },
     ])
+})
+
+test("Positions", ()=>{
+    expect(positions([
+        {type: "s", width: 0.25},
+        {type: "", width: 0.25},
+        {type: "", width: 0.25},
+        {type: "", width: 0.25},
+        {type: "e", width: 0},
+    ])).toEqual([0, 0.25, 0.5, 0.75, 1])
 })

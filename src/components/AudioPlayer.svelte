@@ -1,6 +1,7 @@
 <script>
     import { Howl } from 'howler';
-    import ZoomBars from '../components/bars/zoom/ZoomBars.svelte'
+    import { positions } from './bars/bars.js'
+    import Wrapper from '../components/bars/Wrapper.svelte'
     import Bars from '../components/bars/Bars.svelte'
     import Metronome from '../components/track/Metronome.svelte'
 
@@ -155,10 +156,16 @@
 		return howlPromise;
     }
 
+    let beats
+    let bars
     async function getBeats(videoID) {
         let response = await fetch("getYTAudio/beats/" + videoID)
         let json = await response.json()
-        return json
+        // This sets the result of the promise to a value on the state that can be bound to the bars wrapper
+        // TODO: remove hack
+        beats = json
+        bars = makeBarLines(beats)
+        return "message"
     }
 
     function makeBarLines(beats) {
@@ -243,12 +250,10 @@ Loop:
 </label>
 
 <div id="playbackArea">
-    {#await getBeats(videoID) then beats}
+    {#await getBeats(videoID) then unused}
         <!-- TODO: get actual bars, not just beats -->
-        <ZoomBars bars={makeBarLines(beats)} position={positionPercentage} on:seek={handleSeek} on:repeat={handleNewRepeats}></ZoomBars>
-        <Metronome time={positionPercentage*duration} playing={playing} ticks={beats.slice(1, beats.length - 1)} seeked={seeked}></Metronome>
+        <Wrapper bind:bars={bars} position={positionPercentage} on:seek={handleSeek} on:repeat={handleNewRepeats} songLength={duration}></Wrapper>
+        <Metronome time={positionPercentage*duration} playing={playing} ticks={positions(bars).slice(1, bars.length).map((x)=>{return x * duration})} seeked={seeked}></Metronome>
     {/await}
 </div>
 <p id="positionDuration">{renderSeconds(positionPercentage*duration)}/{renderSeconds(duration)}</p>
-
-

@@ -23,6 +23,17 @@ function count(arr, val) {
     return arr.reduce((acc, curr) => {return curr == val ? acc + 1 : acc}, 0)
 }
 
+export function positions(bars) {
+    let sum = 0;
+    let pos = []
+    for (let i = 0; i < bars.length; i++) {
+        const bar = bars[i];
+        pos.push(sum)
+        sum += bar.width
+    }
+    return pos
+}
+
 // Validate checks that the arrangement of barlines is logical
 export function validate(bars) {
     let types = bars.map(bar => bar.type)

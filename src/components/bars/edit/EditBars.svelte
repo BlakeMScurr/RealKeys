@@ -5,12 +5,12 @@
 
     export let position = 0;
     export let songLength; // length of the song
+    export let bars;
 
     let bpm = 0;
     let tapTimes = [];
     let norm;
 
-    let bars = [{type: "s", width: 1}, {type: "e", width: 0}]
     $: {
         if (!norm) {
             bars = createUnevenBars(tapTimes, songLength, position)
