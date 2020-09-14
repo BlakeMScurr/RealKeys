@@ -85,3 +85,9 @@ const precision = 100000000
 function round(num) {
     return Math.round(num * precision)/precision
 }
+
+export function bpmFromTaps(tapStamps) {
+    // length from first to last taps divided across all the taps but the last, which hasn't finished yet
+    let tapLength = (tapStamps[tapStamps.length-1] - tapStamps[0])/(tapStamps.length-1)
+    return Math.round(60/(tapLength/1000)*10)/10
+}

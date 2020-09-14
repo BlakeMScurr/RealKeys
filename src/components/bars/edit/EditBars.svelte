@@ -10,16 +10,24 @@
     let bpm = 0;
     let tapTimes = [];
     let norm;
+    let moveAnchor = false
+    let anchor = position
 
     $: {
-        if (!norm) {
-            bars = createUnevenBars(tapTimes, songLength, position)
-        } else {
-            bars = createEvenBars(position, bpm, songLength)
+        if (moveAnchor) {
+            anchor = position
         }
     }
 
-    // TODO: allow multiple secionts with different tempos
+    $: {
+        if (!norm) {
+            bars = createUnevenBars(tapTimes, songLength, anchor)
+        } else {
+            bars = createEvenBars(anchor, bpm, songLength)
+        }
+    }
+
+    // TODO: allow sections with different tempos
 </script>
 
 <ZoomBars bind:position={position} bars={bars}></ZoomBars>
@@ -28,6 +36,10 @@
     <label>
         Normalise
         <input type="checkbox" bind:checked={norm}>
+    </label>
+    <label>
+        Move Anchor
+        <input type="checkbox" bind:checked={moveAnchor}>
     </label>
 </div>
 

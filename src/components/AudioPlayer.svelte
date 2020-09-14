@@ -57,7 +57,7 @@
         setRepeatIntervals()
     }
 
-// seeks a time in seconds
+    // seeks a time in seconds
     function seek(time) {
         audioPlayer.seek(time)
         seeked = true
@@ -111,7 +111,7 @@
                         seek(startRepeat * duration)
                         positionPercentage = startRepeat
                     }, ((endRepeat - startRepeat) * duration) * 1000);
-                }, (ct - endRepeat * duration) * 1000)
+                }, (endRepeat * duration - ct) * 1000)
             }
         }
     }
