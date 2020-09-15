@@ -1,17 +1,22 @@
 <script>
+    import { bpmFromTaps } from "../../../backend/beatcalculation/beatcalculation.js"
+
     export let bpm = 0;
     export let tapTimes = []; // length of each bar in milliseconds
 
+
+    let recording;
+    $: inputDisabled = recording ? "disabled" : ""
     let inputDisabled
     let enablerTimeout
     let tapStamps = [] // times at which we tapped
     const timeToReset = 2000 // milliseconds
     function tap() {
         // prevent input field being messed with as we're tapping
-        inputDisabled = "disabled"
+        recording = true
         clearTimeout(enablerTimeout)
         enablerTimeout = setTimeout(() => {
-            inputDisabled = ""
+            recording = false
         }, timeToReset);
 
         // add most recent tap
@@ -31,8 +36,7 @@
 
         // calculate bpm
         if (tapStamps.length > 1) {
-            let tapLength = (tapStamps[tapStamps.length-1] - tapStamps[0])/(tapStamps.length-1) // length from first to last taps divided across all the taps but the last, which hasn't finished yet
-            bpm = Math.round(60/(tapLength/1000)*10)/10
+            bpm = bpmFromTaps(tapStamps)
         }
     }
 </script>

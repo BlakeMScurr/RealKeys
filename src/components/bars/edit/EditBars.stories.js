@@ -8,5 +8,6 @@ export default {
     props: {
         position: 0,
         songLength: 10,
+        bars: [{type: "s", width: 1}, {type: "e", width: 0}],
     },
 });

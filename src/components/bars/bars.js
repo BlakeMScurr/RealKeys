@@ -23,6 +23,17 @@ function count(arr, val) {
     return arr.reduce((acc, curr) => {return curr == val ? acc + 1 : acc}, 0)
 }
 
+export function positions(bars) {
+    let sum = 0;
+    let pos = []
+    for (let i = 0; i < bars.length; i++) {
+        const bar = bars[i];
+        pos.push(sum)
+        sum += bar.width
+    }
+    return pos
+}
+
 // Validate checks that the arrangement of barlines is logical
 export function validate(bars) {
     let types = bars.map(bar => bar.type)
@@ -36,7 +47,9 @@ export function validate(bars) {
     // ensure the widths of the bars sum to 1
     let totalLength = widths.reduce((a,b) => a + b, 0)
     if (totalLength != 1) {
-        return "total bar length too " + (totalLength < 1 ? "short" : "long") + ": " + totalLength
+        // TODO: return as an error instead, and refactor all widths to use fractions https://mathjs.org/docs/datatypes/fractions.html
+        console.warn("total bar length too " + (totalLength < 1 ? "short" : "long") + ": " + totalLength)
+        widths[widths.length-1] += totalLength-1
     }
 
     // Error on misplaced bar lines
