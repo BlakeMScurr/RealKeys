@@ -17,6 +17,7 @@ export const Default = () => ({
                     title: "All Star but it's a Bach chorale following the conventions of the Common Practice Period",
                 }
             }
-        ])
+        ]),
+        youtubeID: "69420",
     }
 })
