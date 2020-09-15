@@ -1,3 +1,4 @@
+# TODO: add linting bots
 name: Chromatic
 on: [pull_request]
 

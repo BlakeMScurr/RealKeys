@@ -151,6 +151,7 @@
 		return howlPromise;
     }
 
+    // TODO: distinguish beats and bar by type (using typescript)
     let beats
     let bars
     async function getBeats(videoID) {
