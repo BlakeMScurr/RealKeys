@@ -116,12 +116,6 @@
         }
     }
 
-    function repeat() {
-        if (!loop) {
-            pause()
-        }
-    }
-
     function pause() {
         clearInterval(positionInterval)
         clearInterval(repeatInterval)
@@ -239,15 +233,6 @@
 {:else}
     <button on:click={play}>Play</button>
 {/if}
-<label>
-Speed:
-    <input type="number" min=0.5 max=4.0 step=0.25 on:change={audioPlayer.rate(speed)} bind:value={speed}>
-</label>
-
-<label>
-Loop:
-    <input type="checkbox" bind:value={loop}>
-</label>
 
 <div id="playbackArea">
     {#await getBeats(videoID) then unused}
