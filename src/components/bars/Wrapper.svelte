@@ -16,7 +16,7 @@
 </script>
 
 {#if edit}
-    <EditBars bind:bars={bars} position={position} songLength={songLength}></EditBars>
+    <EditBars bind:bars={bars} position={position} songLength={songLength} on:seek={forward} on:repeat={forward}></EditBars>
     <button on:click={()=>{edit=false}}>Save</button>
 {:else}
     <ZoomBars bars={bars} bind:position={position} on:seek={forward} on:repeat={forward}></ZoomBars>

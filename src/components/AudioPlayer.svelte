@@ -20,7 +20,6 @@
     let startRepeat = 0;
     let endRepeat = 1;
 
-
     document.addEventListener("keydown", event => {
         switch (event.keyCode) {
             case 32:
