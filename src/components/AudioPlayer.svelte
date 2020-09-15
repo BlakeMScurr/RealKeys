@@ -32,12 +32,14 @@
                 }
                 break;
             case 37: // left arrow
-                let newLeftPost = audioPlayer.seek() - 0.5
-                positionPercentage = newLeftPost / duration
-                seek(newLeftPost)
+                let newLeftPos = audioPlayer.seek() - 0.5
+                if (newLeftPos < 0) newLeftPos = 0
+                positionPercentage = newLeftPos / duration
+                seek(newLeftPos)
                 break;
             case 39: // right arrow
                 let newRightPos = audioPlayer.seek() + 0.5
+                if (newRightPos > duration) newRightPos = duration
                 positionPercentage = newRightPos / duration
                 seek(newRightPos)
                 break;
