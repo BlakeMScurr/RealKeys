@@ -180,6 +180,7 @@
         {/if}
     </div>
     {#if validate(bars) != ""}
+        <!-- TODO: consistent error display component, e.g., pop up -->
         <p class="errordisplay">Could not render barlines: {validate(bars)}</p>
     {/if}
 </div>

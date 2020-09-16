@@ -89,5 +89,5 @@ function round(num) {
 export function bpmFromTaps(tapStamps) {
     // length from first to last taps divided across all the taps but the last, which hasn't finished yet
     let tapLength = (tapStamps[tapStamps.length-1] - tapStamps[0])/(tapStamps.length-1)
-    return Math.round(60/(tapLength/1000)*10)/10
+    return Math.round(60/(tapLength/1000)*100)/100
 }

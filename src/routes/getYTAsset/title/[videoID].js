@@ -1,6 +1,6 @@
 const fetch = require('node-fetch');
 
-export function post(req, res) {
+export function get(req, res) {
     const { videoID } = req.params;
 
     if (videoID.startsWith("testdata-")) {

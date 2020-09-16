@@ -1,4 +1,5 @@
 <script>
+    import { createEventDispatcher } from 'svelte';
     import { Howl } from 'howler';
     import { positions } from './bars/bars.js'
     import Wrapper from '../components/bars/Wrapper.svelte'
@@ -20,6 +21,10 @@
     let startRepeat = 0;
     let endRepeat = 1;
 
+    const dispatch = createEventDispatcher();
+    function forward(event) {
+        dispatch(event.type, event.detail);
+    }
 
     document.addEventListener("keydown", event => {
         switch (event.keyCode) {
@@ -33,12 +38,14 @@
                 }
                 break;
             case 37: // left arrow
-                let newLeftPost = audioPlayer.seek() - 0.5
-                positionPercentage = newLeftPost / duration
-                seek(newLeftPost)
+                let newLeftPos = audioPlayer.seek() - 0.5
+                if (newLeftPos < 0) newLeftPos = 0
+                positionPercentage = newLeftPos / duration
+                seek(newLeftPos)
                 break;
             case 39: // right arrow
                 let newRightPos = audioPlayer.seek() + 0.5
+                if (newRightPos > duration) newRightPos = duration
                 positionPercentage = newRightPos / duration
                 seek(newRightPos)
                 break;
@@ -150,6 +157,7 @@
 		return howlPromise;
     }
 
+    // TODO: distinguish beats and bar by type (using typescript)
     let beats
     let bars
     async function getBeats(videoID) {
@@ -237,7 +245,7 @@
 <div id="playbackArea">
     {#await getBeats(videoID) then unused}
         <!-- TODO: get actual bars, not just beats -->
-        <Wrapper bind:bars={bars} position={positionPercentage} on:seek={handleSeek} on:repeat={handleNewRepeats} songLength={duration}></Wrapper>
+        <Wrapper bind:bars={bars} position={positionPercentage} on:seek={handleSeek} on:repeat={handleNewRepeats} songLength={duration} on:save={forward}></Wrapper>
         <Metronome time={positionPercentage*duration} playing={playing} ticks={positions(bars).slice(1, bars.length).map((x)=>{return x * duration})} seeked={seeked}></Metronome>
     {/await}
 </div>

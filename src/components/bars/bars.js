@@ -211,8 +211,13 @@ export function scale(bars, factor) {
         if (bar.type == "e" && bar.width < ebw) {
             // TODO: subtract from earlier bars like giveFinalBarSpace function
             let requiredSpace = ebw - bar.width
-            bars[i].width += requiredSpace
-            bars[i-1].width -= requiredSpace
+            if (typeof bars[i-1] !== undefined && typeof bars[i] !== undefined) {
+                bars[i].width += requiredSpace
+                bars[i-1].width -= requiredSpace
+            } else {
+                // TODO: track down and fix
+                console.warn("can't jiggle space between bars: ", bars)
+            }
         }
     }
 

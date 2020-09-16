@@ -127,6 +127,8 @@
         startpx = centre - dist
         endpx = centre + dist
     }
+
+    // TODO: consider bar snap ala Ableton
 </script>
 
 <style>

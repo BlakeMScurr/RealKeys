@@ -1,0 +1,15 @@
+{
+    "presets": [
+      ["@babel/preset-env", {
+        "useBuiltIns": false,
+      }],
+    ],
+    "plugins": [
+      "@babel/plugin-transform-runtime"
+    ]
+  }
+//  Gets tests working as per
+// https://github.com/babel/babel-loader/issues/560#issuecomment-362871436
+// required due to async functions as per
+// https://github.com/facebook/jest/issues/3126#issuecomment-289283760
+// https://github.com/parcel-bundler/parcel/issues/871#issuecomment-367899522

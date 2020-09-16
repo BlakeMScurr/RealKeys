@@ -14,5 +14,6 @@
 	}
 </script>
 
+<!-- TODO: move left/right on position update to keep the position bar in view -->
 <ZoomArea bind:start={start} bind:end={end}></ZoomArea>
 <Bars bars={bars} zoomStart={start} zoomEnd={end} bind:position={position} on:seek={forward} on:repeat={forward}></Bars>
