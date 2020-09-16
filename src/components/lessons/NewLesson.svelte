@@ -3,9 +3,9 @@
     import { Fetcher } from '../../utils/util.js'
     export let fetcher = new Fetcher();
 
-    export let youtubeID = ""
+    export let youtubeID = "reLjhAAPsPc"
     let youtubeTitle = ""
-    let lessonName = ""
+    let lessonName = "Spaghet"
     $: {
         fetcher.fetch("get", "getYTAsset/title/" + youtubeID).then((res)=>{
             youtubeTitle = res === undefined ? "" : res.title

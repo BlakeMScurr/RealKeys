@@ -14,22 +14,45 @@
     export let owner;
     export let lessonID;
 
-    let lesson;
-    onMount(()=> {
-        fetch(["api", owner, lessonID, "get"].join("/"), {
+    async function getLessonDefinition() {
+        let res = await fetch(["api", owner, lessonID, "get"].join("/"), {
             method: "GET",
-        }).then((res)=>{
-            return res.json()
-        }).then((json)=>{
-            lesson = json
         })
-    })
+        return await res.json()
+    }
 
+    function handleSave(lesson) {
+        return function (event) {
+            switch (event.type) {
+                case 'save':
+                    let newLesson = {
+                        ...lesson,
+                    ...event.detail,
+                    }
+
+                    fetch(["api", owner, lessonID, "save"].join("/"), {
+                        method: "POST",
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(newLesson),
+                    }).then(()=>{
+                        // TODO: show on the UI somewhere
+                        console.log("saved")
+                    }).catch((err)=>{
+                        console.log("failed to save:", err)
+                    })
+            }
+        }
+    }
 </script>
 
-{#if lesson == undefined}
+{#await getLessonDefinition()}
     <h1>Loading</h1>
-{:else}
+{:then lesson}
     <h1>{lesson.lesson_name}</h1>
-    <AudioPlayer videoID={lesson.youtube_id}></AudioPlayer>
-{/if}
+    <AudioPlayer videoID={lesson.youtube_id} on:save={handleSave(lesson)}></AudioPlayer>
+{:catch}
+    <h1>Could not load lesson</h1>
+{/await}
