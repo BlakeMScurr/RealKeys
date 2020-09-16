@@ -3,6 +3,9 @@ var prep = require('pg-prepared')
 
 export function post(request, response) {
     const pool = NewPool()
+
+
+    // ensure lesson is unique
     let uniquenessCheck = prep('SELECT * FROM lesson WHERE LESSON_OWNER=${owner} AND LESSON_NAME=${lessonID}')
     pool.query(uniquenessCheck(request.params), (err, res) => {
         if (err !== undefined) {
@@ -14,7 +17,6 @@ export function post(request, response) {
                 message: "Lesson \"" + request.params.owner + "/" + request.params.lessonID + "\" already exists"
             })
         } else {
-            console.log("doesn't exist yet")
             // TODO: calculate barlines
 
             let insertion = prep('INSERT INTO lesson(LESSON_OWNER, LESSON_NAME, YOUTUBE_ID, YOUTUBE_TITLE) VALUES (${owner}, ${lessonName}, ${youtubeID}, ${youtubeTitle})')

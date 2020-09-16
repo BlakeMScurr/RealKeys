@@ -18,12 +18,16 @@
     function handlesave() {
         fetch(["api", "blakemscurr", lessonName, "new"].join("/"), {
             method: "POST",
-            body: {
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
                 owner: "blakemscurr", // TODO: get from logged in user
                 lessonName: lessonName,
                 youtubeID: youtubeID,
                 youtubeTitle: youtubeTitle,
-            }
+            })
         }).then((response)=>{
             if (response.status == 400) {
                 return response.json()
@@ -31,7 +35,7 @@
                 goto(["blakemscurr", lessonName, "edit"].join("/"))
             }
         }).then((json)=>{
-            if (json.message !== undefined) {
+            if (json !== undefined && json.message !== undefined) {
                 backendError = json.message
             }
         }).catch((err)=>{
