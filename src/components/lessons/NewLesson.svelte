@@ -1,4 +1,5 @@
 <script>
+    import { goto } from '@sapper/app';
     import { Fetcher } from '../../utils/util.js'
     export let fetcher = new Fetcher();
 
@@ -6,7 +7,7 @@
     let youtubeTitle = ""
     let lessonName = ""
     $: {
-        fetcher.fetch("POST", "getYTAsset/title/" + youtubeID).then((res)=>{
+        fetcher.fetch("get", "getYTAsset/title/" + youtubeID).then((res)=>{
             youtubeTitle = res === undefined ? "" : res.title
         }).catch(()=>{
             youtubeTitle = ""
@@ -14,7 +15,16 @@
     }
 
     function handlesave() {
-
+        fetcher.fetch("POST", ["api", "blakemscurr", lessonName, "new"].join("/"), {
+            owner: "blakemscurr", // TODO: get from logged in user
+            lessonName: lessonName,
+            youtubeID: youtubeID,
+            youtubeTitle: youtubeTitle,
+        }).then(()=>{
+           goto(["blakemscurr", lessonName, "edit"].join("/"))
+        }).catch((err)=>{
+            console.warn(err)
+        })
     }
 
     // TODO: make input field component

@@ -18,7 +18,6 @@ export class MockFetcher {
         for (let i = 0; i < this.routes.length; i++) {
             const route = this.routes[i];
             if (method == route.method && url == route.url) {
-                console.log(route.result)
                 return route.result
             }
         }
@@ -26,16 +25,19 @@ export class MockFetcher {
 }
 
 export class Fetcher {
-    async fetch(method, url) {
+    async fetch(method, url, body) {
         let response = await fetch(url, {
             method: method,
             headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
+            body: JSON.stringify(body),
         })
 
-        const json = await response.json()
-        return json
+        if (method != "POST") {
+            const json = await response.json()
+            return json
+        }
     }
 }

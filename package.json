@@ -23,6 +23,8 @@
     "howler": "^2.2.0",
     "mp3-duration": "^1.1.0",
     "node-fetch": "^2.6.0",
+    "pg": "^8.3.3",
+    "pg-prepared": "^2.5.13",
     "polka": "next",
     "request": "^2.81.0",
     "rimraf": "^3.0.2",
