@@ -1,0 +1,1 @@
+// This file contains code for an earlier iteration of index.ts where the focus was on chord playing and recognition

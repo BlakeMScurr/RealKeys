@@ -197,23 +197,27 @@ test("ErrorStartBeforeEndMultiple", ()=>{
 })
 
 test("ErrorLengthSumTooLow", ()=>{
+    global.console = {warn: jest.fn()}
     expect(validate([
         { type: "s", width: 0.5 },
         { type: "", width: 0.25 },
         { type: "e", width: 0 }
-    // TODO: change to:
-    // ])).toEqual("total bar length too short: 0.75")
+        // TODO: change to:
+        // ])).toEqual("total bar length too short: 0.75")
     ])).toEqual("")
+    expect(console.warn).toBeCalled()
 })
     
 test("ErrorLengthSumTooHigh", ()=>{
+    global.console = {warn: jest.fn()}
     expect(validate([
         { type: "s", width: 0.75 },
         { type: "", width: 0.75 },
         { type: "e", width: 0 }
-    // TODO: change to:
-    // ])).toEqual("total bar length too long: 1.5")
+        // TODO: change to:
+        // ])).toEqual("total bar length too long: 1.5")
     ])).toEqual("")
+    expect(console.warn).toBeCalled()
 })
 
 test("ErrorLastBarLineNonZero", () => {

@@ -1,7 +1,8 @@
-// jest.config.js
 module.exports = {
-    verbose: true,
-    transform: {
-        "^.+\\.jsx?$": "babel-jest"
-    },
+  preset: 'ts-jest',
+  testEnvironment: 'node',
+  verbose: true,
+  transform: {
+    "^.+\\.jsx?$": "babel-jest"
+  },
 };

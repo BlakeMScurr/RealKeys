@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@rollup/plugin-json": "^4.1.0",
+    "@types/mocha": "^8.0.3",
     "compression": "^1.7.1",
     "express": "^4.17.1",
     "get-audio-duration": "^2.0.3",
@@ -23,6 +24,7 @@
     "howler": "^2.2.0",
     "mp3-duration": "^1.1.0",
     "node-fetch": "^2.6.0",
+    "opensheetmusicdisplay": "^0.8.6",
     "pg": "^8.3.3",
     "pg-prepared": "^2.5.13",
     "polka": "next",
@@ -35,7 +37,8 @@
     "@babel/core": "^7.11.4",
     "@babel/plugin-syntax-dynamic-import": "^7.0.0",
     "@babel/plugin-transform-runtime": "^7.0.0",
-    "@babel/preset-env": "^7.11.0",
+    "@babel/preset-env": "^7.11.5",
+    "@babel/preset-typescript": "^7.10.4",
     "@babel/runtime": "^7.0.0",
     "@rollup/plugin-babel": "^5.0.0",
     "@rollup/plugin-commonjs": "^14.0.0",
@@ -48,9 +51,12 @@
     "@storybook/svelte": "^6.0.13",
     "@testing-library/jest-dom": "^5.11.4",
     "@tsconfig/svelte": "^1.0.10",
+    "@types/jest": "^26.0.14",
+    "@types/node": "^14.10.3",
     "babel-jest": "^26.3.0",
     "babel-loader": "^8.1.0",
     "babel-plugin-transform-runtime": "^6.23.0",
+    "canvas": "^2.6.1",
     "chromatic": "^5.1.0",
     "jest": "^26.4.2",
     "jest-puppeteer": "^4.4.0",
@@ -66,6 +72,7 @@
     "svelte-jester": "^1.1.2",
     "svelte-loader": "^2.13.6",
     "svelte-preprocess": "^4.3.0",
+    "ts-jest": "^26.3.0",
     "typescript": "^4.0.2"
   }
 }
