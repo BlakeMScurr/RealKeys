@@ -1,5 +1,6 @@
-import { Chord, ChordBook, Note } from "../theory/chords"
-import { GetPlayer, Player } from "../../youtube/youtube"
+import { Chord, ChordBook, Note } from "../theory/chordschords"
+// TODO: use the new yt method
+// import { GetPlayer, Player } from "../youtube/youtube"
 
 export class TimedChord {
     chord: Chord;
@@ -29,21 +30,21 @@ export class Chart {
         this.chords = [];
         this.noteSetIndex = 0;
         this.lastTime = -1;
-        this.player = GetPlayer()
+        // this.player = GetPlayer()
         this.renderLoop()
     }
     
     getPlayer() {
         if (this.player.underlying == undefined) {
-            this.player = GetPlayer()
+            // this.player = GetPlayer()
         }
         return this.player
     }
 
     renderLoop() {
-        setInterval(() => {
-            this.checkUpdates()
-        }, 1000)
+        // setInterval(() => {
+        //     this.checkUpdates()
+        // }, 1000)
     }
 
     checkUpdates() {

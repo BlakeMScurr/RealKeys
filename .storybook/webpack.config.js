@@ -12,6 +12,7 @@ module.exports = ({ config, mode }) => {
             transpileOnly: true,
         },
     });
+    config.sourceMaps = env === 'development'
     config.resolve.extensions.push('.ts', '.tsx');
     return config;
 };
