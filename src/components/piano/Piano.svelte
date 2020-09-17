@@ -1,9 +1,12 @@
 <script lang="ts">
+    import { createEventDispatcher } from "svelte";
     import WebMidi, { InputEventNoteon, InputEventNoteoff } from "webmidi";
     import { onMount } from "svelte";
     import { Chord, ChordBook, Note, NewAbstractNote, noteString } from "./music/theory/chords.ts";
     import { Chart } from "./music/chart/chart"
     import { Score } from "./music/score/score"
+
+    const dispatch = createEventDispatcher();
 
     // TODO: merge with blackKeys
     function whiteKeys(keys: Array<Note>) {
@@ -38,6 +41,11 @@
             }
         });
         return blacks
+    }
+
+    enum PressLift {
+        Press = 1,
+        Lift,
     }
 
     class Piano {
@@ -110,15 +118,23 @@
         }
 
         pressKey(note: Note) {
-            this.pressed.set(note.string(), note)
-            this.render()
-            this.NoteChange()
+            if (note !== undefined && note.abstract !== undefined) {
+                this.pressed.set(note.string(), note)
+                this.render()
+                dispatch("pressKey", {
+                    note: note,
+                })
+            }
         }
 
         releaseKey(note: Note) {
-            this.pressed.delete(note.string())
-            this.render()
-            this.NoteChange()
+            if (note !== undefined && note.abstract !== undefined) {
+                this.pressed.delete(note.string())
+                this.render()
+                dispatch("releaseKey", {
+                    note: note,
+                })
+            }
         }
 
         // Handles midi keyboard note playing
@@ -159,8 +175,6 @@
             if (index != -1) {
                 return physicalBlackKeys(this.keys)[index]
             }
-
-            throw key + " is not on our keyboard"
         }
     }   
 

@@ -285,7 +285,6 @@ export function NewAbstractNote(name: string) {
     if (name == "X") {
         return new AbstractNote("X")
     }
-    throw "unknown note " + name
 }
 
 // TODO: make a notelist type and add this is a method
