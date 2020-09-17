@@ -8,51 +8,32 @@
 </script>
 
 <script>
-    import { onMount } from 'svelte';
+    import LessonLoader from '../../../components/lessons/LessonLoader.svelte';
     import AudioPlayer from '../../../components/AudioPlayer.svelte';
 
     export let owner;
     export let lessonID;
 
-    async function getLessonDefinition() {
-        let res = await fetch(["api", owner, lessonID, "get"].join("/"), {
-            method: "GET",
-        })
-        return await res.json()
-    }
+    let renderComponent = AudioPlayer;
 
-    function handleSave(lesson) {
-        return function (event) {
-            switch (event.type) {
-                case 'save':
-                    let newLesson = {
-                        ...lesson,
-                    ...event.detail,
-                    }
-
-                    fetch(["api", owner, lessonID, "save"].join("/"), {
-                        method: "POST",
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify(newLesson),
-                    }).then(()=>{
-                        // TODO: show on the UI somewhere
-                        console.log("saved")
-                    }).catch((err)=>{
-                        console.log("failed to save:", err)
-                    })
-            }
+    function handleSave(event) {
+        switch (event.type) {
+            case 'save':
+                fetch(["api", owner, lessonID, "save"].join("/"), {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(event.detail),
+                }).then(()=>{
+                    // TODO: show on the UI somewhere
+                    console.log("saved")
+                }).catch((err)=>{
+                    console.log("failed to save:", err)
+                })
         }
     }
 </script>
 
-{#await getLessonDefinition()}
-    <h1>Loading</h1>
-{:then lesson}
-    <h1>{lesson.lesson_name}</h1>
-    <AudioPlayer videoID={lesson.youtube_id} bars={lesson.bars} on:save={handleSave(lesson)}></AudioPlayer>
-{:catch}
-    <h1>Could not load lesson</h1>
-{/await}
+<LessonLoader {owner} {lessonID} {renderComponent} on:save={handleSave}></LessonLoader>

@@ -8,29 +8,14 @@
 </script>
 
 <script>
-    import { onMount } from 'svelte';
+    import LessonLoader from '../../components/lessons/LessonLoader.svelte';
     import AudioPlayer from '../../components/AudioPlayer.svelte';
 
     export let owner;
     export let lessonID;
 
-    let lesson;
-    onMount(()=> {
-        fetch(["api", owner, lessonID, "get"].join("/"), {
-            method: "GET",
-        }).then((res)=>{
-            return res.json()
-        }).then((json)=>{
-            lesson = json
-        })
-    })
-
+    // TODO: don't show edit stuff
+    let renderComponent = AudioPlayer;
 </script>
 
-{#if lesson == undefined}
-    <h1>Loading</h1>
-{:else}
-    <h1>{lesson.lesson_name}</h1>
-    <!-- TODO: disable editing -->
-    <AudioPlayer videoID={lesson.youtube_id} bars={lesson.bars}></AudioPlayer>
-{/if}
+<LessonLoader {owner} {lessonID} {renderComponent}></LessonLoader>
