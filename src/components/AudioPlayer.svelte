@@ -161,13 +161,13 @@
     let beats
     let bars
     async function getBeats(videoID) {
-        let response = await fetch("getYTAudio/beats/" + videoID)
-        let json = await response.json()
-        // This sets the result of the promise to a value on the state that can be bound to the bars wrapper
-        // TODO: remove hack
-        beats = json
-        bars = makeBarLines(beats)
-        return "message"
+        // let response = await fetch("getYTAudio/beats/" + videoID)
+        // let json = await response.json()
+        // // This sets the result of the promise to a value on the state that can be bound to the bars wrapper
+        // // TODO: remove hack
+        // beats = json
+        // bars = makeBarLines(beats)
+        // return "message"
     }
 
     function makeBarLines(beats) {

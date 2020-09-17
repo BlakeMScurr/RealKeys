@@ -8,6 +8,10 @@ export function widthSum(bars) {
     return bars.reduce((acc, curr) => { return acc + curr.width }, 0)
 }
 
+export function pathToAudioFile(ytID) {
+    return "./src/backend/db/audioFiles/" + ytID + ".mp3"
+}
+
 export class MockFetcher {
     constructor(routes) {
         this.routes = routes

@@ -1,9 +1,11 @@
+import { calculateBars } from "../../../../backend/beatcalculation/barCalculation.js"
 import { NewPool } from "../../../../backend/db/client.js"
+import { downloadYouTubeVideo } from "../../../../backend/youtube-dl.js"
 var prep = require('pg-prepared')
 
 export function post(request, response) {
+    console.log("running new")
     const pool = NewPool()
-
 
     // ensure lesson is unique
     let uniquenessCheck = prep('SELECT * FROM lesson WHERE LESSON_OWNER=${owner} AND LESSON_NAME=${lessonID}')
@@ -17,15 +19,20 @@ export function post(request, response) {
                 message: "Lesson \"" + request.params.owner + "/" + request.params.lessonID + "\" already exists"
             })
         } else {
-            // TODO: calculate barlines
+            // Download audio if it doesn't already exist
+            downloadYouTubeVideo(request.body.youtubeID)
 
-            let insertion = prep('INSERT INTO lesson(LESSON_OWNER, LESSON_NAME, YOUTUBE_ID, YOUTUBE_TITLE) VALUES (${owner}, ${lessonName}, ${youtubeID}, ${youtubeTitle})')
-            pool.query(insertion(request.body), (err, res) => {
-                if (err !== undefined) {
-                    throw err
-                }
-                pool.end()
-                response.end()
+            // Calculate barlines
+            calculateBars(request.body.youtubeID).then((bars)=>{
+                let insertion = prep('INSERT INTO lesson(LESSON_OWNER, LESSON_NAME, YOUTUBE_ID, YOUTUBE_TITLE, BARS) VALUES (${owner}, ${lessonName}, ${youtubeID}, ${youtubeTitle}, ${bars})')
+                request.body.bars = JSON.stringify(bars)
+                pool.query(insertion(request.body), (err, res) => {
+                    if (err !== undefined) {
+                        throw err
+                    }
+                    pool.end()
+                    response.end()
+                })
             })
         }
     })

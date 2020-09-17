@@ -7,3 +7,5 @@
     - Bars
 - Use a store to fix dataflow issues
 - Move api routes to `/api`
+- Use rewire to unexport tested functions
+- UI overhaul with real designer

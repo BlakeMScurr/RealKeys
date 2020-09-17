@@ -4,3 +4,5 @@
 yarn-error.log
 /cypress/screenshots/
 /__sapper__/
+# this is where we store actual production audiofiles
+/src/backend/db/audioFiles

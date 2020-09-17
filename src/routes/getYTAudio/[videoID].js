@@ -1,8 +1,8 @@
-import { downloadYouTubeVideo } from "../../backend/youtube-dl.js";
+import { pathToAudioFile } from "../../utils/util";
 
+const path = require('path');
 export function get(request, response) {
-    const { videoID } = request.params;
-    let { cleanup, audioFile } = downloadYouTubeVideo(videoID)
-    response.sendFile(audioFile)
-    cleanup()
+    console.log("path:")
+    console.log(path.resolve(pathToAudioFile(request.params.videoID)))
+    response.sendFile(path.resolve(pathToAudioFile(request.params.videoID)))
 }
