@@ -4,6 +4,7 @@
     export let owner;
     export let lessonID;
     export let renderComponent;
+    export let renderProps;
 
     async function getLessonDefinition() {
         let res = await fetch(["api", owner, lessonID, "get"].join("/"), {
@@ -27,7 +28,7 @@
     <h1>Loading</h1>
 {:then lesson}
     <h1>{lesson.lesson_name}</h1>
-    <svelte:component this={renderComponent} videoID={lesson.youtube_id} bars={lesson.bars} on:save={forward(lesson)}></svelte:component>
+    <svelte:component this={renderComponent} videoID={lesson.youtube_id} bars={lesson.bars} on:save={forward(lesson)} {...renderProps}></svelte:component>
 {:catch}
     <h1>Could not load lesson {owner}/{lessonID}</h1>
 {/await}

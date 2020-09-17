@@ -8,6 +8,7 @@
 
     export let videoID;
     export let bars;
+    export let editable;
 
     let audioPlayer;
     let audioLoaded = false;
@@ -190,7 +191,7 @@
 {:then loadedPlayer}
     <p id="hack" use:setAudio={loadedPlayer}></p> <!-- TODO: remove hack designed to pass the audio to the component's state once the promise is ready -->
         <div id="playbackArea">
-        <Wrapper bind:bars={bars} position={positionPercentage} on:seek={handleSeek} on:repeat={handleNewRepeats} songLength={duration} on:save={forward}></Wrapper>
+        <Wrapper bind:bars={bars} position={positionPercentage} on:seek={handleSeek} on:repeat={handleNewRepeats} songLength={duration} on:save={forward} {editable}></Wrapper>
         <Metronome time={positionPercentage*duration} playing={playing} ticks={positions(bars).slice(1, bars.length).map((x)=>{return x * duration})} seeked={seeked}></Metronome>
     </div>
     <p id="positionDuration">{renderSeconds(positionPercentage*duration)}/{renderSeconds(duration)}</p>

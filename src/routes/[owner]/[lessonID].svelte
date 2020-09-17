@@ -16,6 +16,7 @@
 
     // TODO: don't show edit stuff
     let renderComponent = AudioPlayer;
+    let renderProps = { editable: false }
 </script>
 
-<LessonLoader {owner} {lessonID} {renderComponent}></LessonLoader>
+<LessonLoader {owner} {lessonID} {renderComponent} {renderProps}></LessonLoader>
