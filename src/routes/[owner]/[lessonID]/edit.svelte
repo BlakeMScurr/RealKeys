@@ -52,7 +52,7 @@
     <h1>Loading</h1>
 {:then lesson}
     <h1>{lesson.lesson_name}</h1>
-    <AudioPlayer videoID={lesson.youtube_id} on:save={handleSave(lesson)}></AudioPlayer>
+    <AudioPlayer videoID={lesson.youtube_id} bars={lesson.bars} on:save={handleSave(lesson)}></AudioPlayer>
 {:catch}
     <h1>Could not load lesson</h1>
 {/await}

@@ -32,5 +32,5 @@
 {:else}
     <h1>{lesson.lesson_name}</h1>
     <!-- TODO: disable editing -->
-    <AudioPlayer videoID={lesson.youtube_id}></AudioPlayer>
+    <AudioPlayer videoID={lesson.youtube_id} bars={lesson.bars}></AudioPlayer>
 {/if}
