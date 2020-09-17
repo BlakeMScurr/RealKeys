@@ -4,8 +4,8 @@
     import { createEventDispatcher } from 'svelte';
 
     import { setWidths, validate, getSeekPixels, getSeekPercentage } from "./bars.js"
-    import { getRelativePosition } from "../../utils/dom.js"
-    import { widthSum } from "../../utils/util.js"
+    import { getRelativePosition } from "../../lib/dom.js"
+    import { widthSum } from "../../lib/util.js"
     import { onMount } from 'svelte';
 
     export let bars;

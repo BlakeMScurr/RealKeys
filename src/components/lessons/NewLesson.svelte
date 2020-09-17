@@ -1,6 +1,6 @@
 <script>
     import { goto } from '@sapper/app';
-    import { Fetcher } from '../../utils/util.js'
+    import { Fetcher } from '../../lib/util.js'
     export let fetcher = new Fetcher();
 
     export let youtubeID = "reLjhAAPsPc"

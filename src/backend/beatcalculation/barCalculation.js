@@ -1,5 +1,5 @@
 const { execSync } = require('child_process');
-import { pathToAudioFile } from "../../utils/util.js"
+import { pathToAudioFile } from "../../lib/util.js"
 import { createEvenBars } from "../../components/bars/edit/editBars.js"
 import { calculateBeats } from "./beatcalculation.js";
 const { getAudioDurationInSeconds } = require('get-audio-duration');

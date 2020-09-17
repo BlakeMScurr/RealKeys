@@ -1,4 +1,4 @@
-import { pathToAudioFile } from "../../utils/util";
+import { pathToAudioFile } from "../../lib/util";
 
 const path = require('path');
 export function get(request, response) {
