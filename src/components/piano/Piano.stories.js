@@ -3,6 +3,18 @@ export default {
   title: 'Piano',
 };
 
-export const Default = () => ({
+export const FromC = () => ({
   Component: Piano,
+  props: {
+    octaves: 3,
+    firstNote: "c",
+  }
+});
+
+export const FromF = () => ({
+  Component: Piano,
+  props: {
+    octaves: 4,
+    firstNote: "f",
+  }
 });
