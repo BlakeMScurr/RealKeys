@@ -7,6 +7,8 @@
     import Metronome from '../components/track/Metronome.svelte'
 
     export let videoID;
+    export let bars;
+    export let editable;
 
     let audioPlayer;
     let audioLoaded = false;
@@ -156,58 +158,6 @@
 
 		return howlPromise;
     }
-
-    // TODO: distinguish beats and bar by type (using typescript)
-    let beats
-    let bars
-    async function getBeats(videoID) {
-        let response = await fetch("getYTAudio/beats/" + videoID)
-        let json = await response.json()
-        // This sets the result of the promise to a value on the state that can be bound to the bars wrapper
-        // TODO: remove hack
-        beats = json
-        bars = makeBarLines(beats)
-        return "message"
-    }
-
-    function makeBarLines(beats) {
-        // make bar ends proportion of total length
-        // TODO: clarify beat/bar ambiguity
-        // requires audioplayer to be loaded
-        let duration = beats[beats.length-1]
-        let barEnds = beats.slice().map(bar => {
-            return bar/duration
-        })
-        
-        // get bar lengths from ends
-        let lastpos = 0;
-        let barWidths = [];
-        // TODO: idiomatic js array method, i.e., map(), reduce(), filter() etc
-        for (let i = 0; i < barEnds.length; i++) {
-            const end = barEnds[i];
-            if (end - lastpos != 0) {
-                barWidths.push(end - lastpos)
-            }
-            lastpos = end
-        }
-
-        // start final bar
-        barWidths.push(0)
-
-        // make bar structs
-        let bars = barWidths.map(width => {
-            return {
-                type: "",
-                width: width,
-            }
-        })
-
-        // set bar types
-        bars[0].type = "s"
-        bars[bars.length-1].type = "e"
-
-        return bars
-    }
 </script>
 
 <style>
@@ -228,12 +178,6 @@
     }    
 </style>
 
-{#await getYTAudio(videoID)}
-	<h3>Loading Audio . . .</h3>
-{:then loadedPlayer}
-    <p id="hack" use:setAudio={loadedPlayer}></p> <!-- TODO: remove hack designed to pass the audio to the component's state once the promise is ready -->
-{/await}
-
 {#if !audioPlayer}
     <button on:click={play} disabled>Play</button>
 {:else if playing}
@@ -242,11 +186,13 @@
     <button on:click={play}>Play</button>
 {/if}
 
-<div id="playbackArea">
-    {#await getBeats(videoID) then unused}
-        <!-- TODO: get actual bars, not just beats -->
-        <Wrapper bind:bars={bars} position={positionPercentage} on:seek={handleSeek} on:repeat={handleNewRepeats} songLength={duration} on:save={forward}></Wrapper>
+{#await getYTAudio(videoID)}
+	<h3>Loading Audio . . .</h3>
+{:then loadedPlayer}
+    <p id="hack" use:setAudio={loadedPlayer}></p> <!-- TODO: remove hack designed to pass the audio to the component's state once the promise is ready -->
+        <div id="playbackArea">
+        <Wrapper bind:bars={bars} position={positionPercentage} on:seek={handleSeek} on:repeat={handleNewRepeats} songLength={duration} on:save={forward} {editable}></Wrapper>
         <Metronome time={positionPercentage*duration} playing={playing} ticks={positions(bars).slice(1, bars.length).map((x)=>{return x * duration})} seeked={seeked}></Metronome>
-    {/await}
-</div>
-<p id="positionDuration">{renderSeconds(positionPercentage*duration)}/{renderSeconds(duration)}</p>
+    </div>
+    <p id="positionDuration">{renderSeconds(positionPercentage*duration)}/{renderSeconds(duration)}</p>
+{/await}

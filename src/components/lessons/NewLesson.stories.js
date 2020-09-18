@@ -1,5 +1,5 @@
 import NewLesson from './NewLesson.svelte';
-import { MockFetcher } from '../../utils/util.js'
+import { MockFetcher } from '../../lib/util.js'
 
 export default {
   title: 'NewLesson',

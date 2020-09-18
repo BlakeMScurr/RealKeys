@@ -1,6 +1,6 @@
 <script>
     import { goto } from '@sapper/app';
-    import { Fetcher } from '../../utils/util.js'
+    import { Fetcher } from '../../lib/util.js'
     export let fetcher = new Fetcher();
 
     export let youtubeID = "reLjhAAPsPc"
@@ -14,21 +14,41 @@
         })
     }
 
+    let backendError = "";
     function handlesave() {
-        fetcher.fetch("POST", ["api", "blakemscurr", lessonName, "new"].join("/"), {
-            owner: "blakemscurr", // TODO: get from logged in user
-            lessonName: lessonName,
-            youtubeID: youtubeID,
-            youtubeTitle: youtubeTitle,
-        }).then(()=>{
-           goto(["blakemscurr", lessonName, "edit"].join("/"))
+        fetch(["api", "blakemscurr", lessonName, "new"].join("/"), {
+            method: "POST",
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                owner: "blakemscurr", // TODO: get from logged in user
+                lessonName: lessonName,
+                youtubeID: youtubeID,
+                youtubeTitle: youtubeTitle,
+            })
+        }).then((response)=>{
+            if (response.status == 400) {
+                return response.json()
+            } else {
+                goto(["blakemscurr", lessonName, "edit"].join("/"))
+            }
+        }).then((json)=>{
+            if (json !== undefined && json.message !== undefined) {
+                backendError = json.message
+            }
         }).catch((err)=>{
             console.warn(err)
         })
     }
 
-    // TODO: make input field component
-    function valid(id, title, name) {
+    // TODO: make input field component - this is very ugly and long considering that it basically does nothing
+    function valid(id, title, name, backendError) {
+        if (backendError != "") {
+            return backendError
+        }
+
         if (id == "") {
             return "YouTube ID Required"
         }
@@ -57,13 +77,13 @@
 
 <label>
     Lesson Name
-    <input type="textarea" bind:value={lessonName}>
+    <input type="textarea" bind:value={lessonName} on:input={()=>{backendError = ""}}>
 </label>
 <br>
 <label>
     YouTube ID
-    <input type="textarea" bind:value={youtubeID}>
+    <input type="textarea" bind:value={youtubeID} on:input={()=>{backendError = ""}}>
 </label>
 <p id="ytTitle">{youtubeTitle}</p>
-<button disabled={valid(youtubeID, youtubeTitle, lessonName) == "" ? "" : "disabled"} on:click={handlesave}>New Lesson</button>
-<p id="error">{valid(youtubeID, youtubeTitle, lessonName)}</p>
+<button disabled={valid(youtubeID, youtubeTitle, lessonName, backendError) == "" ? "" : "disabled"} on:click={handlesave}>New Lesson</button>
+<p id="error">{valid(youtubeID, youtubeTitle, lessonName, backendError)}</p>

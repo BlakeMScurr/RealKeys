@@ -4,6 +4,6 @@ CREATE TABLE IF NOT EXISTS lesson (
    YOUTUBE_ID text NOT NULL,
    YOUTUBE_TITLE text NOT NULL,
    -- TODO: don't use json for a complex datatype, it seems error prone
-   BARS json,
+   BARS json NOT NULL,
    UNIQUE(LESSON_OWNER, LESSON_NAME)
 );

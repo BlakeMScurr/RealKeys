@@ -6,6 +6,7 @@
     export let bars;
     export let position;
     export let songLength;
+    export let editable = true;
 
     let edit = false;
 
@@ -27,6 +28,8 @@
     <button on:click={handleClick}>Save</button>
 {:else}
     <ZoomBars bars={bars} bind:position={position} on:seek={forward} on:repeat={forward}></ZoomBars>
-    <button on:click={()=>{edit=true}}>Edit</button>
+    {#if editable}
+        <button on:click={()=>{edit=true}}>Edit</button>
+    {/if}
 {/if}
 

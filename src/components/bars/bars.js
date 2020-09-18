@@ -1,4 +1,4 @@
-import { strip, widthSum } from "../../utils/util.js"
+import { strip, widthSum } from "../../lib/util.js"
 
 // takes strings representing bar line types and returns evenly spaced barlines
 export function even(barlines, width = 1) {

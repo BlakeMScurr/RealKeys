@@ -1,6 +1,6 @@
 <script>
     import { onMount } from 'svelte';
-    import { getRelativePosition } from "../../../utils/dom.js"
+    import { getRelativePosition } from "../../../lib/dom.js"
 
     // start and end are the start and end of the content in the zoom area
     // they are given as percentages
