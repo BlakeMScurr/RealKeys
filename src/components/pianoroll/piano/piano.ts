@@ -43,3 +43,57 @@ export function fillGhosts(notes: Array<Note>) {
     }
     return newNotes
 }
+
+export class NoteWidth {
+    note: Note;
+    width: number;
+    ghost: Ghost;
+    constructor(note: Note, width: width) {
+        this.note = note;
+        this.width = width;
+    }
+}
+
+// Give a set of white notes the appropriate widths
+// B, C, F, and E are 3/4 the width of regular white notes so that the notes in the roll can all be of equal length, and can correspond to the top of the piano (see Design.png for detail)
+export function whiteWidths(notes: Array<Note>):Array<NoteWidth> {
+    let nws: Array<NoteWidth> = [];
+    let totalLength = 0
+    notes.forEach(note => {
+        if(note.color() != "white") {
+            throw new Error("Can only apply whiteWidths to white notes")
+        }
+        
+        totalLength += width(note)
+        nws.push(new NoteWidth(note, width(note)))
+    });
+
+    let totalpercentage = 0;
+    nws.forEach((nw)=> {
+        nw.width = (nw.width/totalLength) * 100 // This note's percentage of the total width
+        totalpercentage += nw.width
+    })
+
+    return nws
+}
+
+function width(note: Note) {
+    switch (note.abstract.letter) {
+        case "b":
+        case "c":
+        case "f":
+        case "e":
+            return 3
+        default:
+            return 4
+    }
+}
+
+export function regularWhiteWidth(notes: Array<Note>) {
+    let totalLength = 0
+    notes.forEach(note => {
+        totalLength += width(note)
+    });
+    console.log("regular white width:", 4/totalLength)
+    return 4/totalLength
+}

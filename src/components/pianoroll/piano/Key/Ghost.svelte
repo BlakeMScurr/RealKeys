@@ -1,7 +1,6 @@
 <style>
       div {
-        background-color: black;
-        /* pointer-events:none; */
+        pointer-events:none;
         opacity: 1;
         width: 50%;
         height: 60%;
