@@ -22,3 +22,12 @@ export const Black = () => ({
   }
 });
 
+export const Border = () => ({
+  Component: RollKey,
+  props: {
+      white: true,
+      rightBorder: true,
+      width: "20px",
+      height: "100px",
+  }
+});
