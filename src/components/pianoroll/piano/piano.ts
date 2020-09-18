@@ -48,7 +48,7 @@ export class NoteWidth {
     note: Note;
     width: number;
     ghost: Ghost;
-    constructor(note: Note, width: width) {
+    constructor(note: Note, width: number) {
         this.note = note;
         this.width = width;
     }
@@ -94,6 +94,5 @@ export function regularWhiteWidth(notes: Array<Note>) {
     notes.forEach(note => {
         totalLength += width(note)
     });
-    console.log("regular white width:", 4/totalLength)
     return 4/totalLength
 }
