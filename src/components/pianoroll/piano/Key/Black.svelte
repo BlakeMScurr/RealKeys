@@ -12,7 +12,7 @@
       div {
         background-color: var(--color);
         width: 50%;
-        height: 60%;
+        height: 65%;
         margin: 0 25% 0 25%;
         pointer-events:auto;
     }
