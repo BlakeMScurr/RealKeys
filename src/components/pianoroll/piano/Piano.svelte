@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { createEventDispatcher } from "svelte";
     import { NewNote, Note } from "../music/theory/notes";
     import { Line } from "../music/theory/notes";
     import { notesBetween, fillGhosts, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote } from "./piano";
@@ -7,6 +8,11 @@
 
     export let lowest: Note;
     export let highest: Note;
+
+    const dispatch = createEventDispatcher();
+    function forward(event) {
+        dispatch(event.type, event.detail);
+    }
 
     let notes = new Line(notesBetween(lowest, highest))
     let activeMap = notes.activeMap()
