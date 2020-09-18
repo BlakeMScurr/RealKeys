@@ -3,8 +3,6 @@
     export let rightBorder:Boolean;
     export let width:String;
     export let height:String;
-
-    console.log(rightBorder)
 </script>
 
 <style>

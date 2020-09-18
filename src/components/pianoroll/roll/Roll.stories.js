@@ -1,26 +1,31 @@
-import RollBar from './RollBar.svelte';
+import Roll from './Roll.svelte';
 import { notesBetween } from "../piano/piano";
+import { Bars } from "../pianoroll";
 import { NewNote } from "../music/theory/notes";
 
 
 
 export default {
-  title: 'RollBar',
+  title: 'Roll',
 };
 
 export const Default = () => ({
-  Component: RollBar,
+  Component: Roll,
   props: {
       notes: notesBetween(NewNote("C", 4), NewNote("C", 5)),
-      height: "100px",
+      height: "400",
+      unit: "px",
+      bars: new Bars([0.2, 0.2, 0.2, 0.2, 0.2]),
   }
 });
 
 export const TwoOctaves = () => ({
-  Component: RollBar,
+  Component: Roll,
   props: {
       notes: notesBetween(NewNote("C", 4), NewNote("C", 6)),
-      height: "100px",
+      height: "400",
+      unit: "px",
+      bars: new Bars([0.2, 0.2, 0.2, 0.2, 0.2]),
   }
 });
 

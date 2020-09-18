@@ -11,6 +11,17 @@ export class Bars {
         this.bars = bars
     }
 
+    barLines():Array<number> {
+        let starts:Array<number> = [];
+        let sum = 0;
+        this.bars.forEach(barLength => {
+            starts.push(sum)
+            sum += barLength
+        });
+        starts.push(sum)
+        return starts
+    }
+
     // cut off the parts of the bars before the start and after then end
     // then normalise the bars to make them add t o
     truncate(start: number, end: number):Bars {
