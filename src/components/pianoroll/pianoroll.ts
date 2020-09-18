@@ -1,3 +1,5 @@
+import type { Note } from "./music/theory/notes";
+
 // TODO: merge this will all the places we're using bars in the ZoomBars thign
 export class Bars {
     bars: Array<number>;
@@ -62,5 +64,38 @@ export class Bars {
         })
 
         return new Bars(newBars)
+    }
+}
+
+export class TimedNote {
+    start: number;
+    end: number;
+    note: Note;
+    constructor(start: number, end: number, note: Note) {
+        this.start = start;
+        this.end = end;
+        this.note = note;
+    }
+}
+
+export class TimedNotes {
+    notes: Array<TimedNote>;
+    constructor(notes: Array<TimedNote>) {
+        // check that the notes are in order
+        for (let i = 1; i < notes.length; i++) {
+            if (notes[i-1].start > notes[i].start) {
+                throw new Error("Notes out of order: " +
+                    notes[i-1].note.string() + " starts at " +
+                    notes[i-1].start + " and " +
+                    notes[i].note.string() + " starts at " +
+                    notes[i].start)
+            }
+        }
+
+        this.notes = notes;
+    }
+
+    truncate(start: number, end: number):TimedNotes {
+        throw new Error("TODO")
     }
 }

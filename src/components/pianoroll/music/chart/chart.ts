@@ -1,3 +1,4 @@
+import { niceBlue } from "../../../colours";
 import { Chord, ChordBook, Note } from "../theory/chords"
 // TODO: use the new yt method
 // import { GetPlayer, Player } from "../youtube/youtube"
@@ -97,7 +98,7 @@ export class Chart {
             }
 
             if (chord.completed) {
-                newChord = newChord.fontcolor("#667ED4")
+                newChord = newChord.fontcolor(niceBlue)
             }
 
             desc += newChord + " "

@@ -1,5 +1,6 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte"
+    import { niceBlue } from "../../../colours";
     import type { Note } from "../../music/theory/notes";
     
     export let active:Boolean;
@@ -18,7 +19,7 @@
     }
 </style>
 
-<div style="--color: {active?"#667ED4":"black"}" on:mousedown={()=>{active=true}}
+<div style="--color: {active?niceBlue:"black"}" on:mousedown={()=>{active=true}}
     on:mouseup={()=>{active=false}}
     on:mouseleave={()=>{active=false}}>
 </div>

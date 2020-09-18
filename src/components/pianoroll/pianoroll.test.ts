@@ -1,4 +1,5 @@
-import { Bars } from "./pianoroll"
+import { NewNote } from "./music/theory/notes"
+import { Bars, TimedNote, TimedNotes } from "./pianoroll"
 
 function fifthBars():Bars {
     return new Bars([0.2, 0.2, 0.2, 0.2, 0.2])
@@ -22,4 +23,13 @@ test("TruncateBarsStartSlice", ()=> {
 
 test("barLines", ()=>{
     expect(fifthBars().barLines()).toEqual([0, 0.2, 0.4, 0.6, 0.8, 1])
+})
+
+test("NotesErroringNew", ()=>{
+    expect(()=>{new TimedNotes([new TimedNote(0.1, 0.2, NewNote("c", 4)), new TimedNote(0, 0.1, NewNote("c", 4))])}).toThrow("Notes out of order: c4 starts at 0.1 and c4 starts at 0")
+})
+
+test("NotesNotErroringNew", ()=>{
+    expect(()=>{new TimedNotes([new TimedNote(0, 0.1, NewNote("c", 4)), new TimedNote(0.1, 0.2, NewNote("c", 4))])}).not.toThrow("Notes out of order")
+    expect(()=>{new TimedNotes([new TimedNote(0, 0.1, NewNote("c", 4)), new TimedNote(0, 0.1, NewNote("c", 4))])}).not.toThrow("Notes out of order")
 })

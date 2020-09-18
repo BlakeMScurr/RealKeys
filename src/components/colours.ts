@@ -1,0 +1,1 @@
+export const niceBlue = "#667ED4";
