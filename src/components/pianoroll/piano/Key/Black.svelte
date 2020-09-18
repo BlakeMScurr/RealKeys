@@ -18,7 +18,7 @@
     }
 </style>
 
-<div style="--color: {active?"green":"black"}" on:mousedown={()=>{active=true}}
+<div style="--color: {active?"#667ED4":"black"}" on:mousedown={()=>{active=true}}
     on:mouseup={()=>{active=false}}
     on:mouseleave={()=>{active=false}}>
 </div>

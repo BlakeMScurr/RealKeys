@@ -97,7 +97,7 @@ export class Chart {
             }
 
             if (chord.completed) {
-                newChord = newChord.fontcolor("green")
+                newChord = newChord.fontcolor("#667ED4")
             }
 
             desc += newChord + " "
