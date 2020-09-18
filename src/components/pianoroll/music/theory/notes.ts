@@ -152,4 +152,13 @@ export class Line {
             return note.color() == "white"
         })
     }
+
+    // gives a new map from all the notes in this line to a boolean representing whether they're active or note
+    activeMap():Map<String, Boolean> {
+        let m: Map<String, Boolean> = new Map()
+        this.notes.forEach(note => {
+            m.set(note.string(), false)
+        });
+        return m
+    }
 }

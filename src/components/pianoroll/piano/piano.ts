@@ -1,4 +1,5 @@
-import type { Note } from "../music/theory/notes";
+import { Note } from "../music/theory/notes";
+import type { Line } from "../music/theory/notes";
 
 // gives the ranges of notes between the two given, inclusive
 export function notesBetween(low: Note, high: Note) {
@@ -95,4 +96,24 @@ export function regularWhiteWidth(notes: Array<Note>) {
         totalLength += width(note)
     });
     return 4/totalLength
+}
+
+// Keys the note repsented by a key on the computer keyboard
+export function keyboardInputNote(keyCode: number, notes: Line):Note {
+    let key: string = String.fromCharCode(keyCode).toLocaleLowerCase()
+    var naturals = ["a","s","d","f","g","h","j","k","l",";"]
+    var accidentals = ["w","e","r","t","y","u","i","o","p","["]
+
+    var index = naturals.indexOf(key)
+    if (index != -1) {
+        return notes.white()[index]
+    }
+
+    index = accidentals.indexOf(key)
+    if (index != -1) {
+        let ng = fillGhosts(notes.black())[index]
+        if (ng instanceof Note) {
+            return <Note>ng
+        }
+    }
 }

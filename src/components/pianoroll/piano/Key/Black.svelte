@@ -2,10 +2,10 @@
     import { createEventDispatcher } from "svelte"
     import type { Note } from "../../music/theory/notes";
     
-    export let clicked:Boolean;
+    export let active:Boolean;
     export let note:Note;
     const dispatch = createEventDispatcher()
-    $: {dispatch(clicked ? "noteOn": "noteOff", note)}
+    $: {dispatch(active ? "noteOn": "noteOff", note)}
 </script>
 
 <style>
@@ -18,7 +18,7 @@
     }
 </style>
 
-<div style="--color: {clicked?"green":"black"}" on:mousedown={()=>{clicked=true}}
-    on:mouseup={()=>{clicked=false}}
-    on:mouseleave={()=>{clicked=false}}>
+<div style="--color: {active?"green":"black"}" on:mousedown={()=>{active=true}}
+    on:mouseup={()=>{active=false}}
+    on:mouseleave={()=>{active=false}}>
 </div>

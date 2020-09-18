@@ -7,9 +7,9 @@
 
     export let width:number;
     export let note:Note;
-    export let clicked:Boolean;
+    export let active:Boolean;
     export let ghost:Boolean = false;
-    
+
     let dispatch = createEventDispatcher();
     function forward(event) {
         dispatch(event.type, event.detail)
@@ -30,9 +30,9 @@
         <Ghost></Ghost>
     {:else}
         {#if note.color() == "white"}
-            <White {note} bind:clicked={clicked} on:noteOn={forward} on:noteOff={forward}></White>
+            <White {note} bind:active={active} on:noteOn={forward} on:noteOff={forward}></White>
         {:else}
-            <Black {note} bind:clicked={clicked} on:noteOn={forward} on:noteOff={forward}></Black>
+            <Black {note} bind:active={active} on:noteOn={forward} on:noteOff={forward}></Black>
         {/if}
     {/if}
 </div>
