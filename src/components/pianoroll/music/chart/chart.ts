@@ -1,4 +1,4 @@
-import { Chord, ChordBook, Note } from "../theory/chordschords"
+import { Chord, ChordBook, Note } from "../theory/chords"
 // TODO: use the new yt method
 // import { GetPlayer, Player } from "../youtube/youtube"
 

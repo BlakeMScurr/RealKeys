@@ -1,4 +1,5 @@
-import { Chord, ChordBook, Note, NewAbstractNote, sortNotes, squashNotes, NoteOrder } from "./chords";
+import { Chord, ChordBook, sortNotes, squashNotes } from "./chords";
+import { Note, NewAbstractNote, NoteOrder, NewNote } from "./notes";
 
 test('inferInversions', () => {
     var b = new ChordBook()
@@ -174,6 +175,5 @@ test('recognisingExoticVoicings', () => {
 })
 
 function nn(note: string, octave: number) {
-    var an = NewAbstractNote(note);
-    return new Note((an), octave)
+    return NewNote(note, octave)
 }
