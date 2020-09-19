@@ -1,20 +1,19 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { NewNote, Note } from "../music/theory/notes";
+    import { NewNote, Note, notesBetween } from "../music/theory/notes";
     import { Line } from "../music/theory/notes";
-    import { notesBetween, fillGhosts, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote } from "./piano";
+    import { fillGhosts, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote } from "./piano";
     import WebMidi, { InputEventNoteon, InputEventNoteoff } from "webmidi";
     import Key from "./Key/Key.svelte";
 
-    export let lowest: Note;
-    export let highest: Note;
+    export let keys:Array<Note>;
 
     const dispatch = createEventDispatcher();
     function forward(event) {
         dispatch(event.type, event.detail);
     }
 
-    let notes = new Line(notesBetween(lowest, highest))
+    let notes = new Line(keys)
     let activeMap = notes.activeMap()
 
     // setup midi keyboard input
@@ -51,6 +50,10 @@
 </script>
 
 <style>
+    div {
+        height: 100%;
+    }
+    
     .rapper {
         position: absolute;
         pointer-events: none;

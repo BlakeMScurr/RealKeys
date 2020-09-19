@@ -1,23 +1,6 @@
 import { Note } from "../music/theory/notes";
 import type { Line } from "../music/theory/notes";
 
-// gives the ranges of notes between the two given, inclusive
-export function notesBetween(low: Note, high: Note) {
-    if (high.lowerThan(low)) {
-        throw new Error("Highest note lower than lowest note")
-    }
-
-    let notes: Array<Note> = [];
-    let curr = low
-    while (!curr.equals(high)) {
-        notes.push(curr)
-        curr = curr.next()
-    }
-    notes.push(curr)
-
-    return notes
-}
-
 export class Ghost {}
 
 // takes a set of black notes and fills in those that don't exist on the piano so they can take some space in the render

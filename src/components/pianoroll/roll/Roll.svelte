@@ -58,11 +58,11 @@
 </div>
 <div class="container barlines" style="--height: {height + unit};">
     {#each bars.bars as bar}
-    <div class="bar" style="--margin-top: {height * bar + unit};"></div>
+        <div class="bar" style="--margin-top: {height * bar + unit};"></div>
     {/each}
 </div>
 <div class="container" style="--height: {height + unit};">
     {#each notes.notes as note}
-    <div class="note" style="--width: {100/keys.length}%; --left: {find(note.note, keys) * 100/keys.length}%; --height: {100*(note.end-note.start)}%; --top:{100*note.start}%; --color: {niceBlue}"></div>
+        <div class="note" style="--width: {100/keys.length}%; --left: {find(note.note, keys) * 100/keys.length}%; --height: {100*(note.end-note.start)}%; --top:{100*note.start}%; --color: {niceBlue}"></div>
     {/each}
 </div>

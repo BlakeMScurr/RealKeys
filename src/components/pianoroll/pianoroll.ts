@@ -1,4 +1,5 @@
 import type { Note } from "./music/theory/notes";
+import {  notesBetween } from "./music/theory/notes";
 // TODO: import as normal
 // TODO: get typescript definition and replace all references to "any" type in this file with "Fraction", or whatever the type is
 var Fraction = require('fraction.js');
@@ -98,5 +99,24 @@ export class TimedNotes {
 
     truncate(start: number, end: number):TimedNotes {
         throw new Error("TODO")
+    }
+
+    range():Array<Note> {
+        let lowest:Note = this.notes[0].note
+        let highest:Note = this.notes[0].note
+
+        for (let i = 0; i < this.notes.length; i++) {
+            const note = this.notes[i].note;
+            if (note.lowerThan(lowest)) {
+                lowest = note
+            }
+            if (highest.lowerThan(note)) {
+                highest = note
+            }
+        }
+
+        // the width of the keys in the roll section only correspond to the width of the black notes, or the width of the white notes 
+
+        return notesBetween(lowest, highest)
     }
 }

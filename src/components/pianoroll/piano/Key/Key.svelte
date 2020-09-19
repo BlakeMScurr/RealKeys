@@ -19,7 +19,7 @@
 <style>
     div {
         display: inline-block;
-        height: 200px;
+        height: 100%;
         width: var(--width);
         pointer-events:none;
     }

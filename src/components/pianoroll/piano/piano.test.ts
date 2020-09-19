@@ -1,5 +1,5 @@
-import { NewNote } from "../music/theory/notes"
-import { fillGhosts, Ghost, notesBetween } from "./piano"
+import { NewNote, notesBetween } from "../music/theory/notes"
+import { fillGhosts, Ghost } from "./piano"
 
 // TODO: shift all my flats to sharps, as that's the internal representation
 

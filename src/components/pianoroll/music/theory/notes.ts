@@ -134,6 +134,23 @@ export function NewNote(note: string, octave: number) {
 const notelist = ["c","c#","d","d#","e","f","f#","g","g#","a","a#","b"]
 export const NoteOrder = notelist.map((name: string)=>{return new AbstractNote(name)})
 
+// gives the ranges of notes between the two given, inclusive
+export function notesBetween(low: Note, high: Note):Array<Note> {
+    if (high.lowerThan(low)) {
+        throw new Error("Highest note lower than lowest note")
+    }
+
+    let notes: Array<Note> = [];
+    let curr = low
+    while (!curr.equals(high)) {
+        notes.push(curr)
+        curr = curr.next()
+    }
+    notes.push(curr)
+
+    return notes
+}
+
 // A line is a linear sequence of notes
 export class Line {
     notes: Array<Note>;
