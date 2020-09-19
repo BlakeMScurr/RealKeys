@@ -3,8 +3,7 @@ import { Bars, TimedNote, TimedNotes } from "./pianoroll"
 var Fraction = require('fraction.js');
 
 function fifthBars():Bars {
-    const x = ()=>{return new Fraction('1/5')}
-    return new Bars([x(), x(), x(), x(), x()])
+    return new Bars([new Fraction('1/5'), new Fraction('1/5'), new Fraction('1/5'), new Fraction('1/5'), new Fraction('1/5')])
 }
 
 test("TruncateBarsWidthError", ()=> {
