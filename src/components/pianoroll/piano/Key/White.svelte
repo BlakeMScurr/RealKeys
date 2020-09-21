@@ -12,8 +12,8 @@
 <style>
       div {
         background-color: var(--color);
-        /* TODO: account for border in width */
-        width: 100%;
+        /* TODO: why is there an overflow unless width is subtracted by 3px? I thought 2 would suffice to account for the border on either side */
+        width: calc(100% - 3px);
         height: 100%;
         border: 1px solid grey;
         pointer-events:auto;

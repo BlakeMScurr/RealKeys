@@ -42,6 +42,12 @@ export class AbstractNote {
         return n
     }
 
+    nextLowest() {
+        var i = NoteOrder.indexOf(this)
+        var n = NoteOrder[(i-1+12)%12];
+        return n
+    }
+
     equals(note: AbstractNote) {
         return this.letter == note.letter && this.accidental == note.accidental
     }
@@ -104,6 +110,14 @@ export class Note {
             octave++
         }
         return new Note(this.abstract.next(), octave)
+    }
+
+    nextLowest() {
+        var octave = this.octave
+        if (NoteOrder.indexOf(this.abstract) == 0) {
+            octave--
+        }
+        return new Note(this.abstract.nextLowest(), octave)
     }
 
     string() {

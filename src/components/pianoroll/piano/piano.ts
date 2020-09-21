@@ -40,6 +40,7 @@ export class NoteWidth {
 
 // Give a set of white notes the appropriate widths
 // B, C, F, and E are 3/4 the width of regular white notes so that the notes in the roll can all be of equal length, and can correspond to the top of the piano (see Design.png for detail)
+// TODO: explore non-bisecting desgins with more uniform keys
 export function whiteWidths(notes: Array<Note>):Array<NoteWidth> {
     let nws: Array<NoteWidth> = [];
     let totalLength = 0

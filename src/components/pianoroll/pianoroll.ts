@@ -1,4 +1,4 @@
-import type { Note } from "./music/theory/notes";
+import { NewAbstractNote, NewNote, Note } from "./music/theory/notes";
 import {  notesBetween } from "./music/theory/notes";
 // TODO: import as normal
 // TODO: get typescript definition and replace all references to "any" type in this file with "Fraction", or whatever the type is
@@ -30,42 +30,14 @@ export class Bars {
         return starts
     }
 
-    // cut off the parts of the bars before the start and after then end
-    // then normalise the bars to make them add t o
-    truncate(start: number, end: number):Bars {
-        if (start >= end) {
-            throw new Error("start must be before end")
-        }
-
-        let newBars: Array<any> = [];
-        let startPos = new Fraction(0);
+    sums():Array<number> {
+        let sum = 0;
+        let newBars:Array<number> = [];
         this.bars.forEach(bar => {
-            let endPos = startPos.add(bar)
-            // TODO: suuuuurely this can be made more elegant
-            if (startPos <= start && endPos <= start) {
-                // do nothing as this bar earlier than the given range
-            } else if (startPos <= start && endPos > start) {
-                newBars.push(endPos.sub(start))
-            } else if (startPos > start && endPos < end) {
-                newBars.push(bar)
-            } else if (startPos > start && endPos >= end) {
-                newBars.push(bar.sub((endPos.sub(end))))
-            } else {
-                // do nothing as this bar is later than the given range
-            }
-            startPos = endPos
+            sum += bar
+            newBars.push(sum)
         });
-
-        // normalise
-        let sum = newBars.reduce((prev, curr) => {
-            return prev.add(curr)
-        }, new Fraction(0));
-
-        newBars = newBars.map((bar)=>{
-            return bar.mul(sum.inverse())
-        })
-
-        return new Bars(newBars)
+        return newBars
     }
 }
 
@@ -97,10 +69,6 @@ export class TimedNotes {
         this.notes = notes;
     }
 
-    truncate(start: number, end: number):TimedNotes {
-        throw new Error("TODO")
-    }
-
     range():Array<Note> {
         let lowest:Note = this.notes[0].note
         let highest:Note = this.notes[0].note
@@ -115,7 +83,15 @@ export class TimedNotes {
             }
         }
 
-        // the width of the keys in the roll section only correspond to the width of the black notes, or the width of the white notes 
+        // the width of the keys in the roll section only correspond to the width of the black notes, or the width of the and there will be a mismatch
+        // if our lowest note isn't C or F, and the highest isn't B or E
+        while (lowest.abstract != NewAbstractNote("C") && lowest.abstract != NewAbstractNote("F")) {
+            lowest = lowest.nextLowest()
+        }
+
+        while (highest.abstract != NewAbstractNote("B") && highest.abstract != NewAbstractNote("E")) {
+            highest = highest.next()
+        }
 
         return notesBetween(lowest, highest)
     }

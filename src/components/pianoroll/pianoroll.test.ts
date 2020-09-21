@@ -6,22 +6,6 @@ function fifthBars():Bars {
     return new Bars([new Fraction('1/5'), new Fraction('1/5'), new Fraction('1/5'), new Fraction('1/5'), new Fraction('1/5')])
 }
 
-test("TruncateBarsWidthError", ()=> {
-    expect(()=>{new Bars([new Fraction('1/10'), new Fraction('1/10'), new Fraction('1/10'), new Fraction('1/10'), new Fraction('1/10')]).truncate(1, 0)}).toThrow("Bars don't sum to 1: 0.5")
-})
-
-test("TruncateBarsRangeError", ()=> {
-    expect(()=>{fifthBars().truncate(1, 0)}).toThrow("start must be before end")
-})
-
-test("TruncateBarsNoEffect", ()=> {
-    expect(fifthBars().truncate(0, 1)).toEqual(fifthBars())
-})
-
-test("TruncateBarsStartSlice", ()=> {
-    expect(fifthBars().truncate(0.5, 1)).toEqual(new Bars([new Fraction('1/5'), new Fraction('2/5'), new Fraction('2/5')]))
-})
-
 test("barLines", ()=>{
     expect(fifthBars().barLines()).toEqual([new Fraction(0), new Fraction("1/5"), new Fraction("2/5"), new Fraction("3/5"), new Fraction("4/5"), new Fraction("1")])
 })

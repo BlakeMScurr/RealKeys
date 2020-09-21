@@ -1,4 +1,6 @@
 <script lang="ts">
+import { zoom } from "../../bars/bars";
+
     import { niceBlue } from "../../colours";
     import type { Note } from "../music/theory/notes";
     import type { Bars, TimedNotes } from "../pianoroll";
@@ -9,6 +11,12 @@
     export let unit:string;
     export let bars:Bars;
     export let notes:TimedNotes;
+    export let zoomStart = 0;
+    export let zoomEnd = 1;
+
+    $: zoomRatio = zoomEnd - zoomStart
+    $: viewHeight = height/zoomRatio
+    $: zoomOffset = height * zoomStart / zoomRatio
 
     function find(n: Note, ns: Array<Note>) {
         // TODO: efficient lookup
@@ -24,6 +32,10 @@
 </script>
 
 <style>
+    div {
+        overflow: hidden;
+    }
+
     .container {
         width: 100%;
         height: var(--height);
@@ -31,10 +43,11 @@
     }
 
     .bar {
-        margin-top: calc(var(--margin-top) - 1px);
+        top: var(--top);
         height: 1px;
         background-color: white;
         width: 100%;
+        position: absolute;
     }
 
     .note {
@@ -57,12 +70,12 @@
     {/each}
 </div>
 <div class="container barlines" style="--height: {height + unit};">
-    {#each bars.bars as bar}
-        <div class="bar" style="--margin-top: {height * bar + unit};"></div>
+    {#each bars.sums() as bar}
+        <div class="bar" style="--top: {(viewHeight * bar - zoomOffset) + unit};"></div>
     {/each}
 </div>
 <div class="container" style="--height: {height + unit};">
     {#each notes.notes as note}
-        <div class="note" style="--width: {100/keys.length}%; --left: {find(note.note, keys) * 100/keys.length}%; --height: {100*(note.end-note.start)}%; --top:{100*note.start}%; --color: {niceBlue}"></div>
+        <div class="note" style="--width: {100/keys.length}%; --left: {find(note.note, keys) * 100/keys.length}%; --height: {100*(note.end-note.start)/zoomRatio}%; --top:{100*note.start/zoomRatio - zoomOffset}%; --color: {niceBlue}"></div>
     {/each}
 </div>
