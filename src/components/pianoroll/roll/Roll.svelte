@@ -14,9 +14,14 @@ import { zoom } from "../../bars/bars";
     export let zoomStart = 0;
     export let zoomEnd = 1;
 
-    $: zoomRatio = zoomEnd - zoomStart
-    $: viewHeight = height/zoomRatio
-    $: zoomOffset = height * zoomStart / zoomRatio
+    // Reverse stuff so that it looks right
+    // TODO: no ugly reversing stuff
+    $: zs = 1- zoomEnd
+    $: ze = 1 - zoomStart
+
+    $: zoomRatio = ze - zs
+    $: viewHeight = height / zoomRatio
+    $: zoomOffset = height * zs / zoomRatio
 
     function find(n: Note, ns: Array<Note>) {
         // TODO: efficient lookup
@@ -76,6 +81,6 @@ import { zoom } from "../../bars/bars";
 </div>
 <div class="container" style="--height: {height + unit};">
     {#each notes.notes as note}
-        <div class="note" style="--width: {100/keys.length}%; --left: {find(note.note, keys) * 100/keys.length}%; --height: {100*(note.end-note.start)/zoomRatio}%; --top:{100*note.start/zoomRatio - zoomOffset}%; --color: {niceBlue}"></div>
+        <div class="note" style="--width: {100/keys.length}%; --left: {find(note.note, keys) * 100/keys.length}%; --height: {100*((1-note.start)-(1-note.end))/zoomRatio}%; --top:{100*(1-note.end)/zoomRatio - zoomOffset}%; --color: {niceBlue}"></div>
     {/each}
 </div>
