@@ -1,10 +1,10 @@
 <script>
     import { createEventDispatcher } from 'svelte';
     import { Howl } from 'howler';
-    import { positions } from './bars/bars.js'
-    import Wrapper from '../components/bars/Wrapper.svelte'
-    import Bars from '../components/bars/Bars.svelte'
-    import Metronome from '../components/track/Metronome.svelte'
+    import { positions } from '../bars/bars.js'
+    import Wrapper from '../bars/Wrapper.svelte'
+    import Bars from '../bars/Bars.svelte'
+    import Metronome from '../track/Metronome.svelte'
 
     export let videoID;
     export let bars;

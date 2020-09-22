@@ -25,7 +25,7 @@
                 activeMap = activeMap // trigger svelte update
             });
             WebMidi.inputs[0].addListener('noteoff', "all", (e: InputEventNoteoff) => {
-                activeMap.set(NewNote(e.note.name, e.note.octave).string(), true)
+                activeMap.set(NewNote(e.note.name, e.note.octave).string(), false)
                 activeMap = activeMap // trigger svelte update
             });
         } catch (e) {}

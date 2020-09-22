@@ -9,7 +9,7 @@
 
 <script>
     import LessonLoader from '../../../components/lessons/LessonLoader.svelte';
-    import AudioPlayer from '../../../components/AudioPlayer.svelte';
+    import AudioPlayer from '../../../components/audioplayer/AudioPlayer.svelte';
 
     export let owner;
     export let lessonID;
