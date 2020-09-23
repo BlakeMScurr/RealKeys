@@ -1,5 +1,5 @@
 import Key from './Key.svelte';
-import { AbstractNote } from "../../music/theory/notes";
+import { AbstractNote } from "../../../../lib/music/theory/notes";
 export default {
   title: 'Key',
 };

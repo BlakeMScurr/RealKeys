@@ -1,7 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte"
     import { niceBlue } from "../../../colours";
-    import type { Note } from "../../music/theory/notes";
+    import type { Note } from "../../../../lib/music/theory/notes";
     
     export let active:Boolean;
     export let note:Note;

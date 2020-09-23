@@ -1,5 +1,5 @@
 import Piano from './Piano.svelte';
-import { NewNote, notesBetween } from "../music/theory/notes";
+import { NewNote, notesBetween } from "../../../lib/music/theory/notes";
 
 export default {
   title: 'Piano',

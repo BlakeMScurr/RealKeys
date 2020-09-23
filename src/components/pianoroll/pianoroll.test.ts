@@ -1,4 +1,4 @@
-import { NewNote } from "./music/theory/notes"
+import { NewNote } from "../../lib/music/theory/notesry/notes"
 import { Bars, TimedNote, TimedNotes } from "./pianoroll"
 var Fraction = require('fraction.js');
 

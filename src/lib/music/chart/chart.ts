@@ -1,4 +1,4 @@
-import { niceBlue } from "../../../colours";
+import { niceBlue } from "../../../components/colours";
 import type { Chord, ChordBook } from "../theory/chords"
 import type {  Note } from "../theory/notes"
 // TODO: use the new yt method

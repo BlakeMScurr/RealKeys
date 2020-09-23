@@ -2,7 +2,7 @@
 import { zoom } from "../../bars/bars";
 
     import { niceBlue } from "../../colours";
-    import type { Note } from "../music/theory/notes";
+    import type { Note } from "../../../lib/music/theory/notes";
     import type { Bars, TimedNotes } from "../pianoroll";
     import RollKey from "./RollKey.svelte";
 
@@ -74,7 +74,8 @@ import { zoom } from "../../bars/bars";
        <RollKey width={100/keys.length + "%"} height={"100%"} white={key.color()=="white"} rightBorder={key.abstract.letter == "b" || key.abstract.letter == "e"}></RollKey> 
     {/each}
 </div>
-<div class="container barlines" style="--height: {height + unit};">
+<div class="container" style="--height: {height + unit};">
+    <!-- TODO: make greyed out space before and after the bars -->
     {#each bars.sums() as bar}
         <div class="bar" style="--top: {(viewHeight * bar - zoomOffset) + unit};"></div>
     {/each}

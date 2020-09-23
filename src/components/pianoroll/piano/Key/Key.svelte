@@ -1,6 +1,6 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte"
-    import type { Note } from "../../music/theory/notes";
+    import type { Note } from "../../../../lib/music/theory/notes";
     import Black from "./Black.svelte"
     import White from "./White.svelte"
     import Ghost from "./Ghost.svelte"

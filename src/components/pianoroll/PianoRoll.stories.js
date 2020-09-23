@@ -1,7 +1,7 @@
 import PianoRoll from './PianoRoll.svelte';
 import _storybook_Tester from "./_storybook_Tester.svelte"
 import { Bars, TimedNote, TimedNotes } from "./pianoroll";
-import { NewNote } from "./music/theory/notes";
+import { NewNote } from "../../lib/music/theory/notes";
 
 export default {
   title: 'PianoRoll',

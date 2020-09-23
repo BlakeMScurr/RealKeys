@@ -1,5 +1,4 @@
-import { Note } from "../music/theory/notes";
-import type { Line } from "../music/theory/notes";
+import { Note, Line } from "../../../lib/music/theory/notes";
 
 export class Ghost {}
 

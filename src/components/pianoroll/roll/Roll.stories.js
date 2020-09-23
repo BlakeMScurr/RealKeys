@@ -1,6 +1,6 @@
 import Roll from './Roll.svelte';
 import { Bars, TimedNote, TimedNotes } from "../pianoroll";
-import { NewNote, notesBetween } from "../music/theory/notes";
+import { NewNote, notesBetween } from "../../../lib/music/theory/notes";
 
 export default {
   title: 'Roll',
