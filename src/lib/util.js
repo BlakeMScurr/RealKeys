@@ -45,3 +45,20 @@ export class Fetcher {
         }
     }
 }
+
+export function renderSeconds(seconds) {
+    seconds = seconds.toFixed(1)
+    if (seconds < 60) {
+        return seconds.toString()
+    }
+
+    let minutes = Math.floor(seconds / 60)
+    seconds = seconds % 60
+    if (minutes < 60) {
+        return minutes + ":" + seconds
+    }
+
+    let hours = Math.floor(minutes / 60)
+    minutes = minutes % 60
+    return hours + ":" + minutes + ":" + seconds
+}

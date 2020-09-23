@@ -1,5 +1,5 @@
 import AudioPlayer from './AudioPlayer.svelte';
-import { even } from "../bars/bars.ts"
+import { MockPlayer } from './audioplayer';
 
 export default {
   title: 'AudioPlayer',
@@ -8,7 +8,7 @@ export default {
 export const Default = () => ({
   Component: AudioPlayer,
   props: {
-    Bars: even(["s", "", "", "", "", "", "e"]),
+    audioPlayer: new MockPlayer(5),
+    startRepeat: {control: 'number'},
   },
 });
-
