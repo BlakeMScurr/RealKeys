@@ -9,14 +9,15 @@
 
 <script>
     import LessonLoader from '../../components/lessons/LessonLoader.svelte';
-    import AudioPlayer from '../../components/audioplayer/AudioPlayer.svelte';
+    // import AudioPlayer from '../../components/audioplayer/AudioPlayer.svelte';
 
     export let owner;
     export let lessonID;
 
     // TODO: don't show edit stuff
-    let renderComponent = AudioPlayer;
+    // let renderComponent = AudioPlayer;
     let renderProps = { editable: false }
 </script>
 
-<LessonLoader {owner} {lessonID} {renderComponent} {renderProps}></LessonLoader>
+<LessonLoader {owner} {lessonID} {renderProps}></LessonLoader>
+<!-- <LessonLoader {owner} {lessonID} {renderComponent} {renderProps}></LessonLoader> -->

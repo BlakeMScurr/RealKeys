@@ -9,12 +9,12 @@
 
 <script>
     import LessonLoader from '../../../components/lessons/LessonLoader.svelte';
-    import AudioPlayer from '../../../components/audioplayer/AudioPlayer.svelte';
+    // import AudioPlayer from '../../../components/audioplayer/AudioPlayer.svelte';
 
     export let owner;
     export let lessonID;
 
-    let renderComponent = AudioPlayer;
+    // let renderComponent = AudioPlayer;
 
     function handleSave(event) {
         switch (event.type) {
@@ -36,4 +36,5 @@
     }
 </script>
 
-<LessonLoader {owner} {lessonID} {renderComponent} on:save={handleSave}></LessonLoader>
+<!-- <LessonLoader {owner} {lessonID} {renderComponent} on:save={handleSave}></LessonLoader> -->
+<LessonLoader {owner} {lessonID} on:save={handleSave}></LessonLoader>

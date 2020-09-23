@@ -1,11 +1,11 @@
 <script lang="ts">
     import { createEventDispatcher } from 'svelte';
-    import type { Player } from './audioplayer'
-    import { position, repeats } from "../stores"
-    import { renderSeconds } from "../../lib/util"
+    import { Player } from './audioplayer';
+    import { position, repeats } from '../stores';
+    import { renderSeconds } from '../../lib/util';
     import { Howl } from 'howler';
 
-    export let audioPlayer: Player;
+    export let audioPlayer;
 
     let positionPercentage = 0;
     position.subscribe((value) => {
