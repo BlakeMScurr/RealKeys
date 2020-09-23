@@ -1,5 +1,5 @@
 import { NewAbstractNote, NewNote, Note } from "./music/theory/notes";
-import {  notesBetween } from "./music/theory/notes";
+import { notesBetween } from "./music/theory/notes";
 // TODO: import as normal
 // TODO: get typescript definition and replace all references to "any" type in this file with "Fraction", or whatever the type is
 var Fraction = require('fraction.js');
