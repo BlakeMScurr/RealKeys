@@ -80,6 +80,7 @@ export class Recorder  {
 
     // Merges the recorded notes into an existing set of notes
     // Currently just deletes existing notes in the recorded timeframe
+    // TODO: if a note is split down the middle keep both halves rather than just the first
     merge(notes: TimedNotes):TimedNotes{
         for (let i = notes.notes.length - 1 ; i >= 0; i--) {
             const note = notes.notes[i];

@@ -7,6 +7,7 @@
     import ZoomArea from "../bars/zoom/ZoomArea.svelte";
     import Roll from "./roll/Roll.svelte";
     import Piano from "./piano/Piano.svelte";
+import { isNull } from "util";
 
     export let notes:TimedNotes;
     export let bars:Bars;
@@ -22,30 +23,36 @@
     let keys = notes.range();
 
     let tmpNotes:TimedNotes;
-    let recorder = new Recorder();
+    let recorder:Recorder = null;
     function startRecording(){
+        recorder = new Recorder();
         // TODO: add a big red line at the top of the page
         recorder.start(pos);
         tmpNotes = notes
+        // TODO: show previous notes while recording
         notes = recorder.getNotes()
     }
 
     function stopRecording() {
         recorder.stop(pos)
         // TODO: merge newly recorded notes
-        notes = tmpNotes
-        recorder = new Recorder();
+        notes = recorder.merge(tmpNotes);
+        recorder = null;
     }
 
     function noteOn(event) {
-        // TODO: consistent up/down off/on naming - we only need one pair
-        recorder.down(event.detail, pos)
-        notes = recorder.getNotes()
+        if (!isNull(recorder)) {
+            // TODO: consistent up/down off/on naming - we only need one pair
+            recorder.down(event.detail, pos)
+            notes = recorder.getNotes()
+        }
     }
     
     function noteOff(event) {
-        recorder.up(event.detail, pos)
-        notes = recorder.getNotes()
+        if (!isNull(recorder)) {
+            recorder.up(event.detail, pos)
+            notes = recorder.getNotes()
+        }
     }
 </script>
 
