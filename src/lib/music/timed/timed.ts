@@ -22,7 +22,7 @@ export class Recorder  {
 
     constructor() {
         this.beginning = -1
-        this.end = -1
+        this.end = 1
         this.notes = new TimedNotes([])
         this.partials = new Map<String, NoteStart>();
     }
@@ -69,13 +69,41 @@ export class Recorder  {
             this.notes.notes.push(new TimedNote(start, end, note))
         }
     }
-    
 
     getNotes() {
-        let end = this.end >= 0 ? this.end : 1
         let notes = JSON.parse(JSON.stringify(this.notes))
         this.partials.forEach((partial)=>{
-            notes.notes.push(new TimedNote(partial.start, end, partial.note))
+            notes.notes.push(new TimedNote(partial.start, this.end, partial.note))
+        })
+        return notes
+    }
+
+    // Merges the recorded notes into an existing set of notes
+    // Currently just deletes existing notes in the recorded timeframe
+    merge(notes: TimedNotes):TimedNotes{
+        for (let i = notes.notes.length - 1 ; i >= 0; i--) {
+            const note = notes.notes[i];
+            // TODO: move succinct if statments
+            // delete notes full within the range
+            if (note.start > this.beginning && note.end < this.end) {
+                notes.notes.splice(i, 1)
+            }
+
+
+            // truncate notes who spill into the range
+            if (note.start < this.beginning && note.end > this.beginning) {
+                note.end = this.beginning
+            }
+            
+            // truncate notes who start in the range
+            if (note.start < this.end && note.end > this.end) {
+                note.start = this.end
+            }
+        }
+
+        notes.notes.push(...this.getNotes().notes)
+        notes.notes.sort((a: TimedNote, b: TimedNote)=>{
+            return a.start - b.start
         })
         return notes
     }

@@ -47,7 +47,6 @@
         recorder.up(event.detail, pos)
         notes = recorder.getNotes()
     }
-
 </script>
 
 <style>
