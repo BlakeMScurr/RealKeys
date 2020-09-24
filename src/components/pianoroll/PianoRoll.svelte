@@ -21,17 +21,33 @@
 
     let keys = notes.range();
 
+    let tmpNotes:TimedNotes;
     let recorder = new Recorder();
     function startRecording(){
         // TODO: add a big red line at the top of the page
         recorder.start(pos);
+        tmpNotes = notes
+        notes = recorder.getNotes()
     }
 
     function stopRecording() {
         recorder.stop(pos)
-        // TODO: update the notes
+        // TODO: merge newly recorded notes
+        notes = tmpNotes
         recorder = new Recorder();
     }
+
+    function noteOn(event) {
+        // TODO: consistent up/down off/on naming - we only need one pair
+        recorder.down(event.detail, pos)
+        notes = recorder.getNotes()
+    }
+    
+    function noteOff(event) {
+        recorder.up(event.detail, pos)
+        notes = recorder.getNotes()
+    }
+
 </script>
 
 <style>
@@ -57,12 +73,12 @@
   
 </style>
 
-<RecordButton on:startRecording={startRecording} on:stopRecording={()=>{stopRecording}}></RecordButton>
+<RecordButton on:startRecording={startRecording} on:stopRecording={stopRecording}></RecordButton>
 <div id="pianoroll">
     <div class="container roll">
         <Roll {keys} {bars} {notes} height={100} unit={"%"} {zoomStart} {zoomEnd}></Roll>
     </div>
     <div class="container piano">
-        <Piano {keys}></Piano>
+        <Piano {keys} on:noteOn={noteOn} on:noteOff={noteOff}></Piano>
     </div>
 </div>

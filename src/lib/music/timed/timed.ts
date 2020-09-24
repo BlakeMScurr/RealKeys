@@ -28,18 +28,18 @@ export class Recorder  {
     }
 
     start(time: number) {
+        if (time > 1) throw new Error("Can't have times greater than 1 as the recorder is normalised to ratios of the song")
         this.beginning = time
     }
 
     stop(end: number) {
+        if (end > 1) throw new Error("Can't have times greater than 1 as the recorder is normalised to ratios of the song")
         this.end = end
-        this.partials.forEach((partial)=>{
-            this.notes.notes.push(new TimedNote(partial.start, end, partial.note))
-        })
     }
 
 
     down(note: Note, start: number) {
+        if (start > 1) throw new Error("Can't have times greater than 1 as the recorder is normalised to ratios of the song")
         if (this.beginning >= 0) { // Unstarted recorders don't record
             if (start < this.beginning) {
                 throw new Error("Note out of recorder bounds")
@@ -54,6 +54,7 @@ export class Recorder  {
     }
 
     up(note: Note, end: number) {
+        if (end > 1) throw new Error("Can't have times greater than 1 as the recorder is normalised to ratios of the song")
         if (this.beginning >= 0) { // Unstarted recorders don't record
             if (end < this.beginning) {
                 throw new Error("Note out of recorder bounds")
@@ -62,7 +63,8 @@ export class Recorder  {
             let start = this.beginning
             if (this.partials.has(note.string())) {
                 start = this.partials.get(note.string()).start
-            }
+                this.partials.delete(note.string())
+            } 
 
             this.notes.notes.push(new TimedNote(start, end, note))
         }
@@ -70,7 +72,12 @@ export class Recorder  {
     
 
     getNotes() {
-        return this.notes
+        let end = this.end >= 0 ? this.end : 1
+        let notes = JSON.parse(JSON.stringify(this.notes))
+        this.partials.forEach((partial)=>{
+            notes.notes.push(new TimedNote(partial.start, end, partial.note))
+        })
+        return notes
     }
 }
 

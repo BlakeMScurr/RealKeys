@@ -1,9 +1,10 @@
 <script lang="ts">
-import { zoom } from "../../bars/bars";
-
+    // TODO: allow scrolling
+    import { zoom } from "../../bars/bars";
     import { niceBlue } from "../../colours";
     import type { Note } from "../../../lib/music/theory/notes";
-    import type { Bars, TimedNotes } from "../pianoroll";
+    import type { TimedNotes } from "../../../lib/music/timed/timed";
+    import type { Bars } from "../pianoroll";
     import RollKey from "./RollKey.svelte";
 
     export let keys:Array<Note>;

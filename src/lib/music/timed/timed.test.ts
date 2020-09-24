@@ -21,16 +21,23 @@ test("RecorderEnd", ()=> {
     let r = new Recorder();
     r.start(0)
     expect(()=>{r.down(NewNote("C", 4), 0)}).not.toThrow("")
-    r.stop(2)
-    expect(r.getNotes()).toEqual(new TimedNotes([new TimedNote(0, 2, NewNote("C", 4))]))
+    r.stop(0.75)
+    expect(r.getNotes()).toEqual(new TimedNotes([new TimedNote(0, 0.75, NewNote("C", 4))]))
+})
+
+test("RecorderOutOfBounds", ()=>{
+    let r = new Recorder();
+    r.start(0)
+    expect(()=>{r.down(NewNote("C", 4), 2)}).toThrow("Can't have times greater than 1 as the recorder is normalised to ratios of the song")
+    expect(r.getNotes()).toEqual(new TimedNotes([]))
 })
 
 test("RecorderAlreadyStarted", ()=>{
     let r = new Recorder();
     r.start(0)
     expect(()=>{r.down(NewNote("C", 4), 0)}).not.toThrow("")
-    expect(()=>{r.down(NewNote("C", 4), 1)}).toThrow("Note already down")
-    expect(r.getNotes()).toEqual(new TimedNotes([]))
+    expect(()=>{r.down(NewNote("C", 4), 0.5)}).toThrow("Note already down")
+    expect(r.getNotes()).toEqual(new TimedNotes([new TimedNote(0, 1, NewNote("C", 4))]))
 })
 
 test("RecorderUpBeforeDown0", ()=>{
@@ -42,9 +49,9 @@ test("RecorderUpBeforeDown0", ()=>{
 
 test("RecorderUpBeforeDown1", ()=>{
     let r = new Recorder();
-    r.start(1)
-    expect(()=>{r.up(NewNote("C", 4), 2)}).not.toThrow("")
-    expect(r.getNotes()).toEqual(new TimedNotes([new TimedNote(1, 2, NewNote("C", 4))]))
+    r.start(0.5)
+    expect(()=>{r.up(NewNote("C", 4), 1)}).not.toThrow("")
+    expect(r.getNotes()).toEqual(new TimedNotes([new TimedNote(0.5, 1, NewNote("C", 4))]))
 })
 
 test("RecorderOutOfBounds", ()=>{
