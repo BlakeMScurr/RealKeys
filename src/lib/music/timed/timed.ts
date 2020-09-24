@@ -1,6 +1,6 @@
 // timed.ts has logic for handled music in time
 
-import { NewAbstractNote, Note } from "../theory/notes";
+import { NewAbstractNote, Note, NewNote } from "../theory/notes";
 import { notesBetween } from "../theory/notes";
 
 class NoteStart {
@@ -144,7 +144,12 @@ export class TimedNotes {
 
     // range is basically specifically for the pianoroll
     // TODO: name/move accordingly
+    // TODO: take width of the screen to render into into account
     range():Array<Note> {
+        if (this.notes.length == 0) {
+            return notesBetween(NewNote("C", 4), NewNote("B", 5))
+        }
+
         let lowest:Note = this.notes[0].note
         let highest:Note = this.notes[0].note
 
