@@ -1,4 +1,5 @@
 <script>
+    // TODO: generalise into toggle button
     import { createEventDispatcher } from "svelte";
 
     let dispatch = createEventDispatcher();

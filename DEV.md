@@ -21,3 +21,7 @@ Child components (ones that only exist to be used by their parents) live in dire
 All svelte components should be written in typescript.
 
 Svelte components should not contain much logic. They should only include svelte specific things like event dispatchers, accepting props, and calling external functions. Any further logic should be put in .ts files and be carefully tested.
+
+## TS
+
+All fields should be private, and only accessed via getters and setters if necessary.
