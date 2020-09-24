@@ -5,6 +5,7 @@
     
     export let active:Boolean;
     export let note:Note;
+
     const dispatch = createEventDispatcher()
     $: {
         dispatch(active ? "noteOn": "noteOff", note)
