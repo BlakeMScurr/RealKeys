@@ -35,7 +35,8 @@ export default {
 			}),
 			resolve({
 				browser: true,
-				dedupe: ['svelte']
+				dedupe: ['svelte'],
+				extensions: [ '.mjs', '.js', '.json', '.node', '.svelte', '.ts'],
 			}),
 			typescript({ sourceMap: dev }),
 			commonjs(),
@@ -77,7 +78,8 @@ export default {
 			svelte({
 				generate: 'ssr',
 				hydratable: true,
-				dev
+				dev,
+				preprocess: autoPreprocess()
 			}),
 			resolve({
 				dedupe: ['svelte']
