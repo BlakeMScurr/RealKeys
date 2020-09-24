@@ -1,5 +1,5 @@
 import Bars from './Bars.svelte';
-import { even } from "./bars.js";
+import { even } from "./bars.ts";
 
 export default {
   title: 'Bars',

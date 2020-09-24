@@ -174,6 +174,11 @@ test('recognisingExoticVoicings', () => {
     // expect(recognisedChord).toEqual(c5add9.invert(1))
 })
 
+test("NextLowest", ()=>{
+    expect(NewNote("C", 4).nextLowest()).toEqual(NewNote("B", 3))
+    expect(NewNote("F", 4).nextLowest()).toEqual(NewNote("E", 4))
+})
+
 function nn(note: string, octave: number) {
     return NewNote(note, octave)
 }

@@ -33,11 +33,11 @@ export default {
 				emitCss: true,
 				preprocess: autoPreprocess()
 			}),
-			typescript({ sourceMap: dev }),
 			resolve({
 				browser: true,
 				dedupe: ['svelte']
 			}),
+			typescript({ sourceMap: dev }),
 			commonjs(),
 
 			legacy && babel({

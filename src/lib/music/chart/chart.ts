@@ -1,4 +1,6 @@
-import { Chord, ChordBook, Note } from "../theory/chords"
+import { niceBlue } from "../../../components/colours";
+import type { Chord, ChordBook } from "../theory/chords"
+import type {  Note } from "../theory/notes"
 // TODO: use the new yt method
 // import { GetPlayer, Player } from "../youtube/youtube"
 
@@ -23,7 +25,8 @@ export class Chart {
     // recording related fields
     noteSetIndex: number;
     lastTime: number;
-    player: Player;
+    // player: Player;
+    player: any;
 
     constructor (book: ChordBook) {
         this.book = book;
@@ -97,7 +100,7 @@ export class Chart {
             }
 
             if (chord.completed) {
-                newChord = newChord.fontcolor("green")
+                newChord = newChord.fontcolor(niceBlue)
             }
 
             desc += newChord + " "

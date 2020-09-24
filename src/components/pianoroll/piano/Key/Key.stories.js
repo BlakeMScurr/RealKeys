@@ -1,5 +1,5 @@
-import Key from './Key.svelte';
-import { AbstractNote } from "../../music/theory/notes";
+import _storybook_Key from './_storybook_Key.svelte';
+import { AbstractNote } from "../../../../lib/music/theory/notes";
 export default {
   title: 'Key',
 };
@@ -7,42 +7,42 @@ export default {
 // Kinda silly beacuse we can't see it in storybook
 // TODO: fix
 export const White = () => ({
-  Component: Key,
+  Component: _storybook_Key,
   props: {
       width: 20,
       height: 100,
       note: new AbstractNote("c"),
-      clicked: false,
+      active: false,
   }
 });
 
 export const Black = () => ({
-  Component: Key,
+  Component: _storybook_Key,
   props: {
       width: 20,
       height: 100,
       note: new AbstractNote("f#"),
-      clicked: false,
+      active: false,
   }
 });
 
 export const WhiteClicked = () => ({
-  Component: Key,
+  Component: _storybook_Key,
   props: {
       width: 20,
       height: 100,
       note: new AbstractNote("c"),
-      clicked: true,
+      active: true,
   }
 });
 
 export const BlackClicked = () => ({
-  Component: Key,
+  Component: _storybook_Key,
   props: {
       width: 20,
       height: 100,
       note: new AbstractNote("f#"),
-      clicked: true,
+      active: true,
   }
 });
 

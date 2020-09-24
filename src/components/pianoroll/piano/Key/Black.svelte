@@ -1,24 +1,27 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte"
-    import type { Note } from "../../music/theory/notes";
+    import { niceBlue } from "../../../colours";
+    import type { Note } from "../../../../lib/music/theory/notes";
     
-    export let clicked:Boolean;
+    export let active:Boolean;
     export let note:Note;
     const dispatch = createEventDispatcher()
-    $: {dispatch(clicked ? "noteOn": "noteOff", note)}
+    $: {
+        dispatch(active ? "noteOn": "noteOff", note)
+    }
 </script>
 
 <style>
       div {
         background-color: var(--color);
         width: 50%;
-        height: 60%;
+        height: 65%;
         margin: 0 25% 0 25%;
         pointer-events:auto;
     }
 </style>
 
-<div style="--color: {clicked?"green":"black"}" on:mousedown={()=>{clicked=true}}
-    on:mouseup={()=>{clicked=false}}
-    on:mouseleave={()=>{clicked=false}}>
+<div style="--color: {active?niceBlue:"black"}" on:mousedown={()=>{active=true}}
+    on:mouseup={()=>{active=false}}
+    on:mouseleave={()=>{active=false}}>
 </div>

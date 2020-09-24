@@ -1,5 +1,5 @@
 import Piano from './Piano.svelte';
-import { NewNote } from "../music/theory/notes";
+import { NewNote, notesBetween } from "../../../lib/music/theory/notes";
 
 export default {
   title: 'Piano',
@@ -8,15 +8,13 @@ export default {
 export const FromC = () => ({
   Component: Piano,
   props: {
-    lowest: NewNote("C", 4),
-    highest: NewNote("C", 5),
+    keys: notesBetween(NewNote("C", 4), NewNote("C", 5)),
   }
 });
 
 export const FromF = () => ({
   Component: Piano,
   props: {
-    lowest: NewNote("F", 4),
-    highest: NewNote("F", 5),
+    keys: notesBetween(NewNote("F", 4), NewNote("F", 5)),
   }
 });

@@ -42,6 +42,12 @@ export class AbstractNote {
         return n
     }
 
+    nextLowest() {
+        var i = NoteOrder.indexOf(this)
+        var n = NoteOrder[(i-1+12)%12];
+        return n
+    }
+
     equals(note: AbstractNote) {
         return this.letter == note.letter && this.accidental == note.accidental
     }
@@ -106,6 +112,14 @@ export class Note {
         return new Note(this.abstract.next(), octave)
     }
 
+    nextLowest() {
+        var octave = this.octave
+        if (NoteOrder.indexOf(this.abstract) == 0) {
+            octave--
+        }
+        return new Note(this.abstract.nextLowest(), octave)
+    }
+
     string() {
         return this.abstract.string() + this.octave
     }
@@ -134,6 +148,23 @@ export function NewNote(note: string, octave: number) {
 const notelist = ["c","c#","d","d#","e","f","f#","g","g#","a","a#","b"]
 export const NoteOrder = notelist.map((name: string)=>{return new AbstractNote(name)})
 
+// gives the ranges of notes between the two given, inclusive
+export function notesBetween(low: Note, high: Note):Array<Note> {
+    if (high.lowerThan(low)) {
+        throw new Error("Highest note lower than lowest note")
+    }
+
+    let notes: Array<Note> = [];
+    let curr = low
+    while (!curr.equals(high)) {
+        notes.push(curr)
+        curr = curr.next()
+    }
+    notes.push(curr)
+
+    return notes
+}
+
 // A line is a linear sequence of notes
 export class Line {
     notes: Array<Note>;
@@ -151,5 +182,14 @@ export class Line {
         return this.notes.filter((note)=>{
             return note.color() == "white"
         })
+    }
+
+    // gives a new map from all the notes in this line to a boolean representing whether they're active or note
+    activeMap():Map<String, Boolean> {
+        let m: Map<String, Boolean> = new Map()
+        this.notes.forEach(note => {
+            m.set(note.string(), false)
+        });
+        return m
     }
 }

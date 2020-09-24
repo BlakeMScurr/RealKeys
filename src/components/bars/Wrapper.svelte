@@ -23,6 +23,8 @@
     }
 </script>
 
+<!-- TODO: push the content in the wrapper up to the top level, it's just markup essentially, and doesn't belong in a component,
+but rather belongs in a route so that we can more easily see the whole structure of the page -->
 {#if edit}
     <EditBars bind:bars={bars} position={position} songLength={songLength} on:seek={forward} on:repeat={forward}></EditBars>
     <button on:click={handleClick}>Save</button>
