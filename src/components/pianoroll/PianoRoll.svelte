@@ -15,11 +15,25 @@
         pos = value
     })
 
+    let zoomWidth = 0.2 // TODO: use a fixed amount of time as a the fixed zoom window
     $: zoomEnd = pos;
-    $: zoomStart = pos - 0.2; // TODO: use a fixed amount of time as a the fixed zoom window
+    $: zoomStart = pos - zoomWidth;
 
     let keys = notes.range();
 
+    function handleWheel(event) {
+        event.preventDefault()
+        pos -= event.deltaY / 1000
+        pos = pos < 0 ? 0 : pos
+        pos = pos > 1 ? 1 : pos
+
+        // TODO: widen the piano with deltaX
+    }
+
+    // Recording handling
+    // -------------------------------------------
+    //
+    // TODO: move to a separate file
     let tmpNotes:TimedNotes;
     let recorder:Recorder = null;
     function startRecording(){
@@ -78,7 +92,7 @@
 </style>
 
 <RecordButton on:startRecording={startRecording} on:stopRecording={stopRecording}></RecordButton>
-<div id="pianoroll">
+<div id="pianoroll" on:wheel={handleWheel}>
     <div class="container roll">
         <Roll {keys} {bars} {notes} height={100} unit={"%"} {zoomStart} {zoomEnd}></Roll>
     </div>

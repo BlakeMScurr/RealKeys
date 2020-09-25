@@ -1,15 +1,15 @@
-import _storybook_Tester from "./_storybook_Tester.svelte"
+import PianoRoll from "./PianoRoll.svelte"
 import { TimedNote, TimedNotes } from "../../lib/music/timed/timed";
 import { Bars}  from "./pianoroll";
 import { NewNote } from "../../lib/music/theory/notes";
 
 export default {
   title: 'PianoRoll',
-  component: _storybook_Tester,
+  component: PianoRoll,
 };
 
 const Template = ({...args }) => ({
-  Component: _storybook_Tester,
+  Component: PianoRoll,
   props: {
     // TODO: make an issue on storybook for the unexpected token error when we pass bars and notes via the args
     bars: new Bars([0.2, 0.2, 0.2, 0.2, 0.2]),
