@@ -1,6 +1,5 @@
 <script lang="ts">
     // TODO: allow scrolling
-    import { zoom } from "../../bars/bars";
     import { niceBlue } from "../../colours";
     import type { Note } from "../../../lib/music/theory/notes";
     import type { TimedNotes } from "../../../lib/music/timed/timed";

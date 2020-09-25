@@ -3,7 +3,6 @@
     import { Recorder, TimedNotes } from "../../lib/music/timed/timed"
     import { position } from "../stores"
     import RecordButton from "../generic/RecordButton.svelte"
-    import ZoomArea from "../bars/zoom/ZoomArea.svelte";
     import Roll from "./roll/Roll.svelte";
     import Piano from "./piano/Piano.svelte";
     import { isNull } from "util";
