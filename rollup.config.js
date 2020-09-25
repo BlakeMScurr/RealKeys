@@ -82,8 +82,10 @@ export default {
 				preprocess: autoPreprocess()
 			}),
 			resolve({
-				dedupe: ['svelte']
+				dedupe: ['svelte'],
+				extensions: [ '.mjs', '.js', '.json', '.node', '.svelte', '.ts'],
 			}),
+			typescript({ sourceMap: dev }),
 			commonjs()
 		],
 		external: Object.keys(pkg.dependencies).concat(require('module').builtinModules),

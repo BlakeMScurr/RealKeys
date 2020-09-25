@@ -8,23 +8,25 @@
 </script>
 
 <script lang="ts">
-    import LessonLoader from '../../../components/lessons/LessonLoader.svelte';
-    import Record from "../../../components/pages/Record.svelte";
+    import { onMount } from 'svelte';
     import { currentSong } from "../../../components/stores";
     import type { TimedNotes } from '../../../lib/music/timed/timed';
+    import LessonLoader from '../../../components/lessons/LessonLoader.svelte';
+    import Record from "../../../components/pages/Record.svelte";
 
     export let owner;
     export let lessonID;
 
-    currentSong.subscribe((notes: TimedNotes) => {
-        console.log("fetching notes")
-        fetch(["api", owner, lessonID, "updateNotes"].join("/"), {
-            method: "POST",
-              headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify(notes)
+    onMount(()=>{
+        currentSong.subscribe((notes: TimedNotes) => {
+            fetch(["api", owner, lessonID, "updateNotes"].join("/"), {
+                method: "POST",
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(notes)
+            })
         })
     })
 
