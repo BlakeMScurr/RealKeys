@@ -1,5 +1,7 @@
 import { writable } from 'svelte/store';
+import { TimedNotes } from '../lib/music/timed/timed';
 
+export const currentSong = createCurrentSong();
 export const repeats = createRepeats();
 export const position = createPosition();
 
@@ -38,3 +40,15 @@ function createRepeats() {
     }
 }
 
+function createCurrentSong() {
+    const { subscribe, set } = writable(new TimedNotes([]));
+
+    return {
+        subscribe,
+        set: (notes: TimedNotes)=>{
+            set(notes)
+        }
+        // TODO: does this work instead?
+        // set,
+    }
+}

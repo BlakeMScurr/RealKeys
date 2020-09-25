@@ -8,14 +8,14 @@
 # 1: import typescript files using the .ts extension in the import (which is not supposed to be allowed)
 # 2: we get the build server running without using typescript first, then we alter files to import typescript
 
-sed -i -e 's/^/<!--/' 'src/routes/ts.svelte'
-sed -i -e 's/$/-->/' "src/routes/ts.svelte"
+sed -i -e 's/^/<!--/' 'src/routes/[owner]/[lessonID]/record.svelte'
+sed -i -e 's/$/-->/' "src/routes/[owner]/[lessonID]/record.svelte"
 sed -i -e 's/^/\/\//' "src/routes/ting.ts"
 npm run dev &
 sleep 10
 echo "replacing"
-sed -i -e 's/^<!--//' "src/routes/ts.svelte"
-sed -i -e 's/-->$//' "src/routes/ts.svelte"
+sed -i -e 's/^<!--//' "src/routes/[owner]/[lessonID]/record.svelte"
+sed -i -e 's/-->$//' "src/routes/[owner]/[lessonID]/record.svelte"
 sed -i -e 's/^\/\///' "src/routes/ting.ts"
-rm src/routes/ts.svelte-e
+rm src/routes/[owner]/[lessonID]/record.svelte-e
 rm src/routes/ting.ts-e

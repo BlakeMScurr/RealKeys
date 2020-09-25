@@ -1,7 +1,7 @@
 <script lang="ts">
     import type { Bars } from "./pianoroll";
     import { Recorder, TimedNotes } from "../../lib/music/timed/timed"
-    import { position } from "../stores"
+    import { position, currentSong } from "../stores"
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
     import Piano from "./piano/Piano.svelte";
@@ -51,6 +51,7 @@
         // TODO: merge newly recorded notes
         notes = recorder.merge(tmpNotes);
         recorder = null;
+        currentSong.set(notes)
     }
 
     function noteOn(event) {
