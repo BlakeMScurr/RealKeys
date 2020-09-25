@@ -2,6 +2,7 @@
     import { TimedNotes } from "../../lib/music/timed/timed.ts";
     import { Bars } from "../pianoroll/pianoroll.ts";
     import PianoRoll from "../pianoroll/PianoRoll.svelte";
+import ZoomBars from "../bars/zoom/ZoomBars.svelte";
 
     export let bars;
     export let notes = new TimedNotes([]);
@@ -12,4 +13,6 @@
     }))
 </script>
 
+<!-- TODO: audioplayer -->
+<ZoomBars {bars}></ZoomBars>
 <PianoRoll bars={barwidths} {notes}></PianoRoll>

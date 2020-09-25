@@ -26,6 +26,7 @@
         pos -= event.deltaY / 1000
         pos = pos < 0 ? 0 : pos
         pos = pos > 1 ? 1 : pos
+        position.set(pos)
 
         // TODO: widen the piano with deltaX
     }
