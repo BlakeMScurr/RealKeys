@@ -1,9 +1,14 @@
 {
   "extends": "@tsconfig/svelte/tsconfig.json",
-  "include": ["src/**/*", "src/node_modules"],
+  "include": ["src/**/*"],
   "exclude": ["node_modules/*", "__sapper__/*", "public/*"],
   "compilerOptions": {
-      "types": ["svelte", "node", "@sapper", "@types/jest"],
-      "typeRoots": ["typings"]
+      "types": ["svelte", "node", "@sapper","@types/jest"],
+      "typeRoots": ["typings"],
+      "isolatedModules": false,
+      "strict": false,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true
   },
 }

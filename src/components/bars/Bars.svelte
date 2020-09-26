@@ -1,17 +1,21 @@
 <script>
-    import Bar from "./Bar.svelte"
-    import Seeker from "./Seeker.svelte"
     import { createEventDispatcher } from 'svelte';
-
     import { setWidths, validate, getSeekPixels, getSeekPercentage } from "./bars.js"
     import { getRelativePosition } from "../../lib/dom.js"
     import { widthSum } from "../../lib/util.js"
+    import { position } from "../stores.ts"
     import { onMount } from 'svelte';
+    import Bar from "./Bar.svelte"
+    import Seeker from "./Seeker.svelte"
 
     export let bars;
     export let zoomStart = 0;
     export let zoomEnd = 1;
-    export let position = 0;
+
+    let currentPosition = 0;
+    position.subscribe((pos)=> {
+        currentPosition = pos
+    })
     
     let w;
     let container;
@@ -29,10 +33,14 @@
     const dispatch = createEventDispatcher();
     function handleClick(event) {
         let pos = getRelativePosition(event.clientX, event.clientY, container)
-        position = getSeekPercentage(pos.x -10, w, zoomStart, zoomEnd)
+        currentPosition = getSeekPercentage(pos.x -10, w, zoomStart, zoomEnd)
         dispatch('seek', {
-			position: position,
+			position: currentPosition,
 		});
+    }
+
+    $: {
+        position.set(currentPosition)
     }
 
     // send repeat positions up to the audio player 
@@ -153,8 +161,8 @@
 </style>
 
 <div class="container" on:click={handleClick} bind:this={container}>
-    {#if zoomStart <= position && position <= zoomEnd}
-        <div class="seekerHolder" style="--left-position: {getSeekPixels(position, w, zoomStart, zoomEnd)+"px"}">
+    {#if zoomStart <= currentPosition && currentPosition <= zoomEnd}
+        <div class="seekerHolder" style="--left-position: {getSeekPixels(currentPosition, w, zoomStart, zoomEnd)+"px"}">
             <Seeker></Seeker>
         </div>
     {:else}

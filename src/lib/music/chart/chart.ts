@@ -66,7 +66,6 @@ export class Chart {
     getCurrent() {
         // TODO: efficient lookup
         var currentTime = this.currentPlayerTime()
-        console.log("current time " + currentTime)
         for (let i = 0; i < this.chords.length; i++) {
             // Assumes chords are properly ordered
             var chord = this.chords[i]

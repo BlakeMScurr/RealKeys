@@ -1,8 +1,8 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { NewNote, Note, notesBetween } from "../../../lib/music/theory/notes";
-    import { Line } from "../../../lib/music/theory/notes";
-    import { fillGhosts, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote } from "./piano";
+    import { NewNote, Note, notesBetween } from "../../../lib/music/theory/notes.ts";
+    import { Line } from "../../../lib/music/theory/notes.ts";
+    import { blackAndGhostBetween, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote } from "./piano.ts";
     import WebMidi, { InputEventNoteon, InputEventNoteoff } from "webmidi";
     import Key from "./Key/Key.svelte";
 
@@ -14,6 +14,7 @@
     }
 
     let notes = new Line(keys)
+    $: notes = new Line(keys)
     let activeMap = notes.activeMap()
 
     // setup midi keyboard input
@@ -73,7 +74,7 @@
         {/each}
     </div>
     <div style="--blackMargin: {regularWhiteWidth(notes.white())*100/4}%;" class="rapper" id="JuiceWrld">
-        {#each fillGhosts(notes.black()) as note}
+        {#each blackAndGhostBetween(notes.lowest(), notes.highest()) as note}
             {#if note instanceof Ghost}
                 <Key ghost={true} width={regularWhiteWidth(notes.white())*100 * (2/4)}></Key>
             {:else}

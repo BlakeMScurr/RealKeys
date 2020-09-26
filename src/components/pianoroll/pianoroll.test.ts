@@ -8,3 +8,7 @@ function fifthBars():Bars {
 test("barLines", ()=>{
     expect(fifthBars().barLines()).toEqual([new Fraction(0), new Fraction("1/5"), new Fraction("2/5"), new Fraction("3/5"), new Fraction("4/5"), new Fraction("1")])
 })
+
+test("tooShort", ()=>{
+    expect(()=>{ new Bars([new Fraction('1/5')])}).toThrow("Bars don't sum to 1:")
+})
