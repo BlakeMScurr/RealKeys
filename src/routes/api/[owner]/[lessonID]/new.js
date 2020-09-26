@@ -8,8 +8,9 @@ export function post(request, response) {
     const pool = NewPool()
 
     // ensure lesson is unique
-    let uniquenessCheck = prep('SELECT * FROM lesson WHERE LESSON_OWNER=${owner} AND LESSON_NAME=${lessonID}')
-    pool.query(uniquenessCheck(request.params), (err, res) => {
+    let params = {lessonID: request.params.owner + "/" + request.params.lessonID}
+    let uniquenessCheck = prep('SELECT * FROM lesson WHERE LESSON_NAME=${lessonID}')
+    pool.query(uniquenessCheck(params), (err, res) => {
         if (err !== undefined) {
             throw err
         }
@@ -24,7 +25,7 @@ export function post(request, response) {
 
             // Calculate barlines
             calculateBars(request.body.youtubeID).then((bars)=>{
-                let insertion = prep('INSERT INTO lesson(LESSON_OWNER, LESSON_NAME, YOUTUBE_ID, YOUTUBE_TITLE, BARS) VALUES (${owner}, ${lessonName}, ${youtubeID}, ${youtubeTitle}, ${bars})')
+                let insertion = prep('INSERT INTO lesson(LESSON_NAME, YOUTUBE_ID, YOUTUBE_TITLE, BARS) VALUES (${lessonName}, ${youtubeID}, ${youtubeTitle}, ${bars})')
                 request.body.bars = JSON.stringify(bars)
                 pool.query(insertion(request.body), (err, res) => {
                     if (err !== undefined) {

@@ -13,20 +13,26 @@
     import type { TimedNotes } from '../../../lib/music/timed/timed';
     import LessonLoader from '../../../components/lessons/LessonLoader.svelte';
     import Record from "../../../components/pages/Record.svelte";
+import { joinURL } from '../../../lib/util';
 
     export let owner;
     export let lessonID;
 
     onMount(()=>{
+        let loads = 0;
         currentSong.subscribe((notes: TimedNotes) => {
-            fetch(["api", owner, lessonID, "updateNotes"].join("/"), {
-                method: "POST",
-                  headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify(notes)
-            })
+            // Don't update the notes in the db for the initial value of the store
+            if (loads > 0) {
+                fetch(joinURL(["api", owner, lessonID, "updateNotes"]), {
+                    method: "POST",
+                      headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(notes)
+                })
+            }
+            loads++
         })
     })
 

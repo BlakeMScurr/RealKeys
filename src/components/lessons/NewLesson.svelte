@@ -1,6 +1,6 @@
 <script>
     import { goto } from '@sapper/app';
-    import { Fetcher } from '../../lib/util.js'
+    import { Fetcher, joinURL } from '../../lib/util.js'
     export let fetcher = new Fetcher();
 
     export let youtubeID = "reLjhAAPsPc"
@@ -16,15 +16,14 @@
 
     let backendError = "";
     function handlesave() {
-        fetch(["api", "blakemscurr", lessonName, "new"].join("/"), {
+        fetch(joinURL(["api", "blakemscurr", lessonName, "new"]), {
             method: "POST",
               headers: {
                 'Content-Type': 'application/json',
                 'Accept': 'application/json'
             },
             body: JSON.stringify({
-                owner: "blakemscurr", // TODO: get from logged in user
-                lessonName: lessonName,
+                lessonName: "blakemscurr/" + lessonName, // TODO: get from logged in user
                 youtubeID: youtubeID,
                 youtubeTitle: youtubeTitle,
             })
@@ -32,7 +31,7 @@
             if (response.status == 400) {
                 return response.json()
             } else {
-                goto(["blakemscurr", lessonName, "edit"].join("/"))
+                goto(joinURL(["blakemscurr", lessonName, "record"]))
             }
         }).then((json)=>{
             if (json !== undefined && json.message !== undefined) {

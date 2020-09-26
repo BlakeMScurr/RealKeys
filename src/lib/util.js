@@ -62,3 +62,8 @@ export function renderSeconds(seconds) {
     minutes = minutes % 60
     return hours + ":" + minutes + ":" + seconds
 }
+
+export function joinURL(parts){
+    // Requires trailing slash or else chrome will lowercase the url - fuck you chrome
+    return parts.join("/") + "/"
+}
