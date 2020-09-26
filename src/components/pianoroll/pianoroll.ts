@@ -9,7 +9,9 @@ export class Bars {
             return prev.add(curr)
         }, new Fraction(0));
         if (sum != 1) {
+            // TODO: revert
             // throw new Error("Bars don't sum to 1: " + sum)
+            console.error("Bars don't sum to 1: " + sum)
         }
 
 
