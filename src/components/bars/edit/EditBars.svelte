@@ -10,7 +10,6 @@
 
     const dispatch = createEventDispatcher();
     function forward(event) {
-        console.log("forwarding from editbars")
         dispatch(event.type, event.detail);
     }
 

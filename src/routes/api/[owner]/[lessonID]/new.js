@@ -4,7 +4,6 @@ import { downloadYouTubeVideo } from "../../../../backend/youtube-dl.js"
 var prep = require('pg-prepared')
 
 export function post(request, response) {
-    console.log("running new")
     const pool = NewPool()
 
     // ensure lesson is unique
@@ -15,7 +14,6 @@ export function post(request, response) {
             throw err
         }
         if (res.rows.length != 0) {
-            console.log("already exists")
             response.status(400).send({
                 message: "Lesson \"" + request.params.owner + "/" + request.params.lessonID + "\" already exists"
             })

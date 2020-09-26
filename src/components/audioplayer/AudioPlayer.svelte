@@ -77,7 +77,6 @@
             clearInterval(repeatInterval)
             clearTimeout(repeatTimeout)
             if (ct < endRepeat * duration) {
-                console.log("setting repeat timeout")
                 repeatTimeout = setTimeout(()=>{
                     audioPlayer.Seek(startRepeat * duration)
                     position.set(startRepeat)

@@ -13,7 +13,7 @@
     import type { TimedNotes } from '../../../lib/music/timed/timed';
     import LessonLoader from '../../../components/lessons/LessonLoader.svelte';
     import Record from "../../../components/pages/Record.svelte";
-import { joinURL } from '../../../lib/util';
+    import { joinURL } from '../../../lib/util';
 
     export let owner;
     export let lessonID;
