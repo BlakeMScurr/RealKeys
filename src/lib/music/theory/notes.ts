@@ -137,6 +137,27 @@ export class Note {
     color():string {
         return this.abstract.color()
     }
+
+    // TODO: efficiency - we should be able to do this without iteration with just a lookup
+    intervalTo(note: Note) {
+        let lower = NewNote(this.abstract.string(), this.octave)
+        let higher = note
+        let flip = 1
+        if (higher.lowerThan(lower)) {
+            let tmp = lower
+            lower = higher
+            higher = tmp
+            flip = -1
+        }
+
+        let interval = 0
+        while (!lower.equals(higher)) {
+            lower = lower.next()
+            interval++
+        }
+
+        return interval * flip
+    }
 }
 
 export function NewNote(note: string, octave: number) {
@@ -170,6 +191,14 @@ export class Line {
     notes: Array<Note>;
     constructor(notes: Array<Note>) {
         this.notes = notes;
+    }
+
+    lowest():Note{
+        return this.notes[0]
+    }
+
+    highest():Note{
+        return this.notes[this.notes.length-1]
     }
 
     black():Array<Note> {

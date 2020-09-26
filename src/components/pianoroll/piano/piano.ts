@@ -1,29 +1,28 @@
+import { noteString } from "../../../lib/music/theory/chords";
 import { Note, Line } from "../../../lib/music/theory/notes";
 
 export class Ghost {}
 
-// takes a set of black notes and fills in those that don't exist on the piano so they can take some space in the render
-// assumes they are ordered from top to bottom with no missing notes
-export function fillGhosts(notes: Array<Note>) {
+// returns the black notes between an upper and lower bound and fills in those that don't 
+// exist on the piano so they can take some space in the render
+export function blackAndGhostBetween(low: Note, high: Note):Array<Note|Ghost> {
     let newNotes: Array<Note|Ghost> = [];
-    for (let i = 0; i < notes.length; i++) {
-        const note = notes[i];
-        if (note.color() != "black") {
-            throw new Error("Can only fill ghosts for black notes")
-        }
-
-        newNotes.push(note)
-        if (i != notes.length -1) {
-            if (note.next().next().color() != "black") {
+    if (high.lowerThan(low) || high.equals(low)) {
+        throw new Error("Low note must be lower than high note")
+    }
+    
+    high = high.next() // runs loop up to highest note, TODO: be more elegant
+    while (low.lowerThan(high)) { 
+        if (low.abstract.accidental) {
+            newNotes.push(low)
+        } else {
+            if (!low.next().abstract.accidental && low.next().lowerThan(high)) {
                 newNotes.push(new Ghost())
-                if (!note.next().next().next().equals(notes[i+1])) {
-                    throw new Error(note.string() + " should be followed by " + note.next().next().next().string() + " not " + notes[i+1].string())
-                }
-            } else if (!note.next().next().equals(notes[i+1])) {
-                throw new Error(note.string() + " should be followed by " + note.next().next().string() + " not " + notes[i+1].string())
             }
         }
+        low = low.next()
     }
+
     return newNotes
 }
 
@@ -43,13 +42,14 @@ export class NoteWidth {
 export function whiteWidths(notes: Array<Note>):Array<NoteWidth> {
     let nws: Array<NoteWidth> = [];
     let totalLength = 0
-    notes.forEach(note => {
+    notes.forEach((note, i) => {
         if(note.color() != "white") {
             throw new Error("Can only apply whiteWidths to white notes")
         }
         
-        totalLength += width(note)
-        nws.push(new NoteWidth(note, width(note)))
+        let w = width(note, i == 0, i == notes.length - 1)
+        totalLength += w
+        nws.push(new NoteWidth(note, w))
     });
 
     let totalpercentage = 0;
@@ -61,22 +61,24 @@ export function whiteWidths(notes: Array<Note>):Array<NoteWidth> {
     return nws
 }
 
-function width(note: Note) {
+// gives the proper width to match up with the constant width of the roll section
+function width(note: Note, bottomEdge: boolean, topEdge) {
     switch (note.abstract.letter) {
-        case "b":
         case "c":
         case "f":
+            return topEdge ? 2 : 3;
+        case "b":
         case "e":
-            return 3
+            return bottomEdge ? 2 : 3;
         default:
-            return 4
+            return topEdge || bottomEdge ? 3 : 4
     }
 }
 
 export function regularWhiteWidth(notes: Array<Note>) {
     let totalLength = 0
-    notes.forEach(note => {
-        totalLength += width(note)
+    notes.forEach((note, i) => {
+        totalLength += width(note, i == 0, i == notes.length - 1)
     });
     return 4/totalLength
 }
@@ -94,7 +96,7 @@ export function keyboardInputNote(keyCode: number, notes: Line):Note {
 
     index = accidentals.indexOf(key)
     if (index != -1) {
-        let ng = fillGhosts(notes.black())[index]
+        let ng = blackAndGhostBetween(notes.notes[0], notes.notes[notes.notes.length-1])[index]
         if (ng instanceof Note) {
             return <Note>ng
         }

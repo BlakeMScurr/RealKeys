@@ -1,5 +1,5 @@
 import { NewNote, notesBetween } from "../../../lib/music/theory/notes"
-import { fillGhosts, Ghost } from "./piano"
+import { blackAndGhostBetween, Ghost } from "./piano"
 
 // TODO: shift all my flats to sharps, as that's the internal representation
 
@@ -30,57 +30,50 @@ test("NotesBetween", ()=>{
     expect(()=>{notesBetween(NewNote("Eb", 4), NewNote("C", 4))}).toThrow("Highest note lower than lowest note")
 })
 
-test("FillGhosts", ()=>{
-    expect(()=>{fillGhosts([
+test("BlackAndGhostBetween", ()=>{
+    expect(blackAndGhostBetween(
         NewNote("C", 4),
         NewNote("C", 5),
-    ])}).toThrow("Can only fill ghosts for black notes")
+    )).toEqual([
+        NewNote("C#", 4),
+        NewNote("D#", 4),
+        new Ghost(),
+        NewNote("F#", 4),
+        NewNote("G#", 4),
+        NewNote("A#", 4),
+        new Ghost(),
+    ])
 
-    expect(()=>{fillGhosts([
-        NewNote("Bb", 4),
-        NewNote("Eb", 5),
-    ])}).toThrow("a#4 should be followed by c#5 not d#5")
-
-    expect(()=>{fillGhosts([
-        NewNote("Ab", 4),
-        NewNote("Eb", 5),
-    ])}).toThrow("g#4 should be followed by a#4 not d#5")
-
-    expect(fillGhosts([
+    expect(blackAndGhostBetween(
         NewNote("F#", 4),
         NewNote("G#", 4)
-    ])).toEqual([
+    )).toEqual([
         NewNote("F#", 4),
         NewNote("G#", 4)
     ])
 
-    expect(fillGhosts([
+    expect(blackAndGhostBetween(
         NewNote("F#", 4),
-        NewNote("G#", 4),
         NewNote("A#", 4)
-    ])).toEqual([
+    )).toEqual([
         NewNote("F#", 4),
         NewNote("G#", 4),
         NewNote("A#", 4)
     ])
 
-    expect(fillGhosts([
+    expect(blackAndGhostBetween(
         NewNote("A#", 4),
         NewNote("C#", 5)
-    ])).toEqual([
+    )).toEqual([
         NewNote("A#", 4),
         new Ghost(),
         NewNote("C#", 5)
     ])
 
-    expect(fillGhosts([
+    expect(blackAndGhostBetween(
         NewNote("Bb", 4),
-        NewNote("Db", 5),
-        NewNote("Eb", 5),
-        NewNote("Gb", 5),
-        NewNote("Ab", 5),
         NewNote("Bb", 5),
-    ])).toEqual([
+    )).toEqual([
         NewNote("Bb", 4),
         new Ghost(),
         NewNote("Db", 5),
@@ -89,5 +82,14 @@ test("FillGhosts", ()=>{
         NewNote("Gb", 5),
         NewNote("Ab", 5),
         NewNote("Bb", 5),
+    ])
+
+    expect(blackAndGhostBetween(
+        NewNote("B", 4),
+        NewNote("E", 5),
+    )).toEqual([
+        new Ghost(),
+        NewNote("Db", 5),
+        NewNote("Eb", 5),
     ])
 })

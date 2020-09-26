@@ -179,6 +179,13 @@ test("NextLowest", ()=>{
     expect(NewNote("F", 4).nextLowest()).toEqual(NewNote("E", 4))
 })
 
+test("Interval", ()=>{
+    expect(NewNote("C", 4).intervalTo(NewNote("C", 4))).toEqual(0)
+    expect(NewNote("C", 4).intervalTo(NewNote("C#", 4))).toEqual(1)
+    expect(NewNote("C", 4).intervalTo(NewNote("B", 3))).toEqual(-1)
+    expect(NewNote("C", 4).intervalTo(NewNote("C", 5))).toEqual(12)
+})
+
 function nn(note: string, octave: number) {
     return NewNote(note, octave)
 }

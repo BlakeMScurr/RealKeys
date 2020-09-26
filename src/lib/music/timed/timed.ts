@@ -163,13 +163,9 @@ export class TimedNotes {
             }
         }
 
-        // the width of the keys in the roll section only correspond to the width of the black notes, or the width of the and there will be a mismatch
-        // if our lowest note isn't C or F, and the highest isn't B or E
-        while (lowest.abstract != NewAbstractNote("C") && lowest.abstract != NewAbstractNote("F")) {
+        // TODO: we should be able to find this without iteration
+        while(lowest.intervalTo(highest) <= 12 || lowest.abstract.accidental || highest.abstract.accidental) {
             lowest = lowest.nextLowest()
-        }
-
-        while (highest.abstract != NewAbstractNote("B") && highest.abstract != NewAbstractNote("E")) {
             highest = highest.next()
         }
 

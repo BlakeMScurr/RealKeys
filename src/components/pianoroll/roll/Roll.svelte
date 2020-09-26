@@ -32,7 +32,7 @@
             }
             
         }
-        throw new Error("Couldn't find note " + n.string())
+        return -1
     }
 </script>
 
@@ -82,6 +82,8 @@
 </div>
 <div class="container" style="--height: {height + unit};">
     {#each notes.notes as note}
-        <div class="note" style="--width: {100/keys.length}%; --left: {find(note.note, keys) * 100/keys.length}%; --height: {100*((1-note.start)-(1-note.end))/zoomRatio}%; --top:{100*(1-note.end)/zoomRatio - zoomOffset}%; --color: {niceBlue}"></div>
+        {#if find(note.note, keys) != -1}
+            <div class="note" style="--width: {100/keys.length}%; --left: {find(note.note, keys) * 100/keys.length}%; --height: {100*((1-note.start)-(1-note.end))/zoomRatio}%; --top:{100*(1-note.end)/zoomRatio - zoomOffset}%; --color: {niceBlue}"></div>
+        {/if}
     {/each}
 </div>

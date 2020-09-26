@@ -5,16 +5,29 @@ export default {
   title: 'Piano',
 };
 
-export const FromC = () => ({
+const Template = ({...args }) => ({
   Component: Piano,
   props: {
-    keys: notesBetween(NewNote("C", 4), NewNote("C", 5)),
-  }
+    ...args,
+  },
 });
 
-export const FromF = () => ({
-  Component: Piano,
-  props: {
-    keys: notesBetween(NewNote("F", 4), NewNote("F", 5)),
-  }
-});
+export const FromC = Template.bind({})
+FromC.args = {
+  keys: notesBetween(NewNote("C", 4), NewNote("C", 5)),
+}
+
+export const FromF = Template.bind({})
+FromF.args = {
+  keys: notesBetween(NewNote("F", 4), NewNote("F", 5)),
+}
+
+export const FromD = Template.bind({})
+FromD.args = {
+  keys: notesBetween(NewNote("D", 4), NewNote("E", 5)),
+}
+
+export const FromB = Template.bind({})
+FromB.args = {
+  keys: notesBetween(NewNote("B", 4), NewNote("E", 6)),
+}
