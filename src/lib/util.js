@@ -55,12 +55,12 @@ export function renderSeconds(seconds) {
     let minutes = Math.floor(seconds / 60)
     seconds = seconds % 60
     if (minutes < 60) {
-        return minutes + ":" + seconds
+        return minutes.toFixed(0) + ":" + seconds.toFixed(1)
     }
 
     let hours = Math.floor(minutes / 60)
     minutes = minutes % 60
-    return hours + ":" + minutes + ":" + seconds
+    return hours.toFixed(0) + ":" + minutes.toFixed(0) + ":" + seconds.toFixed(1)
 }
 
 export function joinURL(parts){

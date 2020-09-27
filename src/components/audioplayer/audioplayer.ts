@@ -1,3 +1,4 @@
+import { readFileSync } from 'fs';
 import { Howl } from 'howler';
 
 export interface Player {
@@ -8,17 +9,31 @@ export interface Player {
     Duration():number;
 }
 
-export async function NewYouTubeAudioPlayer(videoID):Promise<Player> {
+
+export async function NewYouTubeAudioPlayer(videoID: string):Promise<Player> {
+    return NewHowlAudioPlayer(['getYTAudio/' + videoID])
+}
+
+export async function NewHowlAudioPlayer(src: any):Promise<Player> {
     let howlPromise:Promise<Player> = new Promise((resolve) => {
-        resolve(new HowlPlayer(new Howl({
-            src: ['getYTAudio/' + videoID],
+        let sound;
+        sound = new HowlPlayer(new Howl({
+            src: src,
             format: 'mp3',
             html5: true, // html5 being forced gives us rate change without pitch increase as per https://github.com/goldfire/howler.js/issues/586#issuecomment-237240859
-        })));
+            onload: ()=> {
+                resolve(sound)
+            }
+        }));
     })
     return howlPromise;
 }
 
+export function NewMockPlayer(length: number):Promise<Player> {
+    return new Promise((resolve) => {
+        resolve(new MockPlayer(5));
+    })
+}
 class HowlPlayer {
     sound: any;
 
