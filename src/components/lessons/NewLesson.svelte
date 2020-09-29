@@ -31,7 +31,7 @@
             if (response.status == 400) {
                 return response.json()
             } else {
-                goto(joinURL(["blakemscurr", lessonName, "record"]))
+                goto(joinURL(["blakemscurr", lessonName, "beats"]))
             }
         }).then((json)=>{
             if (json !== undefined && json.message !== undefined) {

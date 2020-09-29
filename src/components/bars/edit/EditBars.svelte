@@ -3,8 +3,8 @@
     import Tapper from "../tapper/Tapper.svelte"
     import { createUnevenBars, createEvenBars } from "./editBars.js"
     import { createEventDispatcher } from 'svelte';
+    import { position } from "../../stores"
 
-    export let position = 0;
     export let songLength; // length of the song
     export let bars;
 
@@ -13,15 +13,20 @@
         dispatch(event.type, event.detail);
     }
 
+    let pos = 0;
+    position.subscribe((val)=>{
+        pos = val
+    })
+
     let bpm = 0;
     let tapTimes = [];
     let norm;
     let moveAnchor = false
-    let anchor = position
+    let anchor = pos
 
     $: {
         if (moveAnchor) {
-            anchor = position
+            anchor = pos
         }
     }
 
@@ -36,7 +41,7 @@
     // TODO: allow sections with different tempos
 </script>
 
-<ZoomBars bind:position={position} bars={bars} on:seek={forward}></ZoomBars>
+<ZoomBars bind:position={pos} bars={bars} on:seek={forward}></ZoomBars>
 
 <div>
     <label>
