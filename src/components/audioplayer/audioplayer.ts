@@ -1,4 +1,3 @@
-import { readFileSync } from 'fs';
 import { Howl } from 'howler';
 
 export interface Player {

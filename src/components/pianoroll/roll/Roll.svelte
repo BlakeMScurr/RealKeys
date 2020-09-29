@@ -1,4 +1,5 @@
 <script lang="ts">
+    // TOOD: use webgl - cpu spikes on scroll right now
     // TODO: allow scrolling
     import { niceBlue } from "../../colours";
     import type { Note } from "../../../lib/music/theory/notes";

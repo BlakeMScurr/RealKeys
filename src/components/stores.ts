@@ -32,7 +32,7 @@ function createRepeats() {
             if (start > end) {
                 throw new Error("start > end " + start + " > " + end)
             }
-            else if (start < 0 || start > 1 || end < 0 || end || 1) {
+            else if (start < 0 || start > 1 || end < 0 || end > 1) {
                 throw new Error("repeats out of bounds, must be between 0 and 1. Start: " + start + ", End: " + end)
             }
 

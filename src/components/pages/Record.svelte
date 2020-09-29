@@ -2,10 +2,13 @@
     import { TimedNotes, TimedNote } from "../../lib/music/timed/timed.ts";
     import { NewNote } from "../../lib/music/theory/notes.ts";
     import { Bars } from "../pianoroll/pianoroll.ts";
+    import type { Player } from "../audioplayer/AudioPlayer.ts";
     import PianoRoll from "../pianoroll/PianoRoll.svelte";
     import ZoomBars from "../bars/zoom/ZoomBars.svelte";
+    import AudioPlayer from "../audioplayer/AudioPlayer.svelte";
 
     export let bars;
+    export let AudioPlayerPromise:Promise<Player>;
     export let notes:TimedNotes = new TimedNotes([]);
 
     // TODO: find the proper way to cast
@@ -24,6 +27,6 @@
     }))
 </script>
 
-<!-- TODO: audioplayer -->
+<AudioPlayer {AudioPlayerPromise}></AudioPlayer>
 <ZoomBars {bars}></ZoomBars>
 <PianoRoll bars={barwidths} notes={tns}></PianoRoll>

@@ -50,7 +50,6 @@
                 let newLeftPos = audioPlayer.CurrentTime() - 0.5
                 if (newLeftPos < 0) newLeftPos = 0
                 // TODO: make sure we don't get multiple intervals running when there is an error setting the current time out of bounds
-                console.log("fuck you gay faggot")
                 setPosition(newLeftPos / duration)
                 audioPlayer.Seek(newLeftPos)
                 // TODO: why is repetition broken by hitting the left or right arrows?
@@ -92,12 +91,10 @@
             if (ct < endRepeat * duration) {
                 repeatTimeout = setTimeout(()=>{
                     audioPlayer.Seek(startRepeat * duration)
-                    console.log("fuck you gay faggot")
                     setPosition(startRepeat)
                     clearInterval(repeatInterval)
                     repeatInterval = setInterval(() => {
                         audioPlayer.Seek(startRepeat * duration)
-                        console.log("fuck you gay faggot")
                         setPosition(startRepeat)
                     }, ((endRepeat - startRepeat) * duration) * 1000);
                 }, (endRepeat * duration - ct) * 1000)
