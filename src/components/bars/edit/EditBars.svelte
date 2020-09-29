@@ -9,9 +9,6 @@
     export let bars;
 
     const dispatch = createEventDispatcher();
-    function forward(event) {
-        dispatch(event.type, event.detail);
-    }
 
     let pos = 0;
     position.subscribe((val)=>{
@@ -36,12 +33,13 @@
         } else {
             bars = createEvenBars(anchor, bpm, songLength)
         }
+        dispatch("newBars", bars)
     }
 
     // TODO: allow sections with different tempos
 </script>
 
-<ZoomBars bind:position={pos} bars={bars} on:seek={forward}></ZoomBars>
+<ZoomBars bars={bars}></ZoomBars>
 
 <div>
     <label>

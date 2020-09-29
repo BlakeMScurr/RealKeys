@@ -8,8 +8,6 @@
 </script>
 
 <script>
-    import LessonLoader from '../../components/lessons/LessonLoader.svelte';
-    // import AudioPlayer from '../../components/audioplayer/AudioPlayer.svelte';
 
     export let owner;
     export let lessonID;
@@ -19,5 +17,5 @@
     let renderProps = { editable: false }
 </script>
 
-<LessonLoader {owner} {lessonID} {renderProps}></LessonLoader>
-<!-- <LessonLoader {owner} {lessonID} {renderComponent} {renderProps}></LessonLoader> -->
+
+{owner + "/" + lessonID}
