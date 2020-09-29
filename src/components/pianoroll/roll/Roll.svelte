@@ -78,7 +78,7 @@
 <div class="container" style="--height: {height + unit};">
     <!-- TODO: make greyed out space before and after the bars -->
     {#each bars.sums() as bar}
-        <div class="bar" style="--top: {(viewHeight * bar - zoomOffset) + unit};"></div>
+        <div class="bar" style="--top: {(viewHeight * (1-bar) - zoomOffset) + unit};"></div>
     {/each}
 </div>
 <div class="container" style="--height: {height + unit};">

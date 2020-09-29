@@ -31,7 +31,7 @@ export class Bars {
 
     sums():Array<number> {
         let sum = 0;
-        let newBars:Array<number> = [];
+        let newBars:Array<number> = [0];
         this.bars.forEach(bar => {
             sum += bar
             newBars.push(sum)
