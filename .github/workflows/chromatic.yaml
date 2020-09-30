@@ -18,3 +18,4 @@ jobs:
       with:
         name: buildlogs
         path: /home/runner/work/transcribely/transcribely/build-storybook.log
+        if: always()
