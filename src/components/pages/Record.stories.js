@@ -9,11 +9,11 @@ export default {
   excludeStories: /.*Data$/,
 };
 
-export const Default = () => ({
-    Component: Record,
-    props: {
-        bars: even(["s", "", "", "","", "", "","", "", "","", "", "","", "", "","", "", "","", "", "","", "", "","", "", "","", "", "","", "", "","", "", "", "e"]),
-        notes: new TimedNotes([]),
-        AudioPlayerPromise: NewHowlAudioPlayer(firework),
-    }
-})
+// export const Default = () => ({
+//     Component: Record,
+//     props: {
+//         bars: even(["s", "", "", "","", "", "","", "", "","", "", "","", "", "","", "", "","", "", "","", "", "","", "", "","", "", "","", "", "","", "", "", "e"]),
+//         notes: new TimedNotes([]),
+//         AudioPlayerPromise: NewHowlAudioPlayer(firework),
+//     }
+// })
