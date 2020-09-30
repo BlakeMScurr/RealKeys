@@ -1,14 +1,15 @@
 <script lang="ts">
     import type { Bars } from "./pianoroll";
-    import { Recorder, TimedNotes } from "../../lib/music/timed/timed"
-    import { position, currentSong } from "../stores"
+    import { RecordState } from "./recorder";
+    import { TimedNotes } from "../../lib/music/timed/timed"
+    import { currentSong, position } from "../stores"
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
     import Piano from "./piano/Piano.svelte";
-    import { isNull } from "util";
 
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;
+    export let recordMode:Boolean = true;
 
     let pos = 0;
     position.subscribe((value) => {
@@ -21,11 +22,7 @@
 
     let keys = notes.range();
 
-    // Zoom handling
-    // -------------------------------------------
-    //
-    // TODO: move to a separate file
-
+    let recorder = new RecordState(notes)
 
     // ROLL ZOOM
     function handleRollWheel(event) {
@@ -108,42 +105,14 @@
         dx += event.deltaX * invert
     }
 
-    // Recording handling
-    // -------------------------------------------
-    //
-    // TODO: move to a separate file
-    let tmpNotes:TimedNotes;
-    let recorder:Recorder = null;
-    function startRecording(){
-        recorder = new Recorder();
-        // TODO: add a big red line at the top of the page
-        recorder.start(pos);
-        tmpNotes = notes
-        // TODO: show previous notes while recording
-        notes = recorder.getNotes()
-    }
+    // Recording stuff
 
-    function stopRecording() {
-        recorder.stop(pos)
-        // TODO: merge newly recorded notes
-        notes = recorder.merge(tmpNotes);
-        recorder = null;
-        currentSong.set(notes)
+    function noteOff(event) {
+        notes = recorder.noteOff(event, pos)
     }
 
     function noteOn(event) {
-        if (!isNull(recorder)) {
-            // TODO: consistent up/down off/on naming - we only need one pair
-            recorder.down(event.detail, pos)
-            notes = recorder.getNotes()
-        }
-    }
-    
-    function noteOff(event) {
-        if (!isNull(recorder)) {
-            recorder.up(event.detail, pos)
-            notes = recorder.getNotes()
-        }
+        notes = recorder.noteOn(event, pos)
     }
 </script>
 
@@ -170,12 +139,14 @@
   
 </style>
 
-<RecordButton on:startRecording={startRecording} on:stopRecording={stopRecording}></RecordButton>
+{#if recordMode}
+    <RecordButton on:startRecording={()=>{notes = recorder.startRecording(pos)}} on:stopRecording={()=>{notes = recorder.stopRecording(pos)}}></RecordButton>
+{/if}
 <div id="pianoroll">
     <div class="container roll" on:wheel={handleRollWheel}>
         <Roll {keys} {bars} {notes} height={100} unit={"%"} {zoomStart} {zoomEnd}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel}>
-        <Piano {keys} on:noteOn={noteOn} on:noteOff={noteOff}></Piano>
+        <Piano {keys} on:noteOff={noteOff} on:noteOn={noteOn}></Piano>
     </div>
 </div>

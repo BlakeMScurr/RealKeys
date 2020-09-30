@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
     import { createEventDispatcher } from 'svelte';
     import { setWidths, validate, getSeekPixels, getSeekPercentage } from "./bars.js"
     import { getRelativePosition } from "../../lib/dom.js"

@@ -1,5 +1,7 @@
 import { TimedNote, TimedNotes } from "./music/timed/timed"
 import { NewNote } from "./music/theory/notes"
+import { Bars } from "../components/pianoroll/pianoroll.ts";
+
 
 export function castTimedNotes(notes: any) {
     if (notes === undefined) {
@@ -15,4 +17,11 @@ export function castTimedNotes(notes: any) {
     });
 
     return new TimedNotes(ns)
+}
+
+export function castBars(bars: any):Bars {
+    // TODO: reconcile the two bar types by replacing them with a new type that is fractional and specifies start and end
+    return new Bars(bars.map((bar)=>{
+        return bar.width
+    }))
 }
