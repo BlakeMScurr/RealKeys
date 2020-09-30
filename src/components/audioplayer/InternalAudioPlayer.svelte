@@ -1,6 +1,6 @@
 <script lang="ts">
     import type { Player } from './audioplayer';
-    import { currentSong, position, repeats } from '../stores';
+    import { currentSong, playingStore, position, repeats } from '../stores';
     import { renderSeconds } from '../../lib/util';
 
     export let audioPlayer:Player;
@@ -77,6 +77,7 @@
         let t = audioPlayer.CurrentTime()
         audioPlayer.Play()
         setRepeatIntervals(t)
+        playingStore.play()
     }
 
     function setRepeatIntervals(ct) {
@@ -108,6 +109,7 @@
         clearTimeout(repeatTimeout)
         playing = false
         audioPlayer.Pause()
+        playingStore.pause()
     }
 </script>
 

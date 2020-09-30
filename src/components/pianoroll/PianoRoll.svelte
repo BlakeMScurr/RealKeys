@@ -2,7 +2,7 @@
     import type { Bars } from "./pianoroll";
     import { RecordState } from "./recorder";
     import { TimedNotes } from "../../lib/music/timed/timed"
-    import { currentSong, position } from "../stores"
+    import { currentSong, playingStore, position } from "../stores"
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
     import Piano from "./piano/Piano.svelte";
@@ -16,13 +16,7 @@
         pos = value
     })
 
-    let zoomWidth = 0.2 // TODO: use a fixed amount of time as a the fixed zoom window
-    $: zoomEnd = pos;
-    $: zoomStart = pos - zoomWidth;
-
     let keys = notes.range();
-
-    let recorder = new RecordState(notes)
 
     // ROLL ZOOM
     function handleRollWheel(event) {
@@ -105,14 +99,54 @@
         dx += event.deltaX * invert
     }
 
-    // Recording stuff
+    // RecordMode stuff
+    // TODO: in play mode, send signals to piano to render success or failure of attempt
+    // - Extra or missed note should make played key red
+    // - Hit note should be green
+    // Have some leeway
+
+    let overlayNotes = new TimedNotes([]);
+
+    let recorder;
+    if (recordMode) {
+        recorder = new RecordState(notes)
+    } else {
+        recorder = new RecordState(overlayNotes)
+    }
+   
+    playingStore.subscribe((playing: boolean)=>{
+        if (!recordMode) {
+            if (playing) {
+                startRecording()
+            } else {
+                stopRecording()
+            }
+        }
+    })
 
     function noteOff(event) {
-        notes = recorder.noteOff(event, pos)
+        if (recordMode) {
+            notes = recorder.noteOff(event, pos)
+        } else {
+            overlayNotes = recorder.noteOff(event, pos)
+        }
     }
 
     function noteOn(event) {
-        notes = recorder.noteOn(event, pos)
+        if (recordMode) {
+            notes = recorder.noteOn(event, pos)
+        } else {
+            overlayNotes = recorder.noteOn(event, pos)
+        }
+    }
+
+    function startRecording() {
+        notes = recorder.startRecording(pos)
+    }
+
+    function stopRecording() {     
+        notes = recorder.stopRecording(pos, true)
+        currentSong.set(notes)
     }
 </script>
 
@@ -135,16 +169,14 @@
     .piano {
         height: 30%;
     }
-
-  
 </style>
 
 {#if recordMode}
-    <RecordButton on:startRecording={()=>{notes = recorder.startRecording(pos)}} on:stopRecording={()=>{notes = recorder.stopRecording(pos)}}></RecordButton>
+    <RecordButton on:startRecording={startRecording} on:stopRecording={stopRecording}></RecordButton>
 {/if}
 <div id="pianoroll">
     <div class="container roll" on:wheel={handleRollWheel}>
-        <Roll {keys} {bars} {notes} height={100} unit={"%"} {zoomStart} {zoomEnd}></Roll>
+        <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel}>
         <Piano {keys} on:noteOff={noteOff} on:noteOn={noteOn}></Piano>

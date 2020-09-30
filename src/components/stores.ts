@@ -5,6 +5,7 @@ import { TimedNote, TimedNotes } from '../lib/music/timed/timed';
 export const currentSong = createCurrentSong();
 export const repeats = createRepeats();
 export const position = createPosition();
+export const playingStore = createPlaying();
 
 // Position refers to how far through the audio we are
 // TODO: replace position binding, prop passing, and event firing with this
@@ -51,5 +52,15 @@ function createCurrentSong() {
         }
         // TODO: does this work instead?
         // set,
+    }
+}
+
+function createPlaying() {
+    const { subscribe, set } = writable(true);
+
+    return {
+        subscribe,
+        play: ()=>{set(true)},
+        pause: ()=>{set(false)},
     }
 }

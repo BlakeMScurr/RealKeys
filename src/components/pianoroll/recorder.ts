@@ -1,5 +1,4 @@
 import { Recorder, TimedNotes } from "../../lib/music/timed/timed"
-import { currentSong } from "../stores"
 
 // Manages the state while recording notes
 // TODO: change name and think more carefully about state handling - this was just yoinked from the pianoroll component when it got too messy
@@ -22,13 +21,17 @@ export class RecordState {
         return this.notes
     }
 
-    stopRecording(pos: number) {
-        this.recorder.stop(pos)
-        // TODO: merge newly recorded notes
-        this.notes = this.recorder.merge(this.tmpNotes);
-        this.recorder = null;
-        currentSong.set(this.notes)
-        return this.notes
+    stopRecording(pos: number, withMerge: boolean) {
+        if (this.recorder !== undefined) {
+            this.recorder.stop(pos)
+            // TODO: merge newly recorded notes
+            if (withMerge) {
+                this.notes = this.recorder.merge(this.tmpNotes);
+            }
+            this.recorder = undefined;
+            console.log(this.notes)
+            return this.notes
+        }
     }
     
     noteOn(event, pos: number) {

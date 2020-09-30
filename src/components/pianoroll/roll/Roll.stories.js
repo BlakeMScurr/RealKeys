@@ -7,59 +7,68 @@ export default {
   title: 'Roll',
 };
 
-export const Default = () => ({
+const Template = ({...args }) => ({
   Component: Roll,
   props: {
-    keys: notesBetween(NewNote("C", 4), NewNote("C", 5)),
-    height: 400,
-    unit: "px",
-    bars: new Bars([0.2, 0.2, 0.2, 0.2, 0.2]),
-    notes: new TimedNotes([
-      // Picardy
-      new TimedNote(0, 1, NewNote("C", 4)),
-      new TimedNote(0, 0.4, NewNote("F", 4)),
-      new TimedNote(0, 1, NewNote("G", 4)),
-
-      // Moving "Third"
-      new TimedNote(0.4, 0.6, NewNote("D", 4)),
-      new TimedNote(0.6, 0.8, NewNote("Eb", 4)),
-      new TimedNote(0.8, 1, NewNote("E", 4)),
-    ]),
-  }
+    ...args,
+  },
+  argTypes: {
+    recording: { control: 'boolean' },
+  },
 });
 
-export const TwoOctaves = () => ({
-  Component: Roll,
-  props: {
-    keys: notesBetween(NewNote("C", 4), NewNote("C", 6)),
-    height: 400,
-    unit: "px",
-    bars: new Bars([0.2, 0.2, 0.2, 0.2, 0.2]),
-    notes: new TimedNotes([
-      // Root Position
-      new TimedNote(0, 0.2, NewNote("C", 4)),
-      new TimedNote(0, 0.2, NewNote("E", 4)),
-      new TimedNote(0, 0.2, NewNote("G", 4)),
+export const Default = Template.bind({});
+Default.args = {
+  zoomWidth: 1,
+  keys: notesBetween(NewNote("C", 4), NewNote("C", 5)),
+  height: 400,
+  unit: "px",
+  bars: new Bars([0.2, 0.2, 0.2, 0.2, 0.2]),
+  notes: new TimedNotes([
+    // Picardy
+    new TimedNote(0, 1, NewNote("C", 4)),
+    new TimedNote(0, 0.4, NewNote("F", 4)),
+    new TimedNote(0, 1, NewNote("G", 4)),
 
-      // First Inversion
-      new TimedNote(0.2, 0.4, NewNote("E", 4)),
-      new TimedNote(0.2, 0.4, NewNote("G", 4)),
-      new TimedNote(0.2, 0.4, NewNote("C", 5)),
+    // Moving "Third"
+    new TimedNote(0.4, 0.6, NewNote("D", 4)),
+    new TimedNote(0.6, 0.8, NewNote("Eb", 4)),
+    new TimedNote(0.8, 1, NewNote("E", 4)),
+  ]),
+  recording: true,
+}
 
-      // Second Inversion
-      new TimedNote(0.4, 0.6, NewNote("G", 4)),
-      new TimedNote(0.4, 0.6, NewNote("C", 5)),
-      new TimedNote(0.4, 0.6, NewNote("E", 5)),
+export const TwoOctaves = Template.bind({});
+TwoOctaves.args = {
+  zoomWidth: 1,
+  keys: notesBetween(NewNote("C", 4), NewNote("C", 6)),
+  height: 400,
+  unit: "px",
+  bars: new Bars([0.2, 0.2, 0.2, 0.2, 0.2]),
+  notes: new TimedNotes([
+    // Root Position
+    new TimedNote(0, 0.2, NewNote("C", 4)),
+    new TimedNote(0, 0.2, NewNote("E", 4)),
+    new TimedNote(0, 0.2, NewNote("G", 4)),
 
-      // Root Position up an Octave
-      new TimedNote(0.6, 0.8, NewNote("C", 5)),
-      new TimedNote(0.6, 0.8, NewNote("E", 5)),
-      new TimedNote(0.6, 0.8, NewNote("G", 5)),
-      
-      // Final Note
-      new TimedNote(0.8, 1, NewNote("C", 4)),
-    ])
-  }
-});
+    // First Inversion
+    new TimedNote(0.2, 0.4, NewNote("E", 4)),
+    new TimedNote(0.2, 0.4, NewNote("G", 4)),
+    new TimedNote(0.2, 0.4, NewNote("C", 5)),
 
+    // Second Inversion
+    new TimedNote(0.4, 0.6, NewNote("G", 4)),
+    new TimedNote(0.4, 0.6, NewNote("C", 5)),
+    new TimedNote(0.4, 0.6, NewNote("E", 5)),
+
+    // Root Position up an Octave
+    new TimedNote(0.6, 0.8, NewNote("C", 5)),
+    new TimedNote(0.6, 0.8, NewNote("E", 5)),
+    new TimedNote(0.6, 0.8, NewNote("G", 5)),
+    
+    // Final Note
+    new TimedNote(0.8, 1, NewNote("C", 4)),
+  ]),
+  recording: true,
+}
 

@@ -6,6 +6,9 @@ import { NewNote } from "../../lib/music/theory/notes";
 export default {
   title: 'PianoRoll',
   component: PianoRoll,
+  argTypes: {
+    recordMode: { control: 'boolean' },
+  },
 };
 
 const Template = ({...args }) => ({
