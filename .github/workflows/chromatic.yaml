@@ -13,5 +13,8 @@ jobs:
       with: 
         projectToken: err110fciri
         token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload build log
+      uses: actions/upload-artifact@v2
+      with:
         name: buildlogs
         path: /home/runner/work/transcribely/transcribely/build-storybook.log
