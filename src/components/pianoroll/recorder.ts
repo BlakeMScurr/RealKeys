@@ -4,21 +4,29 @@ import { Recorder, TimedNotes } from "../../lib/music/timed/timed"
 // TODO: change name and think more carefully about state handling - this was just yoinked from the pianoroll component when it got too messy
 export class RecordState {
     tmpNotes:TimedNotes;
-    notes: TimedNotes;
+    private notes: TimedNotes;
     recorder:Recorder;
 
     constructor(notes: TimedNotes) {
         this.notes = notes
     }
 
+    getNotes () {
+        if (this.notes === undefined) {
+            return new TimedNotes([])
+        }
+        return this.notes
+    }
+
     startRecording(pos: number){
+        
         this.recorder = new Recorder();
         // TODO: add a big red line at the top of the page
         this.recorder.start(pos);
         this.tmpNotes = this.notes
         // TODO: show previous notes while recording
         this.notes = this.recorder.getNotes()
-        return this.notes
+        return this.getNotes()
     }
 
     stopRecording(pos: number, withMerge: boolean) {
@@ -29,9 +37,8 @@ export class RecordState {
                 this.notes = this.recorder.merge(this.tmpNotes);
             }
             this.recorder = undefined;
-            console.log(this.notes)
-            return this.notes
         }
+        return this.getNotes()
     }
     
     noteOn(event, pos: number) {
@@ -40,7 +47,7 @@ export class RecordState {
             this.recorder.down(event.detail, pos)
             this.notes = this.recorder.getNotes()
         }
-        return this.notes
+        return this.getNotes()
     }
     
     noteOff(event, pos: number) {
@@ -48,7 +55,7 @@ export class RecordState {
             this.recorder.up(event.detail, pos)
             this.notes = this.recorder.getNotes()
         }
-        return this.notes
+        return this.getNotes()
     }
 }
 
