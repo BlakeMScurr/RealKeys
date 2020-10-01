@@ -35,6 +35,7 @@ Default.args = {
     new TimedNote(0.6, 0.8, NewNote("Eb", 4)),
     new TimedNote(0.8, 1, NewNote("E", 4)),
   ]),
+  overlayNotes: new TimedNotes([]),
   recording: true,
 }
 
@@ -69,6 +70,7 @@ TwoOctaves.args = {
     // Final Note
     new TimedNote(0.8, 1, NewNote("C", 4)),
   ]),
+  overlayNotes: new TimedNotes([]),
   recording: true,
 }
 
