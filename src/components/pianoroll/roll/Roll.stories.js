@@ -19,6 +19,7 @@ const Template = ({...args }) => ({
 
 export const Default = Template.bind({});
 Default.args = {
+  position: 1,
   zoomWidth: 1,
   keys: notesBetween(NewNote("C", 4), NewNote("C", 5)),
   height: 400,
@@ -41,6 +42,7 @@ Default.args = {
 
 export const TwoOctaves = Template.bind({});
 TwoOctaves.args = {
+  position: 1,
   zoomWidth: 1,
   keys: notesBetween(NewNote("C", 4), NewNote("C", 6)),
   height: 400,
