@@ -14,7 +14,7 @@
     export let notes:TimedNotes;
     export let overlayNotes:TimedNotes;
     export let position = 0;
-    export let zoomWidth = 0.2;  // TODO: use a fixed amount of time as a the fixed zoom window
+    export let zoomWidth = 0.2;
     export let recording = true;
 
     // the place on the screen where the user should start playing the note

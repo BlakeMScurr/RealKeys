@@ -1,9 +1,11 @@
 <script lang="ts">
     import type { Player } from './audioplayer';
-    import { currentSong, playingStore, position, repeats } from '../stores';
+    import { currentSong, playingStore, position, repeats, songDuration } from '../stores';
     import { renderSeconds } from '../../lib/util';
 
     export let audioPlayer:Player;
+
+    songDuration.set(audioPlayer.Duration())
 
     let positionPercentage = 0;
     position.subscribe((value) => {

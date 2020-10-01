@@ -2,7 +2,7 @@
     import type { Bars } from "./pianoroll";
     import { RecordState } from "./recorder";
     import { TimedNotes } from "../../lib/music/timed/timed"
-    import { currentSong, playingStore, position } from "../stores"
+    import { currentSong, playingStore, position, songDuration } from "../stores"
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
     import Piano from "./piano/Piano.svelte";
@@ -40,6 +40,18 @@
         if (keys[keys.length-1].abstract.accidental) {
             keys.pop()
         }
+    }
+
+    let duration = 5;
+    songDuration.subscribe((val)=> {
+        duration = val
+    })
+
+    function zoomWidth(duration: number) {
+        if (duration <= 5) {
+            return 1
+        }
+        return 5/duration
     }
 
     // PIANO ZOOM
@@ -141,12 +153,21 @@
     }
 
     function startRecording() {
-        notes = recorder.startRecording(pos)
+        if (recordMode) {
+            notes = recorder.startRecording(pos)
+        } else {
+            overlayNotes = recorder.startRecording(pos)
+        }
     }
 
-    function stopRecording() {     
-        notes = recorder.stopRecording(pos, true)
-        currentSong.set(notes)
+    function stopRecording() {
+        if (recordMode) {
+            notes = recorder.stopRecording(pos, true)
+            currentSong.set(notes)
+        } else {
+            overlayNotes = recorder.stopRecording(pos, true)
+            currentSong.set(overlayNotes)
+        }
     }
 </script>
 
@@ -176,7 +197,7 @@
 {/if}
 <div id="pianoroll">
     <div class="container roll" on:wheel={handleRollWheel}>
-        <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode}></Roll>
+        <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} zoomWidth={zoomWidth(duration)}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel}>
         <Piano {keys} on:noteOff={noteOff} on:noteOn={noteOn}></Piano>

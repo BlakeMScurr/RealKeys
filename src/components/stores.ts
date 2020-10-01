@@ -6,6 +6,7 @@ export const currentSong = createCurrentSong();
 export const repeats = createRepeats();
 export const position = createPosition();
 export const playingStore = createPlaying();
+export const songDuration = createSongDuration();
 
 // Position refers to how far through the audio we are
 // TODO: replace position binding, prop passing, and event firing with this
@@ -55,6 +56,14 @@ function createCurrentSong() {
     }
 }
 
+function createSongDuration() {
+    const { subscribe, set } = writable(1);
+
+    return {
+        subscribe,
+        set,
+    }
+}
 function createPlaying() {
     const { subscribe, set } = writable(true);
 
