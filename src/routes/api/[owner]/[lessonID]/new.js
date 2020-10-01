@@ -1,4 +1,3 @@
-import { calculateBars } from "../../../../backend/beatcalculation/barCalculation.js"
 import { NewPool } from "../../../../backend/db/client.js"
 import { downloadYouTubeVideo } from "../../../../backend/youtube-dl.js"
 var prep = require('pg-prepared')
@@ -21,17 +20,15 @@ export function post(request, response) {
             // Download audio if it doesn't already exist
             downloadYouTubeVideo(request.body.youtubeID)
 
-            // Calculate barlines
-            calculateBars(request.body.youtubeID).then((bars)=>{
-                let insertion = prep('INSERT INTO lesson(LESSON_NAME, YOUTUBE_ID, YOUTUBE_TITLE, BARS) VALUES (${lessonName}, ${youtubeID}, ${youtubeTitle}, ${bars})')
-                request.body.bars = JSON.stringify(bars)
-                pool.query(insertion(request.body), (err, res) => {
-                    if (err !== undefined) {
-                        throw err
-                    }
-                    pool.end()
-                    response.end()
-                })
+            // TODO: Calculate barlines (could revive old bar calculation code)
+            let insertion = prep('INSERT INTO lesson(LESSON_NAME, YOUTUBE_ID, YOUTUBE_TITLE, BARS) VALUES (${lessonName}, ${youtubeID}, ${youtubeTitle}, ${bars})')
+            request.body.bars = JSON.stringify([{type: "s", width: 1}, {type: "e", width: 0}])
+            pool.query(insertion(request.body), (err, res) => {
+                if (err !== undefined) {
+                    throw err
+                }
+                pool.end()
+                response.end()
             })
         }
     })
