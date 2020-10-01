@@ -1,6 +1,6 @@
 import { even } from "../bars/bars.ts";
 import { NewMockPlayer, NewHowlAudioPlayer } from './audioplayer';
-import { firework } from './firework'
+// import { firework } from './firework'
 import AudioPlayer from './AudioPlayer.svelte';
 import _storybook_AudioPlayer from './_storybook_AudioPlayer.svelte';
 
