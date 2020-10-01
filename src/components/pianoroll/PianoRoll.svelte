@@ -141,12 +141,21 @@
     }
 
     function startRecording() {
-        notes = recorder.startRecording(pos)
+        if (recordMode) {
+            notes = recorder.startRecording(pos)
+        } else {
+            overlayNotes = recorder.startRecording(pos)
+        }
     }
 
-    function stopRecording() {     
-        notes = recorder.stopRecording(pos, true)
-        currentSong.set(notes)
+    function stopRecording() {
+        if (recordMode) {
+            notes = recorder.stopRecording(pos, true)
+            currentSong.set(notes)
+        } else {
+            overlayNotes = recorder.stopRecording(pos, true)
+            currentSong.set(overlayNotes)
+        }
     }
 </script>
 
