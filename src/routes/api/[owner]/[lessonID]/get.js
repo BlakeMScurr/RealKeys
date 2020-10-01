@@ -12,7 +12,6 @@ export function get(request, response) {
 
         let lesson = res.rows[0]
         
-
         // TODO: is there a more succinct way of putting this?
         let rollQuery = prep('SELECT notes FROM roll WHERE id = (SELECT MAX(id) FROM roll WHERE LESSON_NAME=${lessonID})')
         pool.query(rollQuery(params), (err, res) => {
@@ -23,6 +22,5 @@ export function get(request, response) {
             pool.end()
             response.send(lesson)
         })
-        
     })
 }

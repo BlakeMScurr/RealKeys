@@ -1,9 +1,9 @@
-<script>
+<script lang="ts">
     import { createEventDispatcher } from 'svelte';
     import { setWidths, validate, getSeekPixels, getSeekPercentage } from "./bars.js"
     import { getRelativePosition } from "../../lib/dom.js"
     import { widthSum } from "../../lib/util.js"
-    import { position } from "../stores.ts"
+    import { position, repeats } from "../stores.ts"
     import { onMount } from 'svelte';
     import Bar from "./Bar.svelte"
     import Seeker from "./Seeker.svelte"
@@ -34,9 +34,6 @@
     function handleClick(event) {
         let pos = getRelativePosition(event.clientX, event.clientY, container)
         currentPosition = getSeekPercentage(pos.x -10, w, zoomStart, zoomEnd)
-        dispatch('seek', {
-			position: currentPosition,
-		});
     }
 
     $: {
@@ -51,10 +48,15 @@
         let start = widthSum(bars.slice(0, find("s", bars)))
         let end = widthSum(bars.slice(0, find("e", bars)))
         if (startRepeatRatio != start && endRepeatRatio != end) {
-            dispatch('repeat', {
-                start: start/length,
-                end: end/length,
-            })
+            if (start < 0) {
+                console.error("start less than 0", start)
+                start = 0 
+            }
+            if (end > 1) {
+                console.error("start greater than 1", end)
+                end = 1
+            }
+            repeats.set(start, end)
         }
     }
 

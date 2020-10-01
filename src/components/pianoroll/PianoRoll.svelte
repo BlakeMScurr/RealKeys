@@ -1,31 +1,22 @@
 <script lang="ts">
     import type { Bars } from "./pianoroll";
-    import { Recorder, TimedNotes } from "../../lib/music/timed/timed"
-    import { position, currentSong } from "../stores"
+    import { RecordState } from "./recorder";
+    import { TimedNotes } from "../../lib/music/timed/timed"
+    import { currentSong, playingStore, position } from "../stores"
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
     import Piano from "./piano/Piano.svelte";
-    import { isNull } from "util";
 
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;
+    export let recordMode:Boolean = true;
 
     let pos = 0;
     position.subscribe((value) => {
         pos = value
     })
 
-    let zoomWidth = 0.2 // TODO: use a fixed amount of time as a the fixed zoom window
-    $: zoomEnd = pos;
-    $: zoomStart = pos - zoomWidth;
-
     let keys = notes.range();
-
-    // Zoom handling
-    // -------------------------------------------
-    //
-    // TODO: move to a separate file
-
 
     // ROLL ZOOM
     function handleRollWheel(event) {
@@ -108,42 +99,54 @@
         dx += event.deltaX * invert
     }
 
-    // Recording handling
-    // -------------------------------------------
-    //
-    // TODO: move to a separate file
-    let tmpNotes:TimedNotes;
-    let recorder:Recorder = null;
-    function startRecording(){
-        recorder = new Recorder();
-        // TODO: add a big red line at the top of the page
-        recorder.start(pos);
-        tmpNotes = notes
-        // TODO: show previous notes while recording
-        notes = recorder.getNotes()
-    }
+    // RecordMode stuff
+    // TODO: in play mode, send signals to piano to render success or failure of attempt
+    // - Extra or missed note should make played key red
+    // - Hit note should be green
+    // Have some leeway
 
-    function stopRecording() {
-        recorder.stop(pos)
-        // TODO: merge newly recorded notes
-        notes = recorder.merge(tmpNotes);
-        recorder = null;
-        currentSong.set(notes)
+    let overlayNotes = new TimedNotes([]);
+
+    let recorder;
+    if (recordMode) {
+        recorder = new RecordState(notes)
+    } else {
+        recorder = new RecordState(overlayNotes)
+    }
+   
+    playingStore.subscribe((playing: boolean)=>{
+        if (!recordMode) {
+            if (playing) {
+                startRecording()
+            } else {
+                stopRecording()
+            }
+        }
+    })
+
+    function noteOff(event) {
+        if (recordMode) {
+            notes = recorder.noteOff(event, pos)
+        } else {
+            overlayNotes = recorder.noteOff(event, pos)
+        }
     }
 
     function noteOn(event) {
-        if (!isNull(recorder)) {
-            // TODO: consistent up/down off/on naming - we only need one pair
-            recorder.down(event.detail, pos)
-            notes = recorder.getNotes()
+        if (recordMode) {
+            notes = recorder.noteOn(event, pos)
+        } else {
+            overlayNotes = recorder.noteOn(event, pos)
         }
     }
-    
-    function noteOff(event) {
-        if (!isNull(recorder)) {
-            recorder.up(event.detail, pos)
-            notes = recorder.getNotes()
-        }
+
+    function startRecording() {
+        notes = recorder.startRecording(pos)
+    }
+
+    function stopRecording() {     
+        notes = recorder.stopRecording(pos, true)
+        currentSong.set(notes)
     }
 </script>
 
@@ -166,16 +169,16 @@
     .piano {
         height: 30%;
     }
-
-  
 </style>
 
-<RecordButton on:startRecording={startRecording} on:stopRecording={stopRecording}></RecordButton>
+{#if recordMode}
+    <RecordButton on:startRecording={startRecording} on:stopRecording={stopRecording}></RecordButton>
+{/if}
 <div id="pianoroll">
     <div class="container roll" on:wheel={handleRollWheel}>
-        <Roll {keys} {bars} {notes} height={100} unit={"%"} {zoomStart} {zoomEnd}></Roll>
+        <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel}>
-        <Piano {keys} on:noteOn={noteOn} on:noteOff={noteOff}></Piano>
+        <Piano {keys} on:noteOff={noteOff} on:noteOn={noteOn}></Piano>
     </div>
 </div>

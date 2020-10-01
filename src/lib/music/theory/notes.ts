@@ -138,25 +138,11 @@ export class Note {
         return this.abstract.color()
     }
 
-    // TODO: efficiency - we should be able to do this without iteration with just a lookup
     intervalTo(note: Note) {
-        let lower = NewNote(this.abstract.string(), this.octave)
-        let higher = note
-        let flip = 1
-        if (higher.lowerThan(lower)) {
-            let tmp = lower
-            lower = higher
-            higher = tmp
-            flip = -1
-        }
+        let octaveDiff = note.octave - this.octave
+        let noteDiff = notelist.indexOf(note.abstract.string()) - notelist.indexOf(this.abstract.string())
 
-        let interval = 0
-        while (!lower.equals(higher)) {
-            lower = lower.next()
-            interval++
-        }
-
-        return interval * flip
+        return octaveDiff * 12 + noteDiff
     }
 }
 
