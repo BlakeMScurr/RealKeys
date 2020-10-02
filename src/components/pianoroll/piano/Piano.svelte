@@ -15,6 +15,7 @@
 
     let notes = new Line(keys)
     $: notes = new Line(keys)
+    // TODO: allow playing notes that aren't on screen
     let activeMap = notes.activeMap()
 
     // setup midi keyboard input
@@ -29,7 +30,9 @@
                 activeMap.set(NewNote(e.note.name, e.note.octave).string(), false)
                 activeMap = activeMap // trigger svelte update
             });
-        } catch (e) {}
+        } catch (e) {
+            console.warn(e)
+        }
     });
 
     // setup computer keyboard input

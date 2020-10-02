@@ -3,6 +3,8 @@
     import { RecordState } from "./recorder";
     import { TimedNotes } from "../../lib/music/timed/timed"
     import { currentSong, playingStore, position, songDuration } from "../stores"
+    import { newPiano } from "../track/trackplayer";
+    import { highestPianoNote, lowestPianoNote } from "../../lib/music/theory/notes"
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
     import Piano from "./piano/Piano.svelte";
@@ -15,6 +17,8 @@
     position.subscribe((value) => {
         pos = value
     })
+
+    let pianoMuted = false;
 
     let keys = notes.range();
 
@@ -29,9 +33,11 @@
     }
 
     function pushTopKey() {
-        keys.push(keys[keys.length-1].next())
-        if (keys[keys.length-1].abstract.accidental) {
+        if (keys[keys.length-1].lowerThan(highestPianoNote)) {
             keys.push(keys[keys.length-1].next())
+            if (keys[keys.length-1].abstract.accidental) {
+                keys.push(keys[keys.length-1].next())
+            }
         }
     }
 
@@ -92,15 +98,17 @@
             keys = keys
             dx = 0
         } else if (dx > shiftDamper) {
-            // remove a note from the top
-            popTopKey()
-            // add a note to the bottom
-            keys.unshift(keys[0].nextLowest())
-            if (keys[0].abstract.accidental) {
+            if (lowestPianoNote.lowerThan(keys[0])) {
+                // remove a note from the top
+                popTopKey()
+                // add a note to the bottom
                 keys.unshift(keys[0].nextLowest())
+                if (keys[0].abstract.accidental) {
+                    keys.unshift(keys[0].nextLowest())
+                }
+                keys = keys
+                dx = 0
             }
-            keys = keys
-            dx = 0
         }
     }
 
@@ -118,6 +126,7 @@
     // Have some leeway
 
     let overlayNotes = new TimedNotes([]);
+    let player = newPiano();
 
     let recorder;
     if (recordMode) {
@@ -137,6 +146,9 @@
     })
 
     function noteOff(event) {
+        if (!pianoMuted) {
+            player.stop(event.detail)
+        }
         if (recordMode) {
             notes = recorder.noteOff(event, pos)
         } else {
@@ -145,6 +157,9 @@
     }
 
     function noteOn(event) {
+        if (!pianoMuted) {
+            player.play(event.detail)
+        }
         if (recordMode) {
             notes = recorder.noteOn(event, pos)
         } else {
@@ -195,6 +210,8 @@
 {#if recordMode}
     <RecordButton on:startRecording={startRecording} on:stopRecording={stopRecording}></RecordButton>
 {/if}
+<button on:click={()=>{pianoMuted = !pianoMuted}}>{pianoMuted ? "Unmute" : "Mute"} Piano</button>
+
 <div id="pianoroll">
     <div class="container roll" on:wheel={handleRollWheel}>
         <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} zoomWidth={zoomWidth(duration)}></Roll>
