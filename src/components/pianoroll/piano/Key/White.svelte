@@ -22,9 +22,15 @@
         border: 1px solid grey;
         pointer-events:auto;
         text-align: center;
+        position:relative;
     }
 
     p {
+        margin: 0;
+        left: 0;
+        right: 0;
+        top: 80%;
+        position: absolute;
         font-size: 2em;
         display: inline-block;
     }

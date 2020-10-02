@@ -77,7 +77,7 @@
 <div>
     <div class="rapper" id="LilPeep">
         {#each whiteWidths(notes.white()) as {note, width}}
-            <Key {note} width={width} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward}></Key>
+            <Key {note} width={width} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={"w"}></Key>
         {/each}
     </div>
     <div style="--blackMargin: {regularWhiteWidth(notes.white())*100/4}%;" class="rapper" id="JuiceWrld">
@@ -85,7 +85,7 @@
             {#if note instanceof Ghost}
                 <Key ghost={true} width={regularWhiteWidth(notes.white())*100 * (2/4)}></Key>
             {:else}
-                <Key {note} width={regularWhiteWidth(notes.white())*100} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward}></Key>
+                <Key {note} width={regularWhiteWidth(notes.white())*100} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={"b"}></Key>
             {/if}
         {/each}
     </div>

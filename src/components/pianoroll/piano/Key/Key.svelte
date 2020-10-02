@@ -25,6 +25,7 @@
         height: 100%;
         width: var(--width);
         pointer-events:none;
+        float: left; /* fixes positioning with label text added per https://stackoverflow.com/questions/17902102/div-position-changed-when-text-is-added */
     }
 </style>
 

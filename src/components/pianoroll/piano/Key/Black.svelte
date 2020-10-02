@@ -21,9 +21,15 @@
         margin: 0 25% 0 25%;
         pointer-events:auto;
         text-align: center;
+        position:relative;
     }
 
     p {
+        margin: 10 0 0 0;
+        top: 60%;
+        right: 0;
+        left: 0;
+        position: absolute;
         font-size: 2em;
         display: inline-block;
         color: white;
