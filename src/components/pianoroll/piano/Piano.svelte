@@ -31,7 +31,7 @@
                 activeMap = activeMap // trigger svelte update
             });
         } catch (e) {
-            console.warn(e)
+            console.warn("webmidi could not be enabled", + e)
         }
     });
 
