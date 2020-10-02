@@ -9,6 +9,9 @@
     export let note:Note;
     export let active:Boolean;
     export let ghost:Boolean = false;
+    export let label:String = "";
+
+    console.log(label)
 
     let dispatch = createEventDispatcher();
     function forward(event) {
@@ -30,9 +33,9 @@
         <Ghost></Ghost>
     {:else}
         {#if note.color() == "white"}
-            <White {note} bind:active={active} on:noteOn={forward} on:noteOff={forward}></White>
+            <White {note} bind:active={active} on:noteOn={forward} on:noteOff={forward} {label}></White>
         {:else}
-            <Black {note} bind:active={active} on:noteOn={forward} on:noteOff={forward}></Black>
+            <Black {note} bind:active={active} on:noteOn={forward} on:noteOff={forward} {label}></Black>
         {/if}
     {/if}
 </div>

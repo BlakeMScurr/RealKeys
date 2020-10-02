@@ -7,6 +7,7 @@
     export let note:Note;
     export let active:Boolean;
     export let ghost:Boolean = false;
+    export let label:String = "";
 </script>
 
 <style>
@@ -17,5 +18,5 @@
 </style>
 
 <div>
-    <Key {width} {note} {active} {ghost}></Key>
+    <Key {width} {note} {active} {ghost} {label}></Key>
 </div>

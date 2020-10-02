@@ -26,6 +26,28 @@ export const Black = () => ({
   }
 });
 
+export const BlackLabeled = () => ({
+  Component: _storybook_Key,
+  props: {
+      width: 20,
+      height: 100,
+      note: new AbstractNote("f#"),
+      active: false,
+      label: "u",
+  }
+});
+
+export const WhiteLabeled = () => ({
+  Component: _storybook_Key,
+  props: {
+      width: 20,
+      height: 100,
+      note: new AbstractNote("c"),
+      active: false,
+      label: "j",
+  }
+});
+
 export const WhiteClicked = () => ({
   Component: _storybook_Key,
   props: {

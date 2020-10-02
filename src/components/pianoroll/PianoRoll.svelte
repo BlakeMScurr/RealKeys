@@ -8,6 +8,7 @@
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
     import Piano from "./piano/Piano.svelte";
+import { onMount } from "svelte";
 
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;
@@ -19,9 +20,19 @@
     })
 
     let pianoMuted = false;
-
-    let keys = notes.range();
-
+    
+    let width = 0;
+    let keys = notes.range(width);
+    let lastWidth = -1;
+    $: {
+        if (width == lastWidth) {} else if (width <= 0) {
+            setTimeout(() => {
+                keys = notes.range(width)
+            }, 1000);
+        }
+        lastWidth = width
+    }
+    
     // ROLL ZOOM
     function handleRollWheel(event) {
         event.preventDefault()
@@ -212,7 +223,7 @@
 {/if}
 <button on:click={()=>{pianoMuted = !pianoMuted}}>{pianoMuted ? "Unmute" : "Mute"} Piano</button>
 
-<div id="pianoroll">
+<div id="pianoroll" bind:clientWidth={width}>
     <div class="container roll" on:wheel={handleRollWheel}>
         <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} zoomWidth={zoomWidth(duration)}></Roll>
     </div>

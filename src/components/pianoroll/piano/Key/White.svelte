@@ -5,6 +5,7 @@
     
     export let active:Boolean;
     export let note:Note;
+    export let label: String = "";
 
     const dispatch = createEventDispatcher()
     $: {
@@ -20,10 +21,19 @@
         height: 100%;
         border: 1px solid grey;
         pointer-events:auto;
+        text-align: center;
+    }
+
+    p {
+        font-size: 2em;
+        display: inline-block;
     }
 </style>
 
 <div style="--color: {active?niceBlue:"white"}" on:mousedown={()=>{active=true}}
     on:mouseup={()=>{active=false}}
     on:mouseleave={()=>{active=false}}>
+    <p>
+        {label}
+    </p>
 </div>
