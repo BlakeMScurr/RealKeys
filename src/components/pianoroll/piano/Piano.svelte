@@ -21,6 +21,9 @@
     // setup midi keyboard input
     // TODO: test
     WebMidi.enable(function (err) {
+        if (err) {
+            console.warn("WebMidi could not be enabled.", err);
+        }
         try {
             WebMidi.inputs[0].addListener('noteon', "all", (e: InputEventNoteon) => {
                 activeMap.set(NewNote(e.note.name, e.note.octave).string(), true)
@@ -31,7 +34,8 @@
                 activeMap = activeMap // trigger svelte update
             });
         } catch (e) {
-            console.warn("webmidi could not be enabled", + e)
+            console.warn("webmidi could not be enabled")
+            console.warn(e)
         }
     });
 
