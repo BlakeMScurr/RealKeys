@@ -8,7 +8,7 @@
     export let keys:Array<Note>;
 
     let midiConnected = false
-    let mobile = false
+    let mobile = false // TODO: figure out how to know this before we get any events
     $: labelsOn = !midiConnected && !mobile
     $: labels = labelsOn ? label(new Line(keys)) : new Map();
 
@@ -23,27 +23,37 @@
     let activeMap = notes.activeMap()
 
     // setup midi keyboard input
-    // TODO: test
-    WebMidi.enable(function (err) {
-        if (err) {
-            console.warn("WebMidi could not be enabled.", err);
-        }
-        try {
-            WebMidi.inputs[0].addListener('noteon', "all", (e: InputEventNoteon) => {
-                activeMap.set(NewNote(e.note.name, e.note.octave).string(), true)
-                activeMap = activeMap // trigger svelte update
-            });
-            WebMidi.inputs[0].addListener('noteoff', "all", (e: InputEventNoteoff) => {
-                activeMap.set(NewNote(e.note.name, e.note.octave).string(), false)
-                activeMap = activeMap // trigger svelte update
-            });
-            console.log("midi connected")
-            midiConnected = true
-        } catch (e) {
-            console.warn("webmidi could not be enabled")
-            console.warn(e)
-        }
-    });
+    // TODO: continusously try to connect
+    let enableWebMidi;
+    enableWebMidi = () => {
+        WebMidi.enable(function (err) {
+            if (err) {
+                console.warn("WebMidi could not be enabled.", err);
+            } else {
+                let addListeners;
+                addListeners = () => {
+                    try {
+                        WebMidi.inputs[0].addListener('noteon', "all", (e: InputEventNoteon) => {
+                            activeMap.set(NewNote(e.note.name, e.note.octave).string(), true)
+                            activeMap = activeMap // trigger svelte update
+                        });
+                        WebMidi.inputs[0].addListener('noteoff', "all", (e: InputEventNoteoff) => {
+                            activeMap.set(NewNote(e.note.name, e.note.octave).string(), false)
+                            activeMap = activeMap // trigger svelte update
+                        });
+                        midiConnected = true
+                    } catch (e) {
+                        // TODO: handle disconnects too
+                        console.log("trying to connect midi again") // TODO: non polling solution
+                        setTimeout(addListeners, 200)
+                    } 
+                }
+                addListeners()
+            }
+        });
+    }
+
+    enableWebMidi()
 
     // setup computer keyboard input
     function setActive(charCode: number, isActive: Boolean) {
@@ -55,10 +65,12 @@
     }
 
     document.addEventListener('keydown', (event) => {
+        mobile = false
         setActive(event.keyCode, true)
     });
     
     document.addEventListener('keyup', (event) => {
+        mobile = false
         setActive(event.keyCode, false)
     });
 
@@ -84,7 +96,7 @@
 
 </style>
 
-<div>
+<div on:touchstart={()=>{mobile = true}}>
     <div class="rapper" id="LilPeep">
         {#each whiteWidths(notes.white()) as {note, width}}
             <Key {note} width={width} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)}></Key>

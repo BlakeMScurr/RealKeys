@@ -30,11 +30,10 @@ function newTrackPlayer(notes: Array<string>):trackplayer {
     notes.forEach((note)=>{
         let h;
         h = new Howl({
-            src: "assets/sounds/" + note + ".wav",
+            src: "getSound/" + note + ".wav",
             format: 'wav',
             html5: true, // html5 being forced gives us rate change without pitch increase as per https://github.com/goldfire/howler.js/issues/586#issuecomment-237240859
             onload: ()=> {
-                console.log("loaded", note)
                 player.addSound(note, h)
             }
         })
@@ -52,7 +51,6 @@ class trackplayer {
     }
 
     addSound(note: string, sound: any) {
-        console.log("setting", note, "to", sound)
         this.sounds.set(note, sound)
     }
 
