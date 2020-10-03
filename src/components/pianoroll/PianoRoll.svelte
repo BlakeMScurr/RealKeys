@@ -21,12 +21,12 @@
     let pianoMuted = false;
     
     let width = 0;
-    let keys = notes.range(width);
+    let keys = notes.range();
     let lastWidth = -1;
     $: {
         if (width == lastWidth) {} else if (width <= 0) {
             setTimeout(() => {
-                keys = notes.range(width)
+                keys = notes.range()
             }, 1000);
         }
         lastWidth = width

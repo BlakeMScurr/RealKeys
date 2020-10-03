@@ -144,7 +144,7 @@ export class TimedNotes {
     // range is basically specifically for the pianoroll
     // TODO: name/move accordingly
     // TODO: take width of the screen to render into into account
-    range(width: number):Array<Note> {
+    range():Array<Note> {
         if (this.notes.length == 0) {
             return notesBetween(NewNote("C", 4), NewNote("B", 5))
         }
@@ -162,9 +162,8 @@ export class TimedNotes {
             }
         }
 
-        const maxWidth = 40
         // TODO: we should be able to find this without iteration
-        while(lowest.intervalTo(highest) <= 12 || lowest.abstract.accidental || highest.abstract.accidental || width / lowest.intervalTo(highest) > maxWidth) {
+        while(lowest.abstract.accidental || highest.abstract.accidental) {
             lowest = lowest.nextLowest()
             highest = highest.next()
         }
