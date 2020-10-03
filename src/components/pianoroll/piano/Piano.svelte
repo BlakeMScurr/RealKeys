@@ -7,7 +7,10 @@
 
     export let keys:Array<Note>;
 
-    $: labels = label(new Line(keys))
+    let midiConnected = false
+    let mobile = false
+    $: labelsOn = !midiConnected && !mobile
+    $: labels = labelsOn ? label(new Line(keys)) : new Map();
 
     const dispatch = createEventDispatcher();
     function forward(event) {
@@ -34,6 +37,8 @@
                 activeMap.set(NewNote(e.note.name, e.note.octave).string(), false)
                 activeMap = activeMap // trigger svelte update
             });
+            console.log("midi connected")
+            midiConnected = true
         } catch (e) {
             console.warn("webmidi could not be enabled")
             console.warn(e)
@@ -56,6 +61,10 @@
     document.addEventListener('keyup', (event) => {
         setActive(event.keyCode, false)
     });
+
+    function getLabel(labels, note) {
+        return labels.get(note.string()) ? labels.get(note.string()) : ""
+    }
 </script>
 
 <style>
@@ -78,7 +87,7 @@
 <div>
     <div class="rapper" id="LilPeep">
         {#each whiteWidths(notes.white()) as {note, width}}
-            <Key {note} width={width} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={labels.get(note.string()) ? labels.get(note.string()) : ""}></Key>
+            <Key {note} width={width} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)}></Key>
         {/each}
     </div>
     <div style="--blackMargin: {regularWhiteWidth(notes.white())*100/4}%;" class="rapper" id="JuiceWrld">
@@ -86,7 +95,7 @@
             {#if note instanceof Ghost}
                 <Key ghost={true} width={regularWhiteWidth(notes.white())*100 * (2/4)}></Key>
             {:else}
-                <Key {note} width={regularWhiteWidth(notes.white())*100} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={labels.get(note.string())}></Key>
+                <Key {note} width={regularWhiteWidth(notes.white())*100} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)}></Key>
             {/if}
         {/each}
     </div>
