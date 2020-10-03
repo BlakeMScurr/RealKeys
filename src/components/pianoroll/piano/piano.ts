@@ -83,11 +83,11 @@ export function regularWhiteWidth(notes: Array<Note>) {
     return 4/totalLength
 }
 
+const naturals = ["a","s","d","f","g","h","j","k","l",";"]
+const accidentals = ["w","e","r","t","y","u","i","o","p","["]
 // Keys the note repsented by a key on the computer keyboard
 export function keyboardInputNote(keyCode: number, notes: Line):Note {
     let key: string = String.fromCharCode(keyCode).toLocaleLowerCase()
-    var naturals = ["a","s","d","f","g","h","j","k","l",";"]
-    var accidentals = ["w","e","r","t","y","u","i","o","p","["]
 
     var index = naturals.indexOf(key)
     if (index != -1) {
@@ -101,4 +101,20 @@ export function keyboardInputNote(keyCode: number, notes: Line):Note {
             return <Note>ng
         }
     }
+}
+
+export function label(notes: Line):Map<String, String> {
+    let m = new Map();
+    notes.white().forEach((note, i) => {
+        if (i < naturals.length) {
+            m.set(note.string(), naturals[i])
+        }
+    });
+
+    blackAndGhostBetween(notes.notes[0], notes.notes[notes.notes.length-1]).forEach((note, i) => {
+        if (i < accidentals.length && note instanceof Note) {
+            m.set(note.string(), accidentals[i])
+        }
+    });
+    return m
 }

@@ -11,8 +11,6 @@
     export let ghost:Boolean = false;
     export let label:String = "";
 
-    console.log(label)
-
     let dispatch = createEventDispatcher();
     function forward(event) {
         dispatch(event.type, event.detail)

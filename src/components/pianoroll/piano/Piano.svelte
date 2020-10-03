@@ -1,12 +1,13 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
-    import { NewNote, Note, notesBetween } from "../../../lib/music/theory/notes.ts";
-    import { Line } from "../../../lib/music/theory/notes.ts";
-    import { blackAndGhostBetween, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote } from "./piano.ts";
+    import { NewNote, Note, notesBetween, Line } from "../../../lib/music/theory/notes.ts";
+    import { blackAndGhostBetween, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote, label } from "./piano.ts";
     import WebMidi, { InputEventNoteon, InputEventNoteoff } from "webmidi";
     import Key from "./Key/Key.svelte";
 
     export let keys:Array<Note>;
+
+    let labels = label(new Line(keys))
 
     const dispatch = createEventDispatcher();
     function forward(event) {
@@ -77,7 +78,7 @@
 <div>
     <div class="rapper" id="LilPeep">
         {#each whiteWidths(notes.white()) as {note, width}}
-            <Key {note} width={width} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={"w"}></Key>
+            <Key {note} width={width} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={labels.get(note.string())}></Key>
         {/each}
     </div>
     <div style="--blackMargin: {regularWhiteWidth(notes.white())*100/4}%;" class="rapper" id="JuiceWrld">
@@ -85,7 +86,7 @@
             {#if note instanceof Ghost}
                 <Key ghost={true} width={regularWhiteWidth(notes.white())*100 * (2/4)}></Key>
             {:else}
-                <Key {note} width={regularWhiteWidth(notes.white())*100} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={"b"}></Key>
+                <Key {note} width={regularWhiteWidth(notes.white())*100} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={labels.get(note.string())}></Key>
             {/if}
         {/each}
     </div>
