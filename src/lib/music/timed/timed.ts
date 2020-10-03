@@ -42,7 +42,7 @@ export class Recorder  {
         if (start > 1) throw new Error("Can't have times greater than 1 as the recorder is normalised to ratios of the song")
         if (this.beginning >= 0) { // Unstarted recorders don't record
             if (start < this.beginning) {
-                throw new Error("Note out of recorder bounds")
+                throw new Error("Note out of recorder bounds: start before beginning:" + "start: " + start + ", beginning: " + this.beginning)
             }
 
             if (this.partials.has(note.string())) {
@@ -57,7 +57,7 @@ export class Recorder  {
         if (end > 1) throw new Error("Can't have times greater than 1 as the recorder is normalised to ratios of the song")
         if (this.beginning >= 0) { // Unstarted recorders don't record
             if (end < this.beginning) {
-                throw new Error("Note out of recorder bounds")
+                throw new Error("Note out of recorder bounds: end before beginning" + "end: " + end + ", beginning: " + this.beginning)
             }
 
             let start = this.beginning
