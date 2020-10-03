@@ -29,9 +29,9 @@
         margin: 0;
         left: 0;
         right: 0;
-        top: 80%;
+        top: calc(64%);
         position: absolute;
-        font-size: 2em;
+        font-size: 1.75em;
         display: inline-block;
     }
 </style>

@@ -118,8 +118,6 @@ function makeAccidentals () {
 // Keys the note repsented by a key on the computer keyboard
 export function keyboardInputNote(keyCode: number, notes: Line):Note {
     // Change a bunch
-    console.log(keyCode)
-    console.log(naturals)
     var index = naturals.get(keyCode)
     if (index) {
         return notes.white()[index]
@@ -137,9 +135,7 @@ export function keyboardInputNote(keyCode: number, notes: Line):Note {
 export function label(notes: Line):Map<String, String> {
     let m = new Map();
     notes.white().forEach((note, i) => {
-        console.log(naturalKeys.length, i)
         if (i < naturalKeys.length) {
-            console.log("setting")
             m.set(note.string(), naturalKeys[i])
         }
     });
@@ -149,6 +145,5 @@ export function label(notes: Line):Map<String, String> {
             m.set(note.string(), accidentalKeys[i])
         }
     });
-    console.log(m)
     return m
 }

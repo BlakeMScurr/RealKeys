@@ -26,11 +26,10 @@
 
     p {
         margin: 10 0 0 0;
-        top: 60%;
         right: 0;
         left: 0;
         position: absolute;
-        font-size: 2em;
+        font-size: 1.75em;
         display: inline-block;
         color: white;
     }

@@ -7,7 +7,7 @@
 
     export let keys:Array<Note>;
 
-    let labels = label(new Line(keys))
+    $: labels = label(new Line(keys))
 
     const dispatch = createEventDispatcher();
     function forward(event) {
@@ -78,7 +78,7 @@
 <div>
     <div class="rapper" id="LilPeep">
         {#each whiteWidths(notes.white()) as {note, width}}
-            <Key {note} width={width} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={labels.get(note.string())}></Key>
+            <Key {note} width={width} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={labels.get(note.string()) ? labels.get(note.string()) : ""}></Key>
         {/each}
     </div>
     <div style="--blackMargin: {regularWhiteWidth(notes.white())*100/4}%;" class="rapper" id="JuiceWrld">
