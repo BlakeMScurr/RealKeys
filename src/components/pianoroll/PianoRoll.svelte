@@ -122,6 +122,28 @@
         }
     }
 
+    // TODO: less jerky dragging
+    let dragging = false
+    function handlemouseleave() {
+        dragging = false
+    }
+
+    function handlemouseup(event) {
+        dragging = false
+    }
+
+    function handlemousedown(event) {
+        dragging = true
+    }
+
+    function handlemousemove(event) {
+        if (dragging) {
+            console.log("increasing by " + event.movementX)
+            console.log(event)
+            dx += event.movementX / 5 // TODO: make dx correspond to actual pixels so the speed works properly
+        }
+    }
+
     function handlePianoWheel(event) {
         // zoom in and out
         event.preventDefault()
@@ -226,7 +248,7 @@
     <div class="container roll" on:wheel={handleRollWheel}>
         <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} zoomWidth={zoomWidth(duration)}></Roll>
     </div>
-    <div class="container piano" on:wheel={handlePianoWheel}>
+    <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
         <Piano {keys} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untime()}></Piano>
     </div>
 </div>
