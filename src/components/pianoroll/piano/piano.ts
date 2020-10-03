@@ -83,19 +83,50 @@ export function regularWhiteWidth(notes: Array<Note>) {
     return 4/totalLength
 }
 
-const naturals = ["a","s","d","f","g","h","j","k","l",";"]
-const accidentals = ["w","e","r","t","y","u","i","o","p","["]
+let naturalKeys = ["a","s","d","f","g","h","j","k","l"]
+let accidentalKeys = ["w","e","r","t","y","u","i","o","p"]
+const naturals = makeNaturals()
+const accidentals = makeAccidentals()
+naturalKeys.push(":")
+naturalKeys.push("'")
+accidentalKeys.push("[")
+accidentalKeys.push("]")
+
+function makeNaturals() {
+    let m = naturalKeys.reduce((m, str, i)=>{
+        m.set(str.toLocaleUpperCase().charCodeAt(0), i)
+        return m
+    }, new Map())
+
+    m.set(186, 9)
+    m.set(222, 10)
+    return m
+}
+
+function makeAccidentals () {
+    let m = accidentalKeys.reduce((m, str, i)=>{
+        m.set(str.toLocaleUpperCase().charCodeAt(0), i)
+        return m
+    }, new Map())
+
+    m.set(219, 9)
+    m.set(221, 10)
+    return m
+}
+
+
 // Keys the note repsented by a key on the computer keyboard
 export function keyboardInputNote(keyCode: number, notes: Line):Note {
-    let key: string = String.fromCharCode(keyCode).toLocaleLowerCase()
-
-    var index = naturals.indexOf(key)
-    if (index != -1) {
+    // Change a bunch
+    console.log(keyCode)
+    console.log(naturals)
+    var index = naturals.get(keyCode)
+    if (index) {
         return notes.white()[index]
     }
 
-    index = accidentals.indexOf(key)
-    if (index != -1) {
+    index = accidentals.get(keyCode)
+    if (index) {
         let ng = blackAndGhostBetween(notes.notes[0], notes.notes[notes.notes.length-1])[index]
         if (ng instanceof Note) {
             return <Note>ng
@@ -106,15 +137,18 @@ export function keyboardInputNote(keyCode: number, notes: Line):Note {
 export function label(notes: Line):Map<String, String> {
     let m = new Map();
     notes.white().forEach((note, i) => {
-        if (i < naturals.length) {
-            m.set(note.string(), naturals[i])
+        console.log(naturalKeys.length, i)
+        if (i < naturalKeys.length) {
+            console.log("setting")
+            m.set(note.string(), naturalKeys[i])
         }
     });
 
     blackAndGhostBetween(notes.notes[0], notes.notes[notes.notes.length-1]).forEach((note, i) => {
-        if (i < accidentals.length && note instanceof Note) {
-            m.set(note.string(), accidentals[i])
+        if (i < accidentalKeys.length && note instanceof Note) {
+            m.set(note.string(), accidentalKeys[i])
         }
     });
+    console.log(m)
     return m
 }
