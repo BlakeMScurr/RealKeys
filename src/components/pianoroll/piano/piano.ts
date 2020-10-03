@@ -119,12 +119,12 @@ function makeAccidentals () {
 export function keyboardInputNote(keyCode: number, notes: Line):Note {
     // Change a bunch
     var index = naturals.get(keyCode)
-    if (index) {
+    if (index !== undefined) {
         return notes.white()[index]
     }
 
     index = accidentals.get(keyCode)
-    if (index) {
+    if (index !== undefined) {
         let ng = blackAndGhostBetween(notes.notes[0], notes.notes[notes.notes.length-1])[index]
         if (ng instanceof Note) {
             return <Note>ng
