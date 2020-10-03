@@ -58,20 +58,6 @@
         }
     }
 
-    function unshiftBottomKey() {
-        keys.unshift(keys[0].nextLowest())
-        if (keys[0].abstract.accidental) {
-            keys.unshift(keys[0].nextLowest())
-        }
-    }
-
-    function shiftBottomKey () {
-        keys.shift()
-        if (keys[0].abstract.accidental) {
-            keys.shift()
-        }
-    }
-
     let duration = 5;
     songDuration.subscribe((val)=> {
         duration = val
@@ -89,27 +75,16 @@
     // This can probably be done by getting the mouse x position with respect to the hovered key, and removing
     // the top note if we're on the left side and vice versa
     let dy = 0
-    let lastTakenFromTop = false;
     const zoomDamper = 20 // higher number lower speed
     $: {
         // TODO: get some response from the UI as we scroll before we add a new key so the user can see what's going on
         if (dy > zoomDamper) {
-            if (lastTakenFromTop) {
-                pushTopKey()
-            } else {
-                unshiftBottomKey()
-            }
-            lastTakenFromTop = !lastTakenFromTop
+            pushTopKey()
             keys = keys
             dy = 0
         } else if (dy < -zoomDamper){
             if (keys.length >= 15) { // TODO: make this number depend on the actual view window etc
-                if (lastTakenFromTop) {
-                    popTopKey()
-                } else {
-                    shiftBottomKey()
-                }
-                lastTakenFromTop = !lastTakenFromTop
+                popTopKey()
                 keys = keys
             }
             dy = 0
@@ -126,7 +101,10 @@
             // add a note to the top
             pushTopKey()
             // remove a note from the bottom
-            shiftBottomKey()
+            keys.shift()
+            if (keys[0].abstract.accidental) {
+                keys.shift()
+            }
             keys = keys
             dx = 0
         } else if (dx > shiftDamper) {
@@ -134,7 +112,10 @@
                 // remove a note from the top
                 popTopKey()
                 // add a note to the bottom
-                unshiftBottomKey()
+                keys.unshift(keys[0].nextLowest())
+                if (keys[0].abstract.accidental) {
+                    keys.unshift(keys[0].nextLowest())
+                }
                 keys = keys
                 dx = 0
             }
