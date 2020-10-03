@@ -6,7 +6,8 @@
     import Key from "./Key/Key.svelte";
 
     export let keys:Array<Note>;
-
+    export let usedNotes:Map<String, boolean>;
+    
     let midiConnected = false
     let mobile = false // TODO: figure out how to know this before we get any events
     $: labelsOn = !midiConnected && !mobile
@@ -75,7 +76,12 @@
     });
 
     function getLabel(labels, note) {
-        return labels.get(note.string()) ? labels.get(note.string()) : ""
+        if (usedNotes.size == 0) {
+            return labels.get(note.string()) ? labels.get(note.string()) : ""
+        } else if (usedNotes.has(note.string())) {
+            return labels.get(note.string()) ? labels.get(note.string()) : ""
+        }
+        return ""
     }
 </script>
 
@@ -99,7 +105,7 @@
 <div on:touchstart={()=>{mobile = true}}>
     <div class="rapper" id="LilPeep">
         {#each whiteWidths(notes.white()) as {note, width}}
-            <Key {note} width={width} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)}></Key>
+            <Key {note} width={width} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={usedNotes.has(note.string())}></Key>
         {/each}
     </div>
     <div style="--blackMargin: {regularWhiteWidth(notes.white())*100/4}%;" class="rapper" id="JuiceWrld">
@@ -107,7 +113,7 @@
             {#if note instanceof Ghost}
                 <Key ghost={true} width={regularWhiteWidth(notes.white())*100 * (2/4)}></Key>
             {:else}
-                <Key {note} width={regularWhiteWidth(notes.white())*100} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)}></Key>
+                <Key {note} width={regularWhiteWidth(notes.white())*100} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={usedNotes.has(note.string())}></Key>
             {/if}
         {/each}
     </div>

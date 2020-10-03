@@ -17,8 +17,6 @@
     export let zoomWidth = 0.2;
     export let recording = true;
 
-    console.log(overlayNotes)
-
     // the place on the screen where the user should start playing the note
     // TODO: move to store
     const playLine = 0.4

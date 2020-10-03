@@ -227,6 +227,6 @@
         <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} zoomWidth={zoomWidth(duration)}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel}>
-        <Piano {keys} on:noteOff={noteOff} on:noteOn={noteOn}></Piano>
+        <Piano {keys} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untime()}></Piano>
     </div>
 </div>

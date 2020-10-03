@@ -170,4 +170,14 @@ export class TimedNotes {
 
         return notesBetween(lowest, highest)
     }
+
+    // returns all the notes in this set, removing duplicates and timing
+    untime():Map<String, boolean> {
+        // TODO: surely there's a one liner
+        let map = new Map<String, boolean>()
+        this.notes.forEach((note)=>{
+            map.set(note.note.string(), true)
+        })
+        return map
+    }
 }
