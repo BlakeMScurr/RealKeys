@@ -6,7 +6,7 @@
     import Key from "./Key/Key.svelte";
 
     export let keys:Array<Note>;
-    export let usedNotes:Map<String, boolean>;
+    export let usedNotes:Map<String, boolean> = new Map();
     
     let midiConnected = false
     let mobile = false // TODO: figure out how to know this before we get any events
