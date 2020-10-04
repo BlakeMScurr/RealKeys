@@ -110,7 +110,6 @@ export class Recorder  {
     }
 }
 
-
 export class TimedNote {
     start: any;
     end: any;
@@ -164,11 +163,21 @@ export class TimedNotes {
         }
 
         // TODO: we should be able to find this without iteration
-        while(lowest.intervalTo(highest) <= 12 || lowest.abstract.accidental || highest.abstract.accidental) {
+        while(lowest.abstract.accidental || highest.abstract.accidental) {
             lowest = lowest.nextLowest()
             highest = highest.next()
         }
 
         return notesBetween(lowest, highest)
+    }
+
+    // returns all the notes in this set, removing duplicates and timing
+    untime():Map<String, boolean> {
+        // TODO: surely there's a one liner
+        let map = new Map<String, boolean>()
+        this.notes.forEach((note)=>{
+            map.set(note.note.string(), true)
+        })
+        return map
     }
 }

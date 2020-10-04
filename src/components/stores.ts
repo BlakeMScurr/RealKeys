@@ -65,7 +65,7 @@ function createSongDuration() {
     }
 }
 function createPlaying() {
-    const { subscribe, set } = writable(true);
+    const { subscribe, set } = writable(false);
 
     return {
         subscribe,

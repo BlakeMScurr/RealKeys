@@ -83,23 +83,48 @@
         /* This will probably be irrelevant when most values are input with live audio rather than as numbers */
         /* TODO: either remove this, or only attempt to reveal barlines in select cases, say, those where the next note is immediate or almost immediate */
         height: calc(var(--height) - 1px);
-        background-color: var(--color);
+    }
+
+    .mainnote {
+        background-color: red;
+        opacity: 0.6;
+    }
+
+    .keybackground {
+        z-index: 0;
     }
 
     .overlay {
-        background-color: red;
-        opacity: 0.5;
+        z-index: 1;
+        background-color: blue;
+        opacity: 1;
+    }
+
+    .overlayhider {
+        z-index: 2;
+    }
+
+    .barlines {
+        z-index: 3;
+    }
+
+    .notescontainer {
+        z-index: 4;
+    }
+
+    .recordLine {
+        z-index: 5;
     }
 </style>
 
 <!-- Key Backgrounds -->
-<div class="container" style="--height: {height + unit};">
+<div class="container keybackground" style="--height: {height + unit};">
     {#each keys as key}
        <RollKey width={100/keys.length + "%"} height={"100%"} white={key.color()=="white"} rightBorder={key.abstract.letter == "b" || key.abstract.letter == "e"}></RollKey> 
     {/each}
 </div>
 <!-- Bar Lines -->
-<div class="container" style="--height: {height + unit};">
+<div class="container barlines" style="--height: {height + unit};">
     <!-- TODO: make greyed out space before and after the bars -->
     {#if !recording}
         <div class="recordLine" style="--top: {viewHeight * playLine + unit};"></div>
@@ -109,10 +134,10 @@
     {/each}
 </div>
 <!-- Notes -->
-<div class="container" style="--height: {height + unit};">
+<div class="container notescontainer" style="--height: {height + unit};">
     {#each notes.notes as note}
         {#if find(note.note, keys) != -1}
-            <div class="note" style="--width: {100/keys.length}%;
+            <div class="note mainnote" style="--width: {100/keys.length}%;
                 --left: {find(note.note, keys) * 100/keys.length}%;
                 --height: {100*((1-note.start)-(1-note.end))/zoomRatio}%;
                 --top:{
@@ -122,6 +147,13 @@
         {/if}
     {/each}
 </div>
+<!-- Hides the extra top notes in the overlay -->
+<div class="container overlayhider" style="--height: {height + unit};">
+    {#each keys as key}
+       <RollKey width={100/keys.length + "%"} height={"60%"} white={key.color()=="white"} rightBorder={key.abstract.letter == "b" || key.abstract.letter == "e"}></RollKey> 
+    {/each}
+</div>
+
 <!-- Overlay Notes -->
 <div class="container" style="--height: {height + unit};">
     {#each overlayNotes.notes as note}

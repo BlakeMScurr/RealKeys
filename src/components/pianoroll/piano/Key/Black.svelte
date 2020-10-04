@@ -5,6 +5,9 @@
     
     export let active:Boolean;
     export let note:Note;
+    export let label: String = "";
+    export let used: Boolean = false;
+
     const dispatch = createEventDispatcher()
     $: {
         dispatch(active ? "noteOn": "noteOff", note)
@@ -18,10 +21,31 @@
         height: 65%;
         margin: 0 25% 0 25%;
         pointer-events:auto;
+        text-align: center;
+        position:relative;
+        z-index: 2;
+    }
+
+    p {
+        margin: 10 0 0 0;
+        right: 0;
+        left: 0;
+        position: absolute;
+        font-size: 1.75em;
+        display: inline-block;
+        color: white;
+    }
+
+    .used {
+        border-color: #667ED4;
+        border-width: medium;
     }
 </style>
 
-<div style="--color: {active?niceBlue:"black"}" on:mousedown={()=>{active=true}}
+<div class={used?"used":""} style="--color: {active?niceBlue:"black"}" on:mousedown={()=>{active=true}}
     on:mouseup={()=>{active=false}}
     on:mouseleave={()=>{active=false}}>
+    <p>
+        {label}
+    </p>
 </div>

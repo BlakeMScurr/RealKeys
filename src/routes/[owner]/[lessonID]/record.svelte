@@ -13,8 +13,12 @@
     import type { TimedNotes } from '../../../lib/music/timed/timed';
     import { NewYouTubeAudioPlayer } from "../../../components/audioplayer/audioplayer.ts"
     import { getLessonDefinition } from '../../../lib/api.js'
-    import Record from "../../../components/pages/Record.svelte";
     import { joinURL } from '../../../lib/util';
+    import { castBars, castTimedNotes } from '../../../lib/cast';
+
+    import PianoRoll from "../../../components/pianoroll/PianoRoll.svelte";
+    import ZoomBars from "../../../components/bars/zoom/ZoomBars.svelte";
+    import AudioPlayer from "../../../components/audioplayer/AudioPlayer.svelte";
 
     export let owner;
     export let lessonID;
@@ -37,13 +41,27 @@
         })
     })
 </script>
-
+<style>
+    .optionwrapper {
+        position: relative;
+        max-width: 56em;
+        background-color: white;
+        padding: 2em;
+        margin: 0 auto;
+        box-sizing: border-box;
+    }
+</style>
+    
 {#await getLessonDefinition(owner, lessonID)}
     <h1>Loading</h1>
 {:then lesson}
-    <h1>{lessonID}</h1>
-    <h3>{owner}</h3>
-    <Record bars={lesson.bars} notes={lesson.notes} AudioPlayerPromise={NewYouTubeAudioPlayer(lesson.youtube_id)}></Record>
+    <div class="optionwrapper">
+        <h1>{lessonID}</h1>
+        <h3>{owner}</h3>
+        <AudioPlayer AudioPlayerPromise={NewYouTubeAudioPlayer(lesson.youtube_id)}></AudioPlayer>
+        <ZoomBars bars={lesson.bars}></ZoomBars>
+    </div>
+    <PianoRoll bars={castBars(lesson.bars)} notes={castTimedNotes(lesson.notes)}></PianoRoll>
 {:catch error}
     <h1>Could not load lesson {owner}/{lessonID} {console.log(error)}</h1>
 {/await}

@@ -3,6 +3,8 @@
     import { RecordState } from "./recorder";
     import { TimedNotes } from "../../lib/music/timed/timed"
     import { currentSong, playingStore, position, songDuration } from "../stores"
+    import { newPiano } from "../track/trackplayer";
+    import { highestPianoNote, lowestPianoNote } from "../../lib/music/theory/notes"
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
     import Piano from "./piano/Piano.svelte";
@@ -16,8 +18,20 @@
         pos = value
     })
 
+    let pianoMuted = false;
+    
+    let width = 0;
     let keys = notes.range();
-
+    let lastWidth = -1;
+    $: {
+        if (width == lastWidth) {} else if (width <= 0) {
+            setTimeout(() => {
+                keys = notes.range()
+            }, 1000);
+        }
+        lastWidth = width
+    }
+    
     // ROLL ZOOM
     function handleRollWheel(event) {
         event.preventDefault()
@@ -29,9 +43,11 @@
     }
 
     function pushTopKey() {
-        keys.push(keys[keys.length-1].next())
-        if (keys[keys.length-1].abstract.accidental) {
+        if (keys[keys.length-1].lowerThan(highestPianoNote)) {
             keys.push(keys[keys.length-1].next())
+            if (keys[keys.length-1].abstract.accidental) {
+                keys.push(keys[keys.length-1].next())
+            }
         }
     }
 
@@ -92,15 +108,39 @@
             keys = keys
             dx = 0
         } else if (dx > shiftDamper) {
-            // remove a note from the top
-            popTopKey()
-            // add a note to the bottom
-            keys.unshift(keys[0].nextLowest())
-            if (keys[0].abstract.accidental) {
+            if (lowestPianoNote.lowerThan(keys[0])) {
+                // remove a note from the top
+                popTopKey()
+                // add a note to the bottom
                 keys.unshift(keys[0].nextLowest())
+                if (keys[0].abstract.accidental) {
+                    keys.unshift(keys[0].nextLowest())
+                }
+                keys = keys
+                dx = 0
             }
-            keys = keys
-            dx = 0
+        }
+    }
+
+    // TODO: less jerky dragging
+    let dragging = false
+    function handlemouseleave() {
+        dragging = false
+    }
+
+    function handlemouseup(event) {
+        dragging = false
+    }
+
+    function handlemousedown(event) {
+        dragging = true
+    }
+
+    function handlemousemove(event) {
+        if (dragging) {
+            console.log("increasing by " + event.movementX)
+            console.log(event)
+            dx += event.movementX / 5 // TODO: make dx correspond to actual pixels so the speed works properly
         }
     }
 
@@ -118,6 +158,7 @@
     // Have some leeway
 
     let overlayNotes = new TimedNotes([]);
+    let player = newPiano();
 
     let recorder;
     if (recordMode) {
@@ -137,6 +178,9 @@
     })
 
     function noteOff(event) {
+        if (!pianoMuted) {
+            player.stop(event.detail)
+        }
         if (recordMode) {
             notes = recorder.noteOff(event, pos)
         } else {
@@ -145,6 +189,9 @@
     }
 
     function noteOn(event) {
+        if (!pianoMuted) {
+            player.play(event.detail)
+        }
         if (recordMode) {
             notes = recorder.noteOn(event, pos)
         } else {
@@ -195,11 +242,13 @@
 {#if recordMode}
     <RecordButton on:startRecording={startRecording} on:stopRecording={stopRecording}></RecordButton>
 {/if}
-<div id="pianoroll">
+<button on:click={()=>{pianoMuted = !pianoMuted}}>{pianoMuted ? "Unmute" : "Mute"} Piano</button>
+
+<div id="pianoroll" bind:clientWidth={width}>
     <div class="container roll" on:wheel={handleRollWheel}>
         <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} zoomWidth={zoomWidth(duration)}></Roll>
     </div>
-    <div class="container piano" on:wheel={handlePianoWheel}>
-        <Piano {keys} on:noteOff={noteOff} on:noteOn={noteOn}></Piano>
+    <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
+        <Piano {keys} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untime()}></Piano>
     </div>
 </div>

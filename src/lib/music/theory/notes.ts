@@ -202,9 +202,23 @@ export class Line {
     // gives a new map from all the notes in this line to a boolean representing whether they're active or note
     activeMap():Map<String, Boolean> {
         let m: Map<String, Boolean> = new Map()
-        this.notes.forEach(note => {
+        pianoNotes().forEach(note => {
             m.set(note.string(), false)
         });
         return m
     }
+}
+
+export const lowestPianoNote = NewNote("A", 0)
+export const highestPianoNote = NewNote("C", 8)
+
+export function pianoNotes ():Array<Note> {
+    let notes: Array<Note> = []
+    let note = lowestPianoNote
+    while (note.lowerThan(highestPianoNote)) {
+        notes.push(note)
+        note = note.next()
+    }
+    notes.push(note)
+    return notes
 }

@@ -9,6 +9,8 @@
     export let note:Note;
     export let active:Boolean;
     export let ghost:Boolean = false;
+    export let label:String = "";
+    export let used:Boolean = false;
 
     let dispatch = createEventDispatcher();
     function forward(event) {
@@ -22,6 +24,7 @@
         height: 100%;
         width: var(--width);
         pointer-events:none;
+        float: left; /* fixes positioning with label text added per https://stackoverflow.com/questions/17902102/div-position-changed-when-text-is-added */
     }
 </style>
 
@@ -30,9 +33,9 @@
         <Ghost></Ghost>
     {:else}
         {#if note.color() == "white"}
-            <White {note} bind:active={active} on:noteOn={forward} on:noteOff={forward}></White>
+            <White {note} bind:active={active} on:noteOn={forward} on:noteOff={forward} {label} {used}></White>
         {:else}
-            <Black {note} bind:active={active} on:noteOn={forward} on:noteOff={forward}></Black>
+            <Black {note} bind:active={active} on:noteOn={forward} on:noteOff={forward} {label} {used}></Black>
         {/if}
     {/if}
 </div>
