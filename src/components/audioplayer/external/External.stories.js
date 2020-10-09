@@ -7,6 +7,6 @@ export default {
 export const Default = () => ({
     Component: Spotify,
     props: {
-      track: "1ZMiCix7XSAbfAJlEZWMCp",
+      track: "7xGfFoTpQ2E7fRF5lN10tr",
     },
 });
