@@ -51,12 +51,12 @@
     function handleMouseMove(e) {
         if (index != -1) {
             if (type == "start") {
-                notes.notes[index].start -= e.movementY / scaledown
+                notes.notes[index].start -= zoomRatio * e.movementY / scaledown
             } else if (type == "end") {
-                notes.notes[index].end -= e.movementY / scaledown
+                notes.notes[index].end -= zoomRatio * e.movementY / scaledown
             } else if (type == "middle") {
-                notes.notes[index].start -= e.movementY / scaledown
-                notes.notes[index].end -= e.movementY / scaledown
+                notes.notes[index].start -= zoomRatio * e.movementY / scaledown
+                notes.notes[index].end -= zoomRatio * e.movementY / scaledown
             }
 
             if (notes.notes[index].end <= notes.notes[index].start) {
