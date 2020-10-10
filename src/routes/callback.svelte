@@ -1,5 +1,5 @@
 <!-- TODO: rename file to spotify callback -->
-<script lang>
+<script>
     import queryString from "query-string";
 
     let parsed = {};
