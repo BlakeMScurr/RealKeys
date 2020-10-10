@@ -88,6 +88,7 @@
     .mainnote {
         background-color: red;
         opacity: 0.6;
+        cursor: move;
     }
 
     .keybackground {
@@ -114,6 +115,17 @@
 
     .recordLine {
         z-index: 5;
+    }
+
+    .edit {
+        width: 100%;
+        height: 8px;
+        cursor: ns-resize;
+    }
+
+    .EndNote {
+        position: absolute;
+        bottom: 0;
     }
 </style>
 
@@ -143,7 +155,10 @@
                 --top:{
                     100*(1-note.end)/zoomRatio - zoomOffset
                 }%;
-                --color: {niceBlue}"></div>
+                --color: {niceBlue}">
+                <div class="edit StartNote"></div>
+                <div class="edit EndNote"></div>
+            </div>
         {/if}
     {/each}
 </div>
