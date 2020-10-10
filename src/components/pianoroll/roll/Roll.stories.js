@@ -39,6 +39,7 @@ Default.args = {
   ]),
   overlayNotes: new TimedNotes([]),
   recording: true,
+  editable: true,
 }
 
 export const TwoOctaves = Template.bind({});

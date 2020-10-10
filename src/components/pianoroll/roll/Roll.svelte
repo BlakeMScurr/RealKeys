@@ -17,6 +17,7 @@
     export let position = 0;
     export let zoomWidth = 0.2;
     export let recording = true;
+    export let editable = false;
 
     // the place on the screen where the user should start playing the note
     // TODO: move to store
@@ -69,31 +70,37 @@
     }
 
     function mouseup(){
-        index = -1
-        type = ""
+        if (editable) {
+            index = -1
+            type = ""
+        }
     }
    
     function mousedown(i: number, newtype: string) {
         return function (e) {
-            e.stopPropagation()
-            index = i
-            type = newtype
+            if (editable) {
+                e.stopPropagation()
+                index = i
+                type = newtype
+            }
         }
     }
 
     function handleNewNote(e) {
-        if (Array.from(e.path[0].classList.values()).indexOf("notescontainer") == -1) {
-            console.log("clicking where note already exists")
-            return
+        if (editable) {
+            if (Array.from(e.path[0].classList.values()).indexOf("notescontainer") == -1) {
+                console.log("clicking where note already exists")
+                return
+            }
+    
+            let clientWidth = e.path[0].clientWidth
+            let noteIndex = Math.floor((e.offsetX / clientWidth) * keys.length)
+            
+            let notemiddle = 1 - ((e.offsetY)/e.path[0].clientHeight) * zoomRatio
+            const noteRadius = 0.02 // TODO: make this dynamic
+            notes.notes.push(new TimedNote(notemiddle - noteRadius, notemiddle + noteRadius, keys[noteIndex].deepCopy()))
+            notes = notes
         }
-
-        let clientWidth = e.path[0].clientWidth
-        let noteIndex = Math.floor((e.offsetX / clientWidth) * keys.length)
-        
-        let notemiddle = 1 - ((e.offsetY)/e.path[0].clientHeight) * zoomRatio
-        const noteRadius = 0.02 // TODO: make this dynamic
-        notes.notes.push(new TimedNote(notemiddle - noteRadius, notemiddle + noteRadius, keys[noteIndex].deepCopy()))
-        notes = notes
     }
 
 </script>
@@ -141,6 +148,9 @@
     .mainnote {
         background-color: red;
         opacity: 0.6;
+    }
+
+    .movable {
         cursor: move;
     }
 
@@ -202,7 +212,7 @@
 <div class="container notescontainer" style="--height: {height + unit};" on:mouseup={mouseup} on:mousemove={handleMouseMove} on:dblclick={handleNewNote}>
     {#each notes.notes as note, i}
         {#if find(note.note, keys) != -1}
-            <div class="note mainnote" style="--width: {100/keys.length}%;
+            <div class="{"note mainnote" + (editable ? " movable" : "")}" style="--width: {100/keys.length}%;
                 --left: {find(note.note, keys) * 100/keys.length}%;
                 --height: {100*((1-note.start)-(1-note.end))/zoomRatio}%;
                 --top:{
@@ -211,8 +221,10 @@
                 --color: {niceBlue}"
                 on:mousedown={mousedown(i, "middle")}
             >
-                <div class="edit EndNote" on:mousedown={mousedown(i, "end")}></div>
-                <div class="edit StartNote" on:mousedown={mousedown(i, "start")}></div>
+                {#if editable}
+                    <div class="edit EndNote" on:mousedown={mousedown(i, "end")}></div>
+                    <div class="edit StartNote" on:mousedown={mousedown(i, "start")}></div>
+                {/if}
             </div>
         {/if}
     {/each}
