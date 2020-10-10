@@ -4,6 +4,7 @@
     import { niceBlue } from "../../colours";
     import type { Note } from "../../../lib/music/theory/notes";
     import type { TimedNotes } from "../../../lib/music/timed/timed";
+    import { TimedNote } from "../../../lib/music/timed/timed";
     import type { Bars } from "../pianoroll";
     import RollKey from "./RollKey.svelte";
 
@@ -43,6 +44,58 @@
         }
         return -1
     }
+
+    let index = -1
+    let type = ""
+    const scaledown = 400
+    function handleMouseMove(e) {
+        if (index != -1) {
+            if (type == "start") {
+                notes.notes[index].start -= e.movementY / scaledown
+            } else if (type == "end") {
+                notes.notes[index].end -= e.movementY / scaledown
+            } else if (type == "middle") {
+                notes.notes[index].start -= e.movementY / scaledown
+                notes.notes[index].end -= e.movementY / scaledown
+            }
+
+            if (notes.notes[index].end <= notes.notes[index].start) {
+                notes.notes.splice(index, 1)
+                index = -1
+                type = ""
+            }
+            notes = notes
+        }
+    }
+
+    function mouseup(){
+        index = -1
+        type = ""
+    }
+   
+    function mousedown(i: number, newtype: string) {
+        return function (e) {
+            e.stopPropagation()
+            index = i
+            type = newtype
+        }
+    }
+
+    function handleNewNote(e) {
+        if (Array.from(e.path[0].classList.values()).indexOf("notescontainer") == -1) {
+            console.log("clicking where note already exists")
+            return
+        }
+
+        let clientWidth = e.path[0].clientWidth
+        let noteIndex = Math.floor((e.offsetX / clientWidth) * keys.length)
+        
+        let notemiddle = 1 - ((e.offsetY)/e.path[0].clientHeight) * zoomRatio
+        const noteRadius = 0.02 // TODO: make this dynamic
+        notes.notes.push(new TimedNote(notemiddle - noteRadius, notemiddle + noteRadius, keys[noteIndex].deepCopy()))
+        notes = notes
+    }
+
 </script>
 
 <style>
@@ -123,7 +176,7 @@
         cursor: ns-resize;
     }
 
-    .EndNote {
+    .StartNote {
         position: absolute;
         bottom: 0;
     }
@@ -132,7 +185,7 @@
 <!-- Key Backgrounds -->
 <div class="container keybackground" style="--height: {height + unit};">
     {#each keys as key}
-       <RollKey width={100/keys.length + "%"} height={"100%"} white={key.color()=="white"} rightBorder={key.abstract.letter == "b" || key.abstract.letter == "e"}></RollKey> 
+        <RollKey width={100/keys.length + "%"} height={"100%"} white={key.color()=="white"} rightBorder={key.abstract.letter == "b" || key.abstract.letter == "e"}></RollKey> 
     {/each}
 </div>
 <!-- Bar Lines -->
@@ -146,8 +199,8 @@
     {/each}
 </div>
 <!-- Notes -->
-<div class="container notescontainer" style="--height: {height + unit};">
-    {#each notes.notes as note}
+<div class="container notescontainer" style="--height: {height + unit};" on:mouseup={mouseup} on:mousemove={handleMouseMove} on:dblclick={handleNewNote}>
+    {#each notes.notes as note, i}
         {#if find(note.note, keys) != -1}
             <div class="note mainnote" style="--width: {100/keys.length}%;
                 --left: {find(note.note, keys) * 100/keys.length}%;
@@ -155,9 +208,11 @@
                 --top:{
                     100*(1-note.end)/zoomRatio - zoomOffset
                 }%;
-                --color: {niceBlue}">
-                <div class="edit StartNote"></div>
-                <div class="edit EndNote"></div>
+                --color: {niceBlue}"
+                on:mousedown={mousedown(i, "middle")}
+            >
+                <div class="edit EndNote" on:mousedown={mousedown(i, "end")}></div>
+                <div class="edit StartNote" on:mousedown={mousedown(i, "start")}></div>
             </div>
         {/if}
     {/each}

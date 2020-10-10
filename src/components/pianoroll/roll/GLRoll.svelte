@@ -4,13 +4,13 @@
     import type { TimedNotes } from "../../../lib/music/timed/timed";
     import type { Bars } from "../pianoroll";
 
-    export let keys:Array<Note>;
-    export let height:number;
-    export let unit:string;
-    export let bars:Bars;
-    export let notes:TimedNotes;
-    export let overlayNotes:TimedNotes;
-    export let position = 0;
+    // export let keys:Array<Note>;
+    // export let height:number;
+    // export let unit:string;
+    // export let bars:Bars;
+    // export let notes:TimedNotes;
+    // export let overlayNotes:TimedNotes;
+    // export let position = 0;
     export let zoomWidth = 0.2;
     export let recording = true;
 
