@@ -29,6 +29,7 @@
     "pg": "^8.3.3",
     "pg-prepared": "^2.5.13",
     "polka": "next",
+    "query-string": "^6.13.5",
     "request": "^2.81.0",
     "rimraf": "^3.0.2",
     "sirv": "^1.0.0",
