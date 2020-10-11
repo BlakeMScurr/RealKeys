@@ -77,5 +77,6 @@ export function spotifyRedirectURI() {
 export function spotifyAuthorization() {
     const client_id = '9985cfc25fad4e3e82794d87f23823ef';
     const client_secret = '9af10bc37f3a4f44a3471799f90874a5';
-    return 'Authorization: Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+    return 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
+
 }
