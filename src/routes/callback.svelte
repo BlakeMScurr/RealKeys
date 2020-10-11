@@ -1,6 +1,6 @@
 <!-- TODO: rename file to spotify callback -->
 <script>
-    import { joinURL } from "../lib/util";
+    import { joinURL, spotifyRedirectURI } from "../lib/util";
     import queryString from "query-string";
 
     // TODO(security): handle the state parameter to prevent CORS issue
@@ -19,6 +19,22 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
+            }).then((res)=>{
+                return res.json()
+            }).then((json)=>{
+                if (json.error !== undefined) {
+                    error = json.error
+                    console.log("could not login with spotify", error)
+                } else {
+                    let { jwt, spotifyAccessToken } = json
+                    // TODO: store jwt too
+                    // TODO: protect from CSRF stuff, however that works
+                    console.log(spotifyAccessToken)
+                    document.cookie = `token=${spotifyAccessToken}`
+                }
+            }).catch((e)=>{
+                error = e
+                console.log("could not login with spotify", e)
             })
         }
     }

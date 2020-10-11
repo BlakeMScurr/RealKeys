@@ -1,10 +1,12 @@
 <script lang="ts">
+    import { getCookie } from "../../../lib/util";
     import { getPlayer, play } from "./spotify"
 
     export let track:string;
 
+    const token = getCookie("token", document.cookie)
+
     // TODO: put somewhere much safer
-    const token = "BQAfV1pxx1yc8vf6k8lv0ESy_goay335FMXevzngOSuHyTPSRuP-Uce31dxOZhPpAOGZfrCSgyiqo7pG1e6p3VsTZQ_DOn_CLr6llhV12oPLtfROVTXhyvBhYVv0LDR9V3piTOEEBFtcyFU98eezg70FAjnHPH9phRw"
     let playing = false;
     let player;
 

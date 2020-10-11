@@ -7,6 +7,7 @@ const app = express()
 
 const { PORT, NODE_ENV } = process.env;
 const dev = NODE_ENV === 'development';
+require('dotenv').config();
 
 app.use(express.urlencoded())
 app.use(express.json())
