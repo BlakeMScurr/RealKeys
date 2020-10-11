@@ -105,6 +105,11 @@
         }
     }
 
+    let volume = 1;
+    $: {
+        audioPlayer.Volume(volume)
+    }
+
     function pause() {
         clearInterval(positionInterval)
         clearInterval(repeatInterval)
@@ -130,4 +135,7 @@
 {:else}
     <button on:click={play}>Play</button>
 {/if}
+
+<input type=range bind:value={volume} min=0 max=1 step=0.05>
+
 <p id="positionDuration">{renderSeconds( $position * duration )}/{renderSeconds( duration )}</p>
