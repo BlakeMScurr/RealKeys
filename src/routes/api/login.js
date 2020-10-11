@@ -1,7 +1,5 @@
 import { spotifyRedirectURI, spotifyAuthorization } from "../../lib/util"
 const fetch = require("node-fetch");
-const request = require("request");
-var FormData = require('form-data');
 
 export function post(req, res) {
     let { code } = req.body;
