@@ -7,6 +7,7 @@
     import { TimedNote } from "../../../lib/music/timed/timed";
     import type { Bars } from "../pianoroll";
     import RollKey from "./RollKey.svelte";
+    import { currentSong } from "../../stores";
 
     export let keys:Array<Note>;
     export let height:number;
@@ -48,6 +49,7 @@
 
     let index = -1
     let type = ""
+    let unsaved = false
     const scaledown = 400
     function handleMouseMove(e) {
         if (index != -1) {
@@ -66,6 +68,7 @@
                 type = ""
             }
             notes = notes
+            unsaved = true
         }
     }
 
@@ -98,9 +101,17 @@
             
             let notemiddle = 1 - ((e.offsetY)/e.path[0].clientHeight) * zoomRatio
             const noteRadius = 0.02 // TODO: make this dynamic
-            notes.notes.push(new TimedNote(notemiddle - noteRadius, notemiddle + noteRadius, keys[noteIndex].deepCopy()))
+            notes.add(new TimedNote(notemiddle - noteRadius, notemiddle + noteRadius, keys[noteIndex].deepCopy()))
             notes = notes
+            unsaved = true
         }
+    }
+
+    function handleSave() {
+        // TODO: show recent edits etc
+        unsaved = false
+        notes.sort()
+        currentSong.set(notes)
     }
 
 </script>
@@ -191,6 +202,10 @@
         bottom: 0;
     }
 </style>
+
+{#if unsaved}
+    <button on:click={handleSave}>Save</button>
+{/if}
 
 <!-- Key Backgrounds -->
 <div class="container keybackground" style="--height: {height + unit};">

@@ -11,7 +11,7 @@
 
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;
-    export let recordMode:Boolean = true;
+    export let recordMode:Boolean = false;
 
     let pos = 0;
     position.subscribe((value) => {
@@ -246,7 +246,7 @@
 
 <div id="pianoroll" bind:clientWidth={width}>
     <div class="container roll" on:wheel={handleRollWheel}>
-        <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} zoomWidth={zoomWidth(duration)}></Roll>
+        <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} zoomWidth={zoomWidth(duration)} editable={recordMode}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
         <Piano {keys} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untime()}></Piano>

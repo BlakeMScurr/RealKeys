@@ -171,6 +171,16 @@ export class TimedNotes {
         return notesBetween(lowest, highest)
     }
 
+    add(note: TimedNote) {
+        this.notes.push(note)
+    }
+
+    sort() {
+        this.notes.sort((a: TimedNote, b: TimedNote):number => {
+            return a.start - b.start
+        })
+    }
+
     // returns all the notes in this set, removing duplicates and timing
     untime():Map<String, boolean> {
         // TODO: surely there's a one liner

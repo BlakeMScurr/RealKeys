@@ -61,7 +61,7 @@
         <AudioPlayer AudioPlayerPromise={NewYouTubeAudioPlayer(lesson.youtube_id)}></AudioPlayer>
         <ZoomBars bars={lesson.bars}></ZoomBars>
     </div>
-    <PianoRoll bars={castBars(lesson.bars)} notes={castTimedNotes(lesson.notes)}></PianoRoll>
+    <PianoRoll bars={castBars(lesson.bars)} notes={castTimedNotes(lesson.notes)} recordMode={true}></PianoRoll>
 {:catch error}
     <h1>Could not load lesson {owner}/{lessonID} {console.log(error)}</h1>
 {/await}
