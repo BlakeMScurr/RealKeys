@@ -1,5 +1,6 @@
 <script lang="ts">
     import { getCookie } from "../../../lib/util";
+    import Login from "../../generic/Login.svelte";
     import { getPlayer, play } from "./spotify"
 
     export let track:string;
@@ -10,19 +11,21 @@
     let playing = false;
     let player;
 
-    window.onSpotifyWebPlaybackSDKReady = () => {
-        let p = getPlayer(token)
-        let played = false;
-        p.addListener('ready', ({ device_id }) => {
-            if (!played) {
-                played = true
-                player = p;
-                // TODO: disable autoplay
-                play(track, player)
-                playing = true
-            }
-        });
-    };
+    if (token !== undefined) {
+        window.onSpotifyWebPlaybackSDKReady = () => {
+            let p = getPlayer(token)
+            let played = false;
+            p.addListener('ready', ({ device_id }) => {
+                if (!played) {
+                    played = true
+                    player = p;
+                    // TODO: disable autoplay
+                    play(track, player)
+                    playing = true
+                }
+            });
+        };
+    }
 
     function togglePlay() {
         if (playing) {
@@ -94,23 +97,27 @@
     }
 </style>
 
-<div class="controls" on:click={rewind}>
-    <div class="rw">
-        <div class="block"></div
-        ><div class="arrow-left"></div>
-    </div>
+{#if token === undefined}
+    <Login></Login>
+{:else}
+    <div class="controls" on:click={rewind}>
+        <div class="rw">
+            <div class="block"></div
+            ><div class="arrow-left"></div>
+        </div>
 
-    <div class="player" on:click={togglePlay}>
-        {#if !playing}
-            <div class="arrow-right"></div>
-        {:else}
-            <div class="playblock startplay"></div>
-            <div class="playblock"></div>
-        {/if}
-    </div>
+        <div class="player" on:click={togglePlay}>
+            {#if !playing}
+                <div class="arrow-right"></div>
+            {:else}
+                <div class="playblock startplay"></div>
+                <div class="playblock"></div>
+            {/if}
+        </div>
 
-    <div class="ff" on:click={fastForward}>
-        <div class="arrow-right"></div
-        ><div class="block"></div>
+        <div class="ff" on:click={fastForward}>
+            <div class="arrow-right"></div
+            ><div class="block"></div>
+        </div>
     </div>
-</div>
+{/if}

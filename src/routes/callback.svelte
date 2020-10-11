@@ -28,7 +28,7 @@
                 } else {
                     let { jwt, spotifyAccessToken } = json
                     // TODO: store jwt too
-                    // TODO: protect from CSRF stuff, however that works
+                    // TODO(security): protect from CSRF stuff, however that works
                     console.log(spotifyAccessToken)
                     document.cookie = `token=${spotifyAccessToken}`
                 }

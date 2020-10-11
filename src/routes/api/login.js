@@ -1,10 +1,18 @@
-import { spotifyRedirectURI, spotifyAuthorization } from "../../lib/util"
+import { spotifyRedirectURI } from "../../lib/util"
+
 const fetch = require("node-fetch");
 const jwt = require("jsonwebtoken");
 
 function generateAccessToken(userID, username, spotifyToken) {
     // expires after half and hour (1800 seconds = 30 minutes)
     return jwt.sign({'userID': userID, 'username': username, 'spotifyToken': spotifyToken}, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+}
+
+function spotifyAuthorization() {
+   const client_id = '9985cfc25fad4e3e82794d87f23823ef';
+   const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
+    // TODO(security): ask security.stackexchange why we're sending an unencrypted secret - is https enough?  
+   return 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
 }
 
 export function post(req, responder) {
