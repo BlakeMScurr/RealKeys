@@ -1,22 +1,36 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
 
     export let min: number = 0;
     export let max: number = 1;
-    export let step: number = 0.01;
+    export let step: number = 0.000001; // TODO: is it bad for performance to set such a low step?
     export let val: number = 0;
 
     let inputElement;
 
+    let dispatch = createEventDispatcher();
+
+    function handleInput(e) {
+        setbackground()
+        dispatch('input', val)
+    } 
+    
     function setbackground(){
         // Handles preplay styling a la https://stackoverflow.com/a/57153340/7371580
-        let thumbPosition = (inputElement.value-inputElement.min)/(inputElement.max-inputElement.min)*100
+        // TODO: fix trailing black space behind thumb when fast forwarding by
+        // making sure that this uses the correct value when the props are updated
+        // TODO: decrease height so it's not taking the whole track, giving the user more space to click
+        let thumbPosition = (val-inputElement.min)/(inputElement.max-inputElement.min)*100
         inputElement.style.background = 'linear-gradient(to right, #667ED4 0%, #667ED4 ' + thumbPosition + '%, #000 ' + thumbPosition + '%, #000 100%)'
     }
-
+    
+    let mounted;
     onMount(()=>{
         setbackground()
+        mounted = true
     })
+
+    $: { if (val == val && mounted) {setbackground()} }
 </script>
 
 <style lang="scss">
@@ -130,4 +144,4 @@
     }
 </style>
 
-<input type="range" bind:value={val} {min} {max} {step} on:input={setbackground} bind:this={inputElement}>
+<input type="range" bind:value={val} {min} {max} {step} on:input={handleInput} bind:this={inputElement}>

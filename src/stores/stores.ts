@@ -1,11 +1,17 @@
 import { writable } from 'svelte/store';
+import { play } from '../components/audioplayer/external/spotify';
 import { NewNote } from '../lib/music/theory/notes';
 import { TimedNote, TimedNotes } from '../lib/music/timed/timed';
 
+// Position set is only accessible via seek and play
+const { subscribe, set } = createPosition();
+const setPosition = set
+export const position = { subscribe }
+
+export const seek = createSeek();
 export const currentSong = createCurrentSong();
 export const repeats = createRepeats();
-export const position = createPosition();
-export const playingStore = createPlaying();
+export const playingStore = createPlay();
 export const songDuration = createSongDuration();
 
 // Position refers to how far through the audio we are
@@ -15,14 +21,13 @@ function createPosition() {
 
     return {
         subscribe,
-		set: (val: number) => { 
+		set: (val: number) => {
             if (val < 0 || val > 1) {
                 throw new Error("positions must be between 0 and 1, got: " + val)
             } else {
                 set(val)
             }
         },
-        increment: (amount) => update((n) => n + amount),
     }
 }
 
@@ -64,12 +69,58 @@ function createSongDuration() {
         set,
     }
 }
-function createPlaying() {
-    const { subscribe, set } = writable(false);
+
+function createSeek() {
+    const { subscribe, set } = writable(0);
 
     return {
         subscribe,
-        play: ()=>{set(true)},
-        pause: ()=>{set(false)},
+        set: (val: number) => {
+            setPosition(val)
+            set(val)
+        }
+    }
+}
+
+// TODO: does this work in the function's scope too? That would be better and more encapsulated
+let playInterval;
+const frameRate = 40;
+function createPlay() {
+    const { subscribe, set } = writable(false);
+    
+    return {
+        subscribe,
+        play: () => {
+            set(true)
+
+            let timeAtPlayStart = Date.now()
+            let pos;
+            position.subscribe((val) => {
+                pos = val
+            });
+            let duration;
+            songDuration.subscribe((val) => {
+                duration = val
+            })
+            
+            playInterval = setInterval(()=>{
+                let timeNow = Date.now()
+                let newPosition = pos + (timeNow - timeAtPlayStart)/(duration * 1000)
+                if (newPosition < 1) {
+                    setPosition(newPosition)
+                    timeAtPlayStart = timeNow // have to update this as pos will vary as it's set
+                } else {
+                    // Pause at the end
+                    set(false)
+                    clearInterval(playInterval)
+                    setPosition(1)
+                }
+                console.log("updating")
+            }, 1000 / frameRate)
+        },
+        pause: () => {
+            set(false)
+            clearInterval(playInterval)
+        }
     }
 }
