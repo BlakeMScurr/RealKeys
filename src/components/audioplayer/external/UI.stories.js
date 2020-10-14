@@ -2,12 +2,18 @@ import UI from "./UI.svelte";
 
 export default {
     title: 'AudioPlayer UI',
-  };
+};
 
-export const Default = () => ({
+const Template = ({...args }) => ({
     Component: UI,
     props: {
-        _storybook_position: 0.2,
-        _storybook_duration: 10,
-    }
-});
+      ...args,
+    },
+  });
+  
+export const Default = Template.bind({});
+Default.args = {
+    _storybook_position: 0.2,
+    _storybook_duration: 10,
+    _storybook_ready: false,
+}

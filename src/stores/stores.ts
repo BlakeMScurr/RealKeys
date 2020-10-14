@@ -8,11 +8,13 @@ const { subscribe, set } = createPosition();
 const setPosition = set
 export const position = { subscribe }
 
+// TODO: consoldiate into highly testable time manager class
 export const seek = createSeek();
 export const currentSong = createCurrentSong();
 export const repeats = createRepeats();
 export const playingStore = createPlay();
 export const songDuration = createSongDuration();
+export const audioReady = createAudioReady();
 
 // Position refers to how far through the audio we are
 // TODO: replace position binding, prop passing, and event firing with this
@@ -91,35 +93,55 @@ function createPlay() {
     return {
         subscribe,
         play: () => {
-            set(true)
-
-            let timeAtPlayStart = Date.now()
-            let pos;
-            position.subscribe((val) => {
-                pos = val
-            });
-            let duration;
-            songDuration.subscribe((val) => {
-                duration = val
+            let ready;
+            audioReady.subscribe((val) => {
+                ready = val.ready
             })
-            
-            playInterval = setInterval(()=>{
-                let timeNow = Date.now()
-                let newPosition = pos + (timeNow - timeAtPlayStart)/(duration * 1000)
-                if (newPosition < 1) {
-                    setPosition(newPosition)
-                    timeAtPlayStart = timeNow // have to update this as pos will vary as it's set
-                } else {
-                    // Pause at the end
-                    set(false)
-                    clearInterval(playInterval)
-                    setPosition(1)
-                }
-            }, 1000 / frameRate)
+            if (ready) {
+                set(true)
+                
+                let timeAtPlayStart = Date.now()
+                let pos;
+                position.subscribe((val) => {
+                    pos = val
+                });
+                let duration;
+                songDuration.subscribe((val) => {
+                    duration = val
+                })
+                
+                playInterval = setInterval(()=>{
+                    let timeNow = Date.now()
+                    let newPosition = pos + (timeNow - timeAtPlayStart)/(duration * 1000)
+                    if (newPosition < 1) {
+                        setPosition(newPosition)
+                        timeAtPlayStart = timeNow // have to update this as pos will vary as it's set
+                    } else {
+                        // Pause at the end
+                        set(false)
+                        clearInterval(playInterval)
+                        setPosition(1)
+                    }
+                }, 1000 / frameRate)
+            }
         },
         pause: () => {
             set(false)
             clearInterval(playInterval)
+        }
+    }
+}
+
+function createAudioReady() {
+    const { subscribe, set } = writable({reason: "Loading Audio", ready: false});
+
+    return {
+        subscribe,
+        notReady: (reason: string) => {
+            set({reason: reason, ready: false})
+        },
+        ready: () => {
+            set({reason: "", ready: true})
         }
     }
 }

@@ -1,25 +1,39 @@
 <script lang="ts">
-    import { position, songDuration, seek, playingStore } from "../../../stores/stores";
+    import { position, songDuration, seek, playingStore, audioReady } from "../../../stores/stores";
     import Slider from "../../generic/Slider.svelte";
 
     export let _storybook_position: number;
     export let _storybook_duration: number;
+    export let _storybook_ready: number;
     
     let duration: number;
     let pos: number;
+    let ready: {ready: boolean, reason: string};
+
     songDuration.subscribe((val)=> {
         duration = val
     })
     position.subscribe((val)=> {
         pos = val
     })
+    audioReady.subscribe((val)=> {
+        ready = val
+    })
 
-    if (_storybook_position !== undefined) {
-        seek.set(_storybook_position)
-    }
-
-    if (_storybook_duration !== undefined) {
-        songDuration.set(_storybook_duration)
+    $: {
+        if (_storybook_ready !== undefined) {
+            if (_storybook_ready) {
+                audioReady.ready()
+            } else {
+                audioReady.notReady("storybook user said so")
+            }
+        }
+        if (_storybook_position !== undefined) {
+            seek.set(_storybook_position)
+        }
+        if (_storybook_duration !== undefined) {
+            songDuration.set(_storybook_duration)
+        }
     }
 
     // TODO: get this from store
@@ -149,7 +163,7 @@
 
 
 <div class="controls" on:keydown={handleKeyDown}>
-    <div class="{"buttons" + (loaded ? "" : " cantPlay")}">
+    <div class="{"buttons" + (ready.ready ? "" : " cantPlay")}">
         <div class="rw" on:click={rewind}>
             <div class="block"></div
             ><div class="arrow-left"></div>
