@@ -9,7 +9,7 @@
 
 <script lang="ts">
     import { onMount } from 'svelte';
-    import { currentSong } from "../../../components/stores";
+    import { currentSong } from "../../../stores/stores";
     import type { TimedNotes } from '../../../lib/music/timed/timed';
     import { NewYouTubeAudioPlayer } from "../../../components/audioplayer/audioplayer.ts"
     import { getLessonDefinition } from '../../../lib/api.js'

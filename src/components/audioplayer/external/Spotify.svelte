@@ -156,6 +156,7 @@ import { setInterval } from "timers";
         max-width: 300px;
     }
 
+    // TODO: overlay a pretty loading icon instead
     .cantPlay {
         div > div.block {
             background-color: grey;

@@ -3,7 +3,7 @@
     import { setWidths, validate, getSeekPixels, getSeekPercentage } from "./bars.js"
     import { getRelativePosition } from "../../lib/dom.js"
     import { widthSum } from "../../lib/util.js"
-    import { position, repeats } from "../stores.ts"
+    import { position, repeats } from "../../stores/stores.ts"
     import { onMount } from 'svelte';
     import Bar from "./Bar.svelte"
     import Seeker from "./Seeker.svelte"
