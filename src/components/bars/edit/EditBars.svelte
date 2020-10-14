@@ -3,7 +3,7 @@
     import Tapper from "../tapper/Tapper.svelte"
     import { createUnevenBars, createEvenBars } from "./editBars.js"
     import { createEventDispatcher } from 'svelte';
-    import { position } from "../../stores"
+    import { position } from "../../../stores/stores"
 
     export let songLength; // length of the song
     export let bars;

@@ -2,7 +2,7 @@
     import type { Bars } from "./pianoroll";
     import { RecordState } from "./recorder";
     import { TimedNotes } from "../../lib/music/timed/timed"
-    import { currentSong, playingStore, position, songDuration } from "../stores"
+    import { currentSong, playingStore, position, songDuration } from "../../stores/stores"
     import { newPiano } from "../track/trackplayer";
     import { highestPianoNote, lowestPianoNote } from "../../lib/music/theory/notes"
     import RecordButton from "../generic/RecordButton.svelte"

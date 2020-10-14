@@ -25,9 +25,9 @@
     $track-color: #000000 !default;
     $thumb-color: #667ED4 !default; // TODO: import from module
 
-    $thumb-radius: 8px !default;
-    $thumb-height: 16px !default;
-    $thumb-width: 16px !default;
+    $thumb-radius: 7px !default;
+    $thumb-height: 14px !default;
+    $thumb-width: 14px !default;
 
     $track-width: 100% !default;
     $track-height: 3px !default;

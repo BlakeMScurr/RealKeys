@@ -7,7 +7,7 @@
     import { TimedNote } from "../../../lib/music/timed/timed";
     import type { Bars } from "../pianoroll";
     import RollKey from "./RollKey.svelte";
-    import { currentSong } from "../../stores";
+    import { currentSong } from "../../../stores/stores";
 
     export let keys:Array<Note>;
     export let height:number;
