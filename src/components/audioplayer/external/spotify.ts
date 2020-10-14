@@ -1,4 +1,4 @@
-export function getPlayer(token, handleAuthenticationError) {
+export function getPlayer(token, handleAuthenticationError, handleStateChange) {
     const player = new Spotify.Player({
         name: 'RealKeys Spotify Player',
         getOAuthToken: cb => { cb(token); }
@@ -20,7 +20,7 @@ export function getPlayer(token, handleAuthenticationError) {
     
     // Playback status updates
     player.addListener('player_state_changed', state => { 
-        // console.log(state);
+        handleStateChange(state)
     });
     
     // Ready
@@ -56,7 +56,6 @@ const playinternal = ({
     }
 }) => {
     getOAuthToken(access_token => {
-        console.log("bouta fetch")
         fetch(`https://api.spotify.com/v1/me/player/play?device_id=${id}`, {
             method: 'PUT',
             body: JSON.stringify({ uris: [spotify_uri] }),
@@ -64,9 +63,6 @@ const playinternal = ({
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${access_token}`
             },
-        }).catch((err)=> {
-            console.log("warning!!!")
-            console.warn(err)
         });
     });
 };
