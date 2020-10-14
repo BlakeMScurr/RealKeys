@@ -70,6 +70,7 @@
     "puppeteer": "^5.2.1",
     "react-is": "^16.13.1",
     "rollup": "^2.3.4",
+    "rollup-plugin-scss": "^2.6.1",
     "rollup-plugin-svelte": "^5.0.1",
     "rollup-plugin-terser": "^6.1.0",
     "sapper": "^0.28.0",

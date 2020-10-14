@@ -8,6 +8,7 @@ import config from 'sapper/config/rollup.js';
 import pkg from './package.json';
 import autoPreprocess from 'svelte-preprocess';
 import typescript from '@rollup/plugin-typescript';
+import scss from 'rollup-plugin-scss';
 
 const mode = process.env.NODE_ENV;
 const dev = mode === 'development';
@@ -40,6 +41,7 @@ export default {
 			}),
 			typescript({ sourceMap: dev }),
 			commonjs(),
+			scss(),
 
 			legacy && babel({
 				extensions: ['.js', '.mjs', '.html', '.svelte'],
