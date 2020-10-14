@@ -115,7 +115,6 @@ function createPlay() {
                     clearInterval(playInterval)
                     setPosition(1)
                 }
-                console.log("updating")
             }, 1000 / frameRate)
         },
         pause: () => {

@@ -49,6 +49,19 @@
         seek.set(event.detail)
     }
 
+    function handleKeyDown (event) {
+        switch (event.code) {
+            case 'Space':
+                togglePlay()
+                break;
+            case 'ArrowLeft': // left arrow
+                rewind()
+                break;
+            case 'ArrowRight': // right arrow
+                fastForward()
+                break;
+        }
+    }
 </script>
 
 
@@ -134,7 +147,8 @@
     }
 </style>
 
-<div class="controls">
+
+<div class="controls" on:keydown={handleKeyDown}>
     <div class="{"buttons" + (loaded ? "" : " cantPlay")}">
         <div class="rw" on:click={rewind}>
             <div class="block"></div
