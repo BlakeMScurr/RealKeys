@@ -79,3 +79,8 @@ export function getCookie(name, jar) {
     const parts = value.split(`; ${name}=`);
     if (parts.length === 2) return parts.pop().split(';').shift();
 }
+
+export function removeCookie(name, jar) {
+    const cookie = getCookie(name, jar)
+    return jar.replace(name, "")
+}

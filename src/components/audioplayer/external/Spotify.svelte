@@ -1,11 +1,11 @@
 <script lang="ts">
-    import { getCookie } from "../../../lib/util";
+    import { getCookie, removeCookie } from "../../../lib/util";
     import Login from "../../generic/Login.svelte";
     import { getPlayer, play } from "./spotify"
 
     export let track:string;
 
-    const token = getCookie("token", document.cookie)
+    let token = getCookie("token", document.cookie)
 
     // TODO: put somewhere much safer
     let playing = false;
@@ -13,7 +13,13 @@
 
     if (token !== undefined) {
         window.onSpotifyWebPlaybackSDKReady = () => {
-            let p = getPlayer(token)
+            const handleAuthenticationError = () => {
+                // TODO: actually refresh token here
+                token = undefined
+                document.cookie = removeCookie("token", document.cookie)
+            }
+
+            let p = getPlayer(token, handleAuthenticationError)
             let played = false;
             p.addListener('ready', ({ device_id }) => {
                 if (!played) {
@@ -36,12 +42,18 @@
         playing = !playing
     }
 
-    function fastForward() {
+    function dSeek(delta: number) {
+        player.getCurrentState().then((state)=>{
+            player.seek(state.position + delta)
+        })
+    }
 
+    function fastForward() {
+        dSeek(1000)
     }
 
     function rewind() {
-        player.getCurrentState().then()
+        dSeek(-1000)
     }
 </script>
 
@@ -100,8 +112,8 @@
 {#if token === undefined}
     <Login></Login>
 {:else}
-    <div class="controls" on:click={rewind}>
-        <div class="rw">
+    <div class="controls">
+        <div class="rw" on:click={rewind}>
             <div class="block"></div
             ><div class="arrow-left"></div>
         </div>

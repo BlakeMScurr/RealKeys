@@ -1,6 +1,7 @@
 const autoPreprocess = require('svelte-preprocess');
 
 module.exports = ({ config, mode }) => {
+    config.devtool = "eval-source-map"
     const svelteLoader = config.module.rules.find(
         r => r.loader && r.loader.includes('svelte-loader'),
     );

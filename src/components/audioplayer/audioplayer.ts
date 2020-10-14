@@ -98,6 +98,4 @@ export class MockPlayer {
     Duration():number {
         return this.length
     }
-
-
 }
