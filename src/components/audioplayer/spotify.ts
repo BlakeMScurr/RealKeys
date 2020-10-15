@@ -8,7 +8,6 @@ export function getPlayer(token, handleAuthenticationError, handleStateChange):S
     player.addListener('initialization_error', ({ message }) => { console.error(message); });
     player.addListener('authentication_error', ({ message }) => { 
         if (message !== "Invalid token scopes.") {
-            console.error(message);
             handleAuthenticationError()
         } else {
             // TODO: why are we getting this despite the player working correctly?

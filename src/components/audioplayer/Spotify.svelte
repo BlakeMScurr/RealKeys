@@ -1,6 +1,7 @@
 <!-- TODO: add other kinds of audio players -->
 
-<script lang="ts">
+<script lang="ts">import { onDestroy } from "svelte";
+
     import { getCookie, removeCookie } from "../../lib/util";
     import { audioReady, tracks } from "../../stores/stores"
     import Login from "../generic/Login.svelte";
@@ -17,6 +18,8 @@
         token = undefined
         document.cookie = removeCookie("token", document.cookie)
     }
+
+    audioReady.notReady("Loading")
 
     // This just waits for our song to play and stops the autoplay
     // TODO: use the web API to cue up the song we want and skip to it so that we don't have to poll to pause the autoplay
@@ -60,6 +63,11 @@
         }
         pauserBackoff(50)
     }
+
+    onDestroy(()=>{
+        // TODO: unlink track
+        player.Pause()
+    })
 </script>
 
 <svelte:head>
