@@ -33,9 +33,9 @@
 
     $: {
         if (!norm) {
-            bars = createUnevenBars(tapTimes, songLength, anchor)
+            bars = createUnevenBars(tapTimes, songLength / 1000, anchor)
         } else {
-            bars = createEvenBars(anchor, bpm, songLength)
+            bars = createEvenBars(anchor, bpm, songLength / 1000)
         }
         dispatch("newBars", bars)
     }
