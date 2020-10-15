@@ -1,14 +1,22 @@
-<!-- TODO: way nicer styling -->
 <script lang="ts">
     import { getCookie, joinURL } from "../lib/util";
+    import { goto } from '@sapper/app';
     import Login from "../components/generic/Login.svelte"
     import Spotify from "../components/audioplayer/Spotify.svelte";
+import { onMount } from "svelte";
 
-    let token = getCookie("token", document.cookie)
 
+    let token;
     let selected = false
     let songNameQuery: string = "Jesus Walks";
     let searchResults = [];
+    const randishString = "hfjdscvlkjbwlkjebr"
+    
+    onMount(()=>{
+        token = getCookie("token", document.cookie)
+        handleSpotifySearch()
+    })
+
     // TODO: allow infinite scroll with pagination
     function handleSpotifySearch() {
         selected = false
@@ -37,8 +45,7 @@
             })
         }
     }
-    handleSpotifySearch()
-    const randishString = "hfjdscvlkjbwlkjebr"
+    
 
     let lessonName = ""
     function handleSelect(song) {
@@ -57,31 +64,30 @@
         let id = searchResults[0].id
 
         console.log("saving", lessonName, id)
-
-        // fetch(joinURL(["api", "blakemscurr", lessonName, "new"]), {
-        //     method: "POST",
-        //       headers: {
-        //         'Content-Type': 'application/json',
-        //         'Accept': 'application/json'
-        //     },
-        //     body: JSON.stringify({
-        //         lessonName: "blakemscurr/" + lessonName, // TODO: get from logged in user
-        //         youtubeID: youtubeID,
-        //         youtubeTitle: youtubeTitle,
-        //     })
-        // }).then((response)=>{
-        //     if (response.status == 400) {
-        //         return response.json()
-        //     } else {
-        //         goto(joinURL(["blakemscurr", lessonName, "beats"]))
-        //     }
-        // }).then((json)=>{
-        //     if (json !== undefined && json.message !== undefined) {
-        //         backendError = json.message
-        //     }
-        // }).catch((err)=>{
-        //     console.warn(err)
-        // )}
+        let username = "blakemscurr" // TODO: get from logged in user
+        fetch(joinURL(["api", username, lessonName, "new"]), {
+            method: "POST",
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                lessonName: username + "/" + lessonName,
+                spotifyID: id,
+            })
+        }).then((response)=>{
+            if (response.status == 400) {
+                return response.json()
+            } else {
+                goto(joinURL([username, lessonName, "beats"]))
+            }
+        }).then((json)=>{
+            if (json !== undefined && json.message !== undefined) {
+                
+            }
+        }).catch((err)=>{
+            console.warn(err)
+        })
         }
 </script>
 

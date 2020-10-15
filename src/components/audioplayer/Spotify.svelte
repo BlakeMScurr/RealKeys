@@ -1,11 +1,10 @@
 <!-- TODO: add other kinds of audio players -->
 
 <script lang="ts">import { onDestroy } from "svelte";
-
     import { getCookie, removeCookie } from "../../lib/util";
     import { audioReady, tracks } from "../../stores/stores"
     import Login from "../generic/Login.svelte";
-    import { getPlayer, play } from "./spotify"
+    import { getPlayer, play } from "./spotify.ts"
     import UI from "./UI.svelte"
 
     export let track:string;

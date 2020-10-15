@@ -41,7 +41,9 @@ export default {
 			}),
 			typescript({ sourceMap: dev }),
 			commonjs(),
-			scss(),
+			scss({
+				output: 'static/bundle.css',
+			}),
 
 			legacy && babel({
 				extensions: ['.js', '.mjs', '.html', '.svelte'],
@@ -88,7 +90,10 @@ export default {
 				extensions: [ '.mjs', '.js', '.json', '.node', '.svelte', '.ts'],
 			}),
 			typescript({ sourceMap: dev }),
-			commonjs()
+			commonjs(),
+			scss({
+				output: 'static/bundle.css',
+			}),
 		],
 		external: Object.keys(pkg.dependencies).concat(require('module').builtinModules),
 
