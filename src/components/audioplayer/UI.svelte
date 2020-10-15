@@ -1,4 +1,6 @@
 <script lang="ts">
+import { onDestroy } from "svelte";
+
     import { position, songDuration, seek, playingStore, audioReady } from "../../stores/stores";
     import Slider from "../generic/Slider.svelte";
 
@@ -63,7 +65,10 @@
         seek.set(event.detail)
     }
 
-    function handleKeyDown (event) {
+    document.addEventListener("keydown", handleKeyDown)
+
+    function handleKeyDown(event) {
+        console.log("got event")
         switch (event.code) {
             case 'Space':
                 togglePlay()
@@ -76,6 +81,11 @@
                 break;
         }
     }
+
+    onDestroy(() => {
+        console.log("destroying a")
+        document.removeEventListener("keydown", handleKeyDown, false)
+    })
 </script>
 
 
@@ -162,7 +172,7 @@
 </style>
 
 
-<div class="controls" on:keydown={handleKeyDown}>
+<div class="controls">
     <div class="{"buttons" + (ready.ready ? "" : " cantPlay")}">
         <div class="rw" on:click={rewind}>
             <div class="block"></div

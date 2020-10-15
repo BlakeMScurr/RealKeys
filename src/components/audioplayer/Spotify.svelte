@@ -1,6 +1,8 @@
+<!-- TODO: add other kinds of audio players -->
+
 <script lang="ts">
     import { getCookie, removeCookie } from "../../lib/util";
-    import { tracks } from "../../stores/stores"
+    import { audioReady, tracks } from "../../stores/stores"
     import Login from "../generic/Login.svelte";
     import { getPlayer, play } from "./spotify"
     import UI from "./UI.svelte"
@@ -15,6 +17,8 @@
         token = undefined
         document.cookie = removeCookie("token", document.cookie)
     }
+
+    audioReady.notReady("Loading ")
 
     // This just waits for our song to play and stops the autoplay
     // TODO: use the web API to cue up the song we want and skip to it so that we don't have to poll to pause the autoplay
