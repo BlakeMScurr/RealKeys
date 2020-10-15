@@ -18,8 +18,6 @@
         document.cookie = removeCookie("token", document.cookie)
     }
 
-    audioReady.notReady("Loading ")
-
     // This just waits for our song to play and stops the autoplay
     // TODO: use the web API to cue up the song we want and skip to it so that we don't have to poll to pause the autoplay
     // https://developer.spotify.com/documentation/web-api/reference/player/add-to-queue/

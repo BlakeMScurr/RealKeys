@@ -1,6 +1,5 @@
 <script lang="ts">
-import { onDestroy } from "svelte";
-
+    import { onDestroy } from "svelte";
     import { position, songDuration, seek, playingStore, audioReady } from "../../stores/stores";
     import Slider from "../generic/Slider.svelte";
 
@@ -68,7 +67,6 @@ import { onDestroy } from "svelte";
     document.addEventListener("keydown", handleKeyDown)
 
     function handleKeyDown(event) {
-        console.log("got event")
         switch (event.code) {
             case 'Space':
                 togglePlay()
@@ -83,7 +81,6 @@ import { onDestroy } from "svelte";
     }
 
     onDestroy(() => {
-        console.log("destroying a")
         document.removeEventListener("keydown", handleKeyDown, false)
     })
 </script>
