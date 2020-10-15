@@ -44,7 +44,7 @@
     })
 
     function rewind () {
-        seek.set(pos - 1/duration)
+        seek.set(pos - 1000/duration)
     }
 
     function togglePlay () {
@@ -56,7 +56,7 @@
     }
 
     function fastForward () {
-        seek.set(pos + 1/duration)
+        seek.set(pos + 1000/duration)
     }
 
     function handleSliderSeek(event) {
@@ -181,5 +181,5 @@
             ><div class="block"></div>
         </div>
     </div>
-    <Slider val={pos} on:input={handleSliderSeek}></Slider>
+    <Slider value={pos} on:input={handleSliderSeek}></Slider>
 </div>

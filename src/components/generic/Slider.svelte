@@ -4,16 +4,32 @@
     export let min: number = 0;
     export let max: number = 1;
     export let step: number = 0.000001; // TODO: is it bad for performance to set such a low step?
-    export let val: number = 0;
+    export let value: number = 0;
 
     let inputElement;
 
     let dispatch = createEventDispatcher();
 
-    function handleInput(e) {
+    function handleInput() {
         setbackground()
+    }
+
+    let grabbed = false;
+    function grab() {
+        grabbed = true;
+    }
+
+    function release() {
+        grabbed = false;
         dispatch('input', val)
-    } 
+    }
+
+    let val = value
+    $: {
+        if (!grabbed) {
+            val = value
+        }
+    }
     
     function setbackground(){
         // Handles preplay styling a la https://stackoverflow.com/a/57153340/7371580
@@ -144,4 +160,4 @@
     }
 </style>
 
-<input type="range" bind:value={val} {min} {max} {step} on:input={handleInput} bind:this={inputElement}>
+<input type="range" bind:value={val} {min} {max} {step} on:input={handleInput} bind:this={inputElement} on:mousedown={grab} on:touchstart={grab} on:mouseup={release} on:touchend={release}>

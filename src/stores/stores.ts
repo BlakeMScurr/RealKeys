@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import { play } from '../components/audioplayer/external/spotify';
+import type { Player } from '../components/audioplayer/audioplayer'
 import { NewNote } from '../lib/music/theory/notes';
 import { TimedNote, TimedNotes } from '../lib/music/timed/timed';
 
@@ -15,6 +15,7 @@ export const repeats = createRepeats();
 export const playingStore = createPlay();
 export const songDuration = createSongDuration();
 export const audioReady = createAudioReady();
+export const tracks = createTracks();
 
 // Position refers to how far through the audio we are
 // TODO: replace position binding, prop passing, and event firing with this
@@ -68,7 +69,15 @@ function createSongDuration() {
 
     return {
         subscribe,
-        set,
+        set: (dur: Promise<number>|number) => {
+            if (dur instanceof Promise) {
+                dur.then((d) => {
+                    set(d)
+                })
+            } else {
+                set(dur)
+            }
+        }
     }
 }
 
@@ -112,7 +121,7 @@ function createPlay() {
                 
                 playInterval = setInterval(()=>{
                     let timeNow = Date.now()
-                    let newPosition = pos + (timeNow - timeAtPlayStart)/(duration * 1000)
+                    let newPosition = pos + (timeNow - timeAtPlayStart)/(duration)
                     if (newPosition < 1) {
                         setPosition(newPosition)
                         timeAtPlayStart = timeNow // have to update this as pos will vary as it's set
@@ -132,6 +141,7 @@ function createPlay() {
     }
 }
 
+// TODO: only expose subscribe
 function createAudioReady() {
     const { subscribe, set } = writable({reason: "Loading Audio", ready: false});
 
@@ -145,3 +155,52 @@ function createAudioReady() {
         }
     }
 }
+
+class track {
+    player: Player;
+    constructor(player: Player) {
+        this.player = player
+    }
+
+    // links the track to stores
+    link() {
+        audioReady.ready()
+        let duration = this.player.Duration()
+        songDuration.set(duration)
+
+        seek.subscribe((p) => {
+            let dur;
+            songDuration.subscribe((d) => {
+                dur = d
+            })
+            this.player.Seek(p * dur)
+        })
+
+        playingStore.subscribe((play) => {
+            if (play) {
+                this.player.Play()
+            } else {
+                this.player.Pause()
+            }
+        })
+    }
+}
+
+function createTracks() {
+    const { subscribe, update } = writable(new Array<track>());
+
+    return {
+        subscribe,
+        new: (player: Player) => {
+            update((currentPlayers: Array<track>) => {
+                let t = new track(player)
+                t.link()
+                currentPlayers.push(t)
+                return currentPlayers
+            })
+        },
+    }
+}
+
+// TODO: pause at the end
+// TODO: handle repeats

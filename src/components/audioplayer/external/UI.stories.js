@@ -14,6 +14,6 @@ const Template = ({...args }) => ({
 export const Default = Template.bind({});
 Default.args = {
     _storybook_position: 0.2,
-    _storybook_duration: 10,
+    _storybook_duration: 10000,
     _storybook_ready: false,
 }

@@ -1,4 +1,4 @@
-export function getPlayer(token, handleAuthenticationError, handleStateChange) {
+export function getPlayer(token, handleAuthenticationError, handleStateChange):SpotifyPlayer {
     const player = new Spotify.Player({
         name: 'RealKeys Spotify Player',
         getOAuthToken: cb => { cb(token); }
@@ -35,7 +35,7 @@ export function getPlayer(token, handleAuthenticationError, handleStateChange) {
 
     // Connect to the player!
     player.connect();
-    return player
+    return new SpotifyPlayer(player)
 }
 
 export function play(trackID: string, player: any) {
@@ -67,3 +67,35 @@ const playinternal = ({
     });
 };
   
+class SpotifyPlayer {
+    // TODO: figure out type
+    internal: any; // This is the player from the web playback sdk
+    constructor(player: any) {
+        this.internal = player
+    }
+
+    Seek(time: number) {
+        this.internal.seek(time)
+    }
+
+    CurrentTime():number {
+        throw new Error("TODO: implement")
+    }
+
+    Pause() {
+        this.internal.pause()
+    }
+
+    Play() {
+        this.internal.resume()
+    }
+
+    async Duration():Promise<number> {
+        let state = await this.internal.getCurrentState()
+        return state.duration
+    }
+
+    Volume(volume: number) {
+        this.internal.setVolume(volume)
+    }
+}
