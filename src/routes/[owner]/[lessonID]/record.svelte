@@ -18,7 +18,7 @@
 
     import PianoRoll from "../../../components/pianoroll/PianoRoll.svelte";
     import ZoomBars from "../../../components/bars/zoom/ZoomBars.svelte";
-    import AudioPlayer from "../../../components/audioplayer/AudioPlayer.svelte";
+    // import AudioPlayer from "../../../components/audioplayer/AudioPlayer.svelte";
 
     export let owner;
     export let lessonID;
@@ -58,7 +58,7 @@
     <div class="optionwrapper">
         <h1>{lessonID}</h1>
         <h3>{owner}</h3>
-        <AudioPlayer AudioPlayerPromise={NewYouTubeAudioPlayer(lesson.youtube_id)}></AudioPlayer>
+        <!-- <AudioPlayer AudioPlayerPromise={NewYouTubeAudioPlayer(lesson.youtube_id)}></AudioPlayer> -->
         <ZoomBars bars={lesson.bars}></ZoomBars>
     </div>
     <PianoRoll bars={castBars(lesson.bars)} notes={castTimedNotes(lesson.notes)} recordMode={true}></PianoRoll>

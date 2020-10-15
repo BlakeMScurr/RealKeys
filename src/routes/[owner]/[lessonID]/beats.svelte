@@ -13,7 +13,7 @@
     import ZoomBars from '../../../components/bars/zoom/ZoomBars.svelte';
     import { getLessonDefinition } from '../../../lib/api.js'
     import { NewYouTubeAudioPlayer } from "../../../components/audioplayer/audioplayer.ts"
-    import AudioPlayer from "../../../components/audioplayer/AudioPlayer.svelte"
+    // import AudioPlayer from "../../../components/audioplayer/AudioPlayer.svelte"
 
     export let owner;
     export let lessonID;
@@ -63,7 +63,7 @@
         Loading Audio
     {:then audioPlayer}
         <!-- TODO: don't call NewYouTubeAudioPlayer -->
-        <AudioPlayer AudioPlayerPromise={NewYouTubeAudioPlayer(lesson.youtube_id)}></AudioPlayer>
+        <!-- <AudioPlayer AudioPlayerPromise={NewYouTubeAudioPlayer(lesson.youtube_id)}></AudioPlayer> -->
         {#if edit}
             <EditBars bars={lesson.bars} songLength={audioPlayer.Duration()} on:newBars={handleNewBars}></EditBars>
         {:else}

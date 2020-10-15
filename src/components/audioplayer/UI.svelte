@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { position, songDuration, seek, playingStore, audioReady } from "../../../stores/stores";
-    import Slider from "../../generic/Slider.svelte";
+    import { position, songDuration, seek, playingStore, audioReady } from "../../stores/stores";
+    import Slider from "../generic/Slider.svelte";
 
     export let _storybook_position: number;
     export let _storybook_duration: number;

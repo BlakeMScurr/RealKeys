@@ -203,4 +203,28 @@ function createTracks() {
 }
 
 // TODO: pause at the end
+
 // TODO: handle repeats
+// Old repeat code:
+// function setRepeatIntervals(ct) {
+//     // time argument is a workaround for https://github.com/goldfire/howler.js/issues/1189
+//     // as we have to seek before called play() on the howler object in our play function, for whatever reason
+//     if (isNaN(ct)) {
+//         ct = audioPlayer.CurrentTime()
+//     }
+//     if (playing) {
+//         clearInterval(repeatInterval)
+//         clearTimeout(repeatTimeout)
+//         if (ct < endRepeat * duration) {
+//             repeatTimeout = setTimeout(()=>{
+//                 audioPlayer.Seek(startRepeat * duration)
+//                 setPosition(startRepeat)
+//                 clearInterval(repeatInterval)
+//                 repeatInterval = setInterval(() => {
+//                     audioPlayer.Seek(startRepeat * duration)
+//                     setPosition(startRepeat)
+//                 }, ((endRepeat - startRepeat) * duration) * 1000);
+//             }, (endRepeat * duration - ct) * 1000)
+//         }
+//     }
+// }

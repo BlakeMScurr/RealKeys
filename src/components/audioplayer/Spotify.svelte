@@ -1,7 +1,7 @@
 <script lang="ts">
-    import { getCookie, removeCookie } from "../../../lib/util";
-    import { tracks } from "../../../stores/stores"
-    import Login from "../../generic/Login.svelte";
+    import { getCookie, removeCookie } from "../../lib/util";
+    import { tracks } from "../../stores/stores"
+    import Login from "../generic/Login.svelte";
     import { getPlayer, play } from "./spotify"
     import UI from "./UI.svelte"
 
@@ -36,8 +36,6 @@
             player.internal.addListener('ready', ({ device_id }) => {
                 player.Volume(0)
                 play(track, player.internal)
-                player.Pause()
-                player.Seek(0)
             });
         };
     }
