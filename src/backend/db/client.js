@@ -1,9 +1,12 @@
 const { Pool } = require('pg')
 
 export function NewPool() {
-    return  new Pool({
+    let config = {
         database: "melody",
-        user: "postgres",
-        password: "newPassword",
-    })
+    }
+    if (process.env.NODE_ENV !== 'development') {
+        config.user = "postgres"
+        config.password = "newPassword"
+    }
+    return new Pool(config)
 }

@@ -18,7 +18,9 @@ import { onMount } from "svelte";
     })
 
     // TODO: allow infinite scroll with pagination
+    let failedNewWarning = ""
     function handleSpotifySearch() {
+        failedNewWarning = ""
         selected = false
         if (songNameQuery != "") {
             var url = new URL('https://api.spotify.com/v1/search')
@@ -63,7 +65,7 @@ import { onMount } from "svelte";
 
         let id = searchResults[0].id
 
-        console.log("saving", lessonName, id)
+        failedNewWarning = ""
         let username = "blakemscurr" // TODO: get from logged in user
         fetch(joinURL(["api", username, lessonName, "new"]), {
             method: "POST",
@@ -83,12 +85,12 @@ import { onMount } from "svelte";
             }
         }).then((json)=>{
             if (json !== undefined && json.message !== undefined) {
-                
+                failedNewWarning = json.message
             }
         }).catch((err)=>{
             console.warn(err)
         })
-        }
+    }
 </script>
 
 <style lang="scss">
@@ -114,6 +116,10 @@ import { onMount } from "svelte";
         input {
             margin: 5px;
         }
+    }
+
+    .warning {
+        color: red;
     }
 </style>
 
@@ -141,5 +147,6 @@ import { onMount } from "svelte";
         <input type="textarea" bind:value={lessonName}>
         <Spotify track={searchResults[0].id}></Spotify>
         <button on:click={handleSave}>Create Lesson</button>
+        <h3 class="warning">{failedNewWarning}</h3>
     {/if}
 {/if}

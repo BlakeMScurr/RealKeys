@@ -3,7 +3,7 @@
     import { setWidths, validate, getSeekPixels, getSeekPercentage } from "./bars.js"
     import { getRelativePosition } from "../../lib/dom.js"
     import { widthSum } from "../../lib/util.js"
-    import { position, repeats } from "../../stores/stores.ts"
+    import { position, repeats, seek } from "../../stores/stores.ts"
     import { onMount } from 'svelte';
     import Bar from "./Bar.svelte"
     import Seeker from "./Seeker.svelte"
@@ -34,10 +34,7 @@
     function handleClick(event) {
         let pos = getRelativePosition(event.clientX, event.clientY, container)
         currentPosition = getSeekPercentage(pos.x -10, w, zoomStart, zoomEnd)
-    }
-
-    $: {
-        position.set(currentPosition)
+        seek.set(currentPosition)
     }
 
     // send repeat positions up to the audio player 
