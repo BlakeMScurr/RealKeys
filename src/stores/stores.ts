@@ -65,7 +65,7 @@ function createCurrentSong() {
 }
 
 function createSongDuration() {
-    const { subscribe, set } = writable(1);
+    const { subscribe, set } = writable(100000);
 
     return {
         subscribe,

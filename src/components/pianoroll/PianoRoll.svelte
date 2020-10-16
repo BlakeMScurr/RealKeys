@@ -2,7 +2,7 @@
     import type { Bars } from "./pianoroll";
     import { RecordState } from "./recorder";
     import { TimedNotes } from "../../lib/music/timed/timed"
-    import { currentSong, playingStore, position, songDuration } from "../../stores/stores"
+    import { currentSong, playingStore, position, songDuration, seek } from "../../stores/stores"
     import { newPiano } from "../track/trackplayer";
     import { highestPianoNote, lowestPianoNote } from "../../lib/music/theory/notes"
     import RecordButton from "../generic/RecordButton.svelte"
@@ -35,10 +35,11 @@
     // ROLL ZOOM
     function handleRollWheel(event) {
         event.preventDefault()
-        pos -= event.deltaY / 1000
+        console.log(duration)
+        pos -= event.deltaY / duration
         pos = pos < 0 ? 0 : pos
         pos = pos > 1 ? 1 : pos
-        position.set(pos)
+        seek.set(pos)
         // TODO: widen the piano with deltaX
     }
 
@@ -62,13 +63,6 @@
     songDuration.subscribe((val)=> {
         duration = val
     })
-
-    function zoomWidth(duration: number) {
-        if (duration <= 5) {
-            return 1
-        }
-        return 5/duration
-    }
 
     // PIANO ZOOM
     // TODO: zoom in on current location of mouse (i.e., the current note), not just the bottom note
@@ -246,7 +240,7 @@
 
 <div id="pianoroll" bind:clientWidth={width}>
     <div class="container roll" on:wheel={handleRollWheel}>
-        <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} zoomWidth={zoomWidth(duration)} editable={recordMode}></Roll>
+        <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} editable={recordMode}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
         <Piano {keys} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untime()}></Piano>

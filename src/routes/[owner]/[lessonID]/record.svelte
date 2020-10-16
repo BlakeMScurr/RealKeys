@@ -11,14 +11,13 @@
     import { onMount } from 'svelte';
     import { currentSong } from "../../../stores/stores";
     import type { TimedNotes } from '../../../lib/music/timed/timed';
-    import { NewYouTubeAudioPlayer } from "../../../components/audioplayer/audioplayer.ts"
     import { getLessonDefinition } from '../../../lib/api.js'
     import { joinURL } from '../../../lib/util';
     import { castBars, castTimedNotes } from '../../../lib/cast';
 
     import PianoRoll from "../../../components/pianoroll/PianoRoll.svelte";
     import ZoomBars from "../../../components/bars/zoom/ZoomBars.svelte";
-    // import AudioPlayer from "../../../components/audioplayer/AudioPlayer.svelte";
+    import Spotify from "../../../components/audioplayer/Spotify.svelte";
 
     export let owner;
     export let lessonID;
@@ -58,7 +57,7 @@
     <div class="optionwrapper">
         <h1>{lessonID}</h1>
         <h3>{owner}</h3>
-        <!-- <AudioPlayer AudioPlayerPromise={NewYouTubeAudioPlayer(lesson.youtube_id)}></AudioPlayer> -->
+        <Spotify track={lesson.spotify_id}></Spotify>
         <ZoomBars bars={lesson.bars}></ZoomBars>
     </div>
     <PianoRoll bars={castBars(lesson.bars)} notes={castTimedNotes(lesson.notes)} recordMode={true}></PianoRoll>

@@ -7,7 +7,7 @@
     import { TimedNote } from "../../../lib/music/timed/timed";
     import type { Bars } from "../pianoroll";
     import RollKey from "./RollKey.svelte";
-    import { currentSong } from "../../../stores/stores";
+    import { currentSong, songDuration } from "../../../stores/stores";
 
     export let keys:Array<Note>;
     export let height:number;
@@ -16,12 +16,17 @@
     export let notes:TimedNotes;
     export let overlayNotes:TimedNotes;
     export let position = 0;
-    export let zoomWidth = 0.2;
     export let recording = true;
     export let editable = false;
-
+    
     // the place on the screen where the user should start playing the note
-    // TODO: move to store
+    // TODO: why does the length actually seem a bit long, perhaps 5x longer
+    let zoomLength = 2 * 1000 // length of the zoom window in seconds
+    let duration;
+    songDuration.subscribe((val)=>{
+        duration = val
+    }) 
+    let zoomWidth = zoomLength / duration;
     const playLine = 0.4
     $: zoomEnd = recording ? position : position + zoomWidth * (1-playLine)
     $: zoomStart = recording ? position - zoomWidth : position - zoomWidth * playLine

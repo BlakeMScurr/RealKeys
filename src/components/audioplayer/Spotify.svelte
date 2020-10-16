@@ -7,6 +7,7 @@
     import { getPlayer, play } from "./spotify.ts"
     import UI from "./UI.svelte"
 
+    
     export let track:string;
 
     let token = getCookie("token", document.cookie)
@@ -53,14 +54,17 @@
                 player.internal.getCurrentState().then((grabbedState)=>{
                     if (grabbedState.paused) {
                         player.Volume(1)
+                        console.log("spotify ready")
                         tracks.new(player)
                     } else {
-                        setTimeout(()=>{pauserBackoff(i-1)}, 20) // TODO: exponential backoff
+                        setTimeout(()=>{pauserBackoff(i-1)}, 40) // TODO: exponential backoff
                     }
                 })
+            } else {
+                throw new Error("coudln't get spotify ready")
             }
         }
-        pauserBackoff(50)
+        pauserBackoff(500)
     }
 
     onDestroy(()=>{

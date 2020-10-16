@@ -10,8 +10,7 @@
 <script lang="ts">
     import { castTimedNotes, castBars } from '../../lib/cast.ts'
     import { getLessonDefinition } from '../../lib/api.js'
-    import { NewYouTubeAudioPlayer } from "../../components/audioplayer/audioplayer.ts"
-    // import AudioPlayer from "../../components/audioplayer/AudioPlayer.svelte"
+    import Spotify from "../../components/audioplayer/Spotify.svelte"
     import PianoRoll from "../../components/pianoroll/PianoRoll.svelte";
     import ZoomBars from '../../components/bars/zoom/ZoomBars.svelte';
 
@@ -36,8 +35,7 @@
     <div class="optionwrapper">
         <h1>{lessonID}</h1>
         <h3>{owner}</h3>
-        <!-- <AudioPlayer AudioPlayerPromise={NewYouTubeAudioPlayer(lesson.youtube_id)}></AudioPlayer> -->
-        <ZoomBars bars={lesson.bars}></ZoomBars>
+        <Spotify track={lesson.spotify_id}></Spotify>
     </div>
     <PianoRoll bars={castBars(lesson.bars)} notes={castTimedNotes(lesson.notes)} recordMode={false}></PianoRoll>
 {:catch error}
