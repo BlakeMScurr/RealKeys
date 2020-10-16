@@ -54,7 +54,6 @@
                 player.internal.getCurrentState().then((grabbedState)=>{
                     if (grabbedState.paused) {
                         player.Volume(1)
-                        console.log("spotify ready")
                         tracks.new(player)
                     } else {
                         setTimeout(()=>{pauserBackoff(i-1)}, 40) // TODO: exponential backoff

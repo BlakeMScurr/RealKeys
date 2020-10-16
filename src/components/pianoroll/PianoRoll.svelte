@@ -35,7 +35,6 @@
     // ROLL ZOOM
     function handleRollWheel(event) {
         event.preventDefault()
-        console.log(duration)
         pos -= event.deltaY / duration
         pos = pos < 0 ? 0 : pos
         pos = pos > 1 ? 1 : pos

@@ -7,3 +7,4 @@ yarn-error.log
 /__sapper__/
 # this is where we store actual production audiofiles
 /src/backend/db/audioFiles
+/static/bundle.css
