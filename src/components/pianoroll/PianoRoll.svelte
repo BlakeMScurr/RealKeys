@@ -3,7 +3,7 @@
     import { RecordState } from "./recorder";
     import { TimedNotes } from "../../lib/music/timed/timed"
     import { currentSong, playingStore, position, songDuration, seek } from "../../stores/stores"
-    import { newPiano } from "../track/trackplayer";
+    import { newPiano } from "../track/instrument";
     import { highestPianoNote, lowestPianoNote } from "../../lib/music/theory/notes"
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
@@ -18,8 +18,6 @@
         pos = value
     })
 
-    let pianoMuted = false;
-    
     let width = 0;
     let keys = notes.range();
     let lastWidth = -1;
@@ -36,7 +34,7 @@
     let seekTimeout;
     function handleRollWheel(event) {
         event.preventDefault()
-        pos -= event.deltaY / duration
+        pos -= event.deltaY * 2 / duration
         pos = pos < 0 ? 0 : pos
         pos = pos > 1 ? 1 : pos
         clearTimeout(seekTimeout)
@@ -175,9 +173,7 @@
     })
 
     function noteOff(event) {
-        if (!pianoMuted) {
-            player.stop(event.detail)
-        }
+        player.stop(event.detail)
         if (recordMode) {
             notes = recorder.noteOff(event, pos)
         } else {
@@ -186,9 +182,7 @@
     }
 
     function noteOn(event) {
-        if (!pianoMuted) {
-            player.play(event.detail)
-        }
+        player.play(event.detail)
         if (recordMode) {
             notes = recorder.noteOn(event, pos)
         } else {
@@ -197,6 +191,7 @@
     }
 
     function startRecording() {
+        console.log("strign recorinfg")
         if (recordMode) {
             notes = recorder.startRecording(pos)
         } else {
@@ -215,10 +210,10 @@
     }
 </script>
 
-<style>
+<style lang="scss">
     #pianoroll {
         width: 100%;
-        height: 400px;
+        height: 100%;
         position: relative;
     }
 
@@ -228,18 +223,17 @@
     }
 
     .roll {
-        height: 70%;
+        height: calc(100% - 180px);
     }
 
     .piano {
-        height: 30%;
+        height: 180px;
     }
 </style>
 
 {#if recordMode}
     <RecordButton on:startRecording={startRecording} on:stopRecording={stopRecording}></RecordButton>
 {/if}
-<button on:click={()=>{pianoMuted = !pianoMuted}}>{pianoMuted ? "Unmute" : "Mute"} Piano</button>
 
 <div id="pianoroll" bind:clientWidth={width}>
     <div class="container roll" on:wheel={handleRollWheel}>

@@ -19,7 +19,10 @@
 </script>
 
 <style lang="scss">
+    $piano-height: 80vh;
+
     .optionwrapper {
+        height: 100vh - $piano-height;
         width: 100%;
 
         div {
@@ -29,12 +32,18 @@
 
         // TODO: why doesn't it work when we have the two add to 100%?
         .nav {
-            width: 69%;
+            width: calc(69% - 2em);
+            padding-left: 2em;
         }
 
         .settings {
-            width: 29%;
+            width: calc(29% - 2em);
+            padding-right: 2em;
         }
+    }
+
+    .piano {
+        height: $piano-height;
     }
 </style>
 
@@ -50,7 +59,9 @@
             <Spotify track={lesson.spotify_id}></Spotify>
         </div>
     </div>
-    <PianoRoll bars={castBars(lesson.bars)} notes={castTimedNotes(lesson.notes)} recordMode={false}></PianoRoll>
+    <div class="piano">
+        <PianoRoll bars={castBars(lesson.bars)} notes={castTimedNotes(lesson.notes)} recordMode={false}></PianoRoll>
+    </div>
 {:catch error}
     <h1>Could not load lesson {owner}/{lessonID} {console.log(error)}</h1>
 {/await}

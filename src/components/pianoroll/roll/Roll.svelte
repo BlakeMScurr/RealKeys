@@ -175,7 +175,7 @@
 
     .overlay {
         z-index: 1;
-        background-color: blue;
+        background-color: #667ED4;
         opacity: 1;
     }
 

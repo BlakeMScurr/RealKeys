@@ -145,7 +145,7 @@
     }
 
     .controls {
-        max-width: 300px;
+        max-width: 500px;
     }
 
     // TODO: overlay a pretty loading icon instead
@@ -165,6 +165,10 @@
         div > .arrow-left {
             border-right: $triangle_width solid grey; 
         }
+    }
+
+    .slider {
+        margin-top: 5px;
     }
 </style>
 
@@ -188,5 +192,7 @@
             ><div class="block"></div>
         </div>
     </div>
-    <Slider value={pos} on:input={handleSliderSeek}></Slider>
+    <div class="slider">
+        <Slider value={pos} on:input={handleSliderSeek}></Slider>
+    </div>
 </div>
