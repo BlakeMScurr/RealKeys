@@ -18,14 +18,23 @@
     export let lessonID;
 </script>
 
-<style>
+<style lang="scss">
     .optionwrapper {
-        position: relative;
-        max-width: 56em;
-        background-color: white;
-        padding: 2em;
-        margin: 0 auto;
-        box-sizing: border-box;
+        width: 100%;
+
+        div {
+            display: inline-block;
+            margin: none;
+        }
+
+        // TODO: why doesn't it work when we have the two add to 100%?
+        .nav {
+            width: 69%;
+        }
+
+        .settings {
+            width: 29%;
+        }
     }
 </style>
 
@@ -33,9 +42,13 @@
     <h1>Loading</h1>
 {:then lesson}
     <div class="optionwrapper">
-        <h1>{lessonID}</h1>
-        <h3>{owner}</h3>
-        <Spotify track={lesson.spotify_id}></Spotify>
+        <div class="nav">
+            <h1>{lessonID}</h1>
+            <h3>{owner}</h3>
+        </div>
+        <div class="settings">
+            <Spotify track={lesson.spotify_id}></Spotify>
+        </div>
     </div>
     <PianoRoll bars={castBars(lesson.bars)} notes={castTimedNotes(lesson.notes)} recordMode={false}></PianoRoll>
 {:catch error}

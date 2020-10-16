@@ -118,7 +118,6 @@
         notes.sort()
         currentSong.set(notes)
     }
-
 </script>
 
 <style>
@@ -214,8 +213,8 @@
 
 <!-- Key Backgrounds -->
 <div class="container keybackground" style="--height: {height + unit};">
-    {#each keys as key}
-        <RollKey width={100/keys.length + "%"} height={"100%"} white={key.color()=="white"} rightBorder={key.abstract.letter == "b" || key.abstract.letter == "e"}></RollKey> 
+    {#each keys as key, i}
+        <RollKey width={100/keys.length + "%"} height={"100%"} white={key.color()=="white"} rightBorder={(key.abstract.letter == "b" || key.abstract.letter == "e") && i != keys.length - 1}></RollKey>
     {/each}
 </div>
 <!-- Bar Lines -->
@@ -251,8 +250,8 @@
 </div>
 <!-- Hides the extra top notes in the overlay -->
 <div class="container overlayhider" style="--height: {height + unit};">
-    {#each keys as key}
-       <RollKey width={100/keys.length + "%"} height={"60%"} white={key.color()=="white"} rightBorder={key.abstract.letter == "b" || key.abstract.letter == "e"}></RollKey> 
+    {#each keys as key, i}
+       <RollKey width={100/keys.length + "%"} height={"60%"} white={key.color()=="white"} rightBorder={(key.abstract.letter == "b" || key.abstract.letter == "e") && i != keys.length - 1}></RollKey>
     {/each}
 </div>
 
