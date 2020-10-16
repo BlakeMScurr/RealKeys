@@ -45,7 +45,6 @@
                         midiConnected = true
                     } catch (e) {
                         // TODO: handle disconnects too
-                        console.log("trying to connect midi again") // TODO: non polling solution
                         setTimeout(addListeners, 200)
                     } 
                 }
