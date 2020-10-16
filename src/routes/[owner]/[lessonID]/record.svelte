@@ -58,7 +58,6 @@
         <h1>{lessonID}</h1>
         <h3>{owner}</h3>
         <Spotify track={lesson.spotify_id}></Spotify>
-        <ZoomBars bars={lesson.bars}></ZoomBars>
     </div>
     <PianoRoll bars={castBars(lesson.bars)} notes={castTimedNotes(lesson.notes)} recordMode={true}></PianoRoll>
 {:catch error}

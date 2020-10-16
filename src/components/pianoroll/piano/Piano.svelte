@@ -7,7 +7,7 @@
 
     export let keys:Array<Note>;
     export let usedNotes:Map<String, boolean> = new Map();
-    
+
     let midiConnected = false
     let mobile = false // TODO: figure out how to know this before we get any events
     $: labelsOn = !midiConnected && !mobile
