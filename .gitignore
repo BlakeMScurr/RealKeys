@@ -1,4 +1,5 @@
 .DS_Store
+.env
 /node_modules/
 /src/node_modules/@sapper/
 yarn-error.log
@@ -6,3 +7,4 @@ yarn-error.log
 /__sapper__/
 # this is where we store actual production audiofiles
 /src/backend/db/audioFiles
+/static/bundle.css

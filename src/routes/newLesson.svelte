@@ -1,0 +1,152 @@
+<script lang="ts">
+    import { getCookie, joinURL } from "../lib/util";
+    import { goto } from '@sapper/app';
+    import Login from "../components/generic/Login.svelte"
+    import Spotify from "../components/audioplayer/Spotify.svelte";
+import { onMount } from "svelte";
+
+
+    let token;
+    let selected = false
+    let songNameQuery: string = "Jesus Walks";
+    let searchResults = [];
+    const randishString = "hfjdscvlkjbwlkjebr"
+    
+    onMount(()=>{
+        token = getCookie("token", document.cookie)
+        handleSpotifySearch()
+    })
+
+    // TODO: allow infinite scroll with pagination
+    let failedNewWarning = ""
+    function handleSpotifySearch() {
+        failedNewWarning = ""
+        selected = false
+        if (songNameQuery != "") {
+            var url = new URL('https://api.spotify.com/v1/search')
+            let params = {q: songNameQuery, type: "track"}
+            url.search = new URLSearchParams(params).toString();
+            fetch(url, {
+                method: "GET",
+                headers: {
+                    'Accept': "application/json",
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                }
+            }).then((res) => {
+                return res.json()
+            }).then((json) => {
+                if (json.error != undefined) {
+                    token = undefined
+                } else {
+                    searchResults = []
+                    json.tracks.items.forEach(track => {
+                        searchResults.push({artists: track.artists, name: track.name, id: track.id})
+                    });
+                }
+            })
+        }
+    }
+    
+
+    let lessonName = ""
+    function handleSelect(song) {
+        return function () {
+            searchResults = [song]
+            selected = true
+            lessonName = song.name
+        }
+    }
+
+    function handleSave() {
+        if (searchResults.length != 1) {
+            throw new Error("expected a single selected search result when saving")
+        }
+
+        let id = searchResults[0].id
+
+        failedNewWarning = ""
+        let username = "blakemscurr" // TODO: get from logged in user
+        fetch(joinURL(["api", username, lessonName, "new"]), {
+            method: "POST",
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                lessonName: username + "/" + lessonName,
+                spotifyID: id,
+            })
+        }).then((response)=>{
+            if (response.status == 400) {
+                return response.json()
+            } else {
+                goto(joinURL([username, lessonName, "beats"]))
+            }
+        }).then((json)=>{
+            if (json !== undefined && json.message !== undefined) {
+                failedNewWarning = json.message
+            }
+        }).catch((err)=>{
+            console.warn(err)
+        })
+    }
+</script>
+
+<style lang="scss">
+    .result {
+        border: 1px solid grey;
+        margin: 2px;
+        padding: 5px;
+
+        &:hover {
+            background-color: #667ED4;
+            cursor: pointer;
+            color: white;
+        }
+
+        h3 {
+            margin: 0;
+        }
+
+        p {
+            margin: 0;
+        }
+
+        input {
+            margin: 5px;
+        }
+    }
+
+    .warning {
+        color: red;
+    }
+</style>
+
+{#if token === undefined}
+    <Login></Login>
+{:else}
+    Song Name
+    <input type="textarea" bind:value={songNameQuery} on:input={handleSpotifySearch}>
+
+    {#each searchResults as result}
+        <div class="result" on:click={handleSelect(result)}>
+            <div>
+                <h3>{result.name}</h3>
+            </div>
+            <p>
+                {#each result.artists.map((artist)=>{return artist.name}).join(", " + randishString).split(randishString) as name}
+                    {name}
+                {/each}
+            </p>
+        </div>
+    {/each}
+
+    {#if selected}
+        Lesson Name
+        <input type="textarea" bind:value={lessonName}>
+        <Spotify track={searchResults[0].id}></Spotify>
+        <button on:click={handleSave}>Create Lesson</button>
+        <h3 class="warning">{failedNewWarning}</h3>
+    {/if}
+{/if}

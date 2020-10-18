@@ -1,4 +1,5 @@
 import Roll from './Roll.svelte';
+import GLRoll from './GLRoll.svelte';
 import { TimedNote, TimedNotes } from "../../../lib/music/timed/timed";
 import { Bars}  from "../pianoroll";
 import { NewNote, notesBetween } from "../../../lib/music/theory/notes";
@@ -38,6 +39,7 @@ Default.args = {
   ]),
   overlayNotes: new TimedNotes([]),
   recording: true,
+  editable: true,
 }
 
 export const TwoOctaves = Template.bind({});
@@ -76,3 +78,29 @@ TwoOctaves.args = {
   recording: true,
 }
 
+export const GL = () => {
+  return {
+    Component: GLRoll,
+    props: {
+      position: 1,
+      zoomWidth: 1,
+      keys: notesBetween(NewNote("C", 4), NewNote("C", 5)),
+      height: 400,
+      unit: "px",
+      bars: new Bars([0.2, 0.2, 0.2, 0.2, 0.2]),
+      notes: new TimedNotes([
+        // Picardy
+        new TimedNote(0, 1, NewNote("C", 4)),
+        new TimedNote(0, 0.4, NewNote("F", 4)),
+        new TimedNote(0, 1, NewNote("G", 4)),
+
+        // Moving "Third"
+        new TimedNote(0.4, 0.6, NewNote("D", 4)),
+        new TimedNote(0.6, 0.8, NewNote("Eb", 4)),
+        new TimedNote(0.8, 1, NewNote("E", 4)),
+      ]),
+      overlayNotes: new TimedNotes([]),
+      recording: true,
+    },
+  }
+}

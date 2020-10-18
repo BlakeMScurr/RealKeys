@@ -17,11 +17,8 @@ export function post(request, response) {
                 message: "Lesson \"" + request.params.owner + "/" + request.params.lessonID + "\" already exists"
             })
         } else {
-            // Download audio if it doesn't already exist
-            downloadYouTubeVideo(request.body.youtubeID)
-
             // TODO: Calculate barlines (could revive old bar calculation code)
-            let insertion = prep('INSERT INTO lesson(LESSON_NAME, YOUTUBE_ID, YOUTUBE_TITLE, BARS) VALUES (${lessonName}, ${youtubeID}, ${youtubeTitle}, ${bars})')
+            let insertion = prep('INSERT INTO lesson(LESSON_NAME, SPOTIFY_ID, BARS) VALUES (${lessonName}, ${spotifyID}, ${bars})')
             request.body.bars = JSON.stringify([{type: "s", width: 1}, {type: "e", width: 0}])
             pool.query(insertion(request.body), (err, res) => {
                 if (err !== undefined) {

@@ -38,7 +38,10 @@
 
     .used {
         border-color: #667ED4;
-        border-width: medium;
+        border-width: 3px;
+        border-style: solid;
+        width: calc(50% - 6px);
+        height: calc(65% - 6px);
     }
 </style>
 

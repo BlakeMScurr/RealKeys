@@ -6,6 +6,7 @@ export interface Player {
     Pause();
     Play();
     Duration():number;
+    Volume(volume: number);
 }
 
 
@@ -59,6 +60,10 @@ class HowlPlayer {
     Duration():number {
         return this.sound.duration()
     }
+
+    Volume(volume: number) {
+        this.sound.volume(volume)
+    }
 }
 
 export class MockPlayer {
@@ -93,6 +98,4 @@ export class MockPlayer {
     Duration():number {
         return this.length
     }
-
-
 }

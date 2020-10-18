@@ -1,8 +1,8 @@
 import { Howl } from 'howler';
-import { notesBetween, pianoNotes, Note } from '../../lib/music/theory/notes';
+import { pianoNotes, Note } from '../../lib/music/theory/notes';
 
-export function newPiano():trackplayer {
-    return newTrackPlayer(pianoSounds)
+export function newPiano():instrument {
+    return newHowlerInstrument(pianoSounds)
 }
 
 // maps from names of sounds to the urls where they'll be found
@@ -23,9 +23,8 @@ function asFlat(note: Note) {
 
 // TODO: metronome
 
-function newTrackPlayer(notes: Array<string>):trackplayer {
-
-    let player = new trackplayer();
+function newHowlerInstrument(notes: Array<string>):instrument {
+    let player = new instrument();
 
     notes.forEach((note)=>{
         let h;
@@ -43,7 +42,7 @@ function newTrackPlayer(notes: Array<string>):trackplayer {
 
 }
 
-class trackplayer {
+class instrument {
     sounds: Map<string, any>; // TODO: use howl type
 
     constructor () {

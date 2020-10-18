@@ -8,12 +8,10 @@
 </script>
 
 <script lang="ts">
-    import { onMount } from 'svelte';
     import EditBars from '../../../components/bars/edit/EditBars.svelte';
     import ZoomBars from '../../../components/bars/zoom/ZoomBars.svelte';
     import { getLessonDefinition } from '../../../lib/api.js'
-    import { NewYouTubeAudioPlayer } from "../../../components/audioplayer/audioplayer.ts"
-    import AudioPlayer from "../../../components/audioplayer/AudioPlayer.svelte"
+    import Spotify from '../../../components/audioplayer/Spotify.svelte';
 
     export let owner;
     export let lessonID;
@@ -59,23 +57,19 @@
 {:then lesson}
     <h1>{lessonID}</h1>
     <h3>{owner}</h3>
-    {#await NewYouTubeAudioPlayer(lesson.youtube_id)}
-        Loading Audio
-    {:then audioPlayer}
-        <!-- TODO: don't call NewYouTubeAudioPlayer -->
-        <AudioPlayer AudioPlayerPromise={NewYouTubeAudioPlayer(lesson.youtube_id)}></AudioPlayer>
-        {#if edit}
-            <EditBars bars={lesson.bars} songLength={audioPlayer.Duration()} on:newBars={handleNewBars}></EditBars>
-        {:else}
-            <ZoomBars bars={lesson.bars}></ZoomBars>
-            <button on:click={()=>{edit = true}}>Edit</button>
-        {/if}
 
-        {#if newBars !== undefined}
-            <button on:click={save(lesson)}>Save</button>
-            <button on:click={dismiss}>Dismiss</button>
-        {/if}
-    {/await}
+    <Spotify track={lesson.spotify_id}></Spotify>
+    {#if edit}
+        <EditBars bars={lesson.bars} on:newBars={handleNewBars}></EditBars>
+    {:else}
+        <ZoomBars bars={lesson.bars}></ZoomBars>
+        <button on:click={()=>{edit = true}}>Edit</button>
+    {/if}
+
+    {#if newBars !== undefined}
+        <button on:click={save(lesson)}>Save</button>
+        <button on:click={dismiss}>Dismiss</button>
+    {/if}
 {:catch error}
     <h1>Could not load lesson {owner}/{lessonID} {error}</h1>
 {/await}

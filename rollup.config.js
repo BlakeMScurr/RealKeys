@@ -86,7 +86,7 @@ export default {
 				extensions: [ '.mjs', '.js', '.json', '.node', '.svelte', '.ts'],
 			}),
 			typescript({ sourceMap: dev }),
-			commonjs()
+			commonjs(),
 		],
 		external: Object.keys(pkg.dependencies).concat(require('module').builtinModules),
 

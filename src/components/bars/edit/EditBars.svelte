@@ -3,10 +3,14 @@
     import Tapper from "../tapper/Tapper.svelte"
     import { createUnevenBars, createEvenBars } from "./editBars.js"
     import { createEventDispatcher } from 'svelte';
-    import { position } from "../../stores"
+    import { position, songDuration } from "../../../stores/stores"
 
-    export let songLength; // length of the song
     export let bars;
+    
+    let songLength;
+    songDuration.subscribe((val)=>{
+        songLength = val
+    })
 
     const dispatch = createEventDispatcher();
 
@@ -29,9 +33,9 @@
 
     $: {
         if (!norm) {
-            bars = createUnevenBars(tapTimes, songLength, anchor)
+            bars = createUnevenBars(tapTimes, songLength / 1000, anchor)
         } else {
-            bars = createEvenBars(anchor, bpm, songLength)
+            bars = createEvenBars(anchor, bpm, songLength / 1000)
         }
         dispatch("newBars", bars)
     }

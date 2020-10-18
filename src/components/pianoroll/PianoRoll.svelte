@@ -2,8 +2,8 @@
     import type { Bars } from "./pianoroll";
     import { RecordState } from "./recorder";
     import { TimedNotes } from "../../lib/music/timed/timed"
-    import { currentSong, playingStore, position, songDuration } from "../stores"
-    import { newPiano } from "../track/trackplayer";
+    import { currentSong, playingStore, position, songDuration, seek } from "../../stores/stores"
+    import { newPiano } from "../track/instrument";
     import { highestPianoNote, lowestPianoNote } from "../../lib/music/theory/notes"
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
@@ -11,15 +11,13 @@
 
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;
-    export let recordMode:Boolean = true;
+    export let recordMode:Boolean = false;
 
     let pos = 0;
     position.subscribe((value) => {
         pos = value
     })
 
-    let pianoMuted = false;
-    
     let width = 0;
     let keys = notes.range();
     let lastWidth = -1;
@@ -33,12 +31,16 @@
     }
     
     // ROLL ZOOM
+    let seekTimeout;
     function handleRollWheel(event) {
         event.preventDefault()
-        pos -= event.deltaY / 1000
+        pos -= event.deltaY * 2 / duration
         pos = pos < 0 ? 0 : pos
         pos = pos > 1 ? 1 : pos
-        position.set(pos)
+        clearTimeout(seekTimeout)
+        seekTimeout = setTimeout(()=> {
+            seek.set(pos)
+        }, 200)
         // TODO: widen the piano with deltaX
     }
 
@@ -62,13 +64,6 @@
     songDuration.subscribe((val)=> {
         duration = val
     })
-
-    function zoomWidth(duration: number) {
-        if (duration <= 5) {
-            return 1
-        }
-        return 5/duration
-    }
 
     // PIANO ZOOM
     // TODO: zoom in on current location of mouse (i.e., the current note), not just the bottom note
@@ -178,9 +173,7 @@
     })
 
     function noteOff(event) {
-        if (!pianoMuted) {
-            player.stop(event.detail)
-        }
+        player.stop(event.detail)
         if (recordMode) {
             notes = recorder.noteOff(event, pos)
         } else {
@@ -189,9 +182,7 @@
     }
 
     function noteOn(event) {
-        if (!pianoMuted) {
-            player.play(event.detail)
-        }
+        player.play(event.detail)
         if (recordMode) {
             notes = recorder.noteOn(event, pos)
         } else {
@@ -200,6 +191,7 @@
     }
 
     function startRecording() {
+        console.log("strign recorinfg")
         if (recordMode) {
             notes = recorder.startRecording(pos)
         } else {
@@ -218,10 +210,10 @@
     }
 </script>
 
-<style>
+<style lang="scss">
     #pianoroll {
         width: 100%;
-        height: 400px;
+        height: 100%;
         position: relative;
     }
 
@@ -231,22 +223,21 @@
     }
 
     .roll {
-        height: 70%;
+        height: calc(100% - 180px);
     }
 
     .piano {
-        height: 30%;
+        height: 180px;
     }
 </style>
 
 {#if recordMode}
     <RecordButton on:startRecording={startRecording} on:stopRecording={stopRecording}></RecordButton>
 {/if}
-<button on:click={()=>{pianoMuted = !pianoMuted}}>{pianoMuted ? "Unmute" : "Mute"} Piano</button>
 
 <div id="pianoroll" bind:clientWidth={width}>
     <div class="container roll" on:wheel={handleRollWheel}>
-        <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} zoomWidth={zoomWidth(duration)}></Roll>
+        <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} editable={recordMode}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
         <Piano {keys} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untime()}></Piano>

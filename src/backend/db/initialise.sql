@@ -1,7 +1,9 @@
 CREATE TABLE IF NOT EXISTS lesson (
    LESSON_NAME text PRIMARY KEY,
-   YOUTUBE_ID text NOT NULL,
-   YOUTUBE_TITLE text NOT NULL,
+   SPOTIFY_ID text NOT NULL,
+   -- TODO: delete YouTube stuff
+   YOUTUBE_ID text,
+   YOUTUBE_TITLE text,
    -- TODO: don't use json for a complex datatype, it seems error prone
    BARS json NOT NULL
 );

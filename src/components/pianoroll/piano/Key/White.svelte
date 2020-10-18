@@ -19,7 +19,7 @@
         background-color: var(--color);
         /* TODO: why is there an overflow in the piano roll at higher key counts but not lower ones (see piano roll stories) */
         width: calc(100% - 2px);
-        height: 100%;
+        height: calc(100% - 2px);
         border: 1px solid grey;
         pointer-events:auto;
         text-align: center;
@@ -38,7 +38,9 @@
 
     .used {
         border-color: #667ED4;
-        border-width: medium;
+        border-width: 3px;
+        width:  calc(100% - 6px);
+        height:  calc(100% - 6px);
         z-index: 1;
     }
 </style>

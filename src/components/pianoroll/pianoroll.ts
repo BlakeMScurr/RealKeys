@@ -14,7 +14,6 @@ export class Bars {
             console.error("Bars don't sum to 1: " + sum)
         }
 
-
         this.bars = bars
     }
 
