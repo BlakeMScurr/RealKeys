@@ -18,7 +18,8 @@ export function post(request, response) {
             })
         } else {
             // TODO: Calculate barlines (could revive old bar calculation code)
-            let insertion = prep('INSERT INTO lesson(LESSON_NAME, SPOTIFY_ID, BARS) VALUES (${lessonName}, ${spotifyID}, ${bars})')
+            console.log(request.body)
+            let insertion = prep('INSERT INTO lesson(LESSON_NAME, ARTIST, SPOTIFY_ID, BARS) VALUES (${lessonName}, ${artist}, ${spotifyID}, ${bars})')
             request.body.bars = JSON.stringify([{type: "s", width: 1}, {type: "e", width: 0}])
             pool.query(insertion(request.body), (err, res) => {
                 if (err !== undefined) {
