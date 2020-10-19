@@ -1,15 +1,17 @@
 <script>
-    import { goto } from '@sapper/app';
+    import { goto, stores} from '@sapper/app';
     import { spotifyRedirectURI } from '../../lib/util';
+    const { page } = stores();
 
     function handleClick() {
-        var scopes = 'streaming';
+        document.cookie = `redirect=${$page.path};path=/`
+        var scopes = 'streaming'; 
         goto('https://accounts.spotify.com/authorize' +
         '?response_type=code' +
         '&client_id=' + '9985cfc25fad4e3e82794d87f23823ef' +
         (scopes ? '&scope=' + encodeURIComponent(scopes) : '') +
         '&redirect_uri=' + encodeURIComponent(spotifyRedirectURI()));
-        }
+    }
 </script>
 
 <style>
