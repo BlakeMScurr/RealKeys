@@ -13,11 +13,13 @@ class Synth {
         this.internal = internal
     }
 
-    play(note: Note) {
+    play(note: Note, volume: number) {
+        this.internal.volume.value = Math.log10(volume)
         this.internal.triggerAttack(note.string())
     }
-
-    stop(note: Note) {
+    
+    stop(note: Note, volume: number) {
+        this.internal.volume.value = Math.log10(volume)
         this.internal.triggerRelease(note.string())
     }
 }

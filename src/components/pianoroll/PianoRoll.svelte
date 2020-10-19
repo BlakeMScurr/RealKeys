@@ -8,6 +8,7 @@
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
     import Piano from "./piano/Piano.svelte";
+    import Slider from "../generic/Slider.svelte"
 
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;
@@ -161,6 +162,8 @@
     } else {
         recorder = new RecordState(overlayNotes)
     }
+
+    let volume = 1;
    
     playingStore.subscribe((playing: boolean)=>{
         if (!recordMode) {
@@ -173,7 +176,7 @@
     })
 
     function noteOff(event) {
-        player.stop(event.detail)
+        player.stop(event.detail, volume)
         if (recordMode) {
             notes = recorder.noteOff(event, pos)
         } else {
@@ -182,7 +185,7 @@
     }
 
     function noteOn(event) {
-        player.play(event.detail)
+        player.play(event.detail, volume)
         if (recordMode) {
             notes = recorder.noteOn(event, pos)
         } else {
@@ -233,6 +236,7 @@
 
 {#if recordMode}
     <RecordButton on:startRecording={startRecording} on:stopRecording={stopRecording}></RecordButton>
+    <Slider bind:value={volume}></Slider>
 {/if}
 
 <div id="pianoroll" bind:clientWidth={width}>

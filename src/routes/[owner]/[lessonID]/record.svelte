@@ -40,26 +40,51 @@
         })
     })
 </script>
-<style>
+
+<style lang="scss">
+    $piano-height: 80vh;
+
     .optionwrapper {
-        position: relative;
-        max-width: 56em;
-        background-color: white;
-        padding: 2em;
-        margin: 0 auto;
-        box-sizing: border-box;
+        height: 100vh - $piano-height;
+        width: 100%;
+
+        div {
+            display: inline-block;
+            margin: none;
+        }
+
+        // TODO: why doesn't it work when we have the two add to 100%?
+        .nav {
+            width: calc(69% - 2em);
+            padding-left: 2em;
+        }
+
+        .settings {
+            width: calc(29% - 2em);
+            padding-right: 2em;
+        }
+    }
+
+    .piano {
+        height: $piano-height;
     }
 </style>
-    
+
 {#await getLessonDefinition(owner, lessonID)}
     <h1>Loading</h1>
 {:then lesson}
     <div class="optionwrapper">
-        <h1>{lessonID}</h1>
-        <h3>{owner}</h3>
-        <Spotify track={lesson.spotify_id}></Spotify>
+        <div class="nav">
+            <h1>{lessonID}</h1>
+            <h3>{owner}</h3>
+        </div>
+        <div class="settings">
+            <Spotify track={lesson.spotify_id}></Spotify>
+        </div>
     </div>
-    <PianoRoll bars={castBars(lesson.bars)} notes={castTimedNotes(lesson.notes)} recordMode={true}></PianoRoll>
+    <div class="piano">
+        <PianoRoll bars={castBars(lesson.bars)} notes={castTimedNotes(lesson.notes)} recordMode={true}></PianoRoll>
+    </div>
 {:catch error}
     <h1>Could not load lesson {owner}/{lessonID} {console.log(error)}</h1>
 {/await}
