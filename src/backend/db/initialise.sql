@@ -1,5 +1,6 @@
 CREATE TABLE IF NOT EXISTS lesson (
    LESSON_NAME text PRIMARY KEY,
+   ARTIST text NOT NULL,
    SPOTIFY_ID text NOT NULL,
    -- TODO: delete YouTube stuff
    YOUTUBE_ID text,

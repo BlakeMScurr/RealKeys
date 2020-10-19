@@ -18,9 +18,13 @@ export function get(request, response) {
             if (err !== undefined) {
                 throw new Error(err)
             }
-            lesson.notes = res.rows[0]
+            if (res == undefined) {
+                console.log(err)
+            } else {
+                lesson.notes = res.rows[0]
+                response.send(lesson)
+            }
             pool.end()
-            response.send(lesson)
         })
     })
 }

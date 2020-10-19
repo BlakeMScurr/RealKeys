@@ -44,6 +44,10 @@
     .piano {
         height: $piano-height;
     }
+
+    h3 {
+        color: grey;
+    }
 </style>
 
 {#await getLessonDefinition(owner, lessonID)}
@@ -52,7 +56,7 @@
     <div class="optionwrapper">
         <div class="nav">
             <h1>{lessonID}</h1>
-            <h3>{owner}</h3>
+            <h3>{lesson.artist}</h3>
         </div>
         <div class="settings">
             <Spotify track={lesson.spotify_id}></Spotify>

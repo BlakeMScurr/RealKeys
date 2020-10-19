@@ -64,6 +64,7 @@ import { onMount } from "svelte";
         }
 
         let id = searchResults[0].id
+        let artist = searchResults[0].artists.map((artist)=>{return artist.name}).join(", ")
 
         failedNewWarning = ""
         let username = "blakemscurr" // TODO: get from logged in user
@@ -76,6 +77,7 @@ import { onMount } from "svelte";
             body: JSON.stringify({
                 lessonName: username + "/" + lessonName,
                 spotifyID: id,
+                artist: artist,
             })
         }).then((response)=>{
             if (response.status == 400) {
