@@ -69,7 +69,6 @@ export function joinURL(parts){
 }
 
 export function spotifyRedirectURI() {
-    console.log(process.env.NODE_ENV)
     if (process.env.NODE_ENV === 'development') {
         return 'http://localhost:3000/callback'
     }
