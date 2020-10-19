@@ -12,7 +12,6 @@
     import { getLessonDefinition } from '../../lib/api.js'
     import Spotify from "../../components/audioplayer/Spotify.svelte"
     import PianoRoll from "../../components/pianoroll/PianoRoll.svelte";
-    import ZoomBars from '../../components/bars/zoom/ZoomBars.svelte';
 
     export let owner;
     export let lessonID;

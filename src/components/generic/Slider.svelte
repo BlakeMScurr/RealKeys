@@ -21,6 +21,7 @@
 
     function release() {
         grabbed = false;
+        value = val
         dispatch('input', val)
     }
 

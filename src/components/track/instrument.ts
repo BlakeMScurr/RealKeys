@@ -1,73 +1,47 @@
-import { Howl } from 'howler';
-import { pianoNotes, Note } from '../../lib/music/theory/notes';
+import { Note } from '../../lib/music/theory/notes';
+// import { Piano } from '@tonejs/piano'
+import * as Tone from 'tone'
 
-export function newPiano():instrument {
-    return newHowlerInstrument(pianoSounds)
+
+export function newPiano() {
+    const sampler = new Tone.Sampler({
+        urls: {
+            "C4": "C4.mp3",
+            "D#4": "Ds4.mp3",
+            "F#4": "Fs4.mp3",
+            "A4": "A4.mp3",
+            "C5": "C5.mp3",
+            "D#5": "Ds5.mp3",
+            "F#5": "Fs5.mp3",
+            "A5": "A5.mp3",
+            "C6": "C6.mp3",
+            "D#6": "Ds6.mp3",
+            "F#6": "Fs6.mp3",
+            "A6": "A6.mp3",
+            "C2": "C2.mp3",
+            "D#2": "Ds2.mp3",
+            "F#2": "Fs2.mp3",
+            "A2": "A2.mp3",
+        },
+        release: 1,
+        baseUrl: "https://tonejs.github.io/audio/salamander/",
+    }).toDestination();
+    return new Synth(sampler)
 }
 
-// maps from names of sounds to the urls where they'll be found
-// Maps from note names to urls
-const pianoSounds:Array<string> = makePianoSounds()
-function makePianoSounds() {
-    let notes = new Array<string>()
-    pianoNotes().forEach(note => {
-        notes.push(asFlat(note))
-    });
-    return notes
-}
-
-function asFlat(note: Note) {
-    let n = note.abstract.enharmonicEquivalent()
-    return n.charAt(0).toUpperCase() + n.slice(1) + note.octave;
-}
-
-// TODO: metronome
-
-function newHowlerInstrument(notes: Array<string>):instrument {
-    let player = new instrument();
-
-    notes.forEach((note)=>{
-        let h;
-        h = new Howl({
-            src: "getSound/" + note + ".wav",
-            format: 'wav',
-            html5: true, // html5 being forced gives us rate change without pitch increase as per https://github.com/goldfire/howler.js/issues/586#issuecomment-237240859
-            onload: ()=> {
-                player.addSound(note, h)
-            }
-        })
-    })
-
-    return player;
-
-}
-
-class instrument {
-    sounds: Map<string, any>; // TODO: use howl type
-
-    constructor () {
-        this.sounds = new Map();
+class Synth {
+    internal: any;
+    constructor(internal) {
+        this.internal = internal
     }
 
-    addSound(note: string, sound: any) {
-        this.sounds.set(note, sound)
+    play(note: Note, volume: number) {
+        this.internal.volume.value = Math.log10(volume)
+        this.internal.triggerAttack(note.string())
     }
-
-    stop(note: Note) {
-        let n = asFlat(note)
-        if (this.sounds.has(n)) {
-            this.sounds.get(n).fade(1, 0, 200)
-        }
-    }
-
-    play(note: Note) {
-        let n = asFlat(note)
-        if (this.sounds.has(n)) {
-            let s = this.sounds.get(n)
-            s.play()
-            s.fade(0, 1, 1)
-        } else {
-            console.warn("couldn't play", note)
-        }
+    
+    stop(note: Note, volume: number) {
+        this.internal.volume.value = Math.log10(volume)
+        this.internal.triggerRelease(note.string())
     }
 }

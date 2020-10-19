@@ -1,3 +1,4 @@
+import type { instrument } from './instruments';
 import { writable } from 'svelte/store';
 import type { Player } from '../components/audioplayer/audioplayer'
 import { NewNote } from '../lib/music/theory/notes';
@@ -201,6 +202,23 @@ function createTracks() {
         },
     }
 }
+
+function createInstruments() {
+    const { subscribe, update } = writable(new Array<instrument>());
+
+    return {
+        settings: () => {
+            
+        },
+        add: (ins: instrument) => {
+           update((currentInstruments: Array<instrument>) => {
+               currentInstruments.push(ins)
+               return currentInstruments
+           })
+        },
+    }
+}
+
 
 // TODO: pause at the end
 
