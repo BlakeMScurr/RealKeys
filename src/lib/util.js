@@ -69,9 +69,10 @@ export function joinURL(parts){
 }
 
 export function spotifyRedirectURI() {
-    // TODO: check process.env.NODE_ENV
-    return 'http://localhost:3000/callback'
-    // var redirect_uri = 'http://realkeys.co/callback'
+    if (process.env.NODE_ENV !== 'development') {
+        return 'http://localhost:3000/callback'
+    }
+    var redirect_uri = 'http://realkeys.co/callback'
 }
 
 export function getCookie(name, jar) {
