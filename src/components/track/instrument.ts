@@ -4,7 +4,29 @@ import * as Tone from 'tone'
 
 
 export function newPiano() {
-    return new Synth(new Tone.PolySynth().toDestination())
+    const sampler = new Tone.Sampler({
+        urls: {
+            "C4": "C4.mp3",
+            "D#4": "Ds4.mp3",
+            "F#4": "Fs4.mp3",
+            "A4": "A4.mp3",
+            "C5": "C5.mp3",
+            "D#5": "Ds5.mp3",
+            "F#5": "Fs5.mp3",
+            "A5": "A5.mp3",
+            "C6": "C6.mp3",
+            "D#6": "Ds6.mp3",
+            "F#6": "Fs6.mp3",
+            "A6": "A6.mp3",
+            "C2": "C2.mp3",
+            "D#2": "Ds2.mp3",
+            "F#2": "Fs2.mp3",
+            "A2": "A2.mp3",
+        },
+        release: 1,
+        baseUrl: "https://tonejs.github.io/audio/salamander/",
+    }).toDestination();
+    return new Synth(sampler)
 }
 
 class Synth {
