@@ -35,13 +35,25 @@ class Synth {
         this.internal = internal
     }
 
+    loaded() {
+        const loaded = this.internal._buffers._loadingCount === 0
+        if (!loaded) {
+            console.log("waiting on " + this.internal._buffers._loadingCount + " sounds to load")
+        }
+        return loaded
+    }
+
     play(note: Note, volume: number) {
-        this.internal.volume.value = Math.log10(volume)
-        this.internal.triggerAttack(note.string())
+        if (this.loaded()) {
+            this.internal.volume.value = Math.log10(volume)
+            this.internal.triggerAttack(note.string())
+        }
     }
     
     stop(note: Note, volume: number) {
-        this.internal.volume.value = Math.log10(volume)
-        this.internal.triggerRelease(note.string())
+        if (this.loaded()) {
+            this.internal.volume.value = Math.log10(volume)
+            this.internal.triggerRelease(note.string())
+        }
     }
 }
