@@ -11,6 +11,8 @@ function generateAccessToken(userID, username, spotifyToken) {
 function spotifyAuthorization() {
    const client_id = '9985cfc25fad4e3e82794d87f23823ef';
    const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
+   console.log("client_secret")
+   console.log(client_secret)
     // TODO(security): ask security.stackexchange why we're sending an unencrypted secret - is https enough?  
    return 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
 }

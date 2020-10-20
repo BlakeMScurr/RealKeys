@@ -3,7 +3,7 @@
     import { goto } from '@sapper/app';
     import Login from "../components/generic/Login.svelte"
     import Spotify from "../components/audioplayer/Spotify.svelte";
-import { onMount } from "svelte";
+    import { onMount } from "svelte";
 
 
     let token;

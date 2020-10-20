@@ -194,7 +194,6 @@
     }
 
     function startRecording() {
-        console.log("strign recorinfg")
         if (recordMode) {
             notes = recorder.startRecording(pos)
         } else {
