@@ -165,9 +165,11 @@
 
     let volume = 1;
    
-    playingStore.subscribe((playing: boolean)=>{
+    let playing = false
+    playingStore.subscribe((p: boolean)=>{
+        playing = p
         if (!recordMode) {
-            if (playing) {
+            if (p) {
                 startRecording()
             } else {
                 stopRecording()
@@ -240,7 +242,7 @@
 
 <div id="pianoroll" bind:clientWidth={width}>
     <div class="container roll" on:wheel={handleRollWheel}>
-        <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} editable={recordMode}></Roll>
+        <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} editable={recordMode} playing={playing}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
         <Piano {keys} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untime()}></Piano>

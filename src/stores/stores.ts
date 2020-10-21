@@ -88,6 +88,7 @@ function createSeek() {
     return {
         subscribe,
         set: (val: number) => {
+            console.log("seek being set")
             setPosition(val)
             set(val)
         }
@@ -170,10 +171,12 @@ class track {
         songDuration.set(duration)
 
         seek.subscribe((p) => {
+            console.log("seeking and getting relevant duration")
             let dur;
             songDuration.subscribe((d) => {
                 dur = d
             })
+            console.log("seeking", p * dur)
             this.player.Seek(p * dur)
         })
 
@@ -187,18 +190,25 @@ class track {
     }
 }
 
+let mainTrackSet = false
 function createTracks() {
     const { subscribe, update } = writable(new Array<track>());
 
     return {
         subscribe,
+        // TODO: name better so it's clear we're only allowed one main track
         new: (player: Player) => {
-            update((currentPlayers: Array<track>) => {
-                let t = new track(player)
-                t.link()
-                currentPlayers.push(t)
-                return currentPlayers
-            })
+            if (!mainTrackSet) {
+                update((currentPlayers: Array<track>) => {
+                    let t = new track(player)
+                    t.link()
+                    currentPlayers.push(t)
+                    return currentPlayers
+                })
+                mainTrackSet = true
+            } else {
+                console.warn("main track already set")
+            }
         },
     }
 }

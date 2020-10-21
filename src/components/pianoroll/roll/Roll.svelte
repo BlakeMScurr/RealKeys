@@ -7,7 +7,7 @@
     import { TimedNote } from "../../../lib/music/timed/timed";
     import type { Bars } from "../pianoroll";
     import RollKey from "./RollKey.svelte";
-    import { currentSong, songDuration } from "../../../stores/stores";
+    import { currentSong, playingStore, songDuration } from "../../../stores/stores";
 
     export let keys:Array<Note>;
     export let height:number;
@@ -18,6 +18,7 @@
     export let position = 0;
     export let recording = true;
     export let editable = false;
+    export let playing;
     
     // the place on the screen where the user should start playing the note
     // TODO: why does the length actually seem a bit long, perhaps 5x longer
@@ -25,11 +26,10 @@
     let duration;
     songDuration.subscribe((val)=>{
         duration = val
-    }) 
+    })
     let zoomWidth = zoomLength / duration;
-    const playLine = 0.4
-    $: zoomEnd = recording ? position : position + zoomWidth * (1-playLine)
-    $: zoomStart = recording ? position - zoomWidth : position - zoomWidth * playLine
+    $: zoomEnd = recording ? position : position + zoomWidth
+    $: zoomStart = recording ? position - zoomWidth : position
 
     // Reverse stuff so that it looks right
     // TODO: no ugly reversing stuff
@@ -131,7 +131,7 @@
         width: 100%;
         height: 1px;
         background-color: red;
-        z-index: 1;
+        z-index: 5;
     }
 
     .container {
@@ -191,10 +191,6 @@
         z-index: 4;
     }
 
-    .recordLine {
-        z-index: 5;
-    }
-
     .edit {
         width: 100%;
         height: 8px;
@@ -219,10 +215,6 @@
 </div>
 <!-- Bar Lines -->
 <div class="container barlines" style="--height: {height + unit};">
-    <!-- TODO: make greyed out space before and after the bars -->
-    {#if !recording}
-        <div class="recordLine" style="--top: {viewHeight * playLine + unit};"></div>
-    {/if}
     {#each bars.sums() as bar}
         <div class="bar" style="--top: {(viewHeight * (1-bar) - zoomOffset) + unit};"></div>
     {/each}
@@ -249,11 +241,13 @@
     {/each}
 </div>
 <!-- Hides the extra top notes in the overlay -->
-<div class="container overlayhider" style="--height: {height + unit};">
-    {#each keys as key, i}
-       <RollKey width={100/keys.length + "%"} height={"60%"} white={key.color()=="white"} rightBorder={(key.abstract.letter == "b" || key.abstract.letter == "e") && i != keys.length - 1}></RollKey>
-    {/each}
-</div>
+{#if playing}
+    <div class="container overlayhider" style="--height: {height + unit};">
+        {#each keys as key, i}
+        <RollKey width={100/keys.length + "%"} height={"100%"} white={key.color()=="white"} rightBorder={(key.abstract.letter == "b" || key.abstract.letter == "e") && i != keys.length - 1}></RollKey>
+        {/each}
+    </div>
+{/if}
 
 <!-- Overlay Notes -->
 <div class="container" style="--height: {height + unit};">

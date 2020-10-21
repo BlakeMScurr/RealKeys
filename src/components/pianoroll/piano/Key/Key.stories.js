@@ -12,7 +12,7 @@ export const White = () => ({
       width: 20,
       height: 100,
       note: new AbstractNote("c"),
-      active: false,
+      state: "",
   }
 });
 
@@ -22,7 +22,7 @@ export const Black = () => ({
       width: 20,
       height: 100,
       note: new AbstractNote("f#"),
-      active: false,
+      state: "",
   }
 });
 
@@ -32,7 +32,7 @@ export const BlackLabeled = () => ({
       width: 20,
       height: 100,
       note: new AbstractNote("f#"),
-      active: false,
+      state: "",
       label: "u",
   }
 });
@@ -43,7 +43,7 @@ export const WhiteLabeled = () => ({
       width: 20,
       height: 100,
       note: new AbstractNote("c"),
-      active: false,
+      state: "",
       label: "j",
   }
 });
@@ -54,7 +54,17 @@ export const WhiteClicked = () => ({
       width: 20,
       height: 100,
       note: new AbstractNote("c"),
-      active: true,
+      state: "active",
+  }
+});
+
+export const WhiteRight = () => ({
+  Component: _storybook_Key,
+  props: {
+      width: 20,
+      height: 100,
+      note: new AbstractNote("c"),
+      state: "right",
   }
 });
 
@@ -64,7 +74,17 @@ export const BlackClicked = () => ({
       width: 20,
       height: 100,
       note: new AbstractNote("f#"),
-      active: true,
+      state: "active",
+  }
+});
+
+export const BlackWrong = () => ({
+  Component: _storybook_Key,
+  props: {
+      width: 20,
+      height: 100,
+      note: new AbstractNote("f#"),
+      state: "wrong",
   }
 });
 
