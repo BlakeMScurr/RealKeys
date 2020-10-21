@@ -3,6 +3,7 @@ import { writable } from 'svelte/store';
 import type { Player } from '../components/audioplayer/audioplayer'
 import { NewNote } from '../lib/music/theory/notes';
 import { TimedNote, TimedNotes } from '../lib/music/timed/timed';
+import { playbackTrack, track } from "./track";
 
 // Position set is only accessible via seek and play
 const { subscribe, set } = createPosition();
@@ -104,6 +105,7 @@ function createPlay() {
     return {
         subscribe,
         play: () => {
+            console.log("PLAYING")
             let ready;
             audioReady.subscribe((val) => {
                 ready = val.ready
@@ -158,37 +160,6 @@ function createAudioReady() {
     }
 }
 
-class track {
-    player: Player;
-    constructor(player: Player) {
-        this.player = player
-    }
-
-    // links the track to stores
-    link() {
-        audioReady.ready()
-        let duration = this.player.Duration()
-        songDuration.set(duration)
-
-        seek.subscribe((p) => {
-            console.log("seeking and getting relevant duration")
-            let dur;
-            songDuration.subscribe((d) => {
-                dur = d
-            })
-            console.log("seeking", p * dur)
-            this.player.Seek(p * dur)
-        })
-
-        playingStore.subscribe((play) => {
-            if (play) {
-                this.player.Play()
-            } else {
-                this.player.Pause()
-            }
-        })
-    }
-}
 
 let mainTrackSet = false
 function createTracks() {
@@ -210,6 +181,14 @@ function createTracks() {
                 console.warn("main track already set")
             }
         },
+        newPlaybackTrack: (notes: Array<TimedNote>) => {
+            update((currentPlayers: Array<track>) => {
+                let t = new playbackTrack(notes)
+                t.link()
+                currentPlayers.push(t)
+                return currentPlayers
+            })
+        }
     }
 }
 

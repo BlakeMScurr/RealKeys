@@ -48,7 +48,6 @@ export function post(req, responder) {
             }).then((res)=> {
                 return res.json()
             }).then((json)=>{
-                console.log(json)
                 let { display_name, id, product } = json
                 // TODO: show username rather than display name
                 if (product !== 'premium') {

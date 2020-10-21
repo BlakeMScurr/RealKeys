@@ -2,7 +2,7 @@
     import type { Bars } from "./pianoroll";
     import { RecordState } from "./recorder";
     import { TimedNotes } from "../../lib/music/timed/timed"
-    import { currentSong, playingStore, position, songDuration, seek } from "../../stores/stores"
+    import { currentSong, playingStore, position, songDuration, seek, tracks } from "../../stores/stores"
     import { newPiano } from "../track/instrument";
     import { highestPianoNote, lowestPianoNote } from "../../lib/music/theory/notes"
     import RecordButton from "../generic/RecordButton.svelte"
@@ -13,6 +13,10 @@
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;
     export let recordMode:Boolean = false;
+
+    if (!recordMode) {
+        tracks.newPlaybackTrack(notes.notes)
+    }
 
     let pos = 0;
     position.subscribe((value) => {
