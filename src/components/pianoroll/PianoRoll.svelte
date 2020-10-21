@@ -15,7 +15,7 @@
     export let recordMode:Boolean = false;
 
     if (!recordMode) {
-        tracks.newPlaybackTrack(notes.notes)
+        tracks.newPlaybackTrack(notes.notes, newPiano().genericise("Lesson Playback"))
     }
 
     let pos = 0;

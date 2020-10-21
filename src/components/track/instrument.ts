@@ -1,6 +1,7 @@
 import { Note } from '../../lib/music/theory/notes';
 // import { Piano } from '@tonejs/piano'
 import * as Tone from 'tone'
+import type { instrument } from '../../stores/instruments';
 
 
 export function newPiano() {
@@ -55,5 +56,36 @@ class Synth {
             this.internal.volume.value = Math.log10(volume)
             this.internal.triggerRelease(note.string())
         }
+    }
+
+    genericise(name: string):instrument {
+        return new wrapper(this)
+    }
+}
+
+class wrapper {
+    internal: Synth;
+    volume: number;
+    instrumentName: string;
+    constructor(internal: Synth, name: string) {
+        this.internal = internal
+        this.volume = 1;
+        this.instrumentName = name
+    }
+
+    getVolume() {
+        return this.volume
+    }
+
+    setVolume(volume: number) {
+        this.volume = volume
+    }
+
+    name() {
+        return this.name
+    }
+
+    play(note: Note) {
+        this.internal.play(note, this.volume)
     }
 }

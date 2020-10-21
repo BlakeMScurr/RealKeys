@@ -1,6 +1,7 @@
 import type { Player } from '../components/audioplayer/audioplayer'
 import { play } from '../components/audioplayer/spotify';
 import type { TimedNote } from '../lib/music/timed/timed';
+import type { instrument } from './instruments';
 import { audioReady, songDuration, seek, playingStore } from "./stores"
 
 function duration():number {
@@ -25,23 +26,25 @@ export class playbackTrack {
     startedPlaying: number;
     startTimeouts: Array<ReturnType<typeof setTimeout>>;
     endTimeouts: Array<ReturnType<typeof setTimeout>>;
-    constructor(notes: Array<TimedNote>) {
+    playbackInstrument: instrument;
+
+    constructor(notes: Array<TimedNote>, playbackInstrument: instrument) {
         this.notes = notes
         this.currentPosition = 0;
         this.startTimeouts = new Array();
         this.endTimeouts = new Array();
         this.startedPlaying = -1;
+        this.playbackInstrument = playbackInstrument
     }
 
     // links the track to stores
     link() {
         seek.subscribe((p) => {
-            this.seek(p * duration())
+            this.seek(p)
         })
 
         playingStore.subscribe((play) => {
             if (play) {
-                console.log("playing from play in link")
                 this.play()
             } else {
                 this.pause()
@@ -50,23 +53,22 @@ export class playbackTrack {
     }
 
     play() {
-        console.log("playing instrument at ", this.currentPosition)
         this.startedPlaying = Date.now()
         this.notes.forEach((note)=>{
             if (note.start > this.currentPosition) {
-                console.log("setting a timeout for", note.note.string())
+                let delay = (note.start - this.currentPosition) * duration()
+                let length = (note.end - note.start) * duration()
                 this.startTimeouts.push(setTimeout(() => {
-                    console.log("playing", note.note.string())
+                    this.playbackInstrument.play(note.note)
                     this.endTimeouts.push(setTimeout(() => {
-                        console.log("ending", note.note.string())
-                    }, (note.end - note.start) * duration()))
-                }, (note.start - this.currentPosition)*duration()))
+                    }, length))
+                }, delay))
             }
         })
     }
 
     pause() {
-        if (this.startedPlaying = -1) {
+        if (this.startedPlaying == -1) {
             this.currentPosition = 0
         } else {
             this.currentPosition = this.currentPosition + (Date.now() - this.startedPlaying)/duration()

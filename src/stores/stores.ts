@@ -181,9 +181,9 @@ function createTracks() {
                 console.warn("main track already set")
             }
         },
-        newPlaybackTrack: (notes: Array<TimedNote>) => {
+        newPlaybackTrack: (notes: Array<TimedNote>, playbackInstrument: instrument) => {
             update((currentPlayers: Array<track>) => {
-                let t = new playbackTrack(notes)
+                let t = new playbackTrack(notes, playbackInstrument)
                 t.link()
                 currentPlayers.push(t)
                 return currentPlayers
