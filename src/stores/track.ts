@@ -1,8 +1,9 @@
 import type { Player } from '../components/audioplayer/audioplayer'
-import { play } from '../components/audioplayer/spotify';
 import type { TimedNote } from '../lib/music/timed/timed';
+import type { Note } from '../lib/music/theory/notes';
 import type { instrument } from './instruments';
 import { audioReady, songDuration, seek, playingStore } from "./stores"
+import { writable } from 'svelte/store';
 
 function duration():number {
     let dur;
@@ -24,17 +25,17 @@ export class playbackTrack {
     notes: Array<TimedNote>;
     currentPosition: number;
     startedPlaying: number;
-    startTimeouts: Array<ReturnType<typeof setTimeout>>;
-    endTimeouts: Array<ReturnType<typeof setTimeout>>;
+    timeouts: Array<ReturnType<typeof setTimeout>>;
     playbackInstrument: instrument;
+    currentNotes;
 
     constructor(notes: Array<TimedNote>, playbackInstrument: instrument) {
         this.notes = notes
         this.currentPosition = 0;
-        this.startTimeouts = new Array();
-        this.endTimeouts = new Array();
+        this.timeouts = new Array();
         this.startedPlaying = -1;
         this.playbackInstrument = playbackInstrument
+        this.currentNotes = writable(new Map<string, string>())
     }
 
     // links the track to stores
@@ -54,15 +55,52 @@ export class playbackTrack {
 
     play() {
         this.startedPlaying = Date.now()
+        const leeway = 100 // ms
+
         this.notes.forEach((note)=>{
             if (note.start > this.currentPosition) {
-                let delay = (note.start - this.currentPosition) * duration()
+                // TODO: handle cases where note is less than or near leeway
+                let firstNote = (note.start - this.currentPosition) * duration()
+                let softOn = firstNote - leeway
+
                 let length = (note.end - note.start) * duration()
-                this.startTimeouts.push(setTimeout(() => {
+
+                this.timeouts.push(setTimeout(() => {
+                    // Set the note as being allowed to be played
+                    this.currentNotes.update((notes: Map<string, string>)=> {
+                        notes.set(note.note.string(), "soft")
+                        return notes
+                    })
+                }, softOn))
+
+                // Play the note
+                this.timeouts.push(setTimeout(() => {
                     this.playbackInstrument.play(note.note, length)
-                    this.endTimeouts.push(setTimeout(() => {
-                    }, length))
-                }, delay))
+
+                    // Set the note as having to be played
+                    this.timeouts.push(setTimeout(() => {
+                        this.currentNotes.update((notes: Map<string, string>)=> {
+                            notes.set(note.note.string(), "strict")
+                            return notes
+                        })
+                    }, leeway * 2))
+
+                    // Set the note as being allowed to be off
+                    this.timeouts.push(setTimeout(() => {
+                        this.currentNotes.update((notes: Map<string, string>)=> {
+                            notes.set(note.note.string(), "soft")
+                            return notes
+                        })
+
+                        // Set the note as being required to be off
+                        this.timeouts.push(setTimeout(() => {
+                            this.currentNotes.update((notes: Map<string, string>)=> {
+                                notes.delete(note.note.string())
+                                return notes
+                            })
+                        }, leeway * 2))
+                    }, length - leeway))
+                }, firstNote))
             }
         })
     }
@@ -74,14 +112,10 @@ export class playbackTrack {
             this.currentPosition = this.currentPosition + (Date.now() - this.startedPlaying)/duration()
         }
 
-        this.endTimeouts.forEach((to) => {
+        this.timeouts.forEach((to) => {
             clearTimeout(to)
         })
-        this.startTimeouts.forEach((to) => {
-            clearTimeout(to)
-        })
-        this.endTimeouts = []
-        this.startTimeouts = []
+        this.timeouts = []
     }
 
     seek(d: number) {
@@ -89,6 +123,12 @@ export class playbackTrack {
         if (playing()) {
             this.play()
         }
+    }
+
+    subscribeToNotes(callback: (notes: Map<string, string>)=> void) {
+        this.currentNotes.subscribe((notes)=>{
+            callback(notes)
+        })
     }
 }
 

@@ -7,6 +7,8 @@
 
     export let keys:Array<Note>;
     export let usedNotes:Map<String, boolean> = new Map();
+    export let lessonNotes: Map<string, string>;
+    export let playing: Boolean;
 
     let midiConnected = false
     let mobile = false // TODO: figure out how to know this before we get any events
@@ -82,6 +84,26 @@
         }
         return ""
     }
+
+    // TODO: surely make it more concise
+    function getState(note: Note, activeMap, lessonNotes) {
+        let str = note.string()
+        if (!playing) {
+            return activeMap.get(str) ? "active" : ""
+        } else {
+            if (lessonNotes.has(str)) {
+                let val = lessonNotes.get(str)
+                if (val == "strict") {
+                    return activeMap.get(str) ? "right" : "wrong"
+                } else if (val == "soft") {
+                    return activeMap.get(str) ? "right" : ""
+                }
+                throw new Error("unexpected note state value " + val)
+            } else {
+                return activeMap.get(str) ? "wrong" : ""
+            }
+         }
+    }
 </script>
 
 <style>
@@ -104,7 +126,7 @@
 <div on:touchstart={()=>{mobile = true}}>
     <div class="rapper" id="LilPeep">
         {#each whiteWidths(notes.white()) as {note, width}}
-            <Key {note} width={width} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={usedNotes.has(note.string())}></Key>
+            <Key {note} width={width} active={activeMap.get(note.string())} state={getState(note, activeMap, lessonNotes)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={usedNotes.has(note.string())}></Key>
         {/each}
     </div>
     <div style="--blackMargin: {regularWhiteWidth(notes.white())*100/4}%;" class="rapper" id="JuiceWrld">
@@ -112,7 +134,7 @@
             {#if note instanceof Ghost}
                 <Key ghost={true} width={regularWhiteWidth(notes.white())*100 * (2/4)}></Key>
             {:else}
-                <Key {note} width={regularWhiteWidth(notes.white())*100} active={activeMap.get(note.string())} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={usedNotes.has(note.string())}></Key>
+                <Key {note} width={regularWhiteWidth(notes.white())*100} active={activeMap.get(note.string())} state={getState(note, activeMap, lessonNotes)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={usedNotes.has(note.string())}></Key>
             {/if}
         {/each}
     </div>

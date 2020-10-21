@@ -180,12 +180,15 @@ function createTracks() {
             }
         },
         newPlaybackTrack: (notes: Array<TimedNote>, playbackInstrument: instrument) => {
+            let t = new playbackTrack(notes, playbackInstrument)
+            t.link()
             update((currentPlayers: Array<track>) => {
-                let t = new playbackTrack(notes, playbackInstrument)
-                t.link()
                 currentPlayers.push(t)
                 return currentPlayers
             })
+            return (callback)=>{
+                t.subscribeToNotes(callback)
+            }
         }
     }
 }
