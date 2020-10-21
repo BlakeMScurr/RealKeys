@@ -5,7 +5,7 @@
 
     function handleClick() {
         document.cookie = `redirect=${$page.path};path=/`
-        var scopes = 'streaming'; 
+        var scopes = 'streaming user-read-private'; 
         goto('https://accounts.spotify.com/authorize' +
         '?response_type=code' +
         '&client_id=' + '9985cfc25fad4e3e82794d87f23823ef' +
