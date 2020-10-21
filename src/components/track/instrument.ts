@@ -59,7 +59,7 @@ class Synth {
     }
 
     genericise(name: string):instrument {
-        return new wrapper(this)
+        return new wrapper(this, name)
     }
 }
 
@@ -81,11 +81,14 @@ class wrapper {
         this.volume = volume
     }
 
-    name() {
-        return this.name
+    name():string {
+        return this.instrumentName
     }
 
-    play(note: Note) {
+    play(note: Note, duration: number) {
         this.internal.play(note, this.volume)
+        setTimeout(()=>{
+            this.internal.stop(note, this.volume)
+        }, duration)
     }
 }

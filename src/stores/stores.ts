@@ -89,7 +89,6 @@ function createSeek() {
     return {
         subscribe,
         set: (val: number) => {
-            console.log("seek being set")
             setPosition(val)
             set(val)
         }
@@ -105,7 +104,6 @@ function createPlay() {
     return {
         subscribe,
         play: () => {
-            console.log("PLAYING")
             let ready;
             audioReady.subscribe((val) => {
                 ready = val.ready

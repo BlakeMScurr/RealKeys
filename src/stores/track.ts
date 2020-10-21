@@ -59,7 +59,7 @@ export class playbackTrack {
                 let delay = (note.start - this.currentPosition) * duration()
                 let length = (note.end - note.start) * duration()
                 this.startTimeouts.push(setTimeout(() => {
-                    this.playbackInstrument.play(note.note)
+                    this.playbackInstrument.play(note.note, length)
                     this.endTimeouts.push(setTimeout(() => {
                     }, length))
                 }, delay))
