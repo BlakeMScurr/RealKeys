@@ -14,7 +14,7 @@
     export let bars:Bars;
     export let recordMode:Boolean = false;
 
-    let state: Map<string, string>;
+    let state = new Map<string, string>();
     if (!recordMode) {
         let noteSubscriber = tracks.newPlaybackTrack(notes.notes, newPiano().genericise("Lesson Playback"))
         noteSubscriber((notes: Map<string, string>)=>{
