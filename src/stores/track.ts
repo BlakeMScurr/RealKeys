@@ -1,9 +1,9 @@
 import type { Player } from '../components/audioplayer/audioplayer'
 import type { TimedNote } from '../lib/music/timed/timed';
-import type { Note } from '../lib/music/theory/notes';
 import type { instrument } from './instruments';
 import { audioReady, songDuration, seek, playingStore } from "./stores"
 import { writable } from 'svelte/store';
+import { noteLeeway } from "./settings"
 
 function duration():number {
     let dur;
@@ -26,6 +26,9 @@ export class playbackTrack {
     currentPosition: number;
     startedPlaying: number;
     // Map from note (given by note string + the index of that particular note in the song) to the timeouts used to deal with it
+    // This was changed from the more obvious Array<ReturnType<typeof setTimeout>> so we could clear timeouts for previous notes
+    // of the same pitch
+    // TODO: test whether it's actually necessary
     timeouts: Map<string, Array<ReturnType<typeof setTimeout>>>;
     playbackInstrument: instrument;
     currentNotes;
@@ -62,8 +65,11 @@ export class playbackTrack {
 
     play() {
         this.startedPlaying = Date.now()
-        const leeway = 100 // ms
-
+        let leeway;
+        noteLeeway.subscribe((val) => {
+            leeway = val
+        })
+        
         let noteNumbers = new Map<string, number>();
 
         this.notes.forEach((note)=>{

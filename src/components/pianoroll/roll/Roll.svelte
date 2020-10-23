@@ -14,7 +14,6 @@
     export let unit:string;
     export let bars:Bars;
     export let notes:TimedNotes;
-    export let overlayNotes:TimedNotes;
     export let position = 0;
     export let recording = true;
     export let editable = false;
@@ -125,15 +124,6 @@
         overflow: hidden;
     }
 
-    .recordLine {
-        position: absolute;
-        top: 60%; /* 1 - playLine*/
-        width: 100%;
-        height: 1px;
-        background-color: red;
-        z-index: 5;
-    }
-
     .container {
         width: 100%;
         height: var(--height);
@@ -161,8 +151,7 @@
     }
 
     .mainnote {
-        background-color: red;
-        opacity: 0.6;
+        background-color: #667ED4;
     }
 
     .movable {
@@ -171,16 +160,6 @@
 
     .keybackground {
         z-index: 0;
-    }
-
-    .overlay {
-        z-index: 1;
-        background-color: #667ED4;
-        opacity: 1;
-    }
-
-    .overlayhider {
-        z-index: 2;
     }
 
     .barlines {
@@ -237,29 +216,6 @@
                     <div class="edit StartNote" on:mousedown={mousedown(i, "start")}></div>
                 {/if}
             </div>
-        {/if}
-    {/each}
-</div>
-<!-- Hides the extra top notes in the overlay -->
-{#if playing}
-    <div class="container overlayhider" style="--height: {height + unit};">
-        {#each keys as key, i}
-        <RollKey width={100/keys.length + "%"} height={"100%"} white={key.color()=="white"} rightBorder={(key.abstract.letter == "b" || key.abstract.letter == "e") && i != keys.length - 1}></RollKey>
-        {/each}
-    </div>
-{/if}
-
-<!-- Overlay Notes -->
-<div class="container" style="--height: {height + unit};">
-    {#each overlayNotes.notes as note}
-        {#if find(note.note, keys) != -1}
-            <div class="note overlay" style="--width: {100/keys.length}%;
-                --left: {find(note.note, keys) * 100/keys.length}%;
-                --height: {100*((1-note.start)-(1-note.end))/zoomRatio}%;
-                --top:{
-                    100*(1-note.end)/zoomRatio - zoomOffset
-                }%;
-                --color: {niceBlue}"></div>
         {/if}
     {/each}
 </div>
