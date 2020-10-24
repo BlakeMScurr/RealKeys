@@ -186,6 +186,16 @@ test("Interval", ()=>{
     expect(NewNote("C", 4).intervalTo(NewNote("C", 5))).toEqual(12)
 })
 
+test("Jump", ()=>{
+    expect(NewNote("C", 4).jump(-0)).toEqual(NewNote("C", 4))
+    expect(NewNote("C", 4).jump(0)).toEqual(NewNote("C", 4))
+    expect(NewNote("C", 4).jump(1)).toEqual(NewNote("C#", 4))
+    expect(NewNote("C", 4).jump(-1)).toEqual(NewNote("B", 3))
+    expect(NewNote("C", 4).jump(-12)).toEqual(NewNote("C", 3))
+    expect(NewNote("C", 4).jump(12)).toEqual(NewNote("C", 5))
+    expect(NewNote("C", 4).jump(13)).toEqual(NewNote("C#", 5))
+})
+
 function nn(note: string, octave: number) {
     return NewNote(note, octave)
 }

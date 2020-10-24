@@ -144,6 +144,22 @@ export class Note {
 
         return octaveDiff * 12 + noteDiff
     }
+
+    jump(semitones: number) {
+        let octaveDiff = Math.trunc(semitones / 12)
+        let noteDiff = semitones % 12
+        let index = notelist.indexOf(this.abstract.string()) + noteDiff
+        if (index < 0) {
+            octaveDiff--
+            index += 12
+        }
+        if (index > 11) {
+            octaveDiff++
+            index -= 12
+        }
+        let noteName = notelist[index]
+        return new Note(new AbstractNote(noteName), this.octave + octaveDiff)
+    }
 }
 
 export function NewNote(note: string, octave: number) {
