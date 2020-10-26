@@ -1,7 +1,7 @@
 import pitchDetector from "./pitchDetector.svelte";
 
 export default {
-    title: 'Pitch Detectpr',
+    title: 'Pitch Detector',
 };
 
 const Template = ({...args }) => ({

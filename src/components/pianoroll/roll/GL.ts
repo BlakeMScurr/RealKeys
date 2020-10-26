@@ -1,8 +1,10 @@
 export const vertexCode = `
 attribute vec2 aVertexPosition;
+uniform vec2 translate;
+uniform int zoom;
 
 void main() {
-gl_Position = vec4(aVertexPosition, 0.0, 1.0);
+gl_Position = vec4(aVertexPosition + translate, 0.0, 1.0);
 }`
 
 export const fragmentCode = `
@@ -52,12 +54,31 @@ export function initProgram(gl: WebGLRenderingContext) {
     return new drawer(gl, program)
 }
 
+function staticTranslation () {
+    return [0,0]
+}
+
 class drawer {
     gl: WebGLRenderingContext;
     program: WebGLProgram;
+    translate: number;
+    zoom: number;
     constructor(gl: WebGLRenderingContext, program: WebGLProgram) {
         this.gl = gl
         this.program = program
+        this.translate = 0;
+        this.zoom = 1;
+    }
+
+    // POST INITIALISATION METHODS
+    // -------------------------------
+
+    setTranslate(translate: number){
+        this.translate = translate
+    }
+
+    setZoom(zoom: number){
+        this.zoom = zoom
     }
 
     // ROLL SPECIFIC METHODS
@@ -79,7 +100,7 @@ class drawer {
         })
     
         var vertices = new Float32Array(points);
-        this.drawTriangles(new glColour(0.3984375, 0.4921875, 0.828125, 1.0), vertices)
+        this.drawTriangles(new glColour(0.3984375, 0.4921875, 0.828125, 1.0), vertices, [0, this.translate])
     }
     
     drawBars(bars) {
@@ -94,7 +115,7 @@ class drawer {
             )
         })
         var vertices = new Float32Array(points);
-        this.drawLines(new glColour(1, 1, 1, 1.0), vertices)
+        this.drawLines(new glColour(1, 1, 1, 1.0), vertices, [0, this.translate])
     }
     
     drawDividers(keys) {
@@ -109,7 +130,7 @@ class drawer {
             }
         }
         var vertices = new Float32Array(points);
-        this.drawLines(new glColour(1, 1, 1, 1.0), vertices)
+        this.drawLines(new glColour(1, 1, 1, 1.0), vertices, staticTranslation())
     }
     
     drawBlackkeys(keys) {
@@ -121,7 +142,7 @@ class drawer {
             }
         })
         var vertices = new Float32Array(points);
-        this.drawTriangles(new glColour(0.3515625, 0.3515625, 0.3515625, 1.0), vertices)
+        this.drawTriangles(new glColour(0.3515625, 0.3515625, 0.3515625, 1.0), vertices, staticTranslation())
     }
 
     setBackground(canvas) {
@@ -133,15 +154,15 @@ class drawer {
     // GENERAL UTILITIES
     // -------------------------------
 
-    drawLines(colour: glColour, vertices: Float32Array) {
-        this.drawStuff(colour, vertices, this.gl.LINES)
+    drawLines(colour: glColour, vertices: Float32Array, translation: Array<number>) {
+        this.drawStuff(colour, vertices, this.gl.LINES, translation)
     }
 
-    drawTriangles (colour: glColour, vertices: Float32Array) {
-        this.drawStuff(colour, vertices, this.gl.TRIANGLES)
+    drawTriangles (colour: glColour, vertices: Float32Array, translation: Array<number>) {
+        this.drawStuff(colour, vertices, this.gl.TRIANGLES, translation)
     }
     
-    drawStuff (colour: glColour, vertices: Float32Array, primitive) {
+    drawStuff (colour: glColour, vertices: Float32Array, primitive, translation: Array<number>) {
         let vbuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, vbuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, vertices, this.gl.STATIC_DRAW);
@@ -157,7 +178,10 @@ class drawer {
         let aVertexPosition = this.gl.getAttribLocation(this.program, "aVertexPosition");
         this.gl.enableVertexAttribArray(aVertexPosition);
         this.gl.vertexAttribPointer(aVertexPosition, itemSize, this.gl.FLOAT, false, 0, 0);
-    
+        
+        let translate = this.gl.getUniformLocation(this.program, "translate");
+        this.gl.uniform2fv(translate, translation);
+
         this.gl.drawArrays(primitive, 0, numItems);
     }
 }

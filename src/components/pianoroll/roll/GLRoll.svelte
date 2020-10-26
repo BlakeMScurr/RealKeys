@@ -14,6 +14,9 @@
     export let zoomWidth = 0.2;
     export let recording = true;
 
+    let translate = 0;
+    let zoom = 1;
+    
     let zoomedNotes = notes.notes.map((note) => {
         return new TimedNote(note.start / zoomWidth, note.end / zoomWidth, note.note)
     })
@@ -26,6 +29,8 @@
         main()
     })
 
+    let drawer;
+    let draw = ()=>{};
     // Boilerplate taken from https://www.creativebloq.com/javascript/get-started-webgl-draw-square-7112981
     function main() {
         const canvas:HTMLCanvasElement = document.querySelector("#glCanvas");
@@ -36,8 +41,8 @@
         // Fix blur
         let dpr = window.devicePixelRatio
         if( dpr !== 1 ){
-            canvas.height = canvas.clientHeight * dpr
-            canvas.width = canvas.clientWidth * dpr
+                canvas.height = canvas.clientHeight * dpr
+                canvas.width = canvas.clientWidth * dpr
         }
 
         // Only continue if WebGL is available and working
@@ -47,13 +52,27 @@
         }
 
         
-        let drawer = initProgram(gl)
+        drawer = initProgram(gl)
+        
+        draw = () => {
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            drawer.setBackground(canvas)
+            drawer.drawBlackkeys(keys)
+            drawer.drawDividers(keys)
+            drawer.drawBars(zoomedBars)
+            drawer.drawNotes(keys, zoomedNotes)
+        }
+        draw()
+    }
 
-        drawer.setBackground(canvas)
-        drawer.drawBlackkeys(keys)
-        drawer.drawDividers(keys)
-        drawer.drawBars(zoomedBars)
-        drawer.drawNotes(keys, zoomedNotes)
+    function setTranslate() {
+        drawer.setTranslate(translate)
+        draw()
+    }
+
+    function setZoom() {
+        drawer.setZoom(zoom)
+        draw()
     }
 </script>
 
@@ -64,4 +83,9 @@
     }
 </style>
 
+<input type="range" on:input={setTranslate} bind:value={translate} min="0" max="1" step="0.01">
+<input type="range" on:input={setZoom} bind:value={zoom} min="0" max="1" step="0.01">
+
 <canvas id="glCanvas" width="400px" height="300px"></canvas>
+
+{zoom} {translate}

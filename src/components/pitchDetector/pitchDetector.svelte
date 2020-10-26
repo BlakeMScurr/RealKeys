@@ -36,17 +36,17 @@
             audioBuffer.getChannelData(CHANNEL).set(buffer);
             // We could move this out but that would affect audio quality
             const source = audioContext.createBufferSource();
-            source.buffer = audioBuffer;
-            const float32Array = audioBuffer.getChannelData(0); // get a single channel of sound
             if (detectOn) {
+                source.buffer = audioBuffer;
+                const float32Array = audioBuffer.getChannelData(0); // get a single channel of sound
                 let frequency = autoCorrelate(float32Array, audioContext.sampleRate)
                 
                 if (frequency === -1) {
                     pitch = "no notes detected frequency"
                 } else {
-                    let index = 12*Math.log2(frequency/440)
+                    let index = 12*Math.log2(frequency/440) // get letter name per https://bit.ly/2TzjHBb (just a basic blog post)
                     // TODO: proper logarithmic rounding
-                    pitch = NewNote("A", 4).jump(Math.trunc(index)).string() // get letter name per https://bit.ly/2TzjHBb (just a basic blog post)
+                    pitch = NewNote("A", 4).jump(Math.round(index)).string() // TODO: logarithmic rounding
                 }
             }
             source.start();
