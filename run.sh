@@ -1,1 +1,1 @@
-while true; do node __sapper__/build/ > logs.txt && break; done
+while true; do node __sapper__/build/ &>> logs.txt && break; done
