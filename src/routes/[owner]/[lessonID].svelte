@@ -20,8 +20,14 @@
 <style lang="scss">
     $piano-height: 80vh;
 
+    .page {
+        display: flex;
+        align-items: stretch;
+        flex-direction: column;
+        height: 100vh;
+    }
+
     .optionwrapper {
-        height: 100vh - $piano-height;
         width: 100%;
 
         div {
@@ -42,7 +48,8 @@
     }
 
     .piano {
-        height: $piano-height;
+        flex: 1;
+        width: 100%;
     }
 
     h3 {
@@ -53,17 +60,19 @@
 {#await getLessonDefinition(owner, lessonID)}
     <h1>Loading</h1>
 {:then lesson}
-    <div class="optionwrapper">
-        <div class="nav">
-            <h1>{lessonID}</h1>
-            <h3>{lesson.artist}</h3>
+    <div class="page">
+        <div class="optionwrapper">
+            <div class="nav">
+                <h1>{lessonID}</h1>
+                <h3>{lesson.artist}</h3>
+            </div>
+            <div class="settings">
+                <Spotify track={lesson.spotify_id}></Spotify>
+            </div>
         </div>
-        <div class="settings">
-            <Spotify track={lesson.spotify_id}></Spotify>
+        <div class="piano">
+            <PianoRoll bars={castBars(lesson.bars)} notes={castTimedNotes(lesson.notes)} recordMode={false}></PianoRoll>
         </div>
-    </div>
-    <div class="piano">
-        <PianoRoll bars={castBars(lesson.bars)} notes={castTimedNotes(lesson.notes)} recordMode={false}></PianoRoll>
     </div>
 {:catch error}
     <h1>Could not load lesson {owner}/{lessonID} {console.log(error)}</h1>
