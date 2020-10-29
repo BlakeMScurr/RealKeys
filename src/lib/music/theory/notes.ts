@@ -28,6 +28,21 @@ export class AbstractNote {
         return str
     }
 
+    prettyString() {
+        var str = this.letter
+        if (this.accidental) {
+            switch (str) {
+                case "d":
+                    return "Eb"
+                case "a":
+                    return "Eb"
+                default:
+                    str += "#"
+            }
+        }
+        return str.toLocaleUpperCase()
+    }
+
     enharmonicEquivalent() {
         if (!this.accidental) {
             return this.string()
@@ -229,12 +244,15 @@ export const lowestPianoNote = NewNote("A", 0)
 export const highestPianoNote = NewNote("C", 8)
 
 export function pianoNotes ():Array<Note> {
+    return noteRange(lowestPianoNote, highestPianoNote)
+}
+
+export function noteRange(a: Note, b: Note):Array<Note> {
     let notes: Array<Note> = []
-    let note = lowestPianoNote
-    while (note.lowerThan(highestPianoNote)) {
-        notes.push(note)
-        note = note.next()
+    while (a.lowerThan(b)) {
+        notes.push(a)
+        a = a.next()
     }
-    notes.push(note)
+    notes.push(a)
     return notes
 }
