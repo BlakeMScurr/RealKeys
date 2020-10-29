@@ -12,9 +12,17 @@
     import { getLessonDefinition } from '../../lib/api.js'
     import Spotify from "../../components/audioplayer/Spotify.svelte"
     import PianoRoll from "../../components/pianoroll/PianoRoll.svelte";
+    import { playingStore } from "../../stores/stores"
 
     export let owner;
     export let lessonID;
+
+    let playing;
+    playingStore.subscribe((val) => {
+        playing = val;
+    })
+
+
 </script>
 
 <style lang="scss">
@@ -83,13 +91,17 @@
 {:then lesson}
     <div class="page">
         <div class="optionwrapper">
-            <div class="nav">
-                <h1>{lessonID}</h1>
-            </div>
-            <div class="line2">
-                <div class="subtitle">
-                    <h3>{lesson.artist}</h3>
+            {#if !playing}
+                <div class="nav">
+                    <h1>{lessonID}</h1>
                 </div>
+            {/if}
+            <div class="line2">
+                {#if !playing}
+                    <div class="subtitle">
+                        <h3>{lesson.artist}</h3>
+                    </div>
+                {/if}
                 <div class="settings">
                     <Spotify track={lesson.spotify_id}></Spotify>
                 </div>

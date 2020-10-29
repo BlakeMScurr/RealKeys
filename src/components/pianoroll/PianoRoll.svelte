@@ -227,6 +227,8 @@
 </script>
 
 <style lang="scss">
+    $pianoHeight: 140px;
+
     #pianoroll {
         width: 100%;
         height: 100%;
@@ -239,11 +241,11 @@
     }
 
     .roll {
-        height: calc(100% - 180px);
+        height: calc(100% - #{$pianoHeight});
     }
 
     .piano {
-        height: 180px;
+        height: $pianoHeight;
     }
 </style>
 
