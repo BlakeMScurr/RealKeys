@@ -21,7 +21,7 @@
         color: #FFFFFF;
         font-family: Circular,Helvetica,Arial,sans-serif;
         font-size: medium;
-        padding: 10px 40px 10px 40px;
+        padding: 10px 25px 10px 25px;
         border-radius: 40px;
         border: none;
     }
