@@ -1,7 +1,9 @@
 <script lang="ts">
+    import type { log } from "console";
     import { createEventDispatcher } from "svelte"
     import type { Note } from "../../../../lib/music/theory/notes";
     import { colour } from "./helper"
+    import EventHandler from "./EventHandler.svelte"
     
     export let active:Boolean;
     export let state:string;
@@ -46,9 +48,8 @@
     }
 </style>
 
-<div class={used?"used":""} style="--color: {colour(state, false)}" on:mousedown={()=>{active=true}}
-    on:mouseup={()=>{active=false}}
-    on:mouseleave={()=>{active=false}}>
+<div class={used?"used":""} style="--color: {colour(state, false)}">
+    <EventHandler bind:active></EventHandler>
     <p>
         {label}
     </p>
