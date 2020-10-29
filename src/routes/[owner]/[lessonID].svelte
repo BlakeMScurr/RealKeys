@@ -30,6 +30,10 @@
     .optionwrapper {
         width: 100%;
 
+        button {
+            display: inline-block;
+        }
+
         div {
             display: inline-block;
             margin: none;
@@ -44,6 +48,15 @@
         .settings {
             width: calc(29% - 2em);
             padding-right: 2em;
+            height: 100%;
+            vertical-align: top;
+
+            .verticalAligner {
+                display: flex;
+                justify-content: center;
+                align-items: center; 
+                height: 100%;
+            }
         }
     }
 
@@ -67,7 +80,9 @@
                 <h3>{lesson.artist}</h3>
             </div>
             <div class="settings">
-                <Spotify track={lesson.spotify_id}></Spotify>
+                <div class="verticalAligner">
+                    <Spotify track={lesson.spotify_id}></Spotify>
+                </div>
             </div>
         </div>
         <div class="piano">
