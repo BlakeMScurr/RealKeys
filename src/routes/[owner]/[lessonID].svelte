@@ -19,6 +19,7 @@
 
 <style lang="scss">
     $piano-height: 80vh;
+    $margins: 1.5em;
 
     .page {
         display: flex;
@@ -29,6 +30,8 @@
 
     .optionwrapper {
         width: 100%;
+        display: flex;
+        flex-flow: column;
 
         button {
             display: inline-block;
@@ -39,23 +42,27 @@
             margin: none;
         }
 
-        // TODO: why doesn't it work when we have the two add to 100%?
-        .nav {
-            width: calc(69% - 2em);
-            padding-left: 2em;
+        h1 {
+            margin-bottom: 0;
         }
 
-        .settings {
-            width: calc(29% - 2em);
-            padding-right: 2em;
-            height: 100%;
-            vertical-align: top;
+        .nav {
+            width: calc(100% - 2 * #{$margins});
+            padding-left: $margins;
+            padding-right: $margins;
+        }
 
-            .verticalAligner {
-                display: flex;
-                justify-content: center;
-                align-items: center; 
-                height: 100%;
+        .line2 {
+            display: flex;
+            align-items: center;
+
+            .subtitle {
+                padding-left: $margins;
+            }
+
+            .settings {
+                padding-right: $margins;
+                margin-left: auto;
             }
         }
     }
@@ -77,10 +84,12 @@
         <div class="optionwrapper">
             <div class="nav">
                 <h1>{lessonID}</h1>
-                <h3>{lesson.artist}</h3>
             </div>
-            <div class="settings">
-                <div class="verticalAligner">
+            <div class="line2">
+                <div class="subtitle">
+                    <h3>{lesson.artist}</h3>
+                </div>
+                <div class="settings">
                     <Spotify track={lesson.spotify_id}></Spotify>
                 </div>
             </div>
