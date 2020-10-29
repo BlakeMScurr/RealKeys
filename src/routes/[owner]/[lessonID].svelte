@@ -26,6 +26,7 @@
         align-items: stretch;
         flex-direction: column;
         height: 100vh;
+        touch-action: manipulation; // disable double click zoom per https://stackoverflow.com/a/53236027
     }
 
     .optionwrapper {
