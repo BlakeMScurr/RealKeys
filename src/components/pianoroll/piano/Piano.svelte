@@ -16,8 +16,10 @@
     $: labels = labelsOn ? label(new Line(keys)) : new Map();
 
     const dispatch = createEventDispatcher();
-    function forward(event) {
-        dispatch(event.type, event.detail);
+    function forward(e) {
+        activeMap.set(e.detail.string(), e.type === "noteOn")
+        activeMap = activeMap
+        dispatch(e.type, e.detail);
     }
 
     let notes = new Line(keys)
