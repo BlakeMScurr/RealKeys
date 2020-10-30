@@ -7,7 +7,7 @@
     import { TimedNote } from "../../../lib/music/timed/timed";
     import type { Bars } from "../pianoroll";
     import RollKey from "./RollKey.svelte";
-    import { currentSong, playingStore, songDuration } from "../../../stores/stores";
+    import { currentSong, songDuration } from "../../../stores/stores";
 
     export let keys:Array<Note>;
     export let height:number;
@@ -103,8 +103,9 @@
             let clientWidth = e.path[0].clientWidth
             let noteIndex = Math.floor((e.offsetX / clientWidth) * keys.length)
             
-            let notemiddle = 1 - ((e.offsetY)/e.path[0].clientHeight) * zoomRatio
-            const noteRadius = 0.02 // TODO: make this dynamic
+            let notemiddle = (1 - ((e.offsetY)/e.path[0].clientHeight)) * zoomRatio + position - zoomWidth
+
+            const noteRadius = 1000/duration // one second
             notes.add(new TimedNote(notemiddle - noteRadius, notemiddle + noteRadius, keys[noteIndex].deepCopy()))
             notes = notes
             unsaved = true

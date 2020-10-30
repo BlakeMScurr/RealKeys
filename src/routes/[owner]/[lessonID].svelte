@@ -22,7 +22,7 @@
         playing = val;
     })
 
-
+    $: hideTitle = playing
 </script>
 
 <style lang="scss">
@@ -73,6 +73,11 @@
                 padding-right: $margins;
                 margin-left: auto;
             }
+
+            .soloSettings {
+                padding-top: 6px;
+                padding-bottom: 4px;
+            }
         }
     }
 
@@ -91,18 +96,18 @@
 {:then lesson}
     <div class="page">
         <div class="optionwrapper">
-            {#if !playing}
+            {#if !hideTitle}
                 <div class="nav">
                     <h1>{lessonID}</h1>
                 </div>
             {/if}
             <div class="line2">
-                {#if !playing}
+                {#if !hideTitle}
                     <div class="subtitle">
                         <h3>{lesson.artist}</h3>
                     </div>
                 {/if}
-                <div class="settings">
+                <div class="settings {hideTitle ? "soloSettings": ""}">
                     <Spotify track={lesson.spotify_id}></Spotify>
                 </div>
             </div>
