@@ -15,18 +15,16 @@
     export let recordMode:Boolean = false;
 
     let state = new Map<string, string>();
-    if (!recordMode) {
-        let noteSubscriber = tracks.newPlaybackTrack(notes.notes, newPiano().genericise("Lesson Playback"))
-        noteSubscriber((notes: Map<string, string>)=>{
-            // TODO: only bother sending the strings
+    let noteSubscriber = tracks.newPlaybackTrack(notes.notes, newPiano().genericise("Lesson Playback"))
+    noteSubscriber((notes: Map<string, string>)=>{
+        // TODO: only bother sending the strings
 
-            state = new Map<string, string>();
-            notes.forEach((noteState, noteName: string)=>{
-                state.set(noteName, noteState)
-            })
-            state = state
+        state = new Map<string, string>();
+        notes.forEach((noteState, noteName: string)=>{
+            state.set(noteName, noteState)
         })
-    }
+        state = state
+    })
 
     let pos = 0;
     position.subscribe((value) => {
