@@ -1,4 +1,5 @@
 import { spotifyRedirectURI } from "../../lib/util"
+import { non_premium_access_token } from "../../lib/consts"
 
 const fetch = require("node-fetch");
 const jwt = require("jsonwebtoken");
@@ -47,8 +48,11 @@ export function post(req, responder) {
             }).then((res)=> {
                 return res.json()
             }).then((json)=>{
-                let { display_name, id } = json
+                let { display_name, id, product } = json
                 // TODO: show username rather than display name
+                if (product !== 'premium') {
+                    access_token = non_premium_access_token
+                }
                 let webtoken = generateAccessToken(id, display_name, access_token)
                 responder.json({'jwt': webtoken, 'spotifyAccessToken': access_token})
             }).catch((e)=>{

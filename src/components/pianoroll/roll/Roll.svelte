@@ -14,10 +14,10 @@
     export let unit:string;
     export let bars:Bars;
     export let notes:TimedNotes;
-    export let overlayNotes:TimedNotes;
     export let position = 0;
     export let recording = true;
     export let editable = false;
+    export let playing;
     
     // the place on the screen where the user should start playing the note
     // TODO: why does the length actually seem a bit long, perhaps 5x longer
@@ -25,11 +25,10 @@
     let duration;
     songDuration.subscribe((val)=>{
         duration = val
-    }) 
+    })
     let zoomWidth = zoomLength / duration;
-    const playLine = 0.4
-    $: zoomEnd = recording ? position : position + zoomWidth * (1-playLine)
-    $: zoomStart = recording ? position - zoomWidth : position - zoomWidth * playLine
+    $: zoomEnd = recording ? position : position + zoomWidth
+    $: zoomStart = recording ? position - zoomWidth : position
 
     // Reverse stuff so that it looks right
     // TODO: no ugly reversing stuff
@@ -104,8 +103,9 @@
             let clientWidth = e.path[0].clientWidth
             let noteIndex = Math.floor((e.offsetX / clientWidth) * keys.length)
             
-            let notemiddle = 1 - ((e.offsetY)/e.path[0].clientHeight) * zoomRatio
-            const noteRadius = 0.02 // TODO: make this dynamic
+            let notemiddle = (1 - ((e.offsetY)/e.path[0].clientHeight)) * zoomRatio + position - zoomWidth
+
+            const noteRadius = 1000/duration // one second
             notes.add(new TimedNote(notemiddle - noteRadius, notemiddle + noteRadius, keys[noteIndex].deepCopy()))
             notes = notes
             unsaved = true
@@ -123,15 +123,6 @@
 <style>
     div {
         overflow: hidden;
-    }
-
-    .recordLine {
-        position: absolute;
-        top: 60%; /* 1 - playLine*/
-        width: 100%;
-        height: 1px;
-        background-color: red;
-        z-index: 1;
     }
 
     .container {
@@ -161,8 +152,7 @@
     }
 
     .mainnote {
-        background-color: red;
-        opacity: 0.6;
+        background-color: #667ED4;
     }
 
     .movable {
@@ -173,26 +163,12 @@
         z-index: 0;
     }
 
-    .overlay {
-        z-index: 1;
-        background-color: #667ED4;
-        opacity: 1;
-    }
-
-    .overlayhider {
-        z-index: 2;
-    }
-
     .barlines {
         z-index: 3;
     }
 
     .notescontainer {
         z-index: 4;
-    }
-
-    .recordLine {
-        z-index: 5;
     }
 
     .edit {
@@ -219,10 +195,6 @@
 </div>
 <!-- Bar Lines -->
 <div class="container barlines" style="--height: {height + unit};">
-    <!-- TODO: make greyed out space before and after the bars -->
-    {#if !recording}
-        <div class="recordLine" style="--top: {viewHeight * playLine + unit};"></div>
-    {/if}
     {#each bars.sums() as bar}
         <div class="bar" style="--top: {(viewHeight * (1-bar) - zoomOffset) + unit};"></div>
     {/each}
@@ -245,27 +217,6 @@
                     <div class="edit StartNote" on:mousedown={mousedown(i, "start")}></div>
                 {/if}
             </div>
-        {/if}
-    {/each}
-</div>
-<!-- Hides the extra top notes in the overlay -->
-<div class="container overlayhider" style="--height: {height + unit};">
-    {#each keys as key, i}
-       <RollKey width={100/keys.length + "%"} height={"60%"} white={key.color()=="white"} rightBorder={(key.abstract.letter == "b" || key.abstract.letter == "e") && i != keys.length - 1}></RollKey>
-    {/each}
-</div>
-
-<!-- Overlay Notes -->
-<div class="container" style="--height: {height + unit};">
-    {#each overlayNotes.notes as note}
-        {#if find(note.note, keys) != -1}
-            <div class="note overlay" style="--width: {100/keys.length}%;
-                --left: {find(note.note, keys) * 100/keys.length}%;
-                --height: {100*((1-note.start)-(1-note.end))/zoomRatio}%;
-                --top:{
-                    100*(1-note.end)/zoomRatio - zoomOffset
-                }%;
-                --color: {niceBlue}"></div>
         {/if}
     {/each}
 </div>

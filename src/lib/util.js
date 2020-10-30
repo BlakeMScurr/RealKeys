@@ -70,8 +70,10 @@ export function joinURL(parts){
 
 export function spotifyRedirectURI() {
     if (process.env.NODE_ENV === 'development') {
+        console.log("is dev")
         return 'http://localhost:3000/callback'
     }
+    console.log("not dev")
     return 'https://realkeys.co/callback'
 }
 

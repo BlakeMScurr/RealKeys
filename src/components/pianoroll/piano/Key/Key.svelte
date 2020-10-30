@@ -8,6 +8,7 @@
     export let width:number;
     export let note:Note;
     export let active:Boolean;
+    export let state:string;
     export let ghost:Boolean = false;
     export let label:String = "";
     export let used:Boolean = false;
@@ -31,11 +32,9 @@
 <div style="--width: {width}%;">
     {#if ghost}
         <Ghost></Ghost>
+    {:else if note.color() == "white"}
+        <White {note} bind:active={active} on:noteOn={forward} on:noteOff={forward} {label} {used} {state}></White>
     {:else}
-        {#if note.color() == "white"}
-            <White {note} bind:active={active} on:noteOn={forward} on:noteOff={forward} {label} {used}></White>
-        {:else}
-            <Black {note} bind:active={active} on:noteOn={forward} on:noteOff={forward} {label} {used}></Black>
-        {/if}
+        <Black {note} bind:active={active} on:noteOn={forward} on:noteOff={forward} {label} {used} {state}></Black>
     {/if}
 </div>

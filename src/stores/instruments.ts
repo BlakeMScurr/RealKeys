@@ -1,7 +1,9 @@
+import type { Note } from "../lib/music/theory/notes";
+
 export interface instrument {
     getVolume():number;
-    setVolume():number;
-    play(note: string);
+    setVolume(number);
+    play(note: Note, duration: number);
     name():string;
 }
 

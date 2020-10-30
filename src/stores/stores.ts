@@ -3,6 +3,7 @@ import { writable } from 'svelte/store';
 import type { Player } from '../components/audioplayer/audioplayer'
 import { NewNote } from '../lib/music/theory/notes';
 import { TimedNote, TimedNotes } from '../lib/music/timed/timed';
+import { playbackTrack, track } from "./track";
 
 // Position set is only accessible via seek and play
 const { subscribe, set } = createPosition();
@@ -157,49 +158,38 @@ function createAudioReady() {
     }
 }
 
-class track {
-    player: Player;
-    constructor(player: Player) {
-        this.player = player
-    }
 
-    // links the track to stores
-    link() {
-        audioReady.ready()
-        let duration = this.player.Duration()
-        songDuration.set(duration)
-
-        seek.subscribe((p) => {
-            let dur;
-            songDuration.subscribe((d) => {
-                dur = d
-            })
-            this.player.Seek(p * dur)
-        })
-
-        playingStore.subscribe((play) => {
-            if (play) {
-                this.player.Play()
-            } else {
-                this.player.Pause()
-            }
-        })
-    }
-}
-
+let mainTrackSet = false
 function createTracks() {
     const { subscribe, update } = writable(new Array<track>());
 
     return {
         subscribe,
+        // TODO: name better so it's clear we're only allowed one main track
         new: (player: Player) => {
+            if (!mainTrackSet) {
+                update((currentPlayers: Array<track>) => {
+                    let t = new track(player)
+                    t.link()
+                    currentPlayers.push(t)
+                    return currentPlayers
+                })
+                mainTrackSet = true
+            } else {
+                console.warn("main track already set")
+            }
+        },
+        newPlaybackTrack: (notes: Array<TimedNote>, playbackInstrument: instrument) => {
+            let t = new playbackTrack(notes, playbackInstrument)
+            t.link()
             update((currentPlayers: Array<track>) => {
-                let t = new track(player)
-                t.link()
                 currentPlayers.push(t)
                 return currentPlayers
             })
-        },
+            return (callback)=>{
+                t.subscribeToNotes(callback)
+            }
+        }
     }
 }
 

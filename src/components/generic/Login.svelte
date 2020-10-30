@@ -5,7 +5,7 @@
 
     function handleClick() {
         document.cookie = `redirect=${$page.path};path=/`
-        var scopes = 'streaming'; 
+        var scopes = 'streaming user-read-private'; 
         goto('https://accounts.spotify.com/authorize' +
         '?response_type=code' +
         '&client_id=' + '9985cfc25fad4e3e82794d87f23823ef' +
@@ -21,7 +21,7 @@
         color: #FFFFFF;
         font-family: Circular,Helvetica,Arial,sans-serif;
         font-size: medium;
-        padding: 10px 40px 10px 40px;
+        padding: 10px 25px 10px 25px;
         border-radius: 40px;
         border: none;
     }

@@ -1,6 +1,7 @@
 import { Note } from '../../lib/music/theory/notes';
 // import { Piano } from '@tonejs/piano'
 import * as Tone from 'tone'
+import type { instrument } from '../../stores/instruments';
 
 
 export function newPiano() {
@@ -35,13 +36,59 @@ class Synth {
         this.internal = internal
     }
 
+    loaded() {
+        const loaded = this.internal._buffers._loadingCount === 0
+        if (!loaded) {
+            console.log("waiting on " + this.internal._buffers._loadingCount + " sounds to load")
+        }
+        return loaded
+    }
+
     play(note: Note, volume: number) {
-        this.internal.volume.value = Math.log10(volume)
-        this.internal.triggerAttack(note.string())
+        if (this.loaded()) {
+            this.internal.volume.value = Math.log10(volume)
+            this.internal.triggerAttack(note.string())
+        }
     }
     
     stop(note: Note, volume: number) {
-        this.internal.volume.value = Math.log10(volume)
-        this.internal.triggerRelease(note.string())
+        if (this.loaded()) {
+            this.internal.volume.value = Math.log10(volume)
+            this.internal.triggerRelease(note.string())
+        }
+    }
+
+    genericise(name: string):instrument {
+        return new wrapper(this, name)
+    }
+}
+
+class wrapper {
+    internal: Synth;
+    volume: number;
+    instrumentName: string;
+    constructor(internal: Synth, name: string) {
+        this.internal = internal
+        this.volume = 1;
+        this.instrumentName = name
+    }
+
+    getVolume() {
+        return this.volume
+    }
+
+    setVolume(volume: number) {
+        this.volume = volume
+    }
+
+    name():string {
+        return this.instrumentName
+    }
+
+    play(note: Note, duration: number) {
+        this.internal.play(note, this.volume)
+        setTimeout(()=>{
+            this.internal.stop(note, this.volume)
+        }, duration)
     }
 }

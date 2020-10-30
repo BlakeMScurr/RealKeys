@@ -110,13 +110,23 @@ export class Recorder  {
     }
 }
 
+
+
 export class TimedNote {
     start: any;
     end: any;
     note: Note;
     constructor(start: any, end: any, note: Note) {
         if (start >= end) {
-            throw new Error("start must be before end: " + start + " " + end)
+            // TODO: change all calls to new TimedNote to NewTimedNote so they optionally return no new note
+            console.warn("start must be before end: " + start + " " + end)
+            if (start > end) {
+                let temp = this.start
+                this.start = this.end
+                this.end = temp
+            } else {
+                this.end += 0.001
+            }
         } 
         this.start = start;
         this.end = end;

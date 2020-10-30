@@ -2,9 +2,9 @@
     import type { Bars } from "./pianoroll";
     import { RecordState } from "./recorder";
     import { TimedNotes } from "../../lib/music/timed/timed"
-    import { currentSong, playingStore, position, songDuration, seek } from "../../stores/stores"
+    import { currentSong, playingStore, position, songDuration, seek, tracks } from "../../stores/stores"
     import { newPiano } from "../track/instrument";
-    import { highestPianoNote, lowestPianoNote } from "../../lib/music/theory/notes"
+    import { highestPianoNote, lowestPianoNote, Note } from "../../lib/music/theory/notes"
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
     import Piano from "./piano/Piano.svelte";
@@ -13,6 +13,20 @@
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;
     export let recordMode:Boolean = false;
+
+    let state = new Map<string, string>();
+    if (!recordMode) {
+        let noteSubscriber = tracks.newPlaybackTrack(notes.notes, newPiano().genericise("Lesson Playback"))
+        noteSubscriber((notes: Map<string, string>)=>{
+            // TODO: only bother sending the strings
+
+            state = new Map<string, string>();
+            notes.forEach((noteState, noteName: string)=>{
+                state.set(noteName, noteState)
+            })
+            state = state
+        })
+    }
 
     let pos = 0;
     position.subscribe((value) => {
@@ -134,8 +148,6 @@
 
     function handlemousemove(event) {
         if (dragging) {
-            console.log("increasing by " + event.movementX)
-            console.log(event)
             dx += event.movementX / 5 // TODO: make dx correspond to actual pixels so the speed works properly
         }
     }
@@ -165,9 +177,11 @@
 
     let volume = 1;
    
-    playingStore.subscribe((playing: boolean)=>{
+    let playing = false
+    playingStore.subscribe((p: boolean)=>{
+        playing = p
         if (!recordMode) {
-            if (playing) {
+            if (p) {
                 startRecording()
             } else {
                 stopRecording()
@@ -213,6 +227,8 @@
 </script>
 
 <style lang="scss">
+    $pianoHeight: 140px;
+
     #pianoroll {
         width: 100%;
         height: 100%;
@@ -225,11 +241,11 @@
     }
 
     .roll {
-        height: calc(100% - 180px);
+        height: calc(100% - #{$pianoHeight});
     }
 
     .piano {
-        height: 180px;
+        height: $pianoHeight;
     }
 </style>
 
@@ -240,9 +256,9 @@
 
 <div id="pianoroll" bind:clientWidth={width}>
     <div class="container roll" on:wheel={handleRollWheel}>
-        <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} editable={recordMode}></Roll>
+        <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} editable={recordMode} playing={playing}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
-        <Piano {keys} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untime()}></Piano>
+        <Piano {keys} lessonNotes={state} {playing} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untime()}></Piano>
     </div>
 </div>

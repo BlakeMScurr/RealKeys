@@ -2,6 +2,7 @@
 
 <script lang="ts">import { onDestroy } from "svelte";
     import { getCookie, removeCookie } from "../../lib/util";
+    import { non_premium_access_token } from "../../lib/consts";
     import { audioReady, tracks } from "../../stores/stores"
     import Login from "../generic/Login.svelte";
     import { getPlayer, play } from "./spotify.ts"
@@ -35,7 +36,7 @@
         }
     }
 
-    if (token !== undefined) {
+    if (token !== undefined && token !== non_premium_access_token) {
         window.onSpotifyWebPlaybackSDKReady = () => {
             player = getPlayer(token, handleAuthenticationError, handleStateChange)
             player.internal.addListener('ready', ({ device_id }) => {
@@ -78,6 +79,8 @@
 
 {#if token === undefined}
     <Login></Login>
+{:else if token === non_premium_access_token}
+    <h2>Play along mode requires spotify premium</h2>
 {:else}
     <UI></UI>
 {/if}
