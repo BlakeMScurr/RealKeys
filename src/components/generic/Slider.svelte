@@ -10,9 +10,14 @@
 
     let dispatch = createEventDispatcher();
 
-    function handleInput() {
+    function handleInput(e) {
         setbackground()
     }
+
+    // Prevent the screen from being dragged around when we're moving a slider
+    onMount(()=>{
+        document.addEventListener("touchmove", (e)=>{e.stopPropagation();}, {passive: false});
+    })
 
     let grabbed = false;
     function grab() {

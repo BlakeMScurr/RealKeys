@@ -35,7 +35,7 @@ export class AbstractNote {
                 case "d":
                     return "Eb"
                 case "a":
-                    return "Eb"
+                    return "Bb"
                 default:
                     str += "#"
             }
