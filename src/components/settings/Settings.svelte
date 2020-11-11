@@ -6,22 +6,25 @@
     import { TimedNote } from "../../lib/music/timed/timed";
 
     export let bars: Array<Bar>;
-    let clickTrackOn:boolean = true
 
-    let clicker = newClicker()
+    let clickTrackOn:boolean = true
+    let clicker = newClicker().genericise("Lesson Playback")
+    $: {
+        if (clickTrackOn) {
+            clicker.setVolume(1)
+        } else {
+            clicker.setVolume(0)
+        }
+    }
 
     let currPos = 0;
-    let duration;
-    songDuration.subscribe(val => {
-        duration = val
-    })
     let notes = bars.map((bar) => {
         let oldPos = currPos
         currPos += bar.width
         return new TimedNote(oldPos, oldPos + 0.1, NewNote("A", 4))
     })
 
-    let noteSubscriber = tracks.newPlaybackTrack(notes, clicker.genericise("Lesson Playback"))
+    let noteSubscriber = tracks.newPlaybackTrack(notes, clicker)
 </script>
 
 <label for="clickTrackOn">Click Track</label>
