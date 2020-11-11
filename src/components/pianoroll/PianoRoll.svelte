@@ -57,6 +57,10 @@
         // TODO: widen the piano with deltaX
     }
 
+    function handleTouchMove(event) {
+        handleRollWheel(event)
+    }
+
     function pushTopKey() {
         if (keys[keys.length-1].lowerThan(highestPianoNote)) {
             keys.push(keys[keys.length-1].next())
@@ -253,7 +257,7 @@
 {/if}
 
 <div id="pianoroll" bind:clientWidth={width}>
-    <div class="container roll" on:wheel={handleRollWheel}>
+    <div class="container roll" on:wheel={handleRollWheel} on:touchmove={handleTouchMove}>
         <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} editable={recordMode} playing={playing}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
