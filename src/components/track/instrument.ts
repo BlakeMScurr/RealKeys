@@ -1,5 +1,4 @@
-import { Note } from '../../lib/music/theory/notes';
-// import { Piano } from '@tonejs/piano'
+import type { Note } from '../../lib/music/theory/notes';
 import * as Tone from 'tone'
 import type { instrument } from '../../stores/instruments';
 
@@ -30,13 +29,16 @@ export function newPiano() {
     return new Synth(sampler)
 }
 
-class Synth {
+export class Synth {
     internal: any;
     constructor(internal) {
         this.internal = internal
     }
 
     loaded() {
+        if (this.internal._buffers === undefined) {
+            return true
+        }
         const loaded = this.internal._buffers._loadingCount === 0
         if (!loaded) {
             console.log("waiting on " + this.internal._buffers._loadingCount + " sounds to load")

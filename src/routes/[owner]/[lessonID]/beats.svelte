@@ -12,6 +12,7 @@
     import ZoomBars from '../../../components/bars/zoom/ZoomBars.svelte';
     import { getLessonDefinition } from '../../../lib/api.js'
     import Spotify from '../../../components/audioplayer/Spotify.svelte';
+    import Settings from '../../../components/settings/Settings.svelte';
 
     export let owner;
     export let lessonID;
@@ -58,6 +59,7 @@
     <h1>{lessonID}</h1>
     <h3>{owner}</h3>
 
+    <Settings bars={lesson.bars}></Settings>
     <Spotify track={lesson.spotify_id}></Spotify>
     {#if edit}
         <EditBars bars={lesson.bars} on:newBars={handleNewBars}></EditBars>
