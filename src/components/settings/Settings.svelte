@@ -8,7 +8,7 @@
     export let bars: Array<Bar>;
 
     let clickTrackOn:boolean = true
-    let clicker = newClicker().genericise("Lesson Playback")
+    let clicker = newClicker("Click Track")
     $: {
         if (clickTrackOn) {
             clicker.setVolume(1)

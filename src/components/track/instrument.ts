@@ -3,7 +3,7 @@ import * as Tone from 'tone'
 import type { instrument } from '../../stores/instruments';
 
 
-export function newPiano() {
+export function newPiano(name: string) {
     const sampler = new Tone.Sampler({
         urls: {
             "C4": "C4.mp3",
@@ -26,13 +26,18 @@ export function newPiano() {
         release: 1,
         baseUrl: "https://tonejs.github.io/audio/salamander/",
     }).toDestination();
-    return new Synth(sampler)
+    return new Synth(name, sampler)
 }
 
 export class Synth {
-    internal: any;
-    constructor(internal) {
-        this.internal = internal
+    private internal: any;
+    private instrumentName: string;
+    private volume: number;
+    constructor(name: string, internal) {
+        this.internal = internal;
+        this.instrumentName = name;
+        this.volume = 1;
+        this.internal.volume.value = Math.log10(this.volume)
     }
 
     loaded() {
@@ -46,51 +51,31 @@ export class Synth {
         return loaded
     }
 
-    play(note: Note, volume: number) {
-        if (this.loaded()) {
-            this.internal.volume.value = Math.log10(volume)
-            this.internal.triggerAttack(note.string())
-        }
-    }
-    
-    stop(note: Note, volume: number) {
-        if (this.loaded()) {
-            this.internal.volume.value = Math.log10(volume)
-            this.internal.triggerRelease(note.string())
-        }
-    }
-
-    genericise(name: string):instrument {
-        return new wrapper(this, name)
-    }
-}
-
-class wrapper {
-    internal: Synth;
-    volume: number;
-    instrumentName: string;
-    constructor(internal: Synth, name: string) {
-        this.internal = internal
-        this.volume = 1;
-        this.instrumentName = name
-    }
-
     getVolume() {
         return this.volume
     }
 
     setVolume(volume: number) {
         this.volume = volume
+        this.internal.volume.value = Math.log10(this.volume)
     }
 
     name():string {
         return this.instrumentName
     }
 
-    play(note: Note, duration: number) {
-        this.internal.play(note, this.volume)
-        setTimeout(()=>{
-            this.internal.stop(note, this.volume)
-        }, duration)
+    play(note: Note, duration: number=undefined) { 
+        if (this.loaded()) {
+            this.internal.triggerAttack(note.string())
+            if (duration !== undefined) {
+                setTimeout(()=>{
+                    this.stop(note)
+                }, duration)
+            }
+        }
+    }
+
+    stop(note: Note) {
+        this.internal.triggerRelease(note.string())
     }
 }

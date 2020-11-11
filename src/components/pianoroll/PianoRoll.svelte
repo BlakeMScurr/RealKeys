@@ -15,7 +15,7 @@
     export let recordMode:Boolean = false;
 
     let state = new Map<string, string>();
-    let noteSubscriber = tracks.newPlaybackTrack(notes.notes, newPiano().genericise("Lesson Playback"))
+    let noteSubscriber = tracks.newPlaybackTrack(notes.notes, newPiano("Lesson Playback"))
     noteSubscriber((notes: Map<string, string>)=>{
         // TODO: only bother sending the strings
 
@@ -168,7 +168,7 @@
     // Have some leeway
 
     let overlayNotes = new TimedNotes([]);
-    let player = newPiano();
+    let player = newPiano("User Piano");
 
     let recorder;
     if (recordMode) {
@@ -177,8 +177,6 @@
         recorder = new RecordState(overlayNotes)
     }
 
-    let volume = 1;
-   
     let playing = false
     playingStore.subscribe((p: boolean)=>{
         playing = p
@@ -192,7 +190,7 @@
     })
 
     function noteOff(event) {
-        player.stop(event.detail, volume)
+        player.stop(event.detail)
         if (recordMode) {
             notes = recorder.noteOff(event, pos)
         } else {
@@ -201,7 +199,7 @@
     }
 
     function noteOn(event) {
-        player.play(event.detail, volume)
+        player.play(event.detail)
         if (recordMode) {
             notes = recorder.noteOn(event, pos)
         } else {
@@ -253,7 +251,6 @@
 
 {#if recordMode}
     <RecordButton on:startRecording={startRecording} on:stopRecording={stopRecording}></RecordButton>
-    <Slider bind:value={volume}></Slider>
 {/if}
 
 <div id="pianoroll" bind:clientWidth={width}>

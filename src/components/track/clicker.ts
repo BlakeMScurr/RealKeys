@@ -1,7 +1,7 @@
 import * as Tone from 'tone'
 import { Synth } from "./instrument"
 
-export function newClicker() {
+export function newClicker(name: string) {
     const sampler = new Tone.Synth({
         oscillator: {
           type: 'sine',
@@ -14,5 +14,5 @@ export function newClicker() {
           release: 0.1,
         }
       }).toDestination();
-    return new Synth(sampler)
+    return new Synth(name, sampler)
 }
