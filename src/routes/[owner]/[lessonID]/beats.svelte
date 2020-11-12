@@ -52,7 +52,7 @@
     <h1>{lessonID}</h1>
     <h3>{owner}</h3>
 
-    <Settings bars={lesson.bars}></Settings>
+    <Settings bars={newBars === undefined ? lesson.bars : newBars}></Settings>
     <Spotify track={lesson.spotify_id}></Spotify>
     <EditBars bars={lesson.bars} on:newBars={handleNewBars}></EditBars>
     <button disabled={newBars === undefined} on:click={save(lesson)}>Save</button>

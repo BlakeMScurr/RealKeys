@@ -186,9 +186,7 @@ function createTracks() {
                 currentPlayers.push(t)
                 return currentPlayers
             })
-            return (callback)=>{
-                t.subscribeToNotes(callback)
-            }
+            return t.interface()
         }
     }
 }

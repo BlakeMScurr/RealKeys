@@ -15,8 +15,8 @@
     export let recordMode:Boolean = false;
 
     let state = new Map<string, string>();
-    let noteSubscriber = tracks.newPlaybackTrack(notes.notes, newPiano("Lesson Playback"))
-    noteSubscriber((notes: Map<string, string>)=>{
+    let track = tracks.newPlaybackTrack(notes.notes, newPiano("Lesson Playback"))
+    track.subscribeToNotes((notes: Map<string, string>)=>{
         // TODO: only bother sending the strings
 
         state = new Map<string, string>();

@@ -152,10 +152,31 @@ export class playbackTrack {
         }
     }
 
+    interface() {
+        return new playbackInterface(this)
+    }
+}
+
+class playbackInterface {
+    track: playbackTrack;
+    constructor(track: playbackTrack) {
+        this.track = track
+    }
+
     subscribeToNotes(callback: (notes: Map<string, string>)=> void) {
-        this.currentNotes.subscribe((notes)=>{
+        this.track.currentNotes.subscribe((notes)=>{
             callback(notes)
         })
+    }
+
+    updateNotes(notes: Array<TimedNote>) {
+        if (playing()) {
+            this.track.pause()
+            this.track.notes = notes
+            this.track.play()
+        } else {
+            this.track.notes = notes
+        }
     }
 }
 

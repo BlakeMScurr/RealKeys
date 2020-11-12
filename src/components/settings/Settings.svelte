@@ -17,14 +17,22 @@
         }
     }
 
-    let currPos = 0;
-    let notes = bars.map((bar) => {
-        let oldPos = currPos
-        currPos += bar.width
-        return new TimedNote(oldPos, oldPos + 0.1, NewNote("A", 4))
-    })
+    function makeClicks(bars: Array<Bar>):Array<TimedNote> {
+        let currPos = 0;
+        return bars.map((bar) => {
+            let oldPos = currPos
+            currPos += bar.width
+            return new TimedNote(oldPos, oldPos + 0.1, NewNote("A", 4))
+        })
+    }
 
-    let noteSubscriber = tracks.newPlaybackTrack(notes, clicker)
+    let track = tracks.newPlaybackTrack(makeClicks(bars), clicker)
+
+    $: {
+        track.updateNotes(makeClicks(bars))
+        console.log("updating notes")
+    }
+
 </script>
 
 <label for="clickTrackOn">Click Track</label>
