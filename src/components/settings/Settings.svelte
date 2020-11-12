@@ -30,7 +30,6 @@
 
     $: {
         track.updateNotes(makeClicks(bars))
-        console.log("updating notes")
     }
 
 </script>
