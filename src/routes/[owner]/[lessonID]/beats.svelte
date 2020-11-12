@@ -9,10 +9,15 @@
 
 <script lang="ts">
     import EditBars from '../../../components/bars/edit/EditBars.svelte';
-    import ZoomBars from '../../../components/bars/zoom/ZoomBars.svelte';
-    import { getLessonDefinition } from '../../../lib/api.js'
+    import { castBars } from '../../../lib/cast';
+    import type { Bar } from "../../../components/bars/bars";
+    import { getLessonDefinition } from '../../../lib/api.js';
     import Spotify from '../../../components/audioplayer/Spotify.svelte';
     import Settings from '../../../components/settings/Settings.svelte';
+    import PianoRoll from '../../../components/pianoroll/PianoRoll.svelte';
+    import { NewNote } from "../../../lib/music/theory/notes"
+    import { TimedNote, TimedNotes } from "../../../lib/music/timed/timed";
+    import { songDuration } from '../../../stores/stores';
 
     export let owner;
     export let lessonID;
@@ -44,7 +49,36 @@
             newBars = undefined
         }
     }
+
+    let duration;
+    songDuration.subscribe(val => {
+        duration = val
+    })
+
+    function makeClicks(bars: Array<Bar>):Array<TimedNote> {
+        let currPos = 0;
+        return bars.map((bar) => {
+            let oldPos = currPos
+            currPos += bar.width
+            return new TimedNote(oldPos, (oldPos + currPos) / 2, NewNote("A", 4))
+        })
+    }
 </script>
+
+<style lang="scss">
+    .pianoHolder {
+        display: flex;
+        align-items: stretch;
+        flex-direction: column;
+        height: 80vh;
+        touch-action: manipulation; // disable double click zoom per https://stackoverflow.com/a/53236027
+
+        div {
+            flex: 1;
+            width: 100%;
+        }
+    }
+</style>
 
 {#await getLessonDefinition(owner, lessonID)}
     <h1>Loading</h1>
@@ -52,10 +86,16 @@
     <h1>{lessonID}</h1>
     <h3>{owner}</h3>
 
-    <Settings bars={newBars === undefined ? lesson.bars : newBars}></Settings>
+    <Settings clicks={makeClicks(newBars === undefined ? lesson.bars : newBars)}></Settings>
+    <label>Click Width</label>
     <Spotify track={lesson.spotify_id}></Spotify>
     <EditBars bars={lesson.bars} on:newBars={handleNewBars}></EditBars>
     <button disabled={newBars === undefined} on:click={save(lesson)}>Save</button>
+    <div class="pianoHolder">
+        <div>
+            <PianoRoll bars={castBars(lesson.bars)} notes={new TimedNotes(makeClicks(lesson.bars))} recordMode={true}></PianoRoll>
+        </div>
+    </div>
 {:catch error}
     <h1>Could not load lesson {owner}/{lessonID} {error}</h1>
 {/await}

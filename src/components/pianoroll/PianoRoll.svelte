@@ -8,7 +8,6 @@
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
     import Piano from "./piano/Piano.svelte";
-    import Slider from "../generic/Slider.svelte"
 
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;

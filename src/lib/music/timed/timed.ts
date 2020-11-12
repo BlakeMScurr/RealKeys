@@ -172,6 +172,11 @@ export class TimedNotes {
             }
         }
 
+        if (lowest.equals(highest)) {
+            lowest = lowest.deepCopy().jump(-4)
+            highest = highest.jump(4)
+        }
+
         // TODO: we should be able to find this without iteration
         while(lowest.abstract.accidental || highest.abstract.accidental) {
             lowest = lowest.nextLowest()

@@ -1,11 +1,9 @@
 <script lang="ts">
-    import { songDuration, tracks } from "../../stores/stores"
-    import type { Bar } from "../bars/bars"
-    import { NewNote } from "../../lib/music/theory/notes"
+    import { tracks } from "../../stores/stores"
     import { newClicker } from "../track/clicker"
-    import { TimedNote } from "../../lib/music/timed/timed";
+    import type { TimedNote } from "../../lib/music/timed/timed";
 
-    export let bars: Array<Bar>;
+    export let clicks: Array<TimedNote>;
 
     let clickTrackOn:boolean = true
     let clicker = newClicker("Click Track")
@@ -17,19 +15,10 @@
         }
     }
 
-    function makeClicks(bars: Array<Bar>):Array<TimedNote> {
-        let currPos = 0;
-        return bars.map((bar) => {
-            let oldPos = currPos
-            currPos += bar.width
-            return new TimedNote(oldPos, oldPos + 0.1, NewNote("A", 4))
-        })
-    }
-
-    let track = tracks.newPlaybackTrack(makeClicks(bars), clicker)
+    let track = tracks.newPlaybackTrack(clicks, clicker)
 
     $: {
-        track.updateNotes(makeClicks(bars))
+        track.updateNotes(clicks)
     }
 
 </script>
