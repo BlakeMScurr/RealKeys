@@ -17,8 +17,6 @@
     export let owner;
     export let lessonID;
 
-    let edit = false;
-
     let newBars
     function handleNewBars(event) {
         newBars = event.detail
@@ -26,7 +24,6 @@
 
     function save(lesson) {
         return function () {
-            edit = false
             lesson.bars = newBars
             lesson.lesson_name = owner + "/" + lessonID
 
@@ -47,10 +44,6 @@
             newBars = undefined
         }
     }
-    
-    function dismiss() {
-        newBars = undefined
-    }
 </script>
 
 {#await getLessonDefinition(owner, lessonID)}
@@ -61,17 +54,8 @@
 
     <Settings bars={lesson.bars}></Settings>
     <Spotify track={lesson.spotify_id}></Spotify>
-    {#if edit}
-        <EditBars bars={lesson.bars} on:newBars={handleNewBars}></EditBars>
-    {:else}
-        <ZoomBars bars={lesson.bars}></ZoomBars>
-        <button on:click={()=>{edit = true}}>Edit</button>
-    {/if}
-
-    {#if newBars !== undefined}
-        <button on:click={save(lesson)}>Save</button>
-        <button on:click={dismiss}>Dismiss</button>
-    {/if}
+    <EditBars bars={lesson.bars} on:newBars={handleNewBars}></EditBars>
+    <button disabled={newBars === undefined} on:click={save(lesson)}>Save</button>
 {:catch error}
     <h1>Could not load lesson {owner}/{lessonID} {error}</h1>
 {/await}
