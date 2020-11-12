@@ -93,7 +93,7 @@
     <button disabled={newBars === undefined} on:click={save(lesson)}>Save</button>
     <div class="pianoHolder">
         <div>
-            <PianoRoll bars={castBars(lesson.bars)} notes={new TimedNotes(makeClicks(lesson.bars))} recordMode={true}></PianoRoll>
+            <PianoRoll bars={castBars(newBars === undefined ? lesson.bars : newBars)} notes={new TimedNotes(makeClicks(newBars === undefined ? lesson.bars : newBars))} recordMode={true}></PianoRoll>
         </div>
     </div>
 {:catch error}
