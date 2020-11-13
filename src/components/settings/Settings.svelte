@@ -1,12 +1,12 @@
 <script lang="ts">
     import { tracks } from "../../stores/stores"
-    import { newClicker } from "../track/clicker"
+    import type { Synth } from "../track/instrument"
     import type { TimedNote } from "../../lib/music/timed/timed";
 
     export let clicks: Array<TimedNote>;
+    export let clicker: Synth;
 
     let clickTrackOn:boolean = true
-    let clicker = newClicker("Click Track")
     $: {
         if (clickTrackOn) {
             clicker.setVolume(1)
@@ -14,13 +14,6 @@
             clicker.setVolume(0)
         }
     }
-
-    let track = tracks.newPlaybackTrack(clicks, clicker)
-
-    $: {
-        track.updateNotes(clicks)
-    }
-
 </script>
 
 <label for="clickTrackOn">Click Track</label>

@@ -1,9 +1,7 @@
 import type { Note } from '../../lib/music/theory/notes';
 import * as Tone from 'tone'
-import type { instrument } from '../../stores/instruments';
 
-
-export function newPiano(name: string) {
+export function newPiano(name: string):Synth{
     const sampler = new Tone.Sampler({
         urls: {
             "C4": "C4.mp3",
@@ -76,6 +74,10 @@ export class Synth {
     }
 
     stop(note: Note) {
-        this.internal.triggerRelease(note.string())
+        try {
+            this.internal.triggerRelease(note.string())
+        } catch (error) {
+            console.warn("could not release note", error)
+        }
     }
 }

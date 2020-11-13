@@ -3,8 +3,7 @@
     import { RecordState } from "./recorder";
     import { TimedNotes } from "../../lib/music/timed/timed"
     import { currentSong, playingStore, position, songDuration, seek, tracks } from "../../stores/stores"
-    import { newPiano } from "../track/instrument";
-    import { highestPianoNote, lowestPianoNote, Note } from "../../lib/music/theory/notes"
+    import { highestPianoNote, lowestPianoNote, NewNote, Note } from "../../lib/music/theory/notes"
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
     import Piano from "./piano/Piano.svelte";
@@ -12,18 +11,21 @@
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;
     export let recordMode:Boolean = false;
+    export let instrument;
 
     let state = new Map<string, string>();
-    let track = tracks.newPlaybackTrack(notes.notes, newPiano("Lesson Playback"))
+    let track = tracks.newPlaybackTrack(notes.notes, instrument)
     track.subscribeToNotes((notes: Map<string, string>)=>{
         // TODO: only bother sending the strings
-
         state = new Map<string, string>();
         notes.forEach((noteState, noteName: string)=>{
             state.set(noteName, noteState)
         })
         state = state
     })
+    $: {
+        track.updateNotes(notes.notes)
+    }
 
     let pos = 0;
     position.subscribe((value) => {
@@ -167,7 +169,6 @@
     // Have some leeway
 
     let overlayNotes = new TimedNotes([]);
-    let player = newPiano("User Piano");
 
     let recorder;
     if (recordMode) {
@@ -189,7 +190,7 @@
     })
 
     function noteOff(event) {
-        player.stop(event.detail)
+        instrument.stop(event.detail)
         if (recordMode) {
             notes = recorder.noteOff(event, pos)
         } else {
@@ -198,7 +199,7 @@
     }
 
     function noteOn(event) {
-        player.play(event.detail)
+        instrument.play(event.detail)
         if (recordMode) {
             notes = recorder.noteOn(event, pos)
         } else {

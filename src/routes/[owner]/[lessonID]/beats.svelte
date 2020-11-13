@@ -18,6 +18,7 @@
     import { NewNote } from "../../../lib/music/theory/notes"
     import { TimedNote, TimedNotes } from "../../../lib/music/timed/timed";
     import { songDuration } from '../../../stores/stores';
+    import { newClicker } from "../../../components/track/clicker"
 
     export let owner;
     export let lessonID;
@@ -63,6 +64,12 @@
             return new TimedNote(oldPos, (oldPos + currPos) / 2, NewNote("A", 4))
         })
     }
+
+    // required because getting the clicker immediately at the top level gives a weird "AudioBuffer is not defined" error, there are probably many other possible workarounds
+    // TODO: get rid of it
+    async function makeClicker() {
+        return newClicker("Click Track")
+    }
 </script>
 
 <style lang="scss">
@@ -83,19 +90,25 @@
 {#await getLessonDefinition(owner, lessonID)}
     <h1>Loading</h1>
 {:then lesson}
-    <h1>{lessonID}</h1>
-    <h3>{owner}</h3>
 
-    <Settings clicks={makeClicks(newBars === undefined ? lesson.bars : newBars)}></Settings>
-    <label>Click Width</label>
-    <Spotify track={lesson.spotify_id}></Spotify>
-    <EditBars bars={lesson.bars} on:newBars={handleNewBars}></EditBars>
-    <button disabled={newBars === undefined} on:click={save(lesson)}>Save</button>
-    <div class="pianoHolder">
-        <div>
-            <PianoRoll bars={castBars(newBars === undefined ? lesson.bars : newBars)} notes={new TimedNotes(makeClicks(newBars === undefined ? lesson.bars : newBars))} recordMode={true}></PianoRoll>
+    {#await makeClicker()}
+        <h1>Loading</h1>
+    {:then clicker}
+        <h1>{lessonID}</h1>
+        <h3>{owner}</h3>
+
+        <Settings clicks={makeClicks(newBars === undefined ? lesson.bars : newBars)} clicker={clicker}></Settings>
+        <Spotify track={lesson.spotify_id}></Spotify>
+        <EditBars bars={lesson.bars} on:newBars={handleNewBars}></EditBars>
+        <button disabled={newBars === undefined} on:click={save(lesson)}>Save</button>
+        <div class="pianoHolder">
+            <div>
+                <PianoRoll bars={castBars(newBars === undefined ? lesson.bars : newBars)} notes={new TimedNotes(makeClicks(newBars === undefined ? lesson.bars : newBars))} recordMode={true} instrument={clicker}></PianoRoll>
+            </div>
         </div>
-    </div>
+    {:catch error}
+        <h1>Could not make clicker {error}</h1>
+    {/await}
 {:catch error}
     <h1>Could not load lesson {owner}/{lessonID} {error}</h1>
 {/await}
