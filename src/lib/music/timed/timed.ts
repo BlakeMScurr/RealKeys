@@ -1,7 +1,6 @@
 // timed.ts has logic for handled music in time
 
-import { NewAbstractNote, Note, NewNote } from "../theory/notes";
-import { notesBetween } from "../theory/notes";
+import type { Note } from "../theory/notes";
 
 class NoteStart {
     start: number;
@@ -151,41 +150,6 @@ export class TimedNotes {
         this.notes = notes;
     }
 
-    // range is basically specifically for the pianoroll
-    // TODO: name/move accordingly
-    // TODO: take width of the screen to render into into account
-    range():Array<Note> {
-        if (this.notes.length == 0) {
-            return notesBetween(NewNote("C", 4), NewNote("B", 5))
-        }
-
-        let lowest:Note = this.notes[0].note
-        let highest:Note = this.notes[0].note
-
-        for (let i = 0; i < this.notes.length; i++) {
-            const note = this.notes[i].note;
-            if (note.lowerThan(lowest)) {
-                lowest = note
-            }
-            if (highest.lowerThan(note)) {
-                highest = note
-            }
-        }
-
-        if (lowest.equals(highest)) {
-            lowest = lowest.deepCopy().jump(-4)
-            highest = highest.jump(4)
-        }
-
-        // TODO: we should be able to find this without iteration
-        while(lowest.abstract.accidental || highest.abstract.accidental) {
-            lowest = lowest.nextLowest()
-            highest = highest.next()
-        }
-
-        return notesBetween(lowest, highest)
-    }
-
     add(note: TimedNote) {
         this.notes.push(note)
     }
@@ -196,8 +160,16 @@ export class TimedNotes {
         })
     }
 
+    // returns the notes in this set
+    untime():Array<Note> {
+        return this.notes.map(note => {
+            return note.note
+        })
+    }
+
     // returns all the notes in this set, removing duplicates and timing
-    untime():Map<String, boolean> {
+    // TODO: merge this and untime
+    untimeRemoveDupes():Map<String, boolean> {
         // TODO: surely there's a one liner
         let map = new Map<String, boolean>()
         this.notes.forEach((note)=>{

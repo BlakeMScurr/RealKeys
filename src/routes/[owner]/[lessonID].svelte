@@ -13,6 +13,7 @@
     import Spotify from "../../components/audioplayer/Spotify.svelte"
     import PianoRoll from "../../components/pianoroll/PianoRoll.svelte";
     import { playingStore } from "../../stores/stores"
+import { newPiano } from '../../components/track/instrument';
 
     export let owner;
     export let lessonID;
@@ -113,7 +114,7 @@
             </div>
         </div>
         <div class="piano">
-            <PianoRoll bars={castBars(lesson.bars)} notes={castTimedNotes(lesson.notes)} recordMode={false}></PianoRoll>
+            <PianoRoll bars={castBars(lesson.bars)} notes={castTimedNotes(lesson.notes)} recordMode={false} instrument={newPiano("Lesson Playback")}></PianoRoll>
         </div>
     </div>
 {:catch error}

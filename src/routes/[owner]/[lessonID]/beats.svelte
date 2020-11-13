@@ -18,7 +18,7 @@
     import { NewNote } from "../../../lib/music/theory/notes"
     import { TimedNote, TimedNotes } from "../../../lib/music/timed/timed";
     import { songDuration } from '../../../stores/stores';
-    import { newClicker } from "../../../components/track/clicker"
+    import { lowClick, newClicker } from "../../../components/track/clicker"
 
     export let owner;
     export let lessonID;
@@ -61,7 +61,7 @@
         return bars.map((bar) => {
             let oldPos = currPos
             currPos += bar.width
-            return new TimedNote(oldPos, (oldPos + currPos) / 2, NewNote("A", 4))
+            return new TimedNote(oldPos, (oldPos + currPos) / 2, lowClick)
         })
     }
 

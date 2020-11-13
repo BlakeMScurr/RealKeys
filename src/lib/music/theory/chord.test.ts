@@ -175,6 +175,7 @@ test('recognisingExoticVoicings', () => {
 })
 
 test("NextLowest", ()=>{
+    expect(NewNote("C#", 5).nextLowest()).toEqual(NewNote("C", 5))
     expect(NewNote("C", 4).nextLowest()).toEqual(NewNote("B", 3))
     expect(NewNote("F", 4).nextLowest()).toEqual(NewNote("E", 4))
 })

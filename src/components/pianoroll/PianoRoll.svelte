@@ -1,9 +1,9 @@
 <script lang="ts">
     import type { Bars } from "./pianoroll";
+    import { range } from "./pianoroll.ts"; // why does it import from pianoroll.svelte if I don't specificy the ts extension?
     import { RecordState } from "./recorder";
     import { TimedNotes } from "../../lib/music/timed/timed"
     import { currentSong, playingStore, position, songDuration, seek, tracks } from "../../stores/stores"
-    import { highestPianoNote, lowestPianoNote, NewNote, Note } from "../../lib/music/theory/notes"
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
     import Piano from "./piano/Piano.svelte";
@@ -33,12 +33,12 @@
     })
 
     let width = 0;
-    let keys = notes.range();
+    let keys = range(notes.untime(), instrument.lowest(), instrument.highest())
     let lastWidth = -1;
     $: {
         if (width == lastWidth) {} else if (width <= 0) {
             setTimeout(() => {
-                keys = notes.range()
+                keys = range(notes.untime(), instrument.lowest(), instrument.highest())
             }, 1000);
         }
         lastWidth = width
@@ -63,7 +63,7 @@
     }
 
     function pushTopKey() {
-        if (keys[keys.length-1].lowerThan(highestPianoNote)) {
+        if (keys[keys.length-1].lowerThan(instrument.highest())) {
             keys.push(keys[keys.length-1].next())
             if (keys[keys.length-1].abstract.accidental) {
                 keys.push(keys[keys.length-1].next())
@@ -121,7 +121,7 @@
             keys = keys
             dx = 0
         } else if (dx > shiftDamper) {
-            if (lowestPianoNote.lowerThan(keys[0])) {
+            if (instrument.lowest().lowerThan(keys[0])) {
                 // remove a note from the top
                 popTopKey()
                 // add a note to the bottom
@@ -258,6 +258,6 @@
         <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} editable={recordMode} playing={playing}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
-        <Piano {keys} lessonNotes={state} {playing} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untime()}></Piano>
+        <Piano {keys} lessonNotes={state} {playing} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untimeRemoveDupes()}></Piano>
     </div>
 </div>

@@ -1,4 +1,4 @@
-import type { Note } from '../../lib/music/theory/notes';
+import { highestPianoNote, lowestPianoNote, Note } from '../../lib/music/theory/notes';
 import * as Tone from 'tone'
 
 export function newPiano(name: string):Synth{
@@ -24,18 +24,22 @@ export function newPiano(name: string):Synth{
         release: 1,
         baseUrl: "https://tonejs.github.io/audio/salamander/",
     }).toDestination();
-    return new Synth(name, sampler)
+    return new Synth(name, sampler, lowestPianoNote, highestPianoNote)
 }
 
 export class Synth {
     private internal: any;
     private instrumentName: string;
     private volume: number;
-    constructor(name: string, internal) {
+    private _highest: Note;
+    private _lowest: Note;
+    constructor(name: string, internal, lowest: Note, highest: Note) {
         this.internal = internal;
         this.instrumentName = name;
         this.volume = 1;
         this.internal.volume.value = Math.log10(this.volume)
+        this._highest = highest
+        this._lowest = lowest
     }
 
     loaded() {
@@ -63,12 +67,16 @@ export class Synth {
     }
 
     play(note: Note, duration: number=undefined) { 
-        if (this.loaded()) {
-            this.internal.triggerAttack(note.string())
-            if (duration !== undefined) {
-                setTimeout(()=>{
-                    this.stop(note)
-                }, duration)
+        if (note.lowerThan(this.lowest()) || this.highest().lowerThan(note)) {
+            console.warn("note", note.string(), "not in range", this.lowest().string(), "to", this.highest().string())
+        } else {
+            if (this.loaded()) {
+                this.internal.triggerAttack(note.string())
+                if (duration !== undefined) {
+                    setTimeout(()=>{
+                        this.stop(note)
+                    }, duration)
+                }
             }
         }
     }
@@ -79,5 +87,13 @@ export class Synth {
         } catch (error) {
             console.warn("could not release note", error)
         }
+    }
+
+    highest():Note {
+        return this._highest
+    }
+
+    lowest():Note {
+        return this._lowest
     }
 }

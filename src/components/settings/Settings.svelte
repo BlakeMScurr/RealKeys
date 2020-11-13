@@ -1,5 +1,4 @@
 <script lang="ts">
-    import { tracks } from "../../stores/stores"
     import type { Synth } from "../track/instrument"
     import type { TimedNote } from "../../lib/music/timed/timed";
 
