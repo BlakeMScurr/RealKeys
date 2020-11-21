@@ -82,10 +82,11 @@ export const GL = () => {
   return {
     Component: GLRoll,
     props: {
-      position: 1,
-      zoomWidth: 1,
+      debugSliders: true,
+      position: 0,
+      zoomWidth: 0.5,
       keys: notesBetween(NewNote("C", 4), NewNote("C", 5)),
-      height: 400,
+      height: 1000,
       unit: "px",
       bars: new Bars([0.2, 0.2, 0.2, 0.2, 0.2]),
       notes: new TimedNotes([

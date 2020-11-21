@@ -71,7 +71,7 @@ export class playbackTrack {
         })
         
         let noteNumbers = new Map<string, number>();
-
+        console.log("looping notes")
         this.notes.forEach((note)=>{
             if (note.start > this.currentPosition) {
                 let length = (note.end - note.start) * duration()
@@ -127,6 +127,7 @@ export class playbackTrack {
                 this.pushTimeout(key, requireNoteOff,   firstNote + length + leeway)
             }
         })
+        console.log("looped notes")
     }
 
     pause() {
@@ -206,6 +207,7 @@ export class track {
             } else {
                 this.player.Pause()
             }
+            console.log("playing track 2")
         })
     }
 }

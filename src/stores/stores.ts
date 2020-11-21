@@ -21,8 +21,9 @@ export const tracks = createTracks();
 
 // Position refers to how far through the audio we are
 // TODO: replace position binding, prop passing, and event firing with this
+let x = 0
 function createPosition() {
-    const { subscribe, set, update } = writable(0);
+    const { subscribe, set } = writable(0);
 
     return {
         subscribe,

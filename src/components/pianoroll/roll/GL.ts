@@ -1,10 +1,11 @@
 export const vertexCode = `
 attribute vec2 aVertexPosition;
 uniform vec2 translate;
-uniform int zoom;
+uniform vec2 moveUp;
+uniform mat2 zoom;
 
 void main() {
-gl_Position = vec4(aVertexPosition + translate, 0.0, 1.0);
+    gl_Position = vec4(zoom*(aVertexPosition+moveUp)-moveUp + translate, 0.0, 1.0);
 }`
 
 export const fragmentCode = `
@@ -58,6 +59,10 @@ function staticTranslation () {
     return [0,0]
 }
 
+function staticZoom() {
+    return 1
+}
+
 class drawer {
     gl: WebGLRenderingContext;
     program: WebGLProgram;
@@ -74,11 +79,12 @@ class drawer {
     // -------------------------------
 
     setTranslate(translate: number){
-        this.translate = translate
+        this.translate = -translate*2
     }
 
     setZoom(zoom: number){
-        this.zoom = zoom
+        console.log("zoom scale is", 1/zoom)
+        this.zoom = 1/zoom
     }
 
     // ROLL SPECIFIC METHODS
@@ -100,7 +106,7 @@ class drawer {
         })
     
         var vertices = new Float32Array(points);
-        this.drawTriangles(new glColour(0.3984375, 0.4921875, 0.828125, 1.0), vertices, [0, this.translate])
+        this.drawTriangles(new glColour(0.3984375, 0.4921875, 0.828125, 1.0), vertices, [0, this.translate], this.zoom)
     }
     
     drawBars(bars) {
@@ -115,7 +121,7 @@ class drawer {
             )
         })
         var vertices = new Float32Array(points);
-        this.drawLines(new glColour(1, 1, 1, 1.0), vertices, [0, this.translate])
+        this.drawLines(new glColour(1, 1, 1, 1.0), vertices, [0, this.translate], this.zoom)
     }
     
     drawDividers(keys) {
@@ -130,7 +136,7 @@ class drawer {
             }
         }
         var vertices = new Float32Array(points);
-        this.drawLines(new glColour(1, 1, 1, 1.0), vertices, staticTranslation())
+        this.drawLines(new glColour(1, 1, 1, 1.0), vertices, staticTranslation(), staticZoom())
     }
     
     drawBlackkeys(keys) {
@@ -142,7 +148,7 @@ class drawer {
             }
         })
         var vertices = new Float32Array(points);
-        this.drawTriangles(new glColour(0.3515625, 0.3515625, 0.3515625, 1.0), vertices, staticTranslation())
+        this.drawTriangles(new glColour(0.3515625, 0.3515625, 0.3515625, 1.0), vertices, staticTranslation(), staticZoom())
     }
 
     setBackground(canvas) {
@@ -154,33 +160,44 @@ class drawer {
     // GENERAL UTILITIES
     // -------------------------------
 
-    drawLines(colour: glColour, vertices: Float32Array, translation: Array<number>) {
-        this.drawStuff(colour, vertices, this.gl.LINES, translation)
+    drawLines(colour: glColour, vertices: Float32Array, translation: Array<number>, zoom: number) {
+        this.drawStuff(colour, vertices, this.gl.LINES, translation, zoom)
     }
 
-    drawTriangles (colour: glColour, vertices: Float32Array, translation: Array<number>) {
-        this.drawStuff(colour, vertices, this.gl.TRIANGLES, translation)
+    drawTriangles (colour: glColour, vertices: Float32Array, translation: Array<number>, zoom: number) {
+        this.drawStuff(colour, vertices, this.gl.TRIANGLES, translation, zoom)
     }
     
-    drawStuff (colour: glColour, vertices: Float32Array, primitive, translation: Array<number>) {
+    drawStuff (colour: glColour, vertices: Float32Array, primitive, translation: Array<number>, zoomScale: number) {
         let vbuffer = this.gl.createBuffer();
         this.gl.bindBuffer(this.gl.ARRAY_BUFFER, vbuffer);
         this.gl.bufferData(this.gl.ARRAY_BUFFER, vertices, this.gl.STATIC_DRAW);
     
         let itemSize = 2;
         let numItems = vertices.length / itemSize;
-    
+
         this.gl.useProgram(this.program);
-    
+
         let uColor = this.gl.getUniformLocation(this.program, "uColor");
         this.gl.uniform4fv(uColor, colour.array());
-    
+
         let aVertexPosition = this.gl.getAttribLocation(this.program, "aVertexPosition");
         this.gl.enableVertexAttribArray(aVertexPosition);
         this.gl.vertexAttribPointer(aVertexPosition, itemSize, this.gl.FLOAT, false, 0, 0);
-        
+
         let translate = this.gl.getUniformLocation(this.program, "translate");
         this.gl.uniform2fv(translate, translation);
+
+        let moveUp = this.gl.getUniformLocation(this.program, "moveUp");
+        this.gl.uniform2fv(moveUp, [0, 1]);
+
+        
+        let zoom = this.gl.getUniformLocation(this.program, "zoom");
+        let matrix = [
+            1, 0,
+            0, zoomScale
+        ]
+        this.gl.uniformMatrix2fv(zoom, false, matrix);
 
         this.gl.drawArrays(primitive, 0, numItems);
     }

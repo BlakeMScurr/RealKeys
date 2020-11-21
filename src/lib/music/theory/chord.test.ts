@@ -1,5 +1,5 @@
 import { Chord, ChordBook, sortNotes, squashNotes } from "./chords";
-import { Note, NewAbstractNote, NoteOrder, NewNote } from "./notes";
+import { Note, NewAbstractNote, NoteOrder, NewNote, NoteFromMidiNumber } from "./notes";
 
 test('inferInversions', () => {
     var b = new ChordBook()
@@ -195,6 +195,14 @@ test("Jump", ()=>{
     expect(NewNote("C", 4).jump(-12)).toEqual(NewNote("C", 3))
     expect(NewNote("C", 4).jump(12)).toEqual(NewNote("C", 5))
     expect(NewNote("C", 4).jump(13)).toEqual(NewNote("C#", 5))
+})
+
+test("NoteFromMidiNumber", ()=>{
+    expect(NoteFromMidiNumber(60)).toEqual(NewNote("C", 4))
+    expect(NoteFromMidiNumber(127)).toEqual(NewNote("G", 9))
+    expect(NoteFromMidiNumber(84)).toEqual(NewNote("C", 6))
+    expect(NoteFromMidiNumber(65)).toEqual(NewNote("F", 4))
+    expect(NoteFromMidiNumber(21)).toEqual(NewNote("A", 0))
 })
 
 function nn(note: string, octave: number) {

@@ -6,12 +6,14 @@
     import { currentSong, playingStore, position, songDuration, seek, tracks } from "../../stores/stores"
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
+    import GLRoll from "./roll/GLRoll.svelte";
     import Piano from "./piano/Piano.svelte";
 
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;
     export let recordMode:Boolean = false;
     export let instrument;
+    export let gl:Boolean = false;
 
     let state = new Map<string, string>();
     let track = tracks.newPlaybackTrack(notes.notes, instrument)
@@ -33,7 +35,7 @@
     })
 
     let width = 0;
-    let keys = range(notes.untime(), instrument.lowest(), instrument.highest())
+    $: keys = range(notes.untime(), instrument.lowest(), instrument.highest())
     let lastWidth = -1;
     $: {
         if (width == lastWidth) {} else if (width <= 0) {
@@ -255,7 +257,11 @@
 
 <div id="pianoroll" bind:clientWidth={width}>
     <div class="container roll" on:wheel={handleRollWheel} on:touchmove={handleTouchMove}>
-        <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} editable={recordMode} playing={playing}></Roll>
+        {#if !gl}
+            <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} editable={recordMode} playing={playing}></Roll>
+        {:else}
+            <GLRoll {keys} {bars} {notes} {overlayNotes} position={pos} recording={recordMode} editable={recordMode} playing={playing}></GLRoll>
+        {/if}
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
         <Piano {keys} lessonNotes={state} {playing} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untimeRemoveDupes()}></Piano>

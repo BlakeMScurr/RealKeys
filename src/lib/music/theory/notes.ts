@@ -239,6 +239,12 @@ export class Line {
     }
 }
 
+export function NoteFromMidiNumber(num: number):Note {
+    let octave = Math.trunc(num / 12) - 1;
+    let noteIndex = (num % 12);
+    return new Note(NoteOrder[noteIndex], octave)
+}
+
 export const lowestPianoNote = NewNote("A", 0)
 export const highestPianoNote = NewNote("C", 8)
 
