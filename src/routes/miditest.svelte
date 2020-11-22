@@ -2,24 +2,18 @@
     import { Midi } from '@tonejs/midi'
     import { NoteFromMidiNumber } from '../lib/music/theory/notes';
     import { TimedNote, TimedNotes } from '../lib/music/timed/timed';
-    import PianoRoll from '../components/pianoroll/PianoRoll.svelte'
-    import { newPiano } from '../components/track/instrument';
     import { uniqueKey } from '../lib/util'
     import { Bars } from '../components/pianoroll/pianoroll.ts';
     import Lesson from '../components/lesson/Lesson.svelte'
     import { audioReady, songDuration } from '../stores/stores'
-    import Soundfont from 'soundfont-player';
-    import { onMount } from 'svelte';
+    import { InertTrack } from '../components/track/instrument';
+    import { SoundFont } from '../components/track/soundfont';
 
     export let owner;
     export let lessonID;
 
     async function processMidiFile() {
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
-
-        Soundfont.instrument(new AudioContext(), 'clavinet').then(function (clavinet) {
-            clavinet.play('C4')
-        })
 
         const midi = await Midi.fromUrl("api/midi")
         console.log(midi)
@@ -29,7 +23,6 @@
         let artist = ""
         if (nameparts.length > 1) artist = nameparts[1]
 
-        let tracks = []
         let duration = midi.duration
         songDuration.set(duration*1000)
 
@@ -41,8 +34,7 @@
                 track.notes.forEach(note => {
                     notes.push(new TimedNote(note.time / duration, (note.time + note.duration)/duration, NoteFromMidiNumber(note.midi)))
                 })
-
-            trackMap.set(uniqueKey(trackMap, track.instrument.name), new TimedNotes(notes))
+            trackMap.set(uniqueKey(trackMap, track.instrument.name), new InertTrack(new TimedNotes(notes), new SoundFont(track.instrument.number, track.name)))
         })
 
         let bs = []

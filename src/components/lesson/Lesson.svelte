@@ -1,18 +1,15 @@
 <script lang="ts">
-import type { log } from 'console';
-
-    import type { TimedNotes } from '../../lib/music/timed/timed'
     import Spotify from "../audioplayer/Spotify.svelte"
     import { playingStore } from "../../stores/stores"
-    import { newPiano } from '../track/instrument';
     import UI from "../audioplayer/UI.svelte"
     import PianoRoll from "../pianoroll/PianoRoll.svelte";
-import type { get } from 'http';
     import Dropdown from '../generic/dropdown/Dropdown.svelte';
+    import { SoundFont } from '../track/soundfont';
+    import type { InertTrack } from '../track/instrument';
 
     export let owner;
     export let lessonID;
-    export let tracks: Map<string, TimedNotes>;
+    export let tracks: Map<string, InertTrack>;
     export let bars;
     export let artist;
     export let spotify_id;
@@ -25,19 +22,25 @@ import type { get } from 'http';
         playing = val;
     })
 
-    console.log(tracks)
-
     let selectedNotes;
+    let selectedInstrumentName;
+    let instrument
     if (notes !== undefined) {
         selectedNotes = notes
+        selectedInstrumentName = "acoustic_grand_piano"
+        instrument = new SoundFont(0, "Default Piano Player")
     } else {
-        selectedNotes = tracks.get(tracks.keys().next())
+        selectedInstrumentName = tracks.keys().next().value
+        selectedNotes = tracks.get(selectedInstrumentName).notes
+        console.log(selectedNotes)
+        instrument = tracks.get(selectedInstrumentName).instrument
     }
 
     $: hideTitle = playing && window.innerHeight <= 400
 
     function handleTrackSelection(e) {
-        selectedNotes = e.detail
+        selectedNotes = e.detail.value.notes
+        instrument = e.detail.value.instrument
     }
 </script>
 
@@ -133,6 +136,6 @@ import type { get } from 'http';
         </div>
     </div>
     <div class="piano">
-        <PianoRoll bars={bars} notes={selectedNotes} recordMode={false} instrument={newPiano("Lesson Playback")} {gl}></PianoRoll>
+        <PianoRoll bars={bars} notes={selectedNotes} recordMode={false} instrument={instrument} {gl}></PianoRoll>
     </div>
 </div>

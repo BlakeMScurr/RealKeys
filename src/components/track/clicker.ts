@@ -1,11 +1,12 @@
 import * as Tone from 'tone'
+import type { Instrument } from 'tone/build/esm/instrument/Instrument';
 import { NewNote, Note } from '../../lib/music/theory/notes';
-import { Synth } from "./instrument"
+import { VirtualInstrument } from "./instrument"
 
 
 export const lowClick = NewNote("F", 5)
 export const highClick = NewNote("C", 6)
-export function newClicker(name: string):Synth {
+export function newClicker(name: string):VirtualInstrument {
     const sampler = new Tone.Synth({
         oscillator: {
           type: 'sine',

@@ -8,11 +8,12 @@
     import Roll from "./roll/Roll.svelte";
     import GLRoll from "./roll/GLRoll.svelte";
     import Piano from "./piano/Piano.svelte";
+    import type { VirtualInstrument } from "../track/instrument";
 
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;
     export let recordMode:Boolean = false;
-    export let instrument;
+    export let instrument: VirtualInstrument;
     export let gl:Boolean = false;
 
     let state = new Map<string, string>();
@@ -35,6 +36,7 @@
     })
 
     let width = 0;
+    console.log(notes)
     $: keys = range(notes.untime(), instrument.lowest(), instrument.highest())
     let lastWidth = -1;
     $: {

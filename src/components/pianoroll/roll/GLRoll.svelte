@@ -16,9 +16,6 @@
     export let recording = true;
     export let debugSliders = false;
 
-    console.log("glnotes")
-    console.log(notes)
-    
     if (zw === undefined) {
         zw = zoomWidth()
     }

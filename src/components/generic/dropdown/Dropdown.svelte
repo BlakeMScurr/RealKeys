@@ -20,7 +20,7 @@
     let selected;
     $: {
         if (selected !== undefined) {
-            dispatch("select", list.get(selected))
+            dispatch("select", {key: selected, value: list.get(selected), index: keys.indexOf(selected)})
         }
     }
 </script>

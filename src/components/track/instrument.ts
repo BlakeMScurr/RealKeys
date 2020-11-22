@@ -1,7 +1,17 @@
 import { highestPianoNote, lowestPianoNote, Note } from '../../lib/music/theory/notes';
 import * as Tone from 'tone'
+import type { TimedNotes } from '../../lib/music/timed/timed';
 
-export function newPiano(name: string):Synth{
+export class InertTrack {
+    notes: TimedNotes;
+    instrument: VirtualInstrument;
+    constructor(notes: TimedNotes, instrument: VirtualInstrument) {
+        this.notes = notes
+        this.instrument = instrument
+    }
+}
+
+export function newPiano(name: string):VirtualInstrument{
     const sampler = new Tone.Sampler({
         urls: {
             "C4": "C4.mp3",
@@ -27,7 +37,18 @@ export function newPiano(name: string):Synth{
     return new Synth(name, sampler, lowestPianoNote, highestPianoNote)
 }
 
-export class Synth {
+export interface VirtualInstrument {
+    loaded():boolean
+    getVolume():number
+    setVolume(volume: number)
+    name():string
+    play(note: Note, duration: number)
+    stop(note: Note)
+    highest():Note
+    lowest():Note
+}
+
+class Synth {
     private internal: any;
     private instrumentName: string;
     private volume: number;
@@ -42,7 +63,7 @@ export class Synth {
         this._lowest = lowest
     }
 
-    loaded() {
+    loaded():boolean {
         if (this.internal._buffers === undefined) {
             return true
         }
@@ -53,7 +74,7 @@ export class Synth {
         return loaded
     }
 
-    getVolume() {
+    getVolume():number {
         return this.volume
     }
 

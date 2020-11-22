@@ -83,7 +83,6 @@ class drawer {
     }
 
     setZoom(zoom: number){
-        console.log("zoom scale is", 1/zoom)
         this.zoom = 1/zoom
     }
 
