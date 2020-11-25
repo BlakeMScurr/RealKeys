@@ -150,6 +150,45 @@ export class TimedNotes {
         this.notes = notes;
     }
 
+    notesFrom(start: number, end: number):Array<TimedNote>{
+        if (start >= end) {
+            throw new Error("Start must be before end")
+        }
+
+        if (this.notes.length == 0) {
+            return []
+        }
+
+        // binary search to find the first note in the section
+        // TODO: add `nextNoteWindow` method that remembers where we last looked so we don't have to do the binary search
+        let startIndex = 0
+        let endIndex = this.notes.length - 1
+        let midpoint = Math.trunc((startIndex + endIndex) / 2)
+        while (startIndex != endIndex) {
+            let curr = this.notes[midpoint]
+            if (curr.start < start) {
+                if (startIndex == midpoint) { // handles the final loop
+                    startIndex = endIndex
+                } else {
+                    startIndex = midpoint
+                }
+            } else {
+                endIndex = midpoint
+            }
+            midpoint = Math.trunc((startIndex + endIndex) / 2)
+        }
+
+        // loop through all the notes in the section (assumes we're sorted)
+        let i = startIndex
+        let notes = []
+        while (this.notes[i].start <= end && i < this.notes.length) {
+            notes.push(this.notes[i])
+            i++
+        }
+
+        return notes
+    }
+
     add(note: TimedNote) {
         this.notes.push(note)
     }

@@ -16,27 +16,12 @@
     export let instrument: VirtualInstrument;
     export let gl:Boolean = false;
 
-    let state = new Map<string, string>();
-    let track = tracks.newPlaybackTrack(notes.notes, instrument)
-    track.subscribeToNotes((notes: Map<string, string>)=>{
-        // TODO: only bother sending the strings
-        state = new Map<string, string>();
-        notes.forEach((noteState, noteName: string)=>{
-            state.set(noteName, noteState)
-        })
-        state = state
-    })
-    $: {
-        track.updateNotes(notes.notes)
-    }
-
     let pos = 0;
     position.subscribe((value) => {
         pos = value
     })
 
     let width = 0;
-    console.log(notes)
     $: keys = range(notes.untime(), instrument.lowest(), instrument.highest())
     let lastWidth = -1;
     $: {
@@ -266,6 +251,6 @@
         {/if}
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
-        <Piano {keys} lessonNotes={state} {playing} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untimeRemoveDupes()}></Piano>
+        <Piano {keys} {playing} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untimeRemoveDupes()}></Piano>
     </div>
 </div>

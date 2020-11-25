@@ -3,7 +3,7 @@ import { writable } from 'svelte/store';
 import type { Player } from '../components/audioplayer/audioplayer'
 import { NewNote } from '../lib/music/theory/notes';
 import { TimedNote, TimedNotes } from '../lib/music/timed/timed';
-import { playbackTrack, track } from "./track";
+import { midiTrack, audioTrack } from "./track";
 
 // Position set is only accessible via seek and play
 const { subscribe, set } = createPosition();
@@ -99,6 +99,7 @@ function createSeek() {
 // TODO: does this work in the function's scope too? That would be better and more encapsulated
 let playInterval;
 const frameRate = 40;
+export const frameLength = 1000 / frameRate // length of a frame in milliseconds
 function createPlay() {
     const { subscribe, set } = writable(false);
     
@@ -134,7 +135,7 @@ function createPlay() {
                         clearInterval(playInterval)
                         setPosition(1)
                     }
-                }, 1000 / frameRate)
+                }, frameLength)
             }
         },
         pause: () => {
@@ -162,28 +163,27 @@ function createAudioReady() {
 
 let mainTrackSet = false
 function createTracks() {
-    const { subscribe, update } = writable(new Array<track>());
+    const { subscribe, update } = writable(new Array<audioTrack>());
 
     return {
         subscribe,
-        // TODO: name better so it's clear we're only allowed one main track
         new: (player: Player) => {
             if (!mainTrackSet) {
-                update((currentPlayers: Array<track>) => {
-                    let t = new track(player)
+                update((currentPlayers: Array<audioTrack>) => {
+                    let t = new audioTrack(player)
                     t.link()
                     currentPlayers.push(t)
                     return currentPlayers
                 })
                 mainTrackSet = true
             } else {
-                console.warn("main track already set")
+                console.warn("main track already set") // the main track is generally a spotify track, or something to play along to, hence only allowing one
             }
         },
         newPlaybackTrack: (notes: Array<TimedNote>, playbackInstrument: instrument) => {
-            let t = new playbackTrack(notes, playbackInstrument)
+            let t = new midiTrack(notes, playbackInstrument)
             t.link()
-            update((currentPlayers: Array<track>) => {
+            update((currentPlayers: Array<audioTrack>) => {
                 currentPlayers.push(t)
                 return currentPlayers
             })
@@ -191,47 +191,3 @@ function createTracks() {
         }
     }
 }
-
-function createInstruments() {
-    const { subscribe, update } = writable(new Array<instrument>());
-
-    return {
-        settings: () => {
-            
-        },
-        add: (ins: instrument) => {
-           update((currentInstruments: Array<instrument>) => {
-               currentInstruments.push(ins)
-               return currentInstruments
-           })
-        },
-    }
-}
-
-
-// TODO: pause at the end
-
-// TODO: handle repeats
-// Old repeat code:
-// function setRepeatIntervals(ct) {
-//     // time argument is a workaround for https://github.com/goldfire/howler.js/issues/1189
-//     // as we have to seek before called play() on the howler object in our play function, for whatever reason
-//     if (isNaN(ct)) {
-//         ct = audioPlayer.CurrentTime()
-//     }
-//     if (playing) {
-//         clearInterval(repeatInterval)
-//         clearTimeout(repeatTimeout)
-//         if (ct < endRepeat * duration) {
-//             repeatTimeout = setTimeout(()=>{
-//                 audioPlayer.Seek(startRepeat * duration)
-//                 setPosition(startRepeat)
-//                 clearInterval(repeatInterval)
-//                 repeatInterval = setInterval(() => {
-//                     audioPlayer.Seek(startRepeat * duration)
-//                     setPosition(startRepeat)
-//                 }, ((endRepeat - startRepeat) * duration) * 1000);
-//             }, (endRepeat * duration - ct) * 1000)
-//         }
-//     }
-// }

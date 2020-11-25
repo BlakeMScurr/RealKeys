@@ -1,7 +1,7 @@
 import type { Player } from '../components/audioplayer/audioplayer'
 import type { TimedNote } from '../lib/music/timed/timed';
 import type { instrument } from './instruments';
-import { audioReady, songDuration, seek, playingStore } from "./stores"
+import { audioReady, songDuration, seek, playingStore, position, frameLength } from "./stores"
 import { writable } from 'svelte/store';
 import { noteLeeway } from "./settings"
 
@@ -21,10 +21,11 @@ function playing():Boolean {
     return playing
 }
 
-export class playbackTrack {
+export class midiTrack {
     notes: Array<TimedNote>;
     currentPosition: number;
     startedPlaying: number;
+    lastNoteWindow: number;
     // Map from note (given by note string + the index of that particular note in the song) to the timeouts used to deal with it
     // This was changed from the more obvious Array<ReturnType<typeof setTimeout>> so we could clear timeouts for previous notes
     // of the same pitch
@@ -38,6 +39,7 @@ export class playbackTrack {
         this.currentPosition = 0;
         this.timeouts = new Map();
         this.startedPlaying = -1;
+        this.lastNoteWindow = -1;
         this.playbackInstrument = playbackInstrument
         this.currentNotes = writable(new Map<string, string>())
     }
@@ -69,63 +71,68 @@ export class playbackTrack {
         noteLeeway.subscribe((val) => {
             leeway = val
         })
-        
-        let noteNumbers = new Map<string, number>();
-        this.notes.forEach((note)=>{
-            if (note.start > this.currentPosition) {
-                let length = (note.end - note.start) * duration()
-                if (!noteNumbers.has(note.note.string())) {
-                    noteNumbers.set(note.note.string(), -1)
-                }
-                // how many of the current notes have been seen
-                let noteNumber = noteNumbers.get(note.note.string()) + 1
-                noteNumbers.set(note.note.string(), noteNumber)
-                // Key to find all timeouts of this note
-                const key = note.note.string() + noteNumber
-                const lastKey = note.note.string() + (noteNumber - 1)
-                this.timeouts.set(key, [])
 
-                // Define actions
-                const startPlayable = () => {
-                    if (this.timeouts.has(lastKey)) {
-                        this.timeouts.get(lastKey).forEach((_, previousTimeout) => {
-                            clearTimeout(previousTimeout)
-                        });
+        position.subscribe((currentNoteWindow) => {
+            let noteNumbers = new Map<string, number>();
+            this.notes.forEach((note)=>{
+                console.log("hola")
+                if (note.start < currentNoteWindow + frameLength && note.start > this.lastNoteWindow + frameLength) {
+                    this.lastNoteWindow = currentNoteWindow
+                    let length = (note.end - note.start) * duration()
+                    if (!noteNumbers.has(note.note.string())) {
+                        noteNumbers.set(note.note.string(), -1)
                     }
-                    set("soft")()
-                }
-
-                const set = (noteState: string) => {
-                    return () => {
-                        // Set the note as being allowed to be played
+                    // how many of the current notes have been seen
+                    let noteNumber = noteNumbers.get(note.note.string()) + 1
+                    noteNumbers.set(note.note.string(), noteNumber)
+                    // Key to find all timeouts of this note
+                    const key = note.note.string() + noteNumber
+                    const lastKey = note.note.string() + (noteNumber - 1)
+                    this.timeouts.set(key, [])
+    
+                    // Define actions
+                    const startPlayable = () => {
+                        if (this.timeouts.has(lastKey)) {
+                            this.timeouts.get(lastKey).forEach((_, previousTimeout) => {
+                                clearTimeout(previousTimeout)
+                            });
+                        }
+                        set("soft")()
+                    }
+    
+                    const set = (noteState: string) => {
+                        return () => {
+                            // Set the note as being allowed to be played
+                            this.currentNotes.update((notes: Map<string, string>)=> {
+                                notes.set(note.note.string(), noteState)
+                                return notes
+                            })
+                        }
+                    }
+    
+                    const playNote = () => {
+                        this.playbackInstrument.play(note.note, length)
+                    }
+    
+                    const requireNoteOff = () => {
                         this.currentNotes.update((notes: Map<string, string>)=> {
-                            notes.set(note.note.string(), noteState)
+                            notes.delete(note.note.string())
                             return notes
                         })
                     }
+    
+                    // Take actions
+                    // TODO: handle cases where note is less than or near leeway
+                    let firstNote = (note.start - currentNoteWindow) * duration()
+                    this.pushTimeout(key, startPlayable,    firstNote - leeway)
+                    this.pushTimeout(key, playNote,         firstNote)
+                    this.pushTimeout(key, set("strict"),    firstNote + leeway)
+                    this.pushTimeout(key, set("soft"),      firstNote + length - leeway)
+                    this.pushTimeout(key, requireNoteOff,   firstNote + length + leeway)
                 }
-
-                const playNote = () => {
-                    this.playbackInstrument.play(note.note, length)
-                }
-
-                const requireNoteOff = () => {
-                    this.currentNotes.update((notes: Map<string, string>)=> {
-                        notes.delete(note.note.string())
-                        return notes
-                    })
-                }
-
-                // Take actions
-                // TODO: handle cases where note is less than or near leeway
-                let firstNote = (note.start - this.currentPosition) * duration()
-                this.pushTimeout(key, startPlayable,    firstNote - leeway)
-                this.pushTimeout(key, playNote,         firstNote)
-                this.pushTimeout(key, set("strict"),    firstNote + leeway)
-                this.pushTimeout(key, set("soft"),      firstNote + length - leeway)
-                this.pushTimeout(key, requireNoteOff,   firstNote + length + leeway)
-            }
+            })
         })
+        
     }
 
     pause() {
@@ -157,8 +164,8 @@ export class playbackTrack {
 }
 
 class playbackInterface {
-    track: playbackTrack;
-    constructor(track: playbackTrack) {
+    track: midiTrack;
+    constructor(track: midiTrack) {
         this.track = track
     }
 
@@ -179,7 +186,7 @@ class playbackInterface {
     }
 }
 
-export class track {
+export class audioTrack {
     player: Player;
     constructor(player: Player) {
         this.player = player
@@ -205,7 +212,6 @@ export class track {
             } else {
                 this.player.Pause()
             }
-            console.log("playing track 2")
         })
     }
 }

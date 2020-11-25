@@ -3,6 +3,7 @@
     import { playingStore } from "../../stores/stores"
     import UI from "../audioplayer/UI.svelte"
     import PianoRoll from "../pianoroll/PianoRoll.svelte";
+    import Settings from "../settings/Settings.svelte";
     import Dropdown from '../generic/dropdown/Dropdown.svelte';
     import { SoundFont } from '../track/soundfont';
     import type { InertTrack } from '../track/instrument';
@@ -41,6 +42,7 @@
     function handleTrackSelection(e) {
         selectedNotes = e.detail.value.notes
         instrument = e.detail.value.instrument
+        console.log(instrument)
     }
 </script>
 
@@ -126,6 +128,7 @@
                     <Dropdown list={tracks} on:select={handleTrackSelection}></Dropdown>
                 {/if}
             {/if}
+            <Settings trackMap={tracks}></Settings>
             <div class="settings {hideTitle ? "soloSettings": ""}">
                 {#if spotify_id !== ""}
                     <Spotify track={spotify_id}></Spotify>

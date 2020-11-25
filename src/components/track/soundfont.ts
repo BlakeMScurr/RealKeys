@@ -8,17 +8,22 @@ export class SoundFont {
     private instrumentName: string;
     private ac: AudioContext;
     private playingNotes: Map<string, Player>;
-    constructor(GeneralMidiInstrumentNumber: number, name: string) {
+    constructor(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean) {
         this.volume = 1
         this.instrumentName = name
         this.ac = new AudioContext()
         this.playingNotes = new Map();
 
-        console.log("resulting instruemnt name", instrumentName(GeneralMidiInstrumentNumber))
         // GeneralMidiInstrumentNumber refers to https://en.wikipedia.org/wiki/General_MIDI#Program_change_events
-        instrument(this.ac, instrumentName(GeneralMidiInstrumentNumber)).then((i)=>{
-            this.internalInstrument = i
-        })
+        if (percusive) {
+            instrument(this.ac, "percussion", {soundfont: "FluidR3_GM"}).then((i)=>{
+                this.internalInstrument = i
+            })
+        } else {
+            instrument(this.ac, instrumentName(GeneralMidiInstrumentNumber)).then((i)=>{
+                this.internalInstrument = i
+            })
+        }
     }
 
     loaded():boolean {

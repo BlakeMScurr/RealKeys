@@ -2,7 +2,6 @@ import type { InstrumentName } from 'soundfont-player';
 
 // TODO: figure out a way to do this without copying this code, this will likely break with any update to the soundfont library
 export function instrumentName(num: number):InstrumentName {
-    console.log("getting instrument name")
     let n = num
     if (n > 127 || n < 0) {
         console.warn("instrument number", n, "out of general midi range, setting n to 1 instead")

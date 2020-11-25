@@ -1,19 +1,24 @@
 <script lang="ts">
-    import type { Synth } from "../track/instrument"
     import type { TimedNote } from "../../lib/music/timed/timed";
+    import type { InertTrack } from '../track/instrument';
+    import { tracks } from "../../stores/stores"
+    import { createEventDispatcher } from 'svelte';
 
     export let clicks: Array<TimedNote>;
-    export let clicker: Synth;
+    export let trackMap: Map<string, InertTrack>;
 
-    let clickTrackOn:boolean = true
-    $: {
-        if (clickTrackOn) {
-            clicker.setVolume(1)
-        } else {
-            clicker.setVolume(0)
-        }
-    }
+    let dispatch = createEventDispatcher();
+
+    trackMap.forEach((track)=>{
+        let playbackTrack = tracks.newPlaybackTrack(track.notes.notes, track.instrument)
+        playbackTrack.subscribeToNotes((notes: Map<string, string>)=>{
+            let state = new Map<string, string>();
+            notes.forEach((noteState, noteName: string)=>{
+                state.set(noteName, noteState)
+            })
+            dispatch("notestate", {track: track.instrument.name, state: state})
+        })
+    })
 </script>
 
-<label for="clickTrackOn">Click Track</label>
-<input type="checkbox" id="clickTrackOn" bind:checked={clickTrackOn}>
+<p>Settings</p>
