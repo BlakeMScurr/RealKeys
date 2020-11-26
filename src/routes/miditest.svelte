@@ -34,8 +34,7 @@
                 track.notes.forEach(note => {
                     notes.push(new TimedNote(note.time / duration, (note.time + note.duration)/duration, NoteFromMidiNumber(note.midi)))
                 })
-            trackMap.set(uniqueKey(trackMap, track.instrument.name), new InertTrack(new TimedNotes(notes), newPiano("asdf")))
-            // trackMap.set(uniqueKey(trackMap, track.instrument.name), new InertTrack(new TimedNotes(notes), new SoundFont(track.instrument.number, track.name, track.instrument.percussion)))
+            trackMap.set(uniqueKey(trackMap, track.instrument.name), new InertTrack(new TimedNotes(notes), new SoundFont(track.instrument.number, track.name, track.instrument.percussion)))
         })
 
         let bs = []
