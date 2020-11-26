@@ -181,7 +181,7 @@ export class TimedNotes {
         // loop through all the notes in the section (assumes we're sorted)
         let i = startIndex
         let notes = []
-        while (this.notes[i].start <= end && i < this.notes.length) {
+        while (i < this.notes.length && this.notes[i].start <= end) {
             notes.push(this.notes[i])
             i++
         }

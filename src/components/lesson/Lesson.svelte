@@ -6,7 +6,7 @@
     import Settings from "../settings/Settings.svelte";
     import Dropdown from '../generic/dropdown/Dropdown.svelte';
     import { SoundFont } from '../track/soundfont';
-    import type { InertTrack } from '../track/instrument';
+    import { InertTrack, newPiano } from '../track/instrument';
 
     export let owner;
     export let lessonID;
@@ -29,7 +29,7 @@
     if (notes !== undefined) {
         selectedNotes = notes
         selectedInstrumentName = "acoustic_grand_piano"
-        instrument = new SoundFont(0, "Default Piano Player")
+        instrument = newPiano("Default Piano Player")
     } else {
         selectedInstrumentName = tracks.keys().next().value
         selectedNotes = tracks.get(selectedInstrumentName).notes
@@ -42,7 +42,6 @@
     function handleTrackSelection(e) {
         selectedNotes = e.detail.value.notes
         instrument = e.detail.value.instrument
-        console.log(instrument)
     }
 </script>
 

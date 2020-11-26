@@ -155,6 +155,18 @@ test("NotesFrom0.6to0.61", ()=>{
     ])
 })
 
+test("NotesFrom0.9to1", ()=>{
+    expect(LoadsOfCs().notesFrom(0.9, 1)).toEqual([
+        new TimedNote(new Fraction("9/10"), new Fraction("10/10"), NewNote("c", 4)),
+    ])
+})
+
+test("NotesFrom0.9to7000", ()=>{
+    expect(LoadsOfCs().notesFrom(0.9, 7000)).toEqual([
+        new TimedNote(new Fraction("9/10"), new Fraction("10/10"), NewNote("c", 4)),
+    ])
+})
+
 function Cs() {
     return new TimedNotes([
         new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
