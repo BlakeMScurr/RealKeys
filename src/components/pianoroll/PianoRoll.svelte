@@ -16,18 +16,45 @@
     export let instrument: VirtualInstrument;
     export let gl:Boolean = false;
 
+    let state = new Map<string, string>();
+    let updatenotes
+    let updateInstrument
+    if (!recordMode) {
+        let playbackinterface = tracks.newPlaybackTrack(notes.notes, instrument)
+        playbackinterface.subscribeToNotes((notes: Map<string, string>)=>{
+            // TODO: only bother sending the strings
+            state = new Map<string, string>();
+            notes.forEach((noteState, noteName: string)=>{
+                state.set(noteName, noteState)
+            })
+            state = state
+        })
+        updatenotes = (notes)=>{playbackinterface.updateNotes(notes)}
+        updateInstrument = (instrument) => {playbackinterface.updateInstrument(instrument)}
+    }
+
+    $: {
+        updatenotes(notes)
+    }
+
+    $: {
+        updateInstrument(instrument)
+    }
+
+
+
     let pos = 0;
     position.subscribe((value) => {
         pos = value
     })
 
     let width = 0;
-    $: keys = range(notes.untime(), instrument.lowest(), instrument.highest())
+    $: keys = range(notes.untime(), instrument.highest(), instrument.lowest())
     let lastWidth = -1;
     $: {
         if (width == lastWidth) {} else if (width <= 0) {
             setTimeout(() => {
-                keys = range(notes.untime(), instrument.lowest(), instrument.highest())
+                keys = range(notes.untime(), instrument.highest(), instrument.lowest())
             }, 1000);
         }
         lastWidth = width
@@ -251,6 +278,6 @@
         {/if}
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
-        <Piano {keys} {playing} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untimeRemoveDupes()}></Piano>
+    <Piano {keys} lessonNotes={state} {playing} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untimeRemoveDupes()}></Piano>
     </div>
 </div>

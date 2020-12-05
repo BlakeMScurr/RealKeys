@@ -120,7 +120,7 @@ class drawer {
             )
         })
         var vertices = new Float32Array(points);
-        this.drawLines(new glColour(1, 1, 1, 1.0), vertices, [0, this.translate], this.zoom)
+        this.drawLines(new glColour(0.7, 0.7, 0.7, 1), vertices, [0, this.translate], this.zoom)
     }
     
     drawDividers(keys) {
@@ -135,7 +135,7 @@ class drawer {
             }
         }
         var vertices = new Float32Array(points);
-        this.drawLines(new glColour(1, 1, 1, 1.0), vertices, staticTranslation(), staticZoom())
+        this.drawLines(new glColour(1, 1, 1, 0), vertices, staticTranslation(), staticZoom())
     }
     
     drawBlackkeys(keys) {

@@ -1,6 +1,14 @@
 import { highestPianoNote, lowestPianoNote, Note } from '../../lib/music/theory/notes';
 import * as Tone from 'tone'
 import type { TimedNotes } from '../../lib/music/timed/timed';
+import { SoundFont } from './soundfont';
+
+export function NewInstrument(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean) {
+    if (percusive) {
+        return new SoundFont(GeneralMidiInstrumentNumber, name, percusive)
+    }
+    return newPiano(name)
+}
 
 export class InertTrack {
     notes: TimedNotes;

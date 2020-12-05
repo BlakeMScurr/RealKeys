@@ -127,7 +127,7 @@
                     <Dropdown list={tracks} on:select={handleTrackSelection}></Dropdown>
                 {/if}
             {/if}
-            <Settings trackMap={tracks}></Settings>
+            <Settings trackMap={new Map()}></Settings>
             <div class="settings {hideTitle ? "soloSettings": ""}">
                 {#if spotify_id !== ""}
                     <Spotify track={spotify_id}></Spotify>

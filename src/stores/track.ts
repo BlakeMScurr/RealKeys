@@ -5,6 +5,7 @@ import type { instrument } from './instruments';
 import { audioReady, songDuration, seek, playingStore, position, frameLength } from "./stores"
 import { writable } from 'svelte/store';
 import { noteLeeway } from "./settings"
+import type { VirtualInstrument } from '../components/track/instrument';
 
 function duration():number {
     let dur;
@@ -25,7 +26,6 @@ function playing():Boolean {
 export class midiTrack {
     notes: TimedNotes;
     currentPosition: number;
-    startedPlaying: number;
     lastNoteWindow: number;
     playing: Boolean;
     // Map from note (given by note string + the index of that particular note in the song) to the timeouts used to deal with it
@@ -42,7 +42,6 @@ export class midiTrack {
         this.currentPosition = 0;
         this.noteTimeouts = new Map();
         this.windowTimeouts = [];
-        this.startedPlaying = -1;
         this.lastNoteWindow = -1;
         this.playbackInstrument = playbackInstrument
         this.currentNotes = writable(new Map<string, string>())
@@ -66,17 +65,12 @@ export class midiTrack {
 
     pushTimeout(key, cb, dur) {
         if (this.noteTimeouts.has(key)) {
-            this.noteTimeouts.get(key).push(setTimeout(()=>{
-                cb()
-                clearTimeout(this.noteTimeouts.get(key)[0])
-                this.noteTimeouts.get(key).shift()
-            }, dur))
+            this.noteTimeouts.get(key).push(setTimeout(cb, dur))
         }
     }
 
     play() {
         let dur = duration()
-        console.log("duration", dur)
         const windowWidth = 10000 / dur // 10 seconds
         this.runWindow(this.currentPosition, windowWidth, dur)
     }
@@ -90,7 +84,6 @@ export class midiTrack {
         }
 
         let notes = this.notes.notesFrom(start, start + width)
-        console.log("starting", notes.length, "notes in this window")
         notes.forEach((note) => {
             this.triggerNote(note, start)
         })
@@ -142,7 +135,7 @@ export class midiTrack {
                 return notes
             })
         }
-
+        
         // Take actions
         // TODO: handle cases where note is less than or near noteLeeway
         let firstNote = (note.start - pos) * duration()
@@ -154,11 +147,9 @@ export class midiTrack {
     }
 
     pause() {
-        if (this.startedPlaying == -1) {
-            this.currentPosition = 0
-        } else {
-            this.currentPosition = this.currentPosition + (Date.now() - this.startedPlaying)/duration()
-        }
+        position.subscribe(p => {
+            this.currentPosition = p
+        })
 
         this.windowTimeouts.forEach((to) => {
             clearTimeout(to)
@@ -167,12 +158,10 @@ export class midiTrack {
 
         this.noteTimeouts.forEach((tos) => {
             tos.forEach((to) => {
-                console.log("clearing timeout")
                 clearTimeout(to)
             })
         })
 
-        console.log("done clearing timeouts")
         this.noteTimeouts = new Map();
         this.currentNotes.set(new Map<string, string>())
 
@@ -202,7 +191,7 @@ class playbackInterface {
         })
     }
 
-    updateNotes(notes: Array<TimedNote>) {
+    updateNotes(notes: TimedNotes) {
         if (playing()) {
             this.track.pause()
             this.track.notes = notes
@@ -210,6 +199,10 @@ class playbackInterface {
         } else {
             this.track.notes = notes
         }
+    }
+
+    updateInstrument(instrument: VirtualInstrument) {
+        this.track.playbackInstrument = instrument
     }
 }
 

@@ -1,7 +1,7 @@
 // TODO: get typescript definition and replace all references to "any" type in this file with "Fraction", or whatever the type is
 import Fraction from 'fraction.js';
 
-import { Note, NewNote, notesBetween, highestPianoNote } from "../../lib/music/theory/notes";
+import { Note, NewNote, notesBetween, highestPianoNote, lowestPianoNote } from "../../lib/music/theory/notes";
 
 // gives a range of keys to present a given set of notes
 // - should work with no notes
@@ -13,6 +13,12 @@ const defaultStartingNote = NewNote("C", 4) // middle C
 export function range(notes: Array<Note>, upperBound: Note, lowerBound: Note):Array<Note> {
     if (notes.length == 0) {
         notes = [defaultStartingNote]
+    }
+
+    for (let i = notes.length - 1; i >= 0; i--) {
+        if (notes[i].lowerThan(lowerBound) || upperBound.lowerThan(notes[i])) {
+            notes.splice(i, 1)
+        }
     }
 
     let lowest:Note = notes[0]
