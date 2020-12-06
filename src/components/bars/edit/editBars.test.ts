@@ -1,4 +1,4 @@
-import { createUnevenBars, createEvenBars } from "./editBars.js"
+import { createUnevenBars, createEvenBars } from "./editBars"
 
 test("Empty", ()=>{
     expect(createUnevenBars([], 2, 0)).toEqual([

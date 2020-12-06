@@ -60,8 +60,9 @@ export class Recorder  {
             }
 
             let start = this.beginning
-            if (this.partials.has(note.string())) {
-                start = this.partials.get(note.string()).start
+            let partial = this.partials.get(note.string())
+            if (partial != undefined) {
+                start = partial.start
                 this.partials.delete(note.string())
             } 
 

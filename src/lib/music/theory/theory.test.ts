@@ -108,6 +108,10 @@ test('squashingClassicFinalChord', () => {
     )
 })
 
+test('invalidNote', () => {
+    expect(()=>{NewAbstractNote('X')}).toThrow("note X is not a valid note")
+})
+
 test('enharmonicRendering', () => {
     expect(NewAbstractNote("c").enharmonicEquivalent()).toBe("c")
     expect(NewAbstractNote("f").enharmonicEquivalent()).toBe("f")

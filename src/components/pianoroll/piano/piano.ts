@@ -28,7 +28,6 @@ export function blackAndGhostBetween(low: Note, high: Note):Array<Note|Ghost> {
 export class NoteWidth {
     note: Note;
     width: number;
-    ghost: Ghost;
     constructor(note: Note, width: number) {
         this.note = note;
         this.width = width;
@@ -61,7 +60,7 @@ export function whiteWidths(notes: Array<Note>):Array<NoteWidth> {
 }
 
 // gives the proper width to match up with the constant width of the roll section
-function width(note: Note, bottomEdge: boolean, topEdge) {
+function width(note: Note, bottomEdge: boolean, topEdge: boolean) {
     switch (note.abstract.letter) {
         case "c":
         case "f":
@@ -115,7 +114,7 @@ function makeAccidentals () {
 
 
 // Keys the note repsented by a key on the computer keyboard
-export function keyboardInputNote(keyCode: number, notes: Line):Note {
+export function keyboardInputNote(keyCode: number, notes: Line):Note|undefined {
     // Change a bunch
     var index = naturals.get(keyCode)
     if (index !== undefined) {
