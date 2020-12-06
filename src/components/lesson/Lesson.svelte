@@ -14,6 +14,7 @@
     export let bars;
     export let artist;
     export let spotify_id;
+    export let timesignatures;
     export let gl:Boolean = false;
     // deprecated
     export let notes;
@@ -127,7 +128,7 @@
                     <Dropdown list={tracks} on:select={handleTrackSelection}></Dropdown>
                 {/if}
             {/if}
-            <Settings trackMap={new Map()}></Settings>
+            <Settings bars={bars} timesignatures={timesignatures}></Settings>
             <div class="settings {hideTitle ? "soloSettings": ""}">
                 {#if spotify_id !== ""}
                     <Spotify track={spotify_id}></Spotify>

@@ -18,7 +18,7 @@
     import { NewNote } from "../../../lib/music/theory/notes"
     import { TimedNote, TimedNotes } from "../../../lib/music/timed/timed";
     import { songDuration } from '../../../stores/stores';
-    import { lowClick, newClicker } from "../../../components/track/clicker"
+    import { lowClick, newClicker } from "../../../components/track/instrument"
 
     export let owner;
     export let lessonID;

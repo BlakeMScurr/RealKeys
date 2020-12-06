@@ -48,7 +48,7 @@
         }
         let bars = new Bars(bs.map(b=>{return b/x}))
 
-        return {tracks: trackMap, artist: artist, lessonID: songName, bars: bars}
+        return {tracks: trackMap, artist: artist, lessonID: songName, bars: bars, timeSignatures: midi.header.timeSignatures}
     }
 
     processMidiFile()
@@ -58,7 +58,7 @@
 {#await processMidiFile()}
     <h1>Loading</h1>
 {:then lesson}
-<Lesson owner={lesson.artist} lessonID={lesson.lessonID} bars={lesson.bars} tracks={lesson.tracks} artist={lesson.artist} spotify_id={""} gl={true}></Lesson>
+<Lesson owner={lesson.artist} lessonID={lesson.lessonID} timesignatures={lesson.timeSignatures} bars={lesson.bars} tracks={lesson.tracks} artist={lesson.artist} spotify_id={""} gl={true}></Lesson>
 {:catch error}
     <h1>Could not load lesson {console.log(error)}</h1>
 {/await}

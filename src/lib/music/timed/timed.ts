@@ -109,8 +109,6 @@ export class Recorder  {
     }
 }
 
-
-
 export class TimedNote {
     start: any;
     end: any;

@@ -1,4 +1,5 @@
 import { highestPianoNote, lowestPianoNote, Note } from '../../lib/music/theory/notes';
+import { NewNote } from '../../lib/music/theory/notes';
 import * as Tone from 'tone'
 import type { TimedNotes } from '../../lib/music/timed/timed';
 import { SoundFont } from './soundfont';
@@ -56,7 +57,7 @@ export interface VirtualInstrument {
     lowest():Note
 }
 
-class Synth {
+export class Synth {
     private internal: any;
     private instrumentName: string;
     private volume: number;
@@ -125,4 +126,22 @@ class Synth {
     lowest():Note {
         return this._lowest
     }
+}
+
+export const lowClick = NewNote("F", 5)
+export const highClick = NewNote("C", 6)
+export function newClicker(name: string):VirtualInstrument {
+    const sampler = new Tone.Synth({
+        oscillator: {
+          type: 'sine',
+          modulationFrequency: 0.2
+        },
+        envelope: {
+          attack: 0,
+          decay: 0.1,
+          sustain: 0,
+          release: 0.1,
+        }
+      }).toDestination();
+    return new Synth(name, sampler, lowClick, highClick)
 }

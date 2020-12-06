@@ -1,22 +1,45 @@
 <script lang="ts">
-    import type { TimedNote } from "../../lib/music/timed/timed";
-    import type { InertTrack } from '../track/instrument';
-    // import { tracks } from "../../stores/stores"
-    // import { createEventDispatcher } from 'svelte';
+    import { tracks } from "../../stores/stores"
+    import { highClick, lowClick, newClicker } from "../track/instrument"
+    import { TimedNote, TimedNotes } from "../../lib/music/timed/timed";
 
-    // export let clicks: Array<TimedNote>;
-    export let trackMap: Map<string, InertTrack>;
+    export let bars;
+    export let timesignatures;
 
-    // let dispatch = createEventDispatcher();
+    let barLength = timesignatures[0].timeSignature[1]
 
-    // // trackMap.forEach((track)=>{
-    // //     let playbackTrack = tracks.newPlaybackTrack(track.notes.notes, track.instrument)
-    // //     playbackTrack.subscribeToNotes((notes: Map<string, string>)=>{
-    // //         let state = new Map<string, string>();
-    // //         notes.forEach((noteState, noteName: string)=>{
-    // //             state.set(noteName, noteState)
-    // //         })
-    // //         dispatch("notestate", {track: track.instrument.name, state: state})
-    // //     })
-    // // })
+    function makeClicks(bars):Array<TimedNote> {
+        let currPos = 0;
+        let i = 0
+        // TODO: use for loop
+        let clicks = bars.map((bar) => {
+            let oldPos = currPos
+            currPos += bar
+            let note = i % barLength == 0 ? highClick : lowClick
+            i++
+            return new TimedNote(oldPos, oldPos + 0.1, note)
+        })
+        console.log(clicks)
+        return clicks
+    }
+
+    let clickTrackOn:boolean = true
+    let clicker = newClicker("Click Track")
+    $: {
+        if (clickTrackOn) {
+            clicker.setVolume(1)
+        } else {
+            clicker.setVolume(0)
+        }
+    }
+
+    let track = tracks.newPlaybackTrack(makeClicks(bars.bars), clicker)
+
+    $: {
+        track.updateNotes(new TimedNotes(makeClicks(bars.bars)))
+    }
+
 </script>
+
+<label for="clickTrackOn">Click Track</label>
+<input type="checkbox" id="clickTrackOn" bind:checked={clickTrackOn}>
