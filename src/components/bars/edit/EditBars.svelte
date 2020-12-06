@@ -31,7 +31,7 @@
         }
     }
 
-    $: {
+    function generateBars() {
         if (!norm) {
             bars = createUnevenBars(tapTimes, songLength / 1000, anchor)
         } else {
@@ -48,7 +48,7 @@
 <div>
     <label>
         Normalise
-        <input type="checkbox" bind:checked={norm}>
+        <input type="checkbox" bind:checked={norm} on:input={generateBars}>
     </label>
     <label>
         Move Anchor
@@ -56,4 +56,4 @@
     </label>
 </div>
 
-<Tapper bind:bpm={bpm} bind:tapTimes={tapTimes}></Tapper>
+<Tapper bind:bpm={bpm} bind:tapTimes={tapTimes} on:tap={generateBars}></Tapper>

@@ -1,10 +1,26 @@
-import { Note } from '../../lib/music/theory/notes';
-// import { Piano } from '@tonejs/piano'
+import { highestPianoNote, lowestPianoNote, Note } from '../../lib/music/theory/notes';
+import { NewNote } from '../../lib/music/theory/notes';
 import * as Tone from 'tone'
-import type { instrument } from '../../stores/instruments';
+import type { TimedNotes } from '../../lib/music/timed/timed';
+import { SoundFont } from './soundfont';
 
+export function NewInstrument(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean) {
+    if (percusive) {
+        return new SoundFont(GeneralMidiInstrumentNumber, name, percusive)
+    }
+    return newPiano(name)
+}
 
-export function newPiano() {
+export class InertTrack {
+    notes: TimedNotes;
+    instrument: VirtualInstrument;
+    constructor(notes: TimedNotes, instrument: VirtualInstrument) {
+        this.notes = notes
+        this.instrument = instrument
+    }
+}
+
+export function newPiano(name: string):VirtualInstrument{
     const sampler = new Tone.Sampler({
         urls: {
             "C4": "C4.mp3",
@@ -27,16 +43,39 @@ export function newPiano() {
         release: 1,
         baseUrl: "https://tonejs.github.io/audio/salamander/",
     }).toDestination();
-    return new Synth(sampler)
+    return new Synth(name, sampler, lowestPianoNote, highestPianoNote)
 }
 
-class Synth {
-    internal: any;
-    constructor(internal) {
-        this.internal = internal
+export interface VirtualInstrument {
+    loaded():boolean
+    getVolume():number
+    setVolume(volume: number)
+    name():string
+    play(note: Note, duration: number)
+    stop(note: Note)
+    highest():Note
+    lowest():Note
+}
+
+export class Synth {
+    private internal: any;
+    private instrumentName: string;
+    private volume: number;
+    private _highest: Note;
+    private _lowest: Note;
+    constructor(name: string, internal, lowest: Note, highest: Note) {
+        this.internal = internal;
+        this.instrumentName = name;
+        this.volume = 1;
+        this.internal.volume.value = Math.log10(this.volume)
+        this._highest = highest
+        this._lowest = lowest
     }
 
-    loaded() {
+    loaded():boolean {
+        if (this.internal._buffers === undefined) {
+            return true
+        }
         const loaded = this.internal._buffers._loadingCount === 0
         if (!loaded) {
             console.log("waiting on " + this.internal._buffers._loadingCount + " sounds to load")
@@ -44,51 +83,65 @@ class Synth {
         return loaded
     }
 
-    play(note: Note, volume: number) {
-        if (this.loaded()) {
-            this.internal.volume.value = Math.log10(volume)
-            this.internal.triggerAttack(note.string())
-        }
-    }
-    
-    stop(note: Note, volume: number) {
-        if (this.loaded()) {
-            this.internal.volume.value = Math.log10(volume)
-            this.internal.triggerRelease(note.string())
-        }
-    }
-
-    genericise(name: string):instrument {
-        return new wrapper(this, name)
-    }
-}
-
-class wrapper {
-    internal: Synth;
-    volume: number;
-    instrumentName: string;
-    constructor(internal: Synth, name: string) {
-        this.internal = internal
-        this.volume = 1;
-        this.instrumentName = name
-    }
-
-    getVolume() {
+    getVolume():number {
         return this.volume
     }
 
     setVolume(volume: number) {
         this.volume = volume
+        this.internal.volume.value = Math.log10(this.volume)
     }
 
     name():string {
         return this.instrumentName
     }
 
-    play(note: Note, duration: number) {
-        this.internal.play(note, this.volume)
-        setTimeout(()=>{
-            this.internal.stop(note, this.volume)
-        }, duration)
+    play(note: Note, duration: number=undefined) { 
+        if (note.lowerThan(this.lowest()) || this.highest().lowerThan(note)) {
+            console.warn("note", note.string(), "not in range", this.lowest().string(), "to", this.highest().string())
+        } else {
+            if (this.loaded()) {
+                this.internal.triggerAttack(note.string())
+                if (duration !== undefined) {
+                    setTimeout(()=>{
+                        this.stop(note)
+                    }, duration)
+                }
+            }
+        }
     }
+
+    stop(note: Note) {
+        try {
+            this.internal.triggerRelease(note.string())
+        } catch (error) {
+            console.warn("could not release note", error)
+        }
+    }
+
+    highest():Note {
+        return this._highest
+    }
+
+    lowest():Note {
+        return this._lowest
+    }
+}
+
+export const lowClick = NewNote("F", 5)
+export const highClick = NewNote("C", 6)
+export function newClicker(name: string):VirtualInstrument {
+    const sampler = new Tone.Synth({
+        oscillator: {
+          type: 'sine',
+          modulationFrequency: 0.2
+        },
+        envelope: {
+          attack: 0,
+          decay: 0.1,
+          sustain: 0,
+          release: 0.1,
+        }
+      }).toDestination();
+    return new Synth(name, sampler, lowClick, highClick)
 }

@@ -1,7 +1,6 @@
 // timed.ts has logic for handled music in time
 
-import { NewAbstractNote, Note, NewNote } from "../theory/notes";
-import { notesBetween } from "../theory/notes";
+import type { Note } from "../theory/notes";
 
 class NoteStart {
     start: number;
@@ -110,8 +109,6 @@ export class Recorder  {
     }
 }
 
-
-
 export class TimedNote {
     start: any;
     end: any;
@@ -151,34 +148,43 @@ export class TimedNotes {
         this.notes = notes;
     }
 
-    // range is basically specifically for the pianoroll
-    // TODO: name/move accordingly
-    // TODO: take width of the screen to render into into account
-    range():Array<Note> {
+    notesFrom(start: number, end: number):Array<TimedNote>{
+        if (start >= end) {
+            throw new Error("Start must be before end")
+        }
+
         if (this.notes.length == 0) {
-            return notesBetween(NewNote("C", 4), NewNote("B", 5))
+            return []
         }
 
-        let lowest:Note = this.notes[0].note
-        let highest:Note = this.notes[0].note
-
-        for (let i = 0; i < this.notes.length; i++) {
-            const note = this.notes[i].note;
-            if (note.lowerThan(lowest)) {
-                lowest = note
+        // binary search to find the first note in the section
+        // TODO: add `nextNoteWindow` method that remembers where we last looked so we don't have to do the binary search
+        let startIndex = 0
+        let endIndex = this.notes.length - 1
+        let midpoint = Math.trunc((startIndex + endIndex) / 2)
+        while (startIndex != endIndex) {
+            let curr = this.notes[midpoint]
+            if (curr.start < start) {
+                if (startIndex == midpoint) { // handles the final loop
+                    startIndex = endIndex
+                } else {
+                    startIndex = midpoint
+                }
+            } else {
+                endIndex = midpoint
             }
-            if (highest.lowerThan(note)) {
-                highest = note
-            }
+            midpoint = Math.trunc((startIndex + endIndex) / 2)
         }
 
-        // TODO: we should be able to find this without iteration
-        while(lowest.abstract.accidental || highest.abstract.accidental) {
-            lowest = lowest.nextLowest()
-            highest = highest.next()
+        // loop through all the notes in the section (assumes we're sorted)
+        let i = startIndex
+        let notes = []
+        while (i < this.notes.length && this.notes[i].start <= end) {
+            notes.push(this.notes[i])
+            i++
         }
 
-        return notesBetween(lowest, highest)
+        return notes
     }
 
     add(note: TimedNote) {
@@ -191,8 +197,16 @@ export class TimedNotes {
         })
     }
 
+    // returns the notes in this set
+    untime():Array<Note> {
+        return this.notes.map(note => {
+            return note.note
+        })
+    }
+
     // returns all the notes in this set, removing duplicates and timing
-    untime():Map<String, boolean> {
+    // TODO: merge this and untime
+    untimeRemoveDupes():Map<String, boolean> {
         // TODO: surely there's a one liner
         let map = new Map<String, boolean>()
         this.notes.forEach((note)=>{

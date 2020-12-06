@@ -7,7 +7,8 @@
     import { TimedNote } from "../../../lib/music/timed/timed";
     import type { Bars } from "../pianoroll";
     import RollKey from "./RollKey.svelte";
-    import { currentSong, songDuration } from "../../../stores/stores";
+    import { zoomWidth } from './roll.ts'
+    import { currentSong } from "../../../stores/stores";
 
     export let keys:Array<Note>;
     export let height:number;
@@ -18,17 +19,12 @@
     export let recording = true;
     export let editable = false;
     export let playing;
-    
+
     // the place on the screen where the user should start playing the note
     // TODO: why does the length actually seem a bit long, perhaps 5x longer
-    let zoomLength = 2 * 1000 // length of the zoom window in seconds
-    let duration;
-    songDuration.subscribe((val)=>{
-        duration = val
-    })
-    let zoomWidth = zoomLength / duration;
-    $: zoomEnd = recording ? position : position + zoomWidth
-    $: zoomStart = recording ? position - zoomWidth : position
+    let zw = zoomWidth()
+    $: zoomEnd = recording ? position : position + zw
+    $: zoomStart = recording ? position - zw : position
 
     // Reverse stuff so that it looks right
     // TODO: no ugly reversing stuff
@@ -103,7 +99,7 @@
             let clientWidth = e.path[0].clientWidth
             let noteIndex = Math.floor((e.offsetX / clientWidth) * keys.length)
             
-            let notemiddle = (1 - ((e.offsetY)/e.path[0].clientHeight)) * zoomRatio + position - zoomWidth
+            let notemiddle = (1 - ((e.offsetY)/e.path[0].clientHeight)) * zoomRatio + position - zw
 
             const noteRadius = 1000/duration // one second
             notes.add(new TimedNote(notemiddle - noteRadius, notemiddle + noteRadius, keys[noteIndex].deepCopy()))

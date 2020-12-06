@@ -1,9 +1,12 @@
 <script>
+    import { createEventDispatcher } from "svelte";
+
     import { bpmFromTaps } from "../../../backend/beatcalculation/beatcalculation.js"
 
     export let bpm = 0;
     export let tapTimes = []; // length of each bar in milliseconds
 
+    let dispatch = createEventDispatcher()
 
     let recording;
     $: inputDisabled = recording ? "disabled" : ""
@@ -38,6 +41,8 @@
         if (tapStamps.length > 1) {
             bpm = bpmFromTaps(tapStamps)
         }
+
+        dispatch("tap", {})
     }
 </script>
 

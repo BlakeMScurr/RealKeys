@@ -87,3 +87,22 @@ export function removeCookie(name, jar) {
     const cookie = getCookie(name, jar)
     return jar.replace(name, "")
 }
+
+// gives a unique key for a map
+export function uniqueKey(m, k) {
+    return uniqueKeyPriv(m, k, 0)
+}
+
+function uniqueKeyPriv(m, k, n) {
+    if (!m.has(k)) {
+        return k
+    }
+    if (!m.has(k + " " + n)) {
+        return k + " " + n
+    }
+    if (n > 100) {
+        throw new Error("woah, the recursion has gone crazy there buddy, stop")
+    }
+    return uniqueKeyPriv(m, k, n + 1)
+}
+

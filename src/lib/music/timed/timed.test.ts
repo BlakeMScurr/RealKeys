@@ -104,6 +104,87 @@ test("NotesErroringNew", ()=>{
 })
 
 test("NotesNotErroringNew", ()=>{
-    expect(()=>{new TimedNotes([new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), new TimedNote(new Fraction("1/10"), new Fraction("2/10"), NewNote("c", 4))])}).not.toThrow("Notes out of order")
+    expect(Cs).not.toThrow("Notes out of order")
     expect(()=>{new TimedNotes([new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), new TimedNote(new Fraction("0"), new Fraction("1/10"), NewNote("c", 4))])}).not.toThrow("Notes out of order")
 })
+
+test("NotesFrom0to0.01", ()=>{
+    expect(Cs().notesFrom(0, 0.01)).toEqual([ new TimedNote(0, new Fraction("1/10"), NewNote("c", 4))])
+})
+
+test("NotesFrom0to0.1", ()=>{
+    expect(LoadsOfCs().notesFrom(0, 0.1)).toEqual([
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)),
+        new TimedNote(new Fraction("1/10"), new Fraction("2/10"), NewNote("c", 4)),
+    ])
+})
+
+test("NotesFrom0.1to0.1", ()=>{
+    expect(()=>{LoadsOfCs().notesFrom(0.1, 0.1)}).toThrow("Start must be before end")
+})
+
+test("NotesFrom0to0.31", ()=>{
+    expect(LoadsOfCs().notesFrom(0, 0.31)).toEqual([
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)),
+        new TimedNote(new Fraction("1/10"), new Fraction("2/10"), NewNote("c", 4)),
+        new TimedNote(new Fraction("2/10"), new Fraction("3/10"), NewNote("c", 4)),
+        new TimedNote(new Fraction("3/10"), new Fraction("4/10"), NewNote("c", 4)),
+    ])
+})
+
+test("NotesFrom0.3to0.61", ()=>{
+    expect(LoadsOfCs().notesFrom(0.3, 0.61)).toEqual([
+        new TimedNote(new Fraction("3/10"), new Fraction("4/10"), NewNote("c", 4)),
+        new TimedNote(new Fraction("4/10"), new Fraction("5/10"), NewNote("c", 4)),
+        new TimedNote(new Fraction("5/10"), new Fraction("6/10"), NewNote("c", 4)),
+        new TimedNote(new Fraction("6/10"), new Fraction("7/10"), NewNote("c", 4)),
+    ])
+})
+
+test("NotesFrom0.4to0.61", ()=>{
+    expect(LoadsOfCs().notesFrom(0.4, 0.61)).toEqual([
+        new TimedNote(new Fraction("4/10"), new Fraction("5/10"), NewNote("c", 4)),
+        new TimedNote(new Fraction("5/10"), new Fraction("6/10"), NewNote("c", 4)),
+        new TimedNote(new Fraction("6/10"), new Fraction("7/10"), NewNote("c", 4)),
+    ])
+})
+
+test("NotesFrom0.6to0.61", ()=>{
+    expect(LoadsOfCs().notesFrom(0.6, 0.61)).toEqual([
+        new TimedNote(new Fraction("6/10"), new Fraction("7/10"), NewNote("c", 4)),
+    ])
+})
+
+test("NotesFrom0.9to1", ()=>{
+    expect(LoadsOfCs().notesFrom(0.9, 1)).toEqual([
+        new TimedNote(new Fraction("9/10"), new Fraction("10/10"), NewNote("c", 4)),
+    ])
+})
+
+test("NotesFrom0.9to7000", ()=>{
+    expect(LoadsOfCs().notesFrom(0.9, 7000)).toEqual([
+        new TimedNote(new Fraction("9/10"), new Fraction("10/10"), NewNote("c", 4)),
+    ])
+})
+
+function Cs() {
+    return new TimedNotes([
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+        new TimedNote(new Fraction("1/10"), new Fraction("2/10"), NewNote("c", 4))
+    ])
+}
+
+function LoadsOfCs() {
+    return new TimedNotes([
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+        new TimedNote(new Fraction("1/10"), new Fraction("2/10"), NewNote("c", 4)),
+        new TimedNote(new Fraction("2/10"), new Fraction("3/10"), NewNote("c", 4)),
+        new TimedNote(new Fraction("3/10"), new Fraction("4/10"), NewNote("c", 4)),
+        new TimedNote(new Fraction("4/10"), new Fraction("5/10"), NewNote("c", 4)),
+        new TimedNote(new Fraction("5/10"), new Fraction("6/10"), NewNote("c", 4)),
+        new TimedNote(new Fraction("6/10"), new Fraction("7/10"), NewNote("c", 4)),
+        new TimedNote(new Fraction("7/10"), new Fraction("8/10"), NewNote("c", 4)),
+        new TimedNote(new Fraction("8/10"), new Fraction("9/10"), NewNote("c", 4)),
+        new TimedNote(new Fraction("9/10"), new Fraction("10/10"), NewNote("c", 4)),
+    ])
+}

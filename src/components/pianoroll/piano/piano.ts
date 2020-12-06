@@ -1,4 +1,3 @@
-import { noteString } from "../../../lib/music/theory/chords";
 import { Note, Line } from "../../../lib/music/theory/notes";
 
 export class Ghost {}

@@ -24,4 +24,6 @@ Svelte components should not contain much logic. They should only include svelte
 
 ## TS
 
+All variables should be typed.
+
 All fields should be private, and only accessed via getters and setters if necessary.

@@ -18,6 +18,7 @@
     import PianoRoll from "../../../components/pianoroll/PianoRoll.svelte";
     import ZoomBars from "../../../components/bars/zoom/ZoomBars.svelte";
     import Spotify from "../../../components/audioplayer/Spotify.svelte";
+import { newPiano } from '../../../components/track/instrument';
 
     export let owner;
     export let lessonID;
@@ -83,7 +84,7 @@
         </div>
     </div>
     <div class="piano">
-        <PianoRoll bars={castBars(lesson.bars)} notes={castTimedNotes(lesson.notes)} recordMode={true}></PianoRoll>
+        <PianoRoll bars={castBars(lesson.bars)} notes={castTimedNotes(lesson.notes)} recordMode={true} instrument={newPiano("Lesson Playback")}></PianoRoll>
     </div>
 {:catch error}
     <h1>Could not load lesson {owner}/{lessonID} {console.log(error)}</h1>
