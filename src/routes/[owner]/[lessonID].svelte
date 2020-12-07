@@ -10,10 +10,6 @@
 <script lang="ts">
     import { castTimedNotes, castBars } from '../../lib/cast.ts'
     import { getLessonDefinition } from '../../lib/api.js'
-    import Spotify from "../../components/audioplayer/Spotify.svelte"
-    import PianoRoll from "../../components/pianoroll/PianoRoll.svelte";
-    import { playingStore } from "../../stores/stores"
-    import { newPiano } from '../../components/track/instrument';
     import Lesson from "../../components/lesson/Lesson.svelte"
 
     export let owner;

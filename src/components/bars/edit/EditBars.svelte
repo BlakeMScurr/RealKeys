@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
     import ZoomBars from "../zoom/ZoomBars.svelte"
     import Tapper from "../tapper/Tapper.svelte"
-    import { createUnevenBars, createEvenBars } from "./editBars"
+    import { createUnevenBars, createEvenBars } from "./editBars.ts"
     import { createEventDispatcher } from 'svelte';
     import { position, songDuration } from "../../../stores/stores"
 

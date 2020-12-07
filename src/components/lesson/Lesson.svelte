@@ -34,7 +34,6 @@
     } else {
         selectedInstrumentName = tracks.keys().next().value
         selectedNotes = tracks.get(selectedInstrumentName).notes
-        console.log(selectedNotes)
         instrument = tracks.get(selectedInstrumentName).instrument
     }
 
@@ -139,6 +138,11 @@
         </div>
     </div>
     <div class="piano">
-        <PianoRoll bars={bars} notes={selectedNotes} recordMode={false} instrument={instrument} {gl}></PianoRoll>
+        {#await instrument}
+            Loading instrument
+        {:then loadedInstrument}
+            {console.log("loaded instrument", loadedInstrument, "instrument promise", instrument)}
+            <PianoRoll bars={bars} notes={selectedNotes} recordMode={false} instrument={loadedInstrument} {gl}></PianoRoll>
+        {/await}
     </div>
 </div>

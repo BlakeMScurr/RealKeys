@@ -6,7 +6,7 @@
       "types": ["svelte", "node", "@sapper","@types/jest"],
       "typeRoots": ["typings"],
       "isolatedModules": false,
-      "strict": true,
+      "strict": false,
       "esModuleInterop": true,
       "skipLibCheck": true,
       "forceConsistentCasingInFileNames": true

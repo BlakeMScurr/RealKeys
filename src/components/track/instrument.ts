@@ -1,49 +1,54 @@
-import { highestPianoNote, lowestPianoNote, Note } from '../../lib/music/theory/notes';
+import { Note } from '../../lib/music/theory/notes';
 import { NewNote } from '../../lib/music/theory/notes';
 import * as Tone from 'tone'
 import type { TimedNotes } from '../../lib/music/timed/timed';
 import { SoundFont } from './soundfont';
 
-export function NewInstrument(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean) {
+const soundFontCache = "soundFontCache"
+
+export function NewInstrument(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean):Promise<SoundFont> {
     if (percusive) {
-        return new SoundFont(GeneralMidiInstrumentNumber, name, percusive)
+        return new Promise((resolve, reject) => {
+            console.log("making percussion")
+            caches.open(soundFontCache).then(function(cache) {
+                cache.add("https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/percussion-mp3.js").then(() => {
+                    resolve(new SoundFont(GeneralMidiInstrumentNumber, name, percusive))
+                })
+            })
+        })
     }
-    return newPiano(name)
+    return new Promise((resolve, reject) => { 
+        console.log("making piano")
+        resolve(newPiano())
+    })
+}
+
+// Copied from soundfont-player used to create the appropriate caching URL
+// TODO: put the nameToUrl in the index.d.ts file in soundfont-player and make a PR upstream
+function nameToUrl (name: string, sf: string, format: string) {
+    format = format === 'ogg' ? format : 'mp3'
+    sf = sf === 'FluidR3_GM' ? sf : 'MusyngKite'
+    return 'https://gleitz.github.io/midi-js-soundfonts/' + sf + '/' + name + '-' + format + '.js'
+}
+
+let myOnlyPiano:SoundFont
+export function newPiano() { // this is a bit of a misnomer, as it really only gives us the same piano
+    if (myOnlyPiano === undefined) {
+        console.log("making piano for the first time")
+        myOnlyPiano = new SoundFont(0, "piano", false)
+
+    }
+    console.log("returning myOnlyPiano", myOnlyPiano)
+    return myOnlyPiano
 }
 
 export class InertTrack {
     notes: TimedNotes;
-    instrument: VirtualInstrument;
-    constructor(notes: TimedNotes, instrument: VirtualInstrument) {
+    instrument: Promise<VirtualInstrument>;
+    constructor(notes: TimedNotes, instrument: Promise<VirtualInstrument>) {
         this.notes = notes
         this.instrument = instrument
     }
-}
-
-export function newPiano(name: string):VirtualInstrument{
-    const sampler = new Tone.Sampler({
-        urls: {
-            "C4": "C4.mp3",
-            "D#4": "Ds4.mp3",
-            "F#4": "Fs4.mp3",
-            "A4": "A4.mp3",
-            "C5": "C5.mp3",
-            "D#5": "Ds5.mp3",
-            "F#5": "Fs5.mp3",
-            "A5": "A5.mp3",
-            "C6": "C6.mp3",
-            "D#6": "Ds6.mp3",
-            "F#6": "Fs6.mp3",
-            "A6": "A6.mp3",
-            "C2": "C2.mp3",
-            "D#2": "Ds2.mp3",
-            "F#2": "Fs2.mp3",
-            "A2": "A2.mp3",
-        },
-        release: 1,
-        baseUrl: "https://tonejs.github.io/audio/salamander/",
-    }).toDestination();
-    return new Synth(name, sampler, lowestPianoNote, highestPianoNote)
 }
 
 export interface VirtualInstrument {

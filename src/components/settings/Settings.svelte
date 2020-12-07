@@ -6,9 +6,12 @@
     export let bars;
     export let timesignatures;
 
-    let barLength = timesignatures[0].timeSignature[1]
+    let barLength = 4
+    if (timesignatures != undefined && timesignatures[0] != undefined && timesignatures[0].timeSignature != undefiend && timesignatures[0].timeSignature[1] != undefined) {
+        barLength = timesignatures[0].timeSignature[1]
+    }
 
-    function makeClicks(bars):Array<TimedNote> {
+    function makeClicks(bars: Array<number>):Array<TimedNote> {
         let currPos = 0;
         let i = 0
         // TODO: use for loop
@@ -19,13 +22,12 @@
             i++
             return new TimedNote(oldPos, oldPos + 0.1, note)
         })
-        console.log(clicks)
         return clicks
     }
 
     let clickTrackOn:boolean = true
     let clicker = newClicker("Click Track")
-    $: {
+    function clickTrackChange() {
         if (clickTrackOn) {
             clicker.setVolume(1)
         } else {
@@ -42,4 +44,4 @@
 </script>
 
 <label for="clickTrackOn">Click Track</label>
-<input type="checkbox" id="clickTrackOn" bind:checked={clickTrackOn}>
+<input type="checkbox" id="clickTrackOn" bind:checked={clickTrackOn} on:change={clickTrackChange}>
