@@ -20,7 +20,6 @@
 
     const separator = "%2F" // this is an alternative to / that doesn't exist in any of the paths in the midi library and shows up in the url
 
-
     async function processMidiFile() {
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
@@ -61,9 +60,15 @@
     }
 
     audioReady.ready()
+
+    let searchQuery: string;
+
+    function search() {
+        console.log("searching for " + searchQuery)
+    }
 </script>
-
-
+asdfasdf
+<input type="text" on:change={search} bind:value={searchQuery}>
 
 {#await processMidiFile()}
     <h1>Loading</h1>
