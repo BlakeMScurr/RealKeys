@@ -23,7 +23,6 @@ const CACHE_NAME = "soundfont_cache"
 
 // Adds a listener which listens on fetch requests and caches them where applicable 
 export function addFetchListener() {
-    console.log("adding service worker")
     if ('serviceWorker' in navigator) {
         navigator.serviceWorker.register('./sw/caching.js')
         .then((reg) => {

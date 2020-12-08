@@ -11,7 +11,7 @@
     import { NoteFromMidiNumber } from '../../lib/music/theory/notes';
     import { TimedNote, TimedNotes } from '../../lib/music/timed/timed';
     import { uniqueKey } from '../../lib/util'
-    import { Bars } from '../../components/pianoroll/pianoroll.ts';
+    import { Bars } from '../../components/pianoroll/pianoRollHelpers';
     import Lesson from '../../components/lesson/Lesson.svelte'
     import { audioReady, songDuration } from '../../stores/stores'
     import { InertTrack, NewInstrument } from '../../components/track/instrument';

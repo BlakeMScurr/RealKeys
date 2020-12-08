@@ -1,4 +1,4 @@
-import { instrument, Player } from 'soundfont-player';
+import { instrument, Player, InstrumentName } from 'soundfont-player';
 import { highestPianoNote, lowestPianoNote, Note } from '../../lib/music/theory/notes'
 import { instrumentName } from './generalMidiMapping'
 
@@ -23,7 +23,7 @@ export class SoundFont {
         // GeneralMidiInstrumentNumber refers to https://en.wikipedia.org/wiki/General_MIDI#Program_change_events
         if (percusive) {
             let fontOpts = { soundfont: "FluidR3_GM" }
-            instrument(this.ac, "percussion", { ...opts ...fontOpts}).then((i)=>{
+            instrument(this.ac, <InstrumentName>"percussion", { ...opts, ...fontOpts}).then((i)=>{
                 this.internalInstrument = i
             })
         } else {

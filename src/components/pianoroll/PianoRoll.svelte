@@ -1,6 +1,5 @@
 <script lang="ts">
-    import type { Bars } from "./pianoroll";
-    import { range } from "./pianoroll.ts"; // why does it import from pianoroll.svelte if I don't specificy the ts extension?
+    import { range, Bars, pushBottomKey, pushTopKey, popBottomKey, popTopKey } from "./pianoRollHelpers";
     import { RecordState } from "./recorder";
     import { TimedNotes } from "../../lib/music/timed/timed"
     import { currentSong, playingStore, position, songDuration, seek, tracks } from "../../stores/stores"
@@ -81,22 +80,6 @@
         handleRollWheel(event)
     }
 
-    function pushTopKey() {
-        if (keys[keys.length-1].lowerThan(piano.highest())) {
-            keys.push(keys[keys.length-1].next())
-            if (keys[keys.length-1].abstract.accidental) {
-                keys.push(keys[keys.length-1].next())
-            }
-        }
-    }
-
-    function popTopKey() {
-        keys.pop()
-        if (keys[keys.length-1].abstract.accidental) {
-            keys.pop()
-        }
-    }
-
     let duration = 5;
     songDuration.subscribe((val)=> {
         duration = val
@@ -111,12 +94,12 @@
     $: {
         // TODO: get some response from the UI as we scroll before we add a new key so the user can see what's going on
         if (dy > zoomDamper) {
-            pushTopKey()
+            pushTopKey(keys, piano)
             keys = keys
             dy = 0
         } else if (dy < -zoomDamper){
             if (keys.length >= 15) { // TODO: make this number depend on the actual view window etc
-                popTopKey()
+                popTopKey(keys)
                 keys = keys
             }
             dy = 0
@@ -129,29 +112,15 @@
     // TODO: put invert into settings somewhere use accessible
     let invert = -1
     $: {
-        if (dx < -shiftDamper) {
-            // add a note to the top
-            pushTopKey()
-            // remove a note from the bottom
-            keys.shift()
-            if (keys[0].abstract.accidental) {
-                keys.shift()
+        if (Math.abs(dx) > shiftDamper) {
+            if (dx < 0 && pushTopKey(keys, piano)) {
+                popBottomKey(keys)
+            } else if (dx > 0 && pushBottomKey(keys, piano)) {
+                popTopKey(keys)
             }
-            keys = keys
             dx = 0
-        } else if (dx > shiftDamper) {
-            if (piano.lowest().lowerThan(keys[0])) {
-                // remove a note from the top
-                popTopKey()
-                // add a note to the bottom
-                keys.unshift(keys[0].nextLowest())
-                if (keys[0].abstract.accidental) {
-                    keys.unshift(keys[0].nextLowest())
-                }
-                keys = keys
-                dx = 0
-            }
         }
+        keys = keys
     }
 
     // TODO: less jerky dragging

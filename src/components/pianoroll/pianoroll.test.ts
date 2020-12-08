@@ -1,5 +1,7 @@
 import { highestPianoNote, lowestPianoNote, NewNote, notesBetween } from "../../lib/music/theory/notes";
-import { Bars, range } from "./pianoroll"
+import { Bars, popBottomKey, pushBottomKey, pushTopKey, range } from "./pianoRollHelpers"
+import type { Note } from "../../lib/music/theory/notes"
+import { MockInstrument } from "../track/instrument";
 var Fraction = require('fraction.js');
 
 function fifthBars():Bars {
@@ -38,4 +40,20 @@ test("NoteRangeC#3toG#7", ()=>{
 
 test("NoteRangeLowerUpperSwitched", ()=>{
     expect(()=>{range([], lowestPianoNote, highestPianoNote)}).toThrow("lower bound higher than upper bound")
+})
+
+test("PushPop", () => {
+    let piano = new MockInstrument()
+    let keys = new Array<Note>(NewNote("C", 4), NewNote("C#", 4))
+
+    pushTopKey(keys, piano)
+    expect(keys).toEqual(new Array<Note>(NewNote("C", 4), NewNote("C#", 4),  NewNote("D", 4)))
+
+    popBottomKey(keys)
+    expect(keys).toEqual(new Array<Note>(NewNote("D", 4)))
+
+    pushBottomKey(keys, piano)
+    expect(keys).toEqual(new Array<Note>(NewNote("C", 4), NewNote("C#", 4),  NewNote("D", 4)))
+
+    // TODO: test edge cases near lowest and highest piano notes
 })
