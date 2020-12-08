@@ -37,6 +37,7 @@
         position: absolute;
         font-size: 1.75em;
         display: inline-block;
+        pointer-events: none;
     }
 
     .used {
