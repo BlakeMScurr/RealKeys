@@ -3,7 +3,6 @@ import { NewNote } from '../../lib/music/theory/notes';
 import * as Tone from 'tone'
 import type { TimedNotes } from '../../lib/music/timed/timed';
 import { SoundFont } from './soundfont';
-import { instrumentName } from './generalMidiMapping'
 
 export function NewInstrument(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean, notes?: Array<Note>):SoundFont {
     return new SoundFont(GeneralMidiInstrumentNumber, name, percusive, notes)

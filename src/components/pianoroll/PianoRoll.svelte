@@ -9,6 +9,7 @@
     import GLRoll from "./roll/GLRoll.svelte";
     import Piano from "./piano/Piano.svelte";
     import type { VirtualInstrument } from "../track/instrument";
+    import { newPiano } from "../track/instrument";
 
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;
@@ -16,6 +17,7 @@
     export let instrument: VirtualInstrument;
     export let gl:Boolean = false;
 
+    // TODO: track handling at the lesson level
     let state = new Map<string, string>();
     let updatenotes
     let updateInstrument
@@ -41,7 +43,8 @@
         updateInstrument(instrument)
     }
 
-
+    // TODO: allow one to use the same MIDI instrument as the track being played against
+    let piano = newPiano("Player Piano")
 
     let pos = 0;
     position.subscribe((value) => {
@@ -49,12 +52,12 @@
     })
 
     let width = 0;
-    $: keys = range(notes.untime(), instrument.highest(), instrument.lowest())
+    $: keys = range(notes.untime(), piano.highest(), piano.lowest())
     let lastWidth = -1;
     $: {
         if (width == lastWidth) {} else if (width <= 0) {
             setTimeout(() => {
-                keys = range(notes.untime(), instrument.highest(), instrument.lowest())
+                keys = range(notes.untime(), piano.highest(), piano.lowest())
             }, 1000);
         }
         lastWidth = width
@@ -79,7 +82,7 @@
     }
 
     function pushTopKey() {
-        if (keys[keys.length-1].lowerThan(instrument.highest())) {
+        if (keys[keys.length-1].lowerThan(piano.highest())) {
             keys.push(keys[keys.length-1].next())
             if (keys[keys.length-1].abstract.accidental) {
                 keys.push(keys[keys.length-1].next())
@@ -137,7 +140,7 @@
             keys = keys
             dx = 0
         } else if (dx > shiftDamper) {
-            if (instrument.lowest().lowerThan(keys[0])) {
+            if (piano.lowest().lowerThan(keys[0])) {
                 // remove a note from the top
                 popTopKey()
                 // add a note to the bottom
@@ -206,7 +209,7 @@
     })
 
     function noteOff(event) {
-        instrument.stop(event.detail)
+        piano.stop(event.detail)
         if (recordMode) {
             notes = recorder.noteOff(event, pos)
         } else {
@@ -215,7 +218,7 @@
     }
 
     function noteOn(event) {
-        instrument.play(event.detail)
+        piano.play(event.detail)
         if (recordMode) {
             notes = recorder.noteOn(event, pos)
         } else {

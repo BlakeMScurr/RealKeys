@@ -19,7 +19,6 @@ export class SoundFont {
             opts = { notes:  Array.from(new Set(notes.map((note)=>{return note.enharmonicEquivalent()}))) }
         }
 
-        console.log("opts", opts)
 
         // GeneralMidiInstrumentNumber refers to https://en.wikipedia.org/wiki/General_MIDI#Program_change_events
         if (percusive) {
@@ -50,7 +49,7 @@ export class SoundFont {
         return this.instrumentName
     }
 
-    play(note: Note, duration: number) {
+    play(note: Note, duration?: number) {
         if (this.loaded()) {
             if (this.highest().lowerThan(note) || note.lowerThan(this.lowest())) {
                 console.warn("trying to play", note.string(), "which is out of the instrument's range", this.lowest().string(), "-", this.highest().string())
@@ -60,6 +59,9 @@ export class SoundFont {
                     opts["duration"] = duration / 1000 // duration is in milliseconds, but soundfont accepts seconds
                 }
                 let notePlayer = this.internalInstrument.play(note.string(), this.ac.currentTime, opts)
+                if (notePlayer == undefined) {
+                    throw new Error(`Couldn't play note ${note.string()} on the ${this.name()} track`)
+                }
                 this.playingNotes.set(note.string(), notePlayer)
             } 
         }

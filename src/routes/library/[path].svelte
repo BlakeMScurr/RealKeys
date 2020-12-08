@@ -67,7 +67,6 @@
         console.log("searching for " + searchQuery)
     }
 </script>
-asdfasdf
 <input type="text" on:change={search} bind:value={searchQuery}>
 
 {#await processMidiFile()}
