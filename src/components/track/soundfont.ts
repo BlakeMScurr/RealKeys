@@ -43,7 +43,7 @@ export class SoundFont {
     }
 
     play(note: Note, duration: number) {
-        if (this.loaded) {
+        if (this.loaded()) {
             if (this.highest().lowerThan(note) || note.lowerThan(this.lowest())) {
                 console.warn("trying to play", note.string(), "which is out of the instrument's range", this.lowest().string(), "-", this.highest().string())
             } else {
@@ -58,7 +58,7 @@ export class SoundFont {
     }
 
     stop(note: Note) {
-        if (this.loaded) {
+        if (this.loaded()) {
             if (this.playingNotes.has(note.string())) {
                 this.playingNotes.get(note.string()).stop(this.ac.currentTime)
                 this.playingNotes.delete(note.string())

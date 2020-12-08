@@ -20,13 +20,11 @@
 
     const separator = "%2F" // this is an alternative to / that doesn't exist in any of the paths in the midi library and shows up in the url
 
-    console.log("path", path)
 
     async function processMidiFile() {
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
         const midi = await Midi.fromUrl("api/midi?path=" + path)
-        console.log(midi)
         //the file name decoded from the first track
         let nameparts = midi.name.split("@")
         let songName = nameparts[0]
@@ -58,12 +56,10 @@
             x += 60/tempo
         }
         let bars = new Bars(bs.map(b=>{return b/duration}))
-        console.log("tempo", tempo, "duration", duration, "first bar length", bars.bars[0], "bars", bars)
 
         return {tracks: trackMap, artist: artist, lessonID: songName, bars: bars, timeSignatures: midi.header.timeSignatures}
     }
 
-    processMidiFile()
     audioReady.ready()
 </script>
 

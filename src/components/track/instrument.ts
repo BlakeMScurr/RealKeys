@@ -3,43 +3,14 @@ import { NewNote } from '../../lib/music/theory/notes';
 import * as Tone from 'tone'
 import type { TimedNotes } from '../../lib/music/timed/timed';
 import { SoundFont } from './soundfont';
+import { instrumentName } from './generalMidiMapping'
 
-const soundFontCache = "soundFontCache"
-
-export function NewInstrument(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean):Promise<SoundFont> {
-    if (percusive) {
-        return new Promise((resolve, reject) => {
-            console.log("making percussion")
-            caches.open(soundFontCache).then(function(cache) {
-                cache.add("https://gleitz.github.io/midi-js-soundfonts/FluidR3_GM/percussion-mp3.js").then(() => {
-                    resolve(new SoundFont(GeneralMidiInstrumentNumber, name, percusive))
-                })
-            })
-        })
-    }
-    return new Promise((resolve, reject) => { 
-        console.log("making piano")
-        resolve(newPiano())
-    })
+export function NewInstrument(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean):SoundFont {
+    return new SoundFont(GeneralMidiInstrumentNumber, name, percusive)
 }
 
-// Copied from soundfont-player used to create the appropriate caching URL
-// TODO: put the nameToUrl in the index.d.ts file in soundfont-player and make a PR upstream
-function nameToUrl (name: string, sf: string, format: string) {
-    format = format === 'ogg' ? format : 'mp3'
-    sf = sf === 'FluidR3_GM' ? sf : 'MusyngKite'
-    return 'https://gleitz.github.io/midi-js-soundfonts/' + sf + '/' + name + '-' + format + '.js'
-}
-
-let myOnlyPiano:SoundFont
-export function newPiano() { // this is a bit of a misnomer, as it really only gives us the same piano
-    if (myOnlyPiano === undefined) {
-        console.log("making piano for the first time")
-        myOnlyPiano = new SoundFont(0, "piano", false)
-
-    }
-    console.log("returning myOnlyPiano", myOnlyPiano)
-    return myOnlyPiano
+export function newPiano(name: string){
+    return NewInstrument(0, name, false)
 }
 
 export class InertTrack {
