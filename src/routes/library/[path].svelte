@@ -43,7 +43,7 @@
                 notes.push(new TimedNote(note.time / duration, (note.time + note.duration)/duration, NoteFromMidiNumber(note.midi)))
             })
 
-            trackMap.set(uniqueKey(trackMap, track.instrument.name), new InertTrack(new TimedNotes(notes), NewInstrument(track.instrument.number, track.name, track.instrument.percussion)))
+            trackMap.set(uniqueKey(trackMap, track.instrument.name), new InertTrack(new TimedNotes(notes), NewInstrument(track.instrument.number, track.name, track.instrument.percussion, notes.map((tn)=>{return tn.note}))))
         })
 
         let bs = []

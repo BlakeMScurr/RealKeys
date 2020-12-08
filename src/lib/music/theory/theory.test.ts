@@ -209,6 +209,14 @@ test("NoteFromMidiNumber", ()=>{
     expect(NoteFromMidiNumber(21)).toEqual(NewNote("A", 0))
 })
 
+test("MidiNumberFromNote", ()=>{
+    expect(NewNote("C", 4).midiNumber()).toEqual(60)
+    expect(NewNote("G", 9).midiNumber()).toEqual(127)
+    expect(NewNote("C", 6).midiNumber()).toEqual(84)
+    expect(NewNote("F", 4).midiNumber()).toEqual(65)
+    expect(NewNote("A", 0).midiNumber()).toEqual(21)
+})
+
 function nn(note: string, octave: number) {
     return NewNote(note, octave)
 }

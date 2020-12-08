@@ -48,7 +48,7 @@ export class AbstractNote {
             return this.string()
         }
 
-        return NoteOrder[(NoteOrder.indexOf(this)+1)%12].letter + "b"
+        return NoteOrder[(NoteOrder.indexOf(this)+1)%12].letter.toLocaleUpperCase() + "b"
     }
 
     next() {
@@ -130,6 +130,10 @@ export class Note {
         return this.abstract.string() + this.octave
     }
 
+    enharmonicEquivalent() {
+        return this.abstract.enharmonicEquivalent() + this.octave
+    }
+
     equals(note: Note) {
         return this.octave == note.octave && this.abstract.equals(note.abstract)
     }
@@ -164,6 +168,11 @@ export class Note {
             index -= 12
         }
         return new Note(NoteOrder[index], this.octave + octaveDiff)
+    }
+
+    // Opposite of NoteFromMidiNumber
+    midiNumber():number{
+        return (this.octave + 1) * 12 + notelist.indexOf(this.abstract.string())
     }
 }
 
