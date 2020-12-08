@@ -1,49 +1,25 @@
-import { highestPianoNote, lowestPianoNote, Note } from '../../lib/music/theory/notes';
+import type { Note } from '../../lib/music/theory/notes';
 import { NewNote } from '../../lib/music/theory/notes';
 import * as Tone from 'tone'
 import type { TimedNotes } from '../../lib/music/timed/timed';
 import { SoundFont } from './soundfont';
+import { instrumentName } from './generalMidiMapping'
 
-export function NewInstrument(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean) {
-    if (percusive) {
-        return new SoundFont(GeneralMidiInstrumentNumber, name, percusive)
-    }
-    return newPiano(name)
+export function NewInstrument(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean, notes?: Array<Note>):SoundFont {
+    return new SoundFont(GeneralMidiInstrumentNumber, name, percusive, notes)
+}
+
+export function newPiano(name: string){
+    return NewInstrument(0, name, false)
 }
 
 export class InertTrack {
     notes: TimedNotes;
-    instrument: VirtualInstrument;
-    constructor(notes: TimedNotes, instrument: VirtualInstrument) {
+    instrument: Promise<VirtualInstrument>;
+    constructor(notes: TimedNotes, instrument: Promise<VirtualInstrument>) {
         this.notes = notes
         this.instrument = instrument
     }
-}
-
-export function newPiano(name: string):VirtualInstrument{
-    const sampler = new Tone.Sampler({
-        urls: {
-            "C4": "C4.mp3",
-            "D#4": "Ds4.mp3",
-            "F#4": "Fs4.mp3",
-            "A4": "A4.mp3",
-            "C5": "C5.mp3",
-            "D#5": "Ds5.mp3",
-            "F#5": "Fs5.mp3",
-            "A5": "A5.mp3",
-            "C6": "C6.mp3",
-            "D#6": "Ds6.mp3",
-            "F#6": "Fs6.mp3",
-            "A6": "A6.mp3",
-            "C2": "C2.mp3",
-            "D#2": "Ds2.mp3",
-            "F#2": "Fs2.mp3",
-            "A2": "A2.mp3",
-        },
-        release: 1,
-        baseUrl: "https://tonejs.github.io/audio/salamander/",
-    }).toDestination();
-    return new Synth(name, sampler, lowestPianoNote, highestPianoNote)
 }
 
 export interface VirtualInstrument {

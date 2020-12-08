@@ -27,7 +27,6 @@ export function instrumentName(num: number):InstrumentName {
         soundfontName = "acoustic_grand_piano"
     }
 
-    console.log("got instrument name", soundfontName, "from number", num)
     return soundfontName
 }
 

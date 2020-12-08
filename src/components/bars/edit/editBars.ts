@@ -1,4 +1,4 @@
-import { strip } from "../../../lib/util.js"
+import { strip } from "../../../lib/util"
 
 // createBars gives a set of bar lengths given a number of taps starting from a position
 export function createUnevenBars(tapTimes, songLengthInSeconds, anchorPosition) {

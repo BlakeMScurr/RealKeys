@@ -8,19 +8,27 @@ export class SoundFont {
     private instrumentName: string;
     private ac: AudioContext;
     private playingNotes: Map<string, Player>;
-    constructor(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean) {
+    constructor(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean, notes?: Array<Note>) {
         this.volume = 1
         this.instrumentName = name
         this.ac = new AudioContext()
         this.playingNotes = new Map();
 
+        let opts
+        if (notes != undefined) {
+            opts = { notes:  Array.from(new Set(notes.map((note)=>{return note.enharmonicEquivalent()}))) }
+        }
+
+        console.log("opts", opts)
+
         // GeneralMidiInstrumentNumber refers to https://en.wikipedia.org/wiki/General_MIDI#Program_change_events
         if (percusive) {
-            instrument(this.ac, "percussion", {soundfont: "FluidR3_GM"}).then((i)=>{
+            let fontOpts = { soundfont: "FluidR3_GM" }
+            instrument(this.ac, "percussion", { ...opts ...fontOpts}).then((i)=>{
                 this.internalInstrument = i
             })
         } else {
-            instrument(this.ac, instrumentName(GeneralMidiInstrumentNumber)).then((i)=>{
+            instrument(this.ac, instrumentName(GeneralMidiInstrumentNumber), opts).then((i)=>{
                 this.internalInstrument = i
             })
         }
@@ -43,7 +51,7 @@ export class SoundFont {
     }
 
     play(note: Note, duration: number) {
-        if (this.loaded) {
+        if (this.loaded()) {
             if (this.highest().lowerThan(note) || note.lowerThan(this.lowest())) {
                 console.warn("trying to play", note.string(), "which is out of the instrument's range", this.lowest().string(), "-", this.highest().string())
             } else {
@@ -58,7 +66,7 @@ export class SoundFont {
     }
 
     stop(note: Note) {
-        if (this.loaded) {
+        if (this.loaded()) {
             if (this.playingNotes.has(note.string())) {
                 this.playingNotes.get(note.string()).stop(this.ac.currentTime)
                 this.playingNotes.delete(note.string())

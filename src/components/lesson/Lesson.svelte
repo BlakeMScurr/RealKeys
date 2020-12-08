@@ -34,7 +34,6 @@
     } else {
         selectedInstrumentName = tracks.keys().next().value
         selectedNotes = tracks.get(selectedInstrumentName).notes
-        console.log(selectedNotes)
         instrument = tracks.get(selectedInstrumentName).instrument
     }
 

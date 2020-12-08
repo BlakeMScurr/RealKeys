@@ -108,6 +108,10 @@ test('squashingClassicFinalChord', () => {
     )
 })
 
+test('invalidNote', () => {
+    expect(()=>{NewAbstractNote('X')}).toThrow("note X is not a valid note")
+})
+
 test('enharmonicRendering', () => {
     expect(NewAbstractNote("c").enharmonicEquivalent()).toBe("c")
     expect(NewAbstractNote("f").enharmonicEquivalent()).toBe("f")
@@ -203,6 +207,14 @@ test("NoteFromMidiNumber", ()=>{
     expect(NoteFromMidiNumber(84)).toEqual(NewNote("C", 6))
     expect(NoteFromMidiNumber(65)).toEqual(NewNote("F", 4))
     expect(NoteFromMidiNumber(21)).toEqual(NewNote("A", 0))
+})
+
+test("MidiNumberFromNote", ()=>{
+    expect(NewNote("C", 4).midiNumber()).toEqual(60)
+    expect(NewNote("G", 9).midiNumber()).toEqual(127)
+    expect(NewNote("C", 6).midiNumber()).toEqual(84)
+    expect(NewNote("F", 4).midiNumber()).toEqual(65)
+    expect(NewNote("A", 0).midiNumber()).toEqual(21)
 })
 
 function nn(note: string, octave: number) {

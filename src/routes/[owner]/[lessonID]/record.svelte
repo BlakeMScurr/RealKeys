@@ -16,9 +16,8 @@
     import { castBars, castTimedNotes } from '../../../lib/cast';
 
     import PianoRoll from "../../../components/pianoroll/PianoRoll.svelte";
-    import ZoomBars from "../../../components/bars/zoom/ZoomBars.svelte";
     import Spotify from "../../../components/audioplayer/Spotify.svelte";
-import { newPiano } from '../../../components/track/instrument';
+    import { newPiano } from '../../../components/track/instrument';
 
     export let owner;
     export let lessonID;

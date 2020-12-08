@@ -11,6 +11,10 @@ import { Note, NewNote, notesBetween, highestPianoNote, lowestPianoNote } from "
 const minimumNotes = 7 // approximately a 5th
 const defaultStartingNote = NewNote("C", 4) // middle C
 export function range(notes: Array<Note>, upperBound: Note, lowerBound: Note):Array<Note> {
+    if (upperBound.lowerThan(lowerBound)) {
+        throw new Error("lower bound higher than upper bound")
+    }
+
     if (notes.length == 0) {
         notes = [defaultStartingNote]
     }

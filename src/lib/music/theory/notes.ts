@@ -48,7 +48,7 @@ export class AbstractNote {
             return this.string()
         }
 
-        return NoteOrder[(NoteOrder.indexOf(this)+1)%12].letter + "b"
+        return NoteOrder[(NoteOrder.indexOf(this)+1)%12].letter.toLocaleUpperCase() + "b"
     }
 
     next() {
@@ -72,31 +72,22 @@ export class AbstractNote {
     }
 }
 
-export function NewAbstractNote(name: string) {
-    name = name.toLocaleLowerCase()
-    for (var i = 0; i < NoteOrder.length; i++ ) {
-        var note = NoteOrder[i]
-        if (note.string() == name) {
-            return note
-        }
-
-        if (note.enharmonicEquivalent() == name) {
-            return note
-        }
+export function NewAbstractNote(name: string):AbstractNote {
+    let n = name.toLocaleLowerCase()
+    if (noteMap.has(n)) {
+        return NoteOrder[noteMap.get(n)!]
+    } else if (enharmonicNoteMap.has(n)) {
+        return NoteOrder[enharmonicNoteMap.get(n)!]
     }
 
-    // Placeholder note/key
-    // TODO: factor out
-    if (name == "X") {
-        return new AbstractNote("X")
-    }
+    throw new Error("note " + name + " is not a valid note")
 }
 
 export class Note {
     abstract: AbstractNote;
     octave: number;
 
-    // TODO: parseNot function that accepts a nice string
+    // TODO: parseNote function that accepts a nice string
 	constructor(note: AbstractNote, octave: number) {
         this.abstract = note
         this.octave = octave
@@ -139,6 +130,10 @@ export class Note {
         return this.abstract.string() + this.octave
     }
 
+    enharmonicEquivalent() {
+        return this.abstract.enharmonicEquivalent() + this.octave
+    }
+
     equals(note: Note) {
         return this.octave == note.octave && this.abstract.equals(note.abstract)
     }
@@ -174,6 +169,11 @@ export class Note {
         }
         return new Note(NoteOrder[index], this.octave + octaveDiff)
     }
+
+    // Opposite of NoteFromMidiNumber
+    midiNumber():number{
+        return (this.octave + 1) * 12 + notelist.indexOf(this.abstract.string())
+    }
 }
 
 export function NewNote(note: string, octave: number) {
@@ -184,6 +184,10 @@ export function NewNote(note: string, octave: number) {
 // TODO: unexport
 const notelist = ["c","c#","d","d#","e","f","f#","g","g#","a","a#","b"]
 export const NoteOrder = notelist.map((name: string)=>{return new AbstractNote(name)})
+const noteMap:Map<string, number> = new Map(notelist.map((note, i) => [note, i]))
+const enharmonicNoteMap:Map<string, number> = new Map(notelist.map((name, i) => {
+    return [NoteOrder[notelist.indexOf(name)].enharmonicEquivalent().toLocaleLowerCase(), i]
+}))
 
 // gives the ranges of notes between the two given, inclusive
 export function notesBetween(low: Note, high: Note):Array<Note> {
