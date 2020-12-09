@@ -1,4 +1,4 @@
-import { widthSum } from "../../lib/util.js"
+import { widthSum } from "../../lib/util"
 
 
 // TODO: move all of bars.js here

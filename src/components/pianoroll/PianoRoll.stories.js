@@ -1,9 +1,5 @@
 import PianoRoll from "./PianoRoll.svelte"
-import { TimedNote, TimedNotes } from "../../lib/music/timed/timed";
-import { Bars}  from "./pianoroll";
-import { NewNote } from "../../lib/music/theory/notes";
 import { songDuration, seek } from "../../stores/stores"
-import { newPiano } from '../track/instrument'
 
 export default {
   title: 'PianoRoll',

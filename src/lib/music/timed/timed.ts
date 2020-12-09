@@ -131,9 +131,13 @@ export class TimedNote {
         this.note = note;
     }
 }
-
+    
 export class TimedNotes {
     notes: Array<TimedNote>;
+    // records the indices of each note
+    byNotes: Map<string, Array<number>>
+    // records the index of this note by pitch
+    nthNoteOfPitch: Array<number>
     constructor(notes: Array<TimedNote>) {
         // check that the notes are in order
         for (let i = 1; i < notes.length; i++) {
@@ -146,6 +150,9 @@ export class TimedNotes {
             }
         }
 
+        let tmp = generateByNotes(notes) // TODO: is it possible to not have this tmp variable, yet only have a single function that returns byNotes and nthNoteOfPitch?
+        this.byNotes = tmp.byNotes
+        this.nthNoteOfPitch = tmp.nthNoteOfPitch
         this.notes = notes;
     }
 
@@ -190,6 +197,7 @@ export class TimedNotes {
 
     add(note: TimedNote) {
         this.notes.push(note)
+        // TODO: run byNotes here(ish)
     }
 
     sort() {
@@ -215,4 +223,45 @@ export class TimedNotes {
         })
         return map
     }
+
+    nextSame(i: number) {
+        let nthNote = this.nthNoteOfPitch[i]
+        let noteString = this.notes[i].note.string()
+        let arr = this.byNotes.get(noteString)
+        if (i == arr.length - 1) {
+            return
+        }
+        return this.notes[arr[nthNote + 1]]
+    }
+}
+
+function generateByNotes(notes: Array<TimedNote>) {
+    let byNotes = new Map()
+    for (let i = 0; i < notes.length; i++) {
+        const noteStr = notes[i].note.string()
+        if (byNotes.get(noteStr)) {
+            byNotes.set(noteStr, new Array())
+        }
+        byNotes.get(noteStr).push(i)
+    }
+
+    byNotes.forEach((noteList) => {
+        for (let i = 0; i < noteList.length - 1; i++) {
+            const a = notes[noteList[i]];
+            const b = notes[noteList[i + 1]];
+
+            if (a.end < b.start) {
+                throw new Error(`Overlapping notes for pitch ${a.note.string()}: first note is from ${a.start} to ${a.end}, second note is from ${b.start} to ${b.end}`)
+            }
+        }
+    })
+
+    let nthNoteOfPitch = new Array(notes.length)
+    byNotes.forEach((notelist) => {
+        notelist.forEach((noteIndex, i) => {
+            nthNoteOfPitch[i] = noteIndex
+        })
+    })
+
+    return {byNotes: byNotes, nthNoteOfPitch: nthNoteOfPitch}
 }
