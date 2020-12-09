@@ -99,7 +99,7 @@ export class ChordBook {
             if (bassNote != "") {
                 var inversion = -1;
                 newChord.notes.forEach((note, index)=>{
-                    if (note.abstract.string() == bassNote.toLocaleLowerCase() || note.abstract.enharmonicEquivalent() == bassNote.toLocaleLowerCase()) {
+                    if (note.abstract.string() == bassNote.toLocaleLowerCase() || note.abstract.enharmonicEquivalent() == bassNote) {
                         inversion = index
                     }
                 })
