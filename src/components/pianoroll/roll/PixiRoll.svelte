@@ -5,7 +5,7 @@
     import type { Note } from "../../../lib/music/theory/notes";
     import type { TimedNotes } from "../../../lib/music/timed/timed";
     import type { Bars } from "../pianoRollHelpers";
-    import { drawKeys } from "./Pixi";
+    import { drawKeys, drawBarLines, drawNotes } from "./Pixi";
     import { zoomWidth } from './roll.ts'
 
     export let keys:Array<Note>;
@@ -19,9 +19,12 @@
 
     let mountPoint;
     let zw = zoomWidth()
+    console.log(zw)
 
+    let app: PIXI.Application;
+    let foreground: PIXI.Container;
     onMount(()=>{
-        const app = new PIXI.Application();
+        app = new PIXI.Application();
         mountPoint.appendChild(app.view);
 
         if (height !== undefined) {
@@ -30,25 +33,48 @@
 
         app.renderer.view.style.position = "absolute";
         app.renderer.view.style.display = "block";
-        // app.renderer.autoResize = true; // TODO: uncomment and fix type warning
+        app.renderer.autoResize = true;
 
-        const canvasWidth = mountPoint.clientWidth 
-        const canvasHeight = mountPoint.clientHeight 
-        app.renderer.resize(canvasWidth, canvasHeight);
-
-        let keyWidth = canvasWidth / keys.length
-
-        drawKeys(keys, app, keyWidth, canvasHeight)
-        // drawBarLines(bars, app, canvasHeight)
+        app.renderer.resize(mountPoint.clientWidth, mountPoint.clientHeight);
+        let keyWidth = mountPoint.clientWidth / keys.length
+        
+        drawKeys(keys, app.stage, keyWidth, mountPoint.clientHeight)
+        foreground = new PIXI.Container();
+        app.stage.addChild(foreground)
+        transformForeground()
+        drawBarLines(bars, foreground, mountPoint.clientWidth, mountPoint.clientHeight, zw, position)
+        drawNotes(notes, foreground, keys, keyWidth, mountPoint.clientHeight, zw, position)
+        window.addEventListener("resize", ()=>{
+            app.renderer.resize(mountPoint.clientWidth, mountPoint.clientHeight);
+            let keyWidth = mountPoint.clientWidth / keys.length
+            drawKeys(keys, app.stage, keyWidth, mountPoint.clientHeight)
+            transformForeground()
+            drawBarLines(bars, foreground, mountPoint.clientWidth, mountPoint.clientHeight, zw, position)
+            drawNotes(notes, foreground, keys, keyWidth, mountPoint.clientHeight, zw, position)
+        })
     })
+
+    function transformForeground() {
+        if (foreground !== undefined) {
+            foreground.setTransform(0, mountPoint.clientHeight * (position/zw -((1/zw) - 1)), 1, 1 / zw, 0, 0, 0, 0, 0)
+        }
+    }
 </script>
 
 <style>
     div {
         width: 100%;
         height: 100%;
-        background-color: red;
+        background-color: black;
     }
 </style>
 
 <div bind:this={mountPoint}></div>
+
+{#if debugSliders}
+    <input type="range" on:input={transformForeground} bind:value={position} min="0" max="1" step="0.0001">
+    position {position}
+    <br>
+    <input type="range" on:input={transformForeground} bind:value={zw} min="0" max="1" step="0.0001">
+    zoom {zw}
+{/if}
