@@ -62,9 +62,22 @@
     audioReady.ready()
 
     let searchQuery: string;
+    let searchResults: Array<string>;
 
-    function search() {
-        console.log("searching for " + searchQuery)
+    function search(e) {
+        e.stopPropagation()
+        fetch("api/search", {
+                method: "GET",
+                headers: {
+                    'Accept': "application/json",
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ query: searchQuery }),
+            }).then((res) => {
+                return res.json()
+            }).then((json) => {
+                console.log(json)
+            })
     }
 </script>
 <input type="text" on:change={search} bind:value={searchQuery}>
