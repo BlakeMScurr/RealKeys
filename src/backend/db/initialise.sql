@@ -24,3 +24,7 @@ CREATE TABLE IF NOT EXISTS roll (
 );
 
 ALTER SEQUENCE roll_id_seq OWNED BY roll.id;
+
+CREATE TABLE IF NOT EXISTS library {
+   path text NOT NULL
+}

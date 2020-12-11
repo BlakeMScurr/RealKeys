@@ -1,4 +1,6 @@
 import type { TimedNote } from "../../../lib/music/timed/timed";
+import type { Note } from "../../../lib/music/theory/notes";
+import { keyIndex } from './roll'
 
 export const vertexCode = `
 attribute vec2 aVertexPosition;
@@ -91,14 +93,8 @@ class drawer {
     // ROLL SPECIFIC METHODS
     // -------------------------------
 
-    drawNotes(keys, notes: Array<TimedNote>) {
-        let noteToX = new Map();
+    drawNotes(keys: Array<Note>, notes: Array<TimedNote>) {
         let width = 2 / keys.length
-    
-        keys.forEach((key, i) => {
-            noteToX.set(key.string(), width * i - 1)
-        })
-    
         var points = []
         for (let i = 0; i < notes.length; i++) {
             const note = notes[i]
@@ -114,8 +110,8 @@ class drawer {
             //     buffer = 0.1
             // }
 
-
-            let x = noteToX.get(note.note.string())
+            let ind = keyIndex(keys, note.note)
+            let x = width * ind - 1
             let y = note.start * 2 - 1
             let height = (note.end - note.start) * 2
             let sqr = square(x, y, width,  height)

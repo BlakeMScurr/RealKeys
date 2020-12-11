@@ -99,10 +99,6 @@
             draw()
         }
     }
-
-    $: {
-        setTranslate(position)
-    }
 </script>
 
 <style>
