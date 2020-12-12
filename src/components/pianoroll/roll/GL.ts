@@ -1,6 +1,6 @@
 import type { TimedNote } from "../../../lib/music/timed/timed";
 import type { Note } from "../../../lib/music/theory/notes";
-import { keyIndex } from './roll'
+import { keyIndex } from './roll.ts'
 
 export const vertexCode = `
 attribute vec2 aVertexPosition;

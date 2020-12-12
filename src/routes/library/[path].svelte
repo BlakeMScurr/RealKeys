@@ -7,6 +7,7 @@
 </script>
 
 <script lang="ts">
+    import { onMount } from 'svelte';
     import { Midi } from '@tonejs/midi'
     import { NoteFromMidiNumber } from '../../lib/music/theory/notes';
     import { TimedNote, TimedNotes } from '../../lib/music/timed/timed';
@@ -62,25 +63,38 @@
     audioReady.ready()
 
     let searchQuery: string;
-    let searchResults: Array<string>;
+    let searchResults: Array<string> = [];
 
-    function search(e) {
-        e.stopPropagation()
-        fetch("api/search", {
-                method: "GET",
+    // Search as the search query updates
+    let f
+    onMount(()=>{
+        f = fetch
+    })
+
+    $: {
+        search(searchQuery)
+    }
+
+    function search(searchQuery) {
+        if (f !== undefined) {
+            let req = {
+                method: 'get',
                 headers: {
-                    'Accept': "application/json",
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ query: searchQuery }),
-            }).then((res) => {
+            }
+            fetch("api/search?searchQuery=" + searchQuery, req).then((res) => {
                 return res.json()
             }).then((json) => {
-                console.log(json)
+                searchResults = JSON.parse(json).map((item) => {return item.item.path})
             })
+        }
     }
 </script>
-<input type="text" on:change={search} bind:value={searchQuery}>
+<input type="text" bind:value={searchQuery}>
+{#each searchResults as result}
+    <p>{result}</p>
+{/each}
 
 {#await processMidiFile()}
     <h1>Loading</h1>

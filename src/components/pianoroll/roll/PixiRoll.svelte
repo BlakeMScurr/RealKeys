@@ -19,7 +19,6 @@
 
     let mountPoint;
     let zw = zoomWidth()
-    console.log(zw)
 
     let app: PIXI.Application;
     let foreground: PIXI.Container;

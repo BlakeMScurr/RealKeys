@@ -23,7 +23,7 @@ export function drawNotes(notes: TimedNotes, container: PIXI.Container, keys, ke
         container.addChild(noteGraphic)
         noteGraphic.beginFill(niceBlueNum)
         let noteLen = note.end - note.start
-        noteGraphic.drawRect(keyWidth * keyIndex(keys, note.note), (1-note.start - noteLen) * height, keyWidth, noteLen * height)
+        noteGraphic.drawRoundedRect(keyWidth * keyIndex(keys, note.note), (1-note.start - noteLen) * height, keyWidth, noteLen * height, 20)
     })
 }
 
