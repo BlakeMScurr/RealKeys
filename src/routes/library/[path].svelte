@@ -8,13 +8,14 @@
 
 <script lang="ts">
     import { onMount } from 'svelte';
+    import { goto } from '@sapper/app'
     import { Midi } from '@tonejs/midi'
     import { NoteFromMidiNumber } from '../../lib/music/theory/notes';
     import { TimedNote, TimedNotes } from '../../lib/music/timed/timed';
-    import { uniqueKey } from '../../lib/util'
+    import { disableGlobalKeys, enableGlobalKeys, uniqueKey } from '../../lib/util'
     import { Bars } from '../../components/pianoroll/pianoRollHelpers';
     import Lesson from '../../components/lesson/Lesson.svelte'
-    import { audioReady, songDuration } from '../../stores/stores'
+    import { audioReady, playingStore, songDuration } from '../../stores/stores'
     import { InertTrack, NewInstrument } from '../../components/track/instrument';
 
     export let path;
@@ -63,7 +64,7 @@
     audioReady.ready()
 
     let searchQuery: string;
-    let searchResults: Array<string> = [];
+    let searchResults: Array<{path: string, name: string}> = [];
 
     // Search as the search query updates
     let f
@@ -75,28 +76,47 @@
         search(searchQuery)
     }
 
+    let searchTimeout: ReturnType<typeof setTimeout>;
     function search(searchQuery) {
         if (f !== undefined) {
-            let req = {
-                method: 'get',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            }
-            fetch("api/search?searchQuery=" + searchQuery, req).then((res) => {
-                return res.json()
-            }).then((json) => {
-                searchResults = JSON.parse(json).map((item) => {return item.item.path})
-            })
+            clearTimeout(searchTimeout)
+            searchTimeout = setTimeout(()=> {
+                // Delay the search so that we don't hit the server too hard and have to wait too long for the most recent result we're actually interested in
+                // TODO: try cancelling requests per https://stackoverflow.com/questions/31061838/how-do-i-cancel-an-http-fetch-request
+                let req = {
+                    method: 'get',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+                fetch("api/search?searchQuery=" + searchQuery, req).then((res) => {
+                    return res.json()
+                }).then((json) => {
+                    searchResults = JSON.parse(json).map((item) => {return item.item})
+                    console.log("got result for", searchQuery)
+                })
+            }, 200)
         }
     }
+
+    
+    let midiPromise = processMidiFile()
+    function loadNew(newpath) {
+        playingStore.pause()
+        goto("library/" + newpath)
+        path = newpath
+        midiPromise = processMidiFile()
+        searchResults = []
+    }
 </script>
-<input type="text" bind:value={searchQuery}>
+<input type="text" bind:value={searchQuery} on:focus={disableGlobalKeys} on:focusout={enableGlobalKeys}>
 {#each searchResults as result}
-    <p>{result}</p>
+    <div on:click={() => {loadNew(result.path.replace(/\//g, separator))}}> 
+        <p>{result.name}</p>
+    </div>
 {/each}
 
-{#await processMidiFile()}
+{#await midiPromise}
     <h1>Loading</h1>
 {:then lesson}
 <Lesson owner={lesson.artist} lessonID={lesson.lessonID} timesignatures={lesson.timeSignatures} bars={lesson.bars} tracks={lesson.tracks} artist={lesson.artist} spotify_id={""} gl={true}></Lesson>

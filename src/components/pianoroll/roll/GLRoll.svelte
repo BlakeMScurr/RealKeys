@@ -99,6 +99,11 @@
             draw()
         }
     }
+
+    $: {
+        let _ = position
+        setTranslate()
+    }
 </script>
 
 <style>

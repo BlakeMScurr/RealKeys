@@ -7,7 +7,7 @@
     export let timesignatures;
 
     let barLength = 4
-    if (timesignatures != undefined && timesignatures[0] != undefined && timesignatures[0].timeSignature != undefiend && timesignatures[0].timeSignature[1] != undefined) {
+    if (timesignatures != undefined && timesignatures[0] != undefined && timesignatures[0].timeSignature != undefined && timesignatures[0].timeSignature[1] != undefined) {
         barLength = timesignatures[0].timeSignature[1]
     }
 

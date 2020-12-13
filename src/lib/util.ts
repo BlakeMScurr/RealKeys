@@ -90,3 +90,32 @@ function uniqueKeyPriv(m, k, n) {
     return uniqueKeyPriv(m, k, n + 1)
 }
 
+export const midiLocation = "./assets/midi/130000_Pop_Rock_Classical_Videogame_EDM_MIDI_Archive[6_19_15]/"
+
+export function midiPathToName(path: string):string {
+    path = path.substring(path.lastIndexOf("/") + 1)
+    path = path.substring(0, path.indexOf(".mid"))
+    path = path.replace(/_/g, " ")
+    path = path.replace("-", " - ")
+    path = path.replace(/\b\w/g, l => l.toUpperCase()) // capitalise per https://stackoverflow.com/a/38530325
+    return path
+}
+
+let globalKeysEnabled = true
+export function disableGlobalKeys() {
+    globalKeysEnabled = false
+}
+
+export function enableGlobalKeys() {
+    globalKeysEnabled = true
+}
+
+// TODO: find proper type for callback function
+export function addGlobalKeyListener(down: boolean, callback: any) { 
+    const listenFor = down ? "keydown" : "keyup"
+    document.addEventListener(listenFor, (event) => {
+        if (globalKeysEnabled) {
+            callback(event)
+        }
+    })
+}

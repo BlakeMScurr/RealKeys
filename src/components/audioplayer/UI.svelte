@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onDestroy } from "svelte";
+import { addGlobalKeyListener } from "../../lib/util";
     import { position, songDuration, seek, playingStore, audioReady } from "../../stores/stores";
     import Slider from "../generic/Slider.svelte";
 
@@ -64,11 +65,13 @@
         seek.set(event.detail)
     }
 
-    document.addEventListener("keydown", handleKeyDown)
+    addGlobalKeyListener(true, handleKeyDown)
 
     function handleKeyDown(event) {
+        console.log("getting event with code", event.code)
         switch (event.code) {
             case 'Space':
+                console.log("toggling play")
                 togglePlay()
                 break;
             case 'ArrowLeft': // left arrow
