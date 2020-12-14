@@ -119,3 +119,5 @@ export function addGlobalKeyListener(down: boolean, callback: any) {
         }
     })
 }
+
+export const separator = "%2F" // this is an alternative to / that doesn't exist in any of the paths in the midi library and shows up in the url

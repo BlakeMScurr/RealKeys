@@ -7,30 +7,25 @@
 </script>
 
 <script lang="ts">
-    import { onMount } from 'svelte';
     import { goto } from '@sapper/app'
     import { Midi } from '@tonejs/midi'
     import { NoteFromMidiNumber } from '../../lib/music/theory/notes';
     import { TimedNote, TimedNotes } from '../../lib/music/timed/timed';
-    import { disableGlobalKeys, enableGlobalKeys, uniqueKey } from '../../lib/util'
+    import { uniqueKey, midiPathToName } from '../../lib/util'
     import { Bars } from '../../components/pianoroll/pianoRollHelpers';
     import Lesson from '../../components/lesson/Lesson.svelte'
-    import { audioReady, playingStore, songDuration } from '../../stores/stores'
+    import { audioReady, playingStore, songDuration, tracks, seek } from '../../stores/stores'
     import { InertTrack, NewInstrument } from '../../components/track/instrument';
+    import Navbar from '../../components/PageAreas/Navbar.svelte';
 
     export let path;
 
-    const separator = "%2F" // this is an alternative to / that doesn't exist in any of the paths in the midi library and shows up in the url
-
+    let lesson
     async function processMidiFile() {
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
         const midi = await Midi.fromUrl("api/midi?path=" + path)
-        //the file name decoded from the first track
-        let nameparts = midi.name.split("@")
-        let songName = nameparts[0]
-        let artist = ""
-        if (nameparts.length > 1) artist = nameparts[1]
+        let songName = midiPathToName(path)
 
         let duration = midi.duration
         songDuration.set(duration*1000)
@@ -58,68 +53,38 @@
         }
         let bars = new Bars(bs.map(b=>{return b/duration}))
 
-        return {tracks: trackMap, artist: artist, lessonID: songName, bars: bars, timeSignatures: midi.header.timeSignatures}
+        console.log("setting lesson")
+        lesson = {tracks: trackMap, artist: "", lessonID: songName, bars: bars, timeSignatures: midi.header.timeSignatures}
+        return 
     }
 
     audioReady.ready()
 
-    let searchQuery: string;
-    let searchResults: Array<{path: string, name: string}> = [];
-
-    // Search as the search query updates
-    let f
-    onMount(()=>{
-        f = fetch
-    })
-
-    $: {
-        search(searchQuery)
-    }
-
-    let searchTimeout: ReturnType<typeof setTimeout>;
-    function search(searchQuery) {
-        if (f !== undefined) {
-            clearTimeout(searchTimeout)
-            searchTimeout = setTimeout(()=> {
-                // Delay the search so that we don't hit the server too hard and have to wait too long for the most recent result we're actually interested in
-                // TODO: try cancelling requests per https://stackoverflow.com/questions/31061838/how-do-i-cancel-an-http-fetch-request
-                let req = {
-                    method: 'get',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }
-                fetch("api/search?searchQuery=" + searchQuery, req).then((res) => {
-                    return res.json()
-                }).then((json) => {
-                    searchResults = JSON.parse(json).map((item) => {return item.item})
-                    console.log("got result for", searchQuery)
-                })
-            }, 200)
-        }
-    }
-
-    
-    let midiPromise = processMidiFile()
     function loadNew(newpath) {
         playingStore.pause()
+        seek.set(0)
+        tracks.clearAll()
         goto("library/" + newpath)
         path = newpath
         midiPromise = processMidiFile()
-        searchResults = []
+    }
+    
+    let midiPromise = processMidiFile()
+
+    function refreshMessage() {
+        return new Promise(resolve => setTimeout(() => resolve("try refreshing"), 3000));
     }
 </script>
-<input type="text" bind:value={searchQuery} on:focus={disableGlobalKeys} on:focusout={enableGlobalKeys}>
-{#each searchResults as result}
-    <div on:click={() => {loadNew(result.path.replace(/\//g, separator))}}> 
-        <p>{result.name}</p>
-    </div>
-{/each}
+
+<Navbar {loadNew}></Navbar>
 
 {#await midiPromise}
     <h1>Loading</h1>
-{:then lesson}
-<Lesson owner={lesson.artist} lessonID={lesson.lessonID} timesignatures={lesson.timeSignatures} bars={lesson.bars} tracks={lesson.tracks} artist={lesson.artist} spotify_id={""} gl={true}></Lesson>
+    {#await refreshMessage() then message}
+        <p>{message}</p>
+    {/await}
+{:then x}
+    <Lesson owner={lesson.artist} lessonID={lesson.lessonID} timesignatures={lesson.timeSignatures} bars={lesson.bars} tracks={lesson.tracks} artist={lesson.artist} spotify_id={""} gl={true}></Lesson>
 {:catch error}
     <h1>Could not load lesson {console.log(error)}</h1>
 {/await}

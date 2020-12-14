@@ -27,9 +27,11 @@
 
     let clickTrackOn:boolean = true
     let clicker = newClicker("Click Track")
+    const onVolume = 0.000000000000000000001 // why the hell do we need such a low number to have a remotely soft sound? Surely something to do with the logarithms
+    clicker.setVolume(onVolume)
     function clickTrackChange() {
         if (clickTrackOn) {
-            clicker.setVolume(1)
+            clicker.setVolume(onVolume)
         } else {
             clicker.setVolume(0)
         }

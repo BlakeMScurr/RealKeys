@@ -188,6 +188,14 @@ function createTracks() {
                 return currentPlayers
             })
             return t.interface()
+        },
+        clearAll: () => {
+            update((currentPlayers: Array<audioTrack>) => {
+                currentPlayers.forEach((track) => {
+                    track.unlink()
+                })
+                return []
+            })
         }
     }
 }
