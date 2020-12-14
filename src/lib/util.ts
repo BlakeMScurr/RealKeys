@@ -12,22 +12,6 @@ export function pathToAudioFile(ytID) {
     return "./src/backend/db/audioFiles/" + ytID + ".mp3"
 }
 
-export class MockFetcher {
-    constructor(routes) {
-        this.routes = routes
-    }
-
-    async fetch(method, url) {
-        // TODO: use an efficient lookup (who really cares though?)
-        for (let i = 0; i < this.routes.length; i++) {
-            const route = this.routes[i];
-            if (method == route.method && url == route.url) {
-                return route.result
-            }
-        }
-    }
-}
-
 export class Fetcher {
     async fetch(method, url, body) {
         let response = await fetch(url, {
@@ -106,3 +90,34 @@ function uniqueKeyPriv(m, k, n) {
     return uniqueKeyPriv(m, k, n + 1)
 }
 
+export const midiLocation = "./assets/midi/130000_Pop_Rock_Classical_Videogame_EDM_MIDI_Archive[6_19_15]/"
+
+export function midiPathToName(path: string):string {
+    path = path.substring(path.lastIndexOf("/") + 1)
+    path = path.substring(0, path.indexOf(".mid"))
+    path = path.replace(/_/g, " ")
+    path = path.replace("-", " - ")
+    path = path.replace(/\b\w/g, l => l.toUpperCase()) // capitalise per https://stackoverflow.com/a/38530325
+    return path
+}
+
+let globalKeysEnabled = true
+export function disableGlobalKeys() {
+    globalKeysEnabled = false
+}
+
+export function enableGlobalKeys() {
+    globalKeysEnabled = true
+}
+
+// TODO: find proper type for callback function
+export function addGlobalKeyListener(down: boolean, callback: any) { 
+    const listenFor = down ? "keydown" : "keyup"
+    document.addEventListener(listenFor, (event) => {
+        if (globalKeysEnabled) {
+            callback(event)
+        }
+    })
+}
+
+export const separator = "%2F" // this is an alternative to / that doesn't exist in any of the paths in the midi library and shows up in the url

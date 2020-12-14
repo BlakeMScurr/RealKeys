@@ -36,6 +36,7 @@
         font-size: 1.75em;
         display: inline-block;
         color: white;
+        pointer-events: none;
     }
 
     .used {

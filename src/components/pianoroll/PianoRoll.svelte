@@ -1,6 +1,5 @@
 <script lang="ts">
-    import type { Bars } from "./pianoroll";
-    import { range } from "./pianoroll.ts"; // why does it import from pianoroll.svelte if I don't specificy the ts extension?
+    import { range, Bars, pushBottomKey, pushTopKey, popBottomKey, popTopKey } from "./pianoRollHelpers";
     import { RecordState } from "./recorder";
     import { TimedNotes } from "../../lib/music/timed/timed"
     import { currentSong, playingStore, position, songDuration, seek, tracks } from "../../stores/stores"
@@ -9,6 +8,7 @@
     import GLRoll from "./roll/GLRoll.svelte";
     import Piano from "./piano/Piano.svelte";
     import type { VirtualInstrument } from "../track/instrument";
+    import { newPiano } from "../track/instrument";
 
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;
@@ -16,6 +16,7 @@
     export let instrument: VirtualInstrument;
     export let gl:Boolean = false;
 
+    // TODO: track handling at the lesson level
     let state = new Map<string, string>();
     let updatenotes
     let updateInstrument
@@ -41,7 +42,8 @@
         updateInstrument(instrument)
     }
 
-
+    // TODO: allow one to use the same MIDI instrument as the track being played against
+    let piano = newPiano("Player Piano")
 
     let pos = 0;
     position.subscribe((value) => {
@@ -49,12 +51,12 @@
     })
 
     let width = 0;
-    $: keys = range(notes.untime(), instrument.highest(), instrument.lowest())
+    $: keys = range(notes.untime(), piano.highest(), piano.lowest())
     let lastWidth = -1;
     $: {
         if (width == lastWidth) {} else if (width <= 0) {
             setTimeout(() => {
-                keys = range(notes.untime(), instrument.highest(), instrument.lowest())
+                keys = range(notes.untime(), piano.highest(), piano.lowest())
             }, 1000);
         }
         lastWidth = width
@@ -78,22 +80,6 @@
         handleRollWheel(event)
     }
 
-    function pushTopKey() {
-        if (keys[keys.length-1].lowerThan(instrument.highest())) {
-            keys.push(keys[keys.length-1].next())
-            if (keys[keys.length-1].abstract.accidental) {
-                keys.push(keys[keys.length-1].next())
-            }
-        }
-    }
-
-    function popTopKey() {
-        keys.pop()
-        if (keys[keys.length-1].abstract.accidental) {
-            keys.pop()
-        }
-    }
-
     let duration = 5;
     songDuration.subscribe((val)=> {
         duration = val
@@ -108,12 +94,12 @@
     $: {
         // TODO: get some response from the UI as we scroll before we add a new key so the user can see what's going on
         if (dy > zoomDamper) {
-            pushTopKey()
+            pushTopKey(keys, piano)
             keys = keys
             dy = 0
         } else if (dy < -zoomDamper){
             if (keys.length >= 15) { // TODO: make this number depend on the actual view window etc
-                popTopKey()
+                popTopKey(keys)
                 keys = keys
             }
             dy = 0
@@ -126,29 +112,15 @@
     // TODO: put invert into settings somewhere use accessible
     let invert = -1
     $: {
-        if (dx < -shiftDamper) {
-            // add a note to the top
-            pushTopKey()
-            // remove a note from the bottom
-            keys.shift()
-            if (keys[0].abstract.accidental) {
-                keys.shift()
+        if (Math.abs(dx) > shiftDamper) {
+            if (dx < 0 && pushTopKey(keys, piano)) {
+                popBottomKey(keys)
+            } else if (dx > 0 && pushBottomKey(keys, piano)) {
+                popTopKey(keys)
             }
-            keys = keys
             dx = 0
-        } else if (dx > shiftDamper) {
-            if (instrument.lowest().lowerThan(keys[0])) {
-                // remove a note from the top
-                popTopKey()
-                // add a note to the bottom
-                keys.unshift(keys[0].nextLowest())
-                if (keys[0].abstract.accidental) {
-                    keys.unshift(keys[0].nextLowest())
-                }
-                keys = keys
-                dx = 0
-            }
         }
+        keys = keys
     }
 
     // TODO: less jerky dragging
@@ -206,7 +178,7 @@
     })
 
     function noteOff(event) {
-        instrument.stop(event.detail)
+        piano.stop(event.detail)
         if (recordMode) {
             notes = recorder.noteOff(event, pos)
         } else {
@@ -215,7 +187,7 @@
     }
 
     function noteOn(event) {
-        instrument.play(event.detail)
+        piano.play(event.detail)
         if (recordMode) {
             notes = recorder.noteOn(event, pos)
         } else {

@@ -66,6 +66,7 @@
     $thumb-width: 14px !default;
 
     $track-width: 100% !default;
+    // TODO: make the track 1px while still being clickable - just use a canvas!
     $track-height: 3px !default;
 
     $track-radius: 5px !default;

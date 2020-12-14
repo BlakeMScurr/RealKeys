@@ -1,3 +1,7 @@
+import type { TimedNote } from "../../../lib/music/timed/timed";
+import type { Note } from "../../../lib/music/theory/notes";
+import { keyIndex } from './roll.ts'
+
 export const vertexCode = `
 attribute vec2 aVertexPosition;
 uniform vec2 translate;
@@ -89,20 +93,30 @@ class drawer {
     // ROLL SPECIFIC METHODS
     // -------------------------------
 
-    drawNotes(keys, notes) {
-        let noteToX = new Map();
+    drawNotes(keys: Array<Note>, notes: Array<TimedNote>) {
         let width = 2 / keys.length
-    
-        keys.forEach((key, i) => {
-            noteToX.set(key.string(), width * i - 1)
-        })
-    
         var points = []
-        notes.forEach((note) => {
-            let x = noteToX.get(note.note.string())
-            let sqr = square(x, note.start * 2 - 1, width, (note.end - note.start) * 2)
+        for (let i = 0; i < notes.length; i++) {
+            const note = notes[i]
+
+            // buffer at the end of the note if there's another straight after so they can be distinguished from one another
+            // TODO: create a curved note model as per reccomendation at the start of https://webglfundamentals.org/webgl/lessons/webgl-3d-geometry-lathe.html
+            // let buffer = 0
+            // if (i + 1 < notes.length) {
+            //     // TODO: look forward at all notes with an end before or equal to the current start
+            //     console.log(notes[i+1].note.equals(note.note))
+            //     console.log(notes[i+1].note.string())
+            //     console.log(note.note.string())
+            //     buffer = 0.1
+            // }
+
+            let ind = keyIndex(keys, note.note)
+            let x = width * ind - 1
+            let y = note.start * 2 - 1
+            let height = (note.end - note.start) * 2
+            let sqr = square(x, y, width,  height)
             points.push(...sqr)
-        })
+        }
     
         var vertices = new Float32Array(points);
         this.drawTriangles(new glColour(0.3984375, 0.4921875, 0.828125, 1.0), vertices, [0, this.translate], this.zoom)

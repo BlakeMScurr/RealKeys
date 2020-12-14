@@ -1,6 +1,6 @@
 // TODO: get typescript definition and replace all references to "any" type in this file with "Fraction", or whatever the type is
 import Fraction from 'fraction.js';
-
+import type { VirtualInstrument } from "../track/instrument";
 import { Note, NewNote, notesBetween, highestPianoNote, lowestPianoNote } from "../../lib/music/theory/notes";
 
 // gives a range of keys to present a given set of notes
@@ -89,4 +89,43 @@ export class Bars {
         });
         return newBars
     }
+}
+
+// TODO: encapsulate the 4 push/pop methods into a keys class
+export function pushTopKey(keys: Array<Note>, instrument: VirtualInstrument):Boolean {
+    let pushed:Boolean = false
+    if (keys[keys.length-1].lowerThan(instrument.highest())) {
+        keys.push(keys[keys.length-1].next())
+        pushed = true
+        if (keys[keys.length-1].abstract.accidental) {
+            keys.push(keys[keys.length-1].next())
+        }
+    }
+    return pushed
+}
+
+export function popTopKey(keys: Array<Note>) {
+    keys.pop()
+    if (keys[keys.length-1].abstract.accidental) {
+        keys.pop()
+    }
+}
+
+export function popBottomKey(keys: Array<Note>) {
+    keys.shift()
+    if (keys[0].abstract.accidental) {
+        keys.shift()
+    }
+}
+
+export function pushBottomKey(keys: Array<Note>, instrument: VirtualInstrument):Boolean {
+    let pushed:Boolean = false
+    if (instrument.lowest().lowerThan(keys[0])) {
+        keys.unshift(keys[0].nextLowest())
+        pushed = true
+        if (keys[0].abstract.accidental) {
+            keys.unshift(keys[0].nextLowest())
+        }
+    }
+    return pushed
 }

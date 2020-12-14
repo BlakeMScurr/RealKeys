@@ -113,13 +113,13 @@ test('invalidNote', () => {
 })
 
 test('enharmonicRendering', () => {
-    expect(NewAbstractNote("c").enharmonicEquivalent()).toBe("c")
-    expect(NewAbstractNote("f").enharmonicEquivalent()).toBe("f")
-    expect(NewAbstractNote("b").enharmonicEquivalent()).toBe("b")
+    expect(NewAbstractNote("c").enharmonicEquivalent()).toBe("C")
+    expect(NewAbstractNote("f").enharmonicEquivalent()).toBe("F")
+    expect(NewAbstractNote("b").enharmonicEquivalent()).toBe("B")
 
-    expect(NewAbstractNote("c#").enharmonicEquivalent()).toBe("db")
-    expect(NewAbstractNote("f#").enharmonicEquivalent()).toBe("gb")
-    expect(NewAbstractNote("a#").enharmonicEquivalent()).toBe("bb")
+    expect(NewAbstractNote("c#").enharmonicEquivalent()).toBe("Db")
+    expect(NewAbstractNote("f#").enharmonicEquivalent()).toBe("Gb")
+    expect(NewAbstractNote("a#").enharmonicEquivalent()).toBe("Bb")
 
     expect(NewAbstractNote("ab").string()).toBe("g#")
     expect(NewAbstractNote("eb").string()).toBe("d#")

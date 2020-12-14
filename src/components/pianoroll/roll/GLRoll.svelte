@@ -3,7 +3,7 @@
     import type { Note } from "../../../lib/music/theory/notes";
     import { initProgram } from "./GL"
     import { TimedNote, TimedNotes } from "../../../lib/music/timed/timed";
-    import type { Bars } from "../pianoroll";
+    import type { Bars } from "../pianoRollHelpers";
     import { zoomWidth } from './roll.ts'
 
     export let keys:Array<Note>;
@@ -12,13 +12,10 @@
     export let bars:Bars;
     export let notes:TimedNotes;
     export let position = 0;
-    export let zw;
     export let recording = true;
     export let debugSliders = false;
 
-    if (zw === undefined) {
-        zw = zoomWidth()
-    }
+    let zw = zoomWidth()
 
     $: zoomedNotes = notes.notes.map((note) => {
         return new TimedNote(note.start, note.end, note.note)
@@ -104,7 +101,8 @@
     }
 
     $: {
-        setTranslate(position)
+        let _ = position
+        setTranslate()
     }
 </script>
 

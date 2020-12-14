@@ -36,6 +36,7 @@ export class midiTrack {
     windowTimeouts: Array<ReturnType<typeof setTimeout>>;
     playbackInstrument: instrument;
     currentNotes;
+    unlinked: Boolean;
 
     constructor(notes: Array<TimedNote>, playbackInstrument: instrument) {
         this.notes = new TimedNotes(notes)
@@ -46,21 +47,32 @@ export class midiTrack {
         this.playbackInstrument = playbackInstrument
         this.currentNotes = writable(new Map<string, string>())
         this.playing = false
+        this.unlinked = false
     }
 
     // links the track to stores
     link() {
         seek.subscribe((p) => {
-            this.seek(p)
-        })
-
-        playingStore.subscribe((play) => {
-            if (play) {
-                this.play()
-            } else {
-                this.pause()
+            if (!this.unlinked) {
+                this.seek(p)
             }
         })
+    
+        playingStore.subscribe((play) => {
+            if (!this.unlinked) {
+                if (play) {
+                    this.play()
+                } else {
+                    this.pause()
+                }
+            }
+        })
+    }
+
+    unlink() {
+        // Can't relink
+        this.pause()
+        this.unlinked = true
     }
 
     pushTimeout(key, cb, dur) {
@@ -208,8 +220,10 @@ class playbackInterface {
 
 export class audioTrack {
     player: Player;
+    unlinked: Boolean;
     constructor(player: Player) {
         this.player = player
+        this.unlinked = false
     }
 
     // links the track to stores
@@ -219,19 +233,29 @@ export class audioTrack {
         songDuration.set(duration)
 
         seek.subscribe((p) => {
-            let dur;
-            songDuration.subscribe((d) => {
-                dur = d
-            })
-            this.player.Seek(p * dur)
+            if (!this.unlinked) {
+                let dur;
+                songDuration.subscribe((d) => {
+                    dur = d
+                })
+                this.player.Seek(p * dur)
+            }
         })
 
         playingStore.subscribe((play) => {
-            if (play) {
-                this.player.Play()
-            } else {
-                this.player.Pause()
+            // TODO: use a method that won't leave little subscriptions spinning once unlinked
+            if (!this.unlinked) {
+                if (play) {
+                    this.player.Play()
+                } else {
+                    this.player.Pause()
+                }
             }
         })
+    }
+
+    unlink() {
+        this.player.Pause()
+        this.unlinked = true
     }
 }

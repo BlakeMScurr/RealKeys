@@ -2,7 +2,7 @@
     import { createEventDispatcher } from 'svelte';
     import { setWidths, validate, getSeekPixels, getSeekPercentage } from "./bars.js"
     import { getRelativePosition } from "../../lib/dom.js"
-    import { widthSum } from "../../lib/util.js"
+    import { widthSum } from "../../lib/util"
     import { position, repeats, seek } from "../../stores/stores.ts"
     import { onMount } from 'svelte';
     import Bar from "./Bar.svelte"

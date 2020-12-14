@@ -1,5 +1,6 @@
 <script lang="ts">
     import { onDestroy } from "svelte";
+    import { addGlobalKeyListener } from "../../lib/util";
     import { position, songDuration, seek, playingStore, audioReady } from "../../stores/stores";
     import Slider from "../generic/Slider.svelte";
 
@@ -10,6 +11,8 @@
     let duration: number;
     let pos: number;
     let ready: {ready: boolean, reason: string};
+
+    let destroyed = false
 
     songDuration.subscribe((val)=> {
         duration = val
@@ -43,15 +46,25 @@
     playingStore.subscribe((val) => {
         playing = val
     })
+    
+    function currentlyPlaying() {
+        let p
+        playingStore.subscribe((val) => {
+            p = val
+        })
+        return p
+    }
 
     function rewind () {
         seek.set(pos - 1000/duration)
     }
 
     function togglePlay () {
-        if (playing) {
+        if (currentlyPlaying()) {
+            console.log("pausing")
             playingStore.pause()
         } else {
+            console.log("playing")
             playingStore.play()
         }
     }
@@ -64,24 +77,31 @@
         seek.set(event.detail)
     }
 
-    document.addEventListener("keydown", handleKeyDown)
+    addGlobalKeyListener(true, handleKeyDown)
 
     function handleKeyDown(event) {
-        switch (event.code) {
-            case 'Space':
-                togglePlay()
-                break;
-            case 'ArrowLeft': // left arrow
-                rewind()
-                break;
-            case 'ArrowRight': // right arrow
-                fastForward()
-                break;
+        if (!destroyed) {
+            switch (event.code) {
+                case 'Space':
+                    console.log("toggling play")
+                    togglePlay()
+                    break;
+                case 'ArrowLeft': // left arrow
+                    rewind()
+                    break;
+                case 'ArrowRight': // right arrow
+                    fastForward()
+                    break;
+            }
         }
     }
 
     onDestroy(() => {
-        document.removeEventListener("keydown", handleKeyDown, false)
+        // TODO: fix this, it's no longer working s we add the global key listener
+        // document.removeEventListener("keydown", handleKeyDown, false)
+        // TODO: find a cleaner way of doing this
+        destroyed = true
+
     })
 </script>
 
@@ -111,7 +131,7 @@
 
     .block {
         height: 30px;
-        width: 5px;
+        width: 1px;
         background-color: black;
     }
 

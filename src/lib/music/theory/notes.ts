@@ -45,7 +45,7 @@ export class AbstractNote {
 
     enharmonicEquivalent() {
         if (!this.accidental) {
-            return this.string()
+            return this.string().toUpperCase()
         }
 
         return NoteOrder[(NoteOrder.indexOf(this)+1)%12].letter.toLocaleUpperCase() + "b"

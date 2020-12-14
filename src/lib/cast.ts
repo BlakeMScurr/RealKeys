@@ -1,6 +1,6 @@
 import { TimedNote, TimedNotes } from "./music/timed/timed"
 import { NewNote } from "./music/theory/notes"
-import { Bars } from "../components/pianoroll/pianoroll.ts";
+import { Bars } from "../components/pianoroll/pianoRollHelpers.ts";
 
 
 export function castTimedNotes(notes: any) {

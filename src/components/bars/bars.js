@@ -1,4 +1,4 @@
-import { strip } from "../../lib/util.js"
+import { strip } from "../../lib/util"
 
 function count(arr, val) {
     return arr.reduce((acc, curr) => {return curr == val ? acc + 1 : acc}, 0)

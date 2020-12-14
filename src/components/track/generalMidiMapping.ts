@@ -16,9 +16,9 @@ export function instrumentName(num: number):InstrumentName {
     }
 
     // soundfont-player roughly seems to use camel case
-    let soundfontName = wikipediaName.replaceAll(/ /g, "_")
-    soundfontName = soundfontName.replaceAll(/\(/g, "")
-    soundfontName = soundfontName.replaceAll(/\)/g, "")
+    let soundfontName = wikipediaName.replace(/ /g, "_")
+    soundfontName = soundfontName.replace(/\(/g, "")
+    soundfontName = soundfontName.replace(/\)/g, "")
     soundfontName = soundfontName.toLocaleLowerCase()
 
     if (AllowedTypes.indexOf(soundfontName) === -1) {
@@ -27,7 +27,7 @@ export function instrumentName(num: number):InstrumentName {
         soundfontName = "acoustic_grand_piano"
     }
 
-    return soundfontName
+    return <InstrumentName>soundfontName
 }
 
 // From soundfont library's type file

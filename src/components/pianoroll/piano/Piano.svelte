@@ -4,6 +4,7 @@
     import { blackAndGhostBetween, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote, label } from "./piano.ts";
     import WebMidi, { InputEventNoteon, InputEventNoteoff } from "webmidi";
     import Key from "./Key/Key.svelte";
+import { addGlobalKeyListener } from "../../../lib/util";
 
     export let keys:Array<Note>;
     export let usedNotes:Map<String, boolean> = new Map();
@@ -68,12 +69,12 @@
         }
     }
 
-    document.addEventListener('keydown', (event) => {
+    addGlobalKeyListener(true, (event) => {
         mobile = false
         setActive(event.keyCode, true)
     });
     
-    document.addEventListener('keyup', (event) => {
+    addGlobalKeyListener(false, (event) => {
         mobile = false
         setActive(event.keyCode, false)
     });
