@@ -2,7 +2,7 @@
     import { range, Bars, pushBottomKey, pushTopKey, popBottomKey, popTopKey } from "./pianoRollHelpers";
     import { RecordState } from "./recorder";
     import { TimedNotes } from "../../lib/music/timed/timed"
-    import { currentSong, playingStore, position, songDuration, seek, tracks } from "../../stores/stores"
+    import { currentSong, playingStore, position, songDuration, seek, tracks, waitMode } from "../../stores/stores"
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
     import GLRoll from "./roll/GLRoll.svelte";
@@ -187,12 +187,28 @@
         }
     }
 
+    let inWaitMode = false;
+    waitMode.subscribe((val) => {
+        inWaitMode = val
+    })
+
     function noteOn(event) {
         piano.play(event.detail)
         if (recordMode) {
             notes = recorder.noteOn(event, pos)
         } else {
             overlayNotes = recorder.noteOn(event, pos)
+        }
+
+        if (inWaitMode) {
+            let nextNotes = notes.notesFrom(pos, 1)
+            if (nextNotes.length >= 1) {
+                if (nextNotes[0].note.equals(event.detail)) {
+                    if (nextNotes.length >= 2) {
+                        seek.setSlow(nextNotes[1].start)
+                    }
+                }
+            }
         }
     }
 

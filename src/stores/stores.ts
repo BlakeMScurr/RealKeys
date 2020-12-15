@@ -116,6 +116,8 @@ function createSongDuration() {
     }
 }
 
+const frameRate = 40;
+export const frameLength = 1000 / frameRate // length of a frame in milliseconds
 function createSeek() {
     const { subscribe, set } = writable(0);
 
@@ -124,14 +126,42 @@ function createSeek() {
         set: (val: number) => {
             setPosition(val)
             set(val)
+        },
+        setSlow: (val: number) => {
+           let tmppos; // need tmp pos so pos doesn't keep being recalculated
+           position.subscribe((p)=>{
+               tmppos = p
+           })
+           let pos = tmppos
+
+           let duration
+           songDuration.subscribe((d)=>{
+               duration = d
+           })
+
+           let speed
+           speedStore.subscribe((s) => {
+               speed = s
+           })
+
+           let to
+           let diff = val - pos
+           let currDiff = 0
+           to = setInterval(() => {
+               currDiff += frameLength / duration
+               setPosition(pos + currDiff)
+               if (currDiff >= diff) {
+                   clearInterval(to)
+                   setPosition(val)
+                   set(val)
+               }
+           }, frameLength * speed);
         }
     }
 }
 
 // TODO: does this work in the function's scope too? That would be better and more encapsulated
 let playInterval;
-const frameRate = 40;
-export const frameLength = 1000 / frameRate // length of a frame in milliseconds
 function createPlay() {
     const { subscribe, set } = writable(false);
     
