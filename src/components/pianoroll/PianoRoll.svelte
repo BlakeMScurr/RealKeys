@@ -200,6 +200,9 @@
             overlayNotes = recorder.noteOn(event, pos)
         }
 
+        // TODO: handle chords.
+        // i.e., you must have all the relevant notes at the same time before we move on
+        // handle edge cases like if one note is held over, or there's a tiny epsilon discrepency between notes
         if (inWaitMode) {
             let nextNotes = notes.notesFrom(pos, 1)
             if (nextNotes.length >= 1) {
