@@ -2,7 +2,7 @@ import type { Player } from '../components/audioplayer/audioplayer'
 import type { TimedNote } from '../lib/music/timed/timed';
 import { TimedNotes } from '../lib/music/timed/timed';
 import type { instrument } from './instruments';
-import { audioReady, songDuration, seek, playingStore, position, frameLength } from "./stores"
+import { audioReady, songDuration, seek, playingStore, position, speedStore } from "./stores"
 import { writable } from 'svelte/store';
 import { noteLeeway } from "./settings"
 import type { VirtualInstrument } from '../components/track/instrument';
@@ -13,6 +13,14 @@ function duration():number {
         dur = d
     })
     return dur
+}
+
+function speed():number {
+    let speed
+    speedStore.subscribe((s) => {
+        speed = s
+    })
+    return speed
 }
 
 function playing():Boolean {
@@ -92,7 +100,7 @@ export class midiTrack {
         if (width + start <= 1) {
             this.windowTimeouts.push(setTimeout(() => {
                 this.runWindow(start + width, width, dur)
-            }, width * dur))
+            }, width * dur / speed()))
         }
 
         let notes = this.notes.notesFrom(start, start + width)
@@ -103,7 +111,7 @@ export class midiTrack {
 
     triggerNote(note: TimedNote, pos: number) {
         let noteNumbers = new Map<string, number>();
-        let length = (note.end - note.start) * duration()
+        let length = (note.end - note.start) * duration() / speed()
         if (!noteNumbers.has(note.note.string())) {
             noteNumbers.set(note.note.string(), -1)
         }
@@ -150,7 +158,7 @@ export class midiTrack {
         
         // Take actions
         // TODO: handle cases where note is less than or near noteLeeway
-        let firstNote = (note.start - pos) * duration()
+        let firstNote = (note.start - pos) * duration() / speed()
         this.pushTimeout(key, startPlayable,    firstNote - noteLeeway)
         this.pushTimeout(key, playNote,         firstNote)
         this.pushTimeout(key, set("strict"),    firstNote + noteLeeway)

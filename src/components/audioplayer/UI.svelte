@@ -61,10 +61,8 @@
 
     function togglePlay () {
         if (currentlyPlaying()) {
-            console.log("pausing")
             playingStore.pause()
         } else {
-            console.log("playing")
             playingStore.play()
         }
     }
@@ -74,6 +72,7 @@
     }
 
     function handleSliderSeek(event) {
+        playingStore.pause()
         seek.set(event.detail)
     }
 
@@ -83,7 +82,6 @@
         if (!destroyed) {
             switch (event.code) {
                 case 'Space':
-                    console.log("toggling play")
                     togglePlay()
                     break;
                 case 'ArrowLeft': // left arrow
@@ -155,7 +153,7 @@
 
     $play_button_margin: 10px;
     .buttons {
-        width: 88px + 2 * $play_button_margin; // 108 = 31 * 2 + 2 * 10 + 26 = ff + rw + play
+        width: 80px + 2 * $play_button_margin; // 108 = 31 * 2 + 2 * 10 + 26 = ff + rw + play
         margin: 0 auto;
     }
 

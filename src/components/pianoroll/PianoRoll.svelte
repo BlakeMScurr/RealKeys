@@ -65,6 +65,7 @@
     // ROLL ZOOM
     let seekTimeout;
     function handleRollWheel(event) {
+        playingStore.pause()
         event.preventDefault()
         pos -= event.deltaY * 2 / duration
         pos = pos < 0 ? 0 : pos

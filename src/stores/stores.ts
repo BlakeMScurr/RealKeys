@@ -18,6 +18,8 @@ export const playingStore = createPlay();
 export const songDuration = createSongDuration();
 export const audioReady = createAudioReady();
 export const tracks = createTracks();
+export const speedStore = createSpeed();
+export const waitMode = createWaitMode();
 
 // Position refers to how far through the audio we are
 // TODO: replace position binding, prop passing, and event firing with this
@@ -33,6 +35,36 @@ function createPosition() {
             } else {
                 set(val)
             }
+        },
+    }
+}
+
+function createSpeed() {
+    const { subscribe, set } = writable(0);
+
+    return {
+        subscribe,
+		set: (val: number) => {
+            playingStore.pause()
+            if (val < 0 || val > 1) {
+                throw new Error("speeds must be between 0 and 1, got: " + val)
+            } else {
+                set(val)
+            }
+        },
+    }
+}
+
+function createWaitMode() {
+    const { subscribe, set } = writable(false);
+
+    return {
+        subscribe,
+		set: (val: boolean) => {
+            if (val) {
+                playingStore.pause()
+            }
+            set(val)
         },
     }
 }
@@ -106,6 +138,7 @@ function createPlay() {
     return {
         subscribe,
         play: () => {
+            waitMode.set(false)
             let ready;
             audioReady.subscribe((val) => {
                 ready = val.ready
@@ -122,10 +155,15 @@ function createPlay() {
                 songDuration.subscribe((val) => {
                     duration = val
                 })
+
+                let speed;
+                speedStore.subscribe((val) => {
+                    speed = val;
+                })
                 
                 playInterval = setInterval(()=>{
                     let timeNow = Date.now()
-                    let newPosition = pos + (timeNow - timeAtPlayStart)/(duration)
+                    let newPosition = pos + ((timeNow - timeAtPlayStart)/duration) * speed
                     if (newPosition < 1) {
                         setPosition(newPosition)
                         timeAtPlayStart = timeNow // have to update this as pos will vary as it's set

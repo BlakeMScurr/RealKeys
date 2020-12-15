@@ -10,39 +10,12 @@
 
     let dispatch = createEventDispatcher();
 
-    function handleInput(e) {
-        setbackground()
-    }
-
-    // Prevent the screen from being dragged around when we're moving a slider
-    onMount(()=>{
-        document.addEventListener("touchmove", (e)=>{e.stopPropagation();}, {passive: false});
-    })
-
-    let grabbed = false;
-    function grab() {
-        grabbed = true;
-    }
-
-    function release() {
-        grabbed = false;
-        value = val
-        dispatch('input', val)
-    }
-
-    let val = value
-    $: {
-        if (!grabbed) {
-            val = value
-        }
-    }
-    
     function setbackground(){
         // Handles preplay styling a la https://stackoverflow.com/a/57153340/7371580
         // TODO: fix trailing black space behind thumb when fast forwarding by
         // making sure that this uses the correct value when the props are updated
         // TODO: decrease height so it's not taking the whole track, giving the user more space to click
-        let thumbPosition = (val-inputElement.min)/(inputElement.max-inputElement.min)*100
+        let thumbPosition = (value-inputElement.min)/(inputElement.max-inputElement.min)*100
         inputElement.style.background = 'linear-gradient(to right, #667ED4 0%, #667ED4 ' + thumbPosition + '%, #000 ' + thumbPosition + '%, #000 100%)'
     }
     
@@ -50,9 +23,18 @@
     onMount(()=>{
         setbackground()
         mounted = true
+        // Prevent the screen from being dragged around when we're moving a slider
+        document.addEventListener("touchmove", (e)=>{e.stopPropagation();}, {passive: false});
     })
 
-    $: { if (val == val && mounted) {setbackground()} }
+    $: { 
+        let _ = value
+        if (mounted) {setbackground()} 
+    }
+    
+    function handleInput() {
+        dispatch('input', value)
+    }
 </script>
 
 <style lang="scss">
@@ -167,4 +149,4 @@
     }
 </style>
 
-<input type="range" bind:value={val} {min} {max} {step} on:input={handleInput} bind:this={inputElement} on:mousedown={grab} on:touchstart={grab} on:mouseup={release} on:touchend={release}>
+<input type="range" bind:value={value} {min} {max} {step} bind:this={inputElement} on:input={handleInput}>

@@ -113,19 +113,15 @@
 
 <div class="page">
     <div class="optionwrapper">
-        {#if !hideTitle}
-            <div class="nav">
-                <h1>{lessonID}</h1>
-            </div>
-        {/if}
+        <div class="nav">
+            <h1>{lessonID}</h1>
+        </div>
         <div class="line2">
-            {#if !hideTitle}
-                <div class="subtitle">
-                    <h3>{artist}</h3>
-                </div>
-                {#if notes === undefined}
-                    <Dropdown list={tracks} on:select={handleTrackSelection}></Dropdown>
-                {/if}
+            <div class="subtitle">
+                <h3>{artist}</h3>
+            </div>
+            {#if notes === undefined}
+                <Dropdown list={tracks} on:select={handleTrackSelection}></Dropdown>
             {/if}
             <Settings bars={bars} timesignatures={timesignatures}></Settings>
             <div class="settings {hideTitle ? "soloSettings": ""}">
