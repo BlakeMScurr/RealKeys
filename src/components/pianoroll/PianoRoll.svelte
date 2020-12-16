@@ -5,10 +5,11 @@
     import { currentSong, playingStore, position, songDuration, seek, tracks, waitMode } from "../../stores/stores"
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
-    import GLRoll from "./roll/GLRoll.svelte";
     import Piano from "./piano/Piano.svelte";
     import type { VirtualInstrument } from "../track/instrument";
     import { newPiano } from "../track/instrument";
+    import PixiRoll from "./roll/PixiRoll.svelte";
+import GlRoll from "./roll/GLRoll.svelte";
 
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;
@@ -262,7 +263,7 @@
         {#if !gl}
             <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} editable={recordMode} playing={playing}></Roll>
         {:else}
-            <GLRoll {keys} {bars} {notes} {overlayNotes} position={pos} recording={recordMode} editable={recordMode} playing={playing}></GLRoll>
+            <PixiRoll {keys} {bars} {notes} {overlayNotes} position={pos} editable={recordMode} playing={playing}></PixiRoll>
         {/if}
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>

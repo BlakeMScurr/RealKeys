@@ -20,7 +20,7 @@ export function get(request, response) {
                     throw new Error(err)
                 }
                 if (res == undefined) {
-                    console.log(err)
+                    console.warn(err)
                 } else {
                     lesson.notes = res.rows[0]
                     response.send(lesson)

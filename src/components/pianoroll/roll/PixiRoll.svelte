@@ -1,11 +1,9 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import * as PIXI from 'pixi.js';
     
     import type { Note } from "../../../lib/music/theory/notes";
     import type { TimedNotes } from "../../../lib/music/timed/timed";
     import type { Bars } from "../pianoRollHelpers";
-    import { drawKeys, drawBarLines, drawNotes } from "./Pixi";
     import { zoomWidth } from './roll.ts'
 
     export let keys:Array<Note>;
@@ -20,43 +18,72 @@
     let mountPoint;
     let zw = zoomWidth()
 
-    let app: PIXI.Application;
-    let foreground: PIXI.Container;
-    onMount(()=>{
-        app = new PIXI.Application();
+    let app;
+    let foreground;
+    let background;
+    let PIXI	
+    let drawKeys
+    let drawBarLines
+    let drawNotes
+    onMount(async ()=>{
+        PIXI = await import('pixi.js') 		 
+        let helpers = await import('./Pixi')
+        drawKeys = helpers.drawKeys
+        drawBarLines = helpers.drawBarLines
+        drawNotes = helpers.drawNotes
+
+        // TODO: handle dpr so it's crisp on retina displays
+        app = new PIXI.Application({width:  mountPoint.clientWidth, height:  mountPoint.clientHeight});
         mountPoint.appendChild(app.view);
+        console.log(mountPoint.clientHeight, mountPoint.clientWidth)
 
         if (height !== undefined) {
             mountPoint.setAttribute("style","height:" + height + "px");
         }
 
-        app.renderer.view.style.position = "absolute";
-        app.renderer.view.style.display = "block";
-        app.renderer.autoResize = true;
-
-        app.renderer.resize(mountPoint.clientWidth, mountPoint.clientHeight);
-        let keyWidth = mountPoint.clientWidth / keys.length
-        
-        drawKeys(keys, app.stage, keyWidth, mountPoint.clientHeight)
         foreground = new PIXI.Container();
+        background = new PIXI.Container();
+        app.stage.addChild(background)
         app.stage.addChild(foreground)
-        transformForeground()
-        drawBarLines(bars, foreground, mountPoint.clientWidth, mountPoint.clientHeight, zw, position)
-        drawNotes(notes, foreground, keys, keyWidth, mountPoint.clientHeight, zw, position)
+       
+        fullRedraw()
+        app.renderer.resize(mountPoint.clientWidth, mountPoint.clientHeight);
+
         window.addEventListener("resize", ()=>{
             app.renderer.resize(mountPoint.clientWidth, mountPoint.clientHeight);
-            let keyWidth = mountPoint.clientWidth / keys.length
-            drawKeys(keys, app.stage, keyWidth, mountPoint.clientHeight)
-            transformForeground()
-            drawBarLines(bars, foreground, mountPoint.clientWidth, mountPoint.clientHeight, zw, position)
-            drawNotes(notes, foreground, keys, keyWidth, mountPoint.clientHeight, zw, position)
+            fullRedraw()
         })
     })
 
-    function transformForeground() {
-        if (foreground !== undefined) {
-            foreground.setTransform(0, mountPoint.clientHeight * (position/zw -((1/zw) - 1)), 1, 1 / zw, 0, 0, 0, 0, 0)
+    // TODO: parameterise
+    function fullRedraw() {
+        if (app !== undefined) {
+            background.removeChildren()
+            foreground.removeChildren()
+                    
+            let keyWidth = mountPoint.clientWidth / keys.length
+            drawKeys(keys, background, keyWidth, mountPoint.clientHeight)
+            translate(foreground)
+            drawBarLines(bars, foreground, mountPoint.clientWidth, mountPoint.clientHeight, zw)
+            drawNotes(notes, foreground, keys, keyWidth, mountPoint.clientHeight, zw)
         }
+    }
+
+    function translate(foreground: PIXI.Container) {
+        if (foreground !== undefined) {
+            foreground.setTransform(0, mountPoint.clientHeight * position / zw, 1, 1, 0, 0, 0, 0, 0)
+        }
+    }
+
+    $: {
+        let _ = position
+        translate(foreground)
+    }
+
+    $: {
+        let _ = keys
+        let __ = notes
+        fullRedraw()
     }
 </script>
 
@@ -71,9 +98,9 @@
 <div bind:this={mountPoint}></div>
 
 {#if debugSliders}
-    <input type="range" on:input={transformForeground} bind:value={position} min="0" max="1" step="0.0001">
+    <input type="range" on:input={()=>{translate(foreground)}} bind:value={position} min="0" max="1" step="0.0001">
     position {position}
     <br>
-    <input type="range" on:input={transformForeground} bind:value={zw} min="0" max="1" step="0.0001">
+    <input type="range" on:input={fullRedraw} bind:value={zw} min="0" max="1" step="0.0001">
     zoom {zw}
 {/if}

@@ -10,7 +10,6 @@ export function get(request, response) {
             throw new Error(err)
         }
 
-        console.log(res)
         if (res !== undefined) {
             response.send(res.rows)
         }
