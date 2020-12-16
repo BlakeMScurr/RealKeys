@@ -118,12 +118,14 @@ function createSongDuration() {
 
 const frameRate = 40;
 export const frameLength = 1000 / frameRate // length of a frame in milliseconds
+let setSlowInterval;
 function createSeek() {
     const { subscribe, set } = writable(0);
 
     return {
         subscribe,
         set: (val: number) => {
+            clearInterval(setSlowInterval)
             setPosition(val)
             set(val)
         },
@@ -144,18 +146,17 @@ function createSeek() {
                speed = s
            })
 
-           let to
            let diff = val - pos
            let currDiff = 0
-           to = setInterval(() => {
-               currDiff += frameLength / duration
-               setPosition(pos + currDiff)
-               if (currDiff >= diff) {
-                   clearInterval(to)
-                   setPosition(val)
-                   set(val)
-               }
-           }, frameLength * speed);
+           setSlowInterval = setInterval(() => {
+                currDiff += frameLength / duration * speed
+                setPosition(pos + currDiff)
+                if (currDiff >= diff) {
+                    clearInterval(setSlowInterval)
+                    setPosition(val)
+                    set(val)
+                }
+            }, frameLength);
         }
     }
 }

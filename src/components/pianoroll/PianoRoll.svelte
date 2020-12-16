@@ -63,17 +63,13 @@
     }
     
     // ROLL ZOOM
-    let seekTimeout;
     function handleRollWheel(event) {
         playingStore.pause()
         event.preventDefault()
         pos -= event.deltaY * 2 / duration
         pos = pos < 0 ? 0 : pos
         pos = pos > 1 ? 1 : pos
-        clearTimeout(seekTimeout)
-        seekTimeout = setTimeout(()=> {
-            seek.set(pos)
-        }, 200)
+        seek.set(pos)
         // TODO: widen the piano with deltaX
     }
 
