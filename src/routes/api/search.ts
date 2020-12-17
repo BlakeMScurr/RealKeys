@@ -1,4 +1,3 @@
-import { fstat } from 'fs';
 import Fuse from 'fuse.js'
 var walk = require('walk');
 import fs from 'fs'
