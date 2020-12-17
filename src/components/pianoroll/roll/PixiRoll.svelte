@@ -1,6 +1,6 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    
+    import rs from 'css-element-queries/src/ResizeSensor';
     import type { Note } from "../../../lib/music/theory/notes";
     import type { TimedNotes } from "../../../lib/music/timed/timed";
     import type { Bars } from "../pianoRollHelpers";
@@ -32,14 +32,23 @@
         drawBarLines = helpers.drawBarLines
         drawNotes = helpers.drawNotes
 
-        // TODO: handle dpr so it's crisp on retina displays
-        app = new PIXI.Application({width:  mountPoint.clientWidth, height:  mountPoint.clientHeight});
-        mountPoint.appendChild(app.view);
-        console.log(mountPoint.clientHeight, mountPoint.clientWidth)
+        let initialHeight = mountPoint.clientHeight
+        new rs(mountPoint, ()=> {
+            if (mountPoint.clientHeight !== initialHeight) {
+                mountPoint.setAttribute("style","height:" + initialHeight + "px");
+            }
+        })
 
         if (height !== undefined) {
             mountPoint.setAttribute("style","height:" + height + "px");
         }
+
+        // TODO: handle dpr so it's crisp on retina displays
+        app = new PIXI.Application({width:  mountPoint.clientWidth, height: mountPoint.clientHeight});
+        console.log(mountPoint.clientWidth, mountPoint.clientHeight)
+        mountPoint.appendChild(app.view);
+        // TODO: why is the canvas 4 pixels smaller than the mount point?
+
 
         foreground = new PIXI.Container();
         background = new PIXI.Container();
@@ -49,6 +58,7 @@
         fullRedraw()
 
         window.addEventListener("resize", ()=>{
+            app.renderer.resize(mountPoint.clientWidth, mountPoint.clientHeight)
             fullRedraw()
         })
     })
@@ -56,6 +66,7 @@
     // TODO: parameterise
     function fullRedraw() {
         if (app !== undefined) {
+            console.log("fully redrawing")
             background.removeChildren()
             foreground.removeChildren()
                     

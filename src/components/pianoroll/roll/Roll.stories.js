@@ -3,6 +3,10 @@ import { TimedNote, TimedNotes } from "../../../lib/music/timed/timed";
 import { Bars }  from "../pianoRollHelpers";
 import { NewNote, notesBetween } from "../../../lib/music/theory/notes";
 
+export default {
+  title: 'Roll',
+};
+
 export const Pixi = () => {
   return {
     Component: PixiRoll,
