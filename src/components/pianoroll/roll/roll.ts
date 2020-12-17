@@ -1,5 +1,5 @@
+import type { Note } from "../../../lib/music/theory/notes";
 import { songDuration } from "../../../stores/stores";
-import type { Note } from "../../../lib/music/theory/notes"
 
 export function zoomWidth() {
     let zoomLength = 4 * 1000 // length of the zoom window in seconds

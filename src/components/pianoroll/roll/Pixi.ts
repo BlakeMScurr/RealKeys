@@ -3,7 +3,7 @@ import type { Note } from "../../../lib/music/theory/notes";
 import type { TimedNotes } from "../../../lib/music/timed/timed";
 import * as PIXI from 'pixi.js';
 import type { Bars } from "../pianoRollHelpers";
-import { keyIndex } from "./roll.ts";
+import { keyIndex } from './roll'
 
 export function drawBarLines(bars: Bars, container: PIXI.Container, width: number, height: number, zoom: number) {
     let sum = 0;

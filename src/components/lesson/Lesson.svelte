@@ -134,6 +134,6 @@
         </div>
     </div>
     <div class="piano">
-        <PianoRoll bars={bars} notes={selectedNotes} recordMode={false} instrument={instrument} {gl}></PianoRoll>
+        <PianoRoll bars={bars} notes={selectedNotes} recordMode={false} instrument={instrument}></PianoRoll>
     </div>
 </div>

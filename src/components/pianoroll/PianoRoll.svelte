@@ -1,10 +1,7 @@
 <script lang="ts">
     import { range, Bars, pushBottomKey, pushTopKey, popBottomKey, popTopKey } from "./pianoRollHelpers";
-    import { RecordState } from "./recorder";
     import { TimedNotes } from "../../lib/music/timed/timed"
     import { currentSong, playingStore, position, songDuration, seek, tracks, waitMode } from "../../stores/stores"
-    import RecordButton from "../generic/RecordButton.svelte"
-    import Roll from "./roll/Roll.svelte";
     import Piano from "./piano/Piano.svelte";
     import { newPiano } from "../../lib/track/instrument";
     import type { VirtualInstrument } from "../../lib/track/instrument";
@@ -14,7 +11,6 @@
     export let bars:Bars;
     export let recordMode:Boolean = false;
     export let instrument: VirtualInstrument;
-    export let gl:Boolean = false;
 
     // TODO: track handling at the lesson level
     let state = new Map<string, string>();
@@ -147,40 +143,13 @@
         dx += event.deltaX * invert
     }
 
-    // RecordMode stuff
-    // TODO: in play mode, send signals to piano to render success or failure of attempt
-    // - Extra or missed note should make played key red
-    // - Hit note should be green
-    // Have some leeway
-
-    let overlayNotes = new TimedNotes([]);
-
-    let recorder;
-    if (recordMode) {
-        recorder = new RecordState(notes)
-    } else {
-        recorder = new RecordState(overlayNotes)
-    }
-
     let playing = false
     playingStore.subscribe((p: boolean)=>{
         playing = p
-        if (!recordMode) {
-            if (p) {
-                startRecording()
-            } else {
-                stopRecording()
-            }
-        }
     })
 
     function noteOff(event) {
         piano.stop(event.detail)
-        if (recordMode) {
-            notes = recorder.noteOff(event, pos)
-        } else {
-            overlayNotes = recorder.noteOff(event, pos)
-        }
     }
 
     let inWaitMode = false;
@@ -190,11 +159,6 @@
 
     function noteOn(event) {
         piano.play(event.detail)
-        if (recordMode) {
-            notes = recorder.noteOn(event, pos)
-        } else {
-            overlayNotes = recorder.noteOn(event, pos)
-        }
 
         // TODO: handle chords.
         // i.e., you must have all the relevant notes at the same time before we move on
@@ -208,24 +172,6 @@
                     }
                 }
             }
-        }
-    }
-
-    function startRecording() {
-        if (recordMode) {
-            notes = recorder.startRecording(pos)
-        } else {
-            overlayNotes = recorder.startRecording(pos)
-        }
-    }
-
-    function stopRecording() {
-        if (recordMode) {
-            notes = recorder.stopRecording(pos, true)
-            currentSong.set(notes)
-        } else {
-            overlayNotes = recorder.stopRecording(pos, true)
-            currentSong.set(overlayNotes)
         }
     }
 </script>
@@ -253,17 +199,9 @@
     }
 </style>
 
-{#if recordMode}
-    <RecordButton on:startRecording={startRecording} on:stopRecording={stopRecording}></RecordButton>
-{/if}
-
 <div id="pianoroll" bind:clientWidth={width}>
     <div class="container roll" on:wheel={handleRollWheel} on:touchmove={handleTouchMove}>
-        {#if !gl}
-            <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} editable={recordMode} playing={playing}></Roll>
-        {:else}
-            <PixiRoll {keys} {bars} {notes} {overlayNotes} position={pos} editable={recordMode} playing={playing}></PixiRoll>
-        {/if}
+        <PixiRoll {keys} {bars} {notes} position={pos}></PixiRoll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
     <Piano {keys} lessonNotes={state} {playing} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untimeRemoveDupes()}></Piano>

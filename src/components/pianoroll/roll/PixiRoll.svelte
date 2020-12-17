@@ -4,7 +4,7 @@
     import type { Note } from "../../../lib/music/theory/notes";
     import type { TimedNotes } from "../../../lib/music/timed/timed";
     import type { Bars } from "../pianoRollHelpers";
-    import { zoomWidth } from './roll.ts'
+    import { zoomWidth } from './roll'
 
     export let keys:Array<Note>;
     export let height:number;
