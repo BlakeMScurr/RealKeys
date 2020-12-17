@@ -5,8 +5,8 @@
     import PianoRoll from "../pianoroll/PianoRoll.svelte";
     import Settings from "../settings/Settings.svelte";
     import Dropdown from '../generic/dropdown/Dropdown.svelte';
-    import { SoundFont } from '../track/soundfont';
-    import type { InertTrack } from '../track/instrument';
+    import { SoundFont } from '../../lib/track/soundfont';
+    import type { InertTrack } from '../../lib/track/instrument';
 
     export let owner;
     export let lessonID;

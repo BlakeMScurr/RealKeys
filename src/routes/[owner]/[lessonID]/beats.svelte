@@ -15,10 +15,9 @@
     import Spotify from '../../../components/audioplayer/Spotify.svelte';
     import Settings from '../../../components/settings/Settings.svelte';
     import PianoRoll from '../../../components/pianoroll/PianoRoll.svelte';
-    import { NewNote } from "../../../lib/music/theory/notes"
     import { TimedNote, TimedNotes } from "../../../lib/music/timed/timed";
     import { songDuration } from '../../../stores/stores';
-    import { lowClick, newClicker } from "../../../components/track/instrument"
+    import { lowClick, newClicker } from "../../../lib/track/instrument"
 
     export let owner;
     export let lessonID;

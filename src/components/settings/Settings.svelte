@@ -1,6 +1,6 @@
 <script lang="ts">
     import { playingStore, speedStore, tracks, waitMode } from "../../stores/stores"
-    import { highClick, lowClick, newClicker } from "../track/instrument"
+    import { highClick, lowClick, newClicker } from "../../lib/track/instrument"
     import { TimedNote, TimedNotes } from "../../lib/music/timed/timed";
 import Slider from "../generic/Slider.svelte";
 

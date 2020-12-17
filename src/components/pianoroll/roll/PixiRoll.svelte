@@ -47,10 +47,8 @@
         app.stage.addChild(foreground)
        
         fullRedraw()
-        app.renderer.resize(mountPoint.clientWidth, mountPoint.clientHeight);
 
         window.addEventListener("resize", ()=>{
-            app.renderer.resize(mountPoint.clientWidth, mountPoint.clientHeight);
             fullRedraw()
         })
     })

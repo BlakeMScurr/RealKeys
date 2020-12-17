@@ -1,6 +1,5 @@
-import type { instrument } from './instruments';
 import { writable } from 'svelte/store';
-import type { Player } from '../components/audioplayer/audioplayer'
+import type { Player, VirtualInstrument } from '../lib/track/instrument'
 import { NewNote } from '../lib/music/theory/notes';
 import { TimedNote, TimedNotes } from '../lib/music/timed/timed';
 import { midiTrack, audioTrack } from "./track";
@@ -62,7 +61,10 @@ function createWaitMode() {
         subscribe,
 		set: (val: boolean) => {
             if (val) {
+                tracks.muteAll()
                 playingStore.pause()
+            } else {
+                tracks.unmuteAll()
             }
             set(val)
         },
@@ -118,45 +120,32 @@ function createSongDuration() {
 
 const frameRate = 40;
 export const frameLength = 1000 / frameRate // length of a frame in milliseconds
-let setSlowInterval;
+let slto;
 function createSeek() {
     const { subscribe, set } = writable(0);
 
     return {
         subscribe,
         set: (val: number) => {
-            clearInterval(setSlowInterval)
             setPosition(val)
             set(val)
         },
         setSlow: (val: number) => {
-           let tmppos; // need tmp pos so pos doesn't keep being recalculated
-           position.subscribe((p)=>{
-               tmppos = p
+           let diff;
+           position.subscribe((pos)=>{
+               diff = val - pos
            })
-           let pos = tmppos
+           let durr;
+            songDuration.subscribe((d) => {
+                durr = d
+            })
 
-           let duration
-           songDuration.subscribe((d)=>{
-               duration = d
-           })
-
-           let speed
-           speedStore.subscribe((s) => {
-               speed = s
-           })
-
-           let diff = val - pos
-           let currDiff = 0
-           setSlowInterval = setInterval(() => {
-                currDiff += frameLength / duration * speed
-                setPosition(pos + currDiff)
-                if (currDiff >= diff) {
-                    clearInterval(setSlowInterval)
-                    setPosition(val)
-                    set(val)
-                }
-            }, frameLength);
+           playingStore.play(true)
+           clearTimeout(slto)
+           slto = setTimeout(()=> {
+               playingStore.pause()
+               set(val)
+            }, diff * durr)
         }
     }
 }
@@ -168,13 +157,21 @@ function createPlay() {
     
     return {
         subscribe,
-        play: () => {
-            waitMode.set(false)
+        play: (inwait: boolean = false) => {
+            if (!inwait) {
+                waitMode.set(false)
+            }
+
+            let alreadyPlaying;
+            subscribe((val) => {
+                alreadyPlaying = val
+            })
+
             let ready;
             audioReady.subscribe((val) => {
                 ready = val.ready
             })
-            if (ready) {
+            if (ready && !alreadyPlaying) {
                 set(true)
                 
                 let timeAtPlayStart = Date.now()
@@ -232,38 +229,38 @@ function createAudioReady() {
 
 let mainTrackSet = false
 function createTracks() {
-    const { subscribe, update } = writable(new Array<audioTrack>());
-
+    const { subscribe, update } = writable(new Array<midiTrack>());
     return {
         subscribe,
-        new: (player: Player) => {
-            if (!mainTrackSet) {
-                update((currentPlayers: Array<audioTrack>) => {
-                    let t = new audioTrack(player)
-                    t.link()
-                    currentPlayers.push(t)
-                    return currentPlayers
-                })
-                mainTrackSet = true
-            } else {
-                console.warn("main track already set") // the main track is generally a spotify track, or something to play along to, hence only allowing one
-            }
-        },
-        newPlaybackTrack: (notes: Array<TimedNote>, playbackInstrument: instrument) => {
+        newPlaybackTrack: (notes: Array<TimedNote>, playbackInstrument: VirtualInstrument) => {
             let t = new midiTrack(notes, playbackInstrument)
             t.link()
-            update((currentPlayers: Array<audioTrack>) => {
+            update((currentPlayers: Array<midiTrack>) => {
                 currentPlayers.push(t)
                 return currentPlayers
             })
             return t.interface()
         },
         clearAll: () => {
-            update((currentPlayers: Array<audioTrack>) => {
+            update((currentPlayers: Array<midiTrack>) => {
                 currentPlayers.forEach((track) => {
                     track.unlink()
                 })
                 return []
+            })
+        },
+        muteAll: () => {
+            subscribe((currentPlayers: Array<midiTrack>) => {
+                currentPlayers.forEach((track) => {
+                    track.playbackInstrument.setVolume(0)
+                })
+            })
+        },
+        unmuteAll: () => {
+            subscribe((currentPlayers: Array<midiTrack>) => {
+                currentPlayers.forEach((track) => {
+                    track.playbackInstrument.setVolume(1)
+                })
             })
         }
     }

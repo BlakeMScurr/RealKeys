@@ -1,11 +1,8 @@
-import type { Player } from '../components/audioplayer/audioplayer'
+import type { Player, VirtualInstrument } from '../lib/track/instrument'
 import type { TimedNote } from '../lib/music/timed/timed';
 import { TimedNotes } from '../lib/music/timed/timed';
-import type { instrument } from './instruments';
 import { audioReady, songDuration, seek, playingStore, position, speedStore } from "./stores"
 import { writable } from 'svelte/store';
-import { noteLeeway } from "./settings"
-import type { VirtualInstrument } from '../components/track/instrument';
 
 function duration():number {
     let dur;
@@ -42,11 +39,11 @@ export class midiTrack {
     // TODO: test whether it's actually necessary
     noteTimeouts: Map<string, Array<ReturnType<typeof setTimeout>>>;
     windowTimeouts: Array<ReturnType<typeof setTimeout>>;
-    playbackInstrument: instrument;
+    playbackInstrument: VirtualInstrument;
     currentNotes;
     unlinked: Boolean;
 
-    constructor(notes: Array<TimedNote>, playbackInstrument: instrument) {
+    constructor(notes: Array<TimedNote>, playbackInstrument: VirtualInstrument) {
         this.notes = new TimedNotes(notes)
         this.currentPosition = 0;
         this.noteTimeouts = new Map();
@@ -158,6 +155,7 @@ export class midiTrack {
         
         // Take actions
         // TODO: handle cases where note is less than or near noteLeeway
+        const noteLeeway = 100
         let firstNote = (note.start - pos) * duration() / speed()
         this.pushTimeout(key, startPlayable,    firstNote - noteLeeway)
         this.pushTimeout(key, playNote,         firstNote)

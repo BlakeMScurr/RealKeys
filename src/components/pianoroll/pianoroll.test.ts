@@ -1,7 +1,7 @@
 import { highestPianoNote, lowestPianoNote, NewNote, notesBetween } from "../../lib/music/theory/notes";
 import { Bars, popBottomKey, pushBottomKey, pushTopKey, range } from "./pianoRollHelpers"
 import type { Note } from "../../lib/music/theory/notes"
-import { MockInstrument } from "../track/instrument";
+import { MockInstrument } from "../../lib/track/instrument";
 var Fraction = require('fraction.js');
 
 function fifthBars():Bars {

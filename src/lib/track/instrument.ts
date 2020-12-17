@@ -1,8 +1,17 @@
-import { highestPianoNote, lowestPianoNote, Note } from '../../lib/music/theory/notes';
-import { NewNote } from '../../lib/music/theory/notes';
+import { highestPianoNote, lowestPianoNote, Note } from '../music/theory/notes';
+import { NewNote } from '../music/theory/notes';
 import * as Tone from 'tone'
-import type { TimedNotes } from '../../lib/music/timed/timed';
+import type { TimedNotes } from '../music/timed/timed';
 import { SoundFont } from './soundfont';
+
+export interface Player {
+    Seek(time: number);
+    CurrentTime():number;
+    Pause();
+    Play();
+    Duration():number;
+    Volume(volume: number);
+}
 
 export function NewInstrument(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean, notes?: Array<Note>):SoundFont {
     return new SoundFont(GeneralMidiInstrumentNumber, name, percusive, notes)

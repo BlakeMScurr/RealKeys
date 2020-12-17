@@ -6,10 +6,9 @@
     import RecordButton from "../generic/RecordButton.svelte"
     import Roll from "./roll/Roll.svelte";
     import Piano from "./piano/Piano.svelte";
-    import type { VirtualInstrument } from "../track/instrument";
-    import { newPiano } from "../track/instrument";
+    import { newPiano } from "../../lib/track/instrument";
+    import type { VirtualInstrument } from "../../lib/track/instrument";
     import PixiRoll from "./roll/PixiRoll.svelte";
-import GlRoll from "./roll/GLRoll.svelte";
 
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;

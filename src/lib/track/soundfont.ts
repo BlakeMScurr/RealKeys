@@ -1,5 +1,5 @@
 import { instrument, Player, InstrumentName } from 'soundfont-player';
-import { highestPianoNote, lowestPianoNote, Note } from '../../lib/music/theory/notes'
+import { highestPianoNote, lowestPianoNote, Note } from '../music/theory/notes'
 import { instrumentName } from './generalMidiMapping'
 
 export class SoundFont {

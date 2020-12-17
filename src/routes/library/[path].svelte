@@ -15,7 +15,7 @@
     import { Bars } from '../../components/pianoroll/pianoRollHelpers';
     import Lesson from '../../components/lesson/Lesson.svelte'
     import { audioReady, playingStore, songDuration, tracks, seek } from '../../stores/stores'
-    import { InertTrack, NewInstrument } from '../../components/track/instrument';
+    import { InertTrack, NewInstrument } from '../../lib/track/instrument';
     import Navbar from '../../components/PageAreas/Navbar.svelte';
 
     export let path;

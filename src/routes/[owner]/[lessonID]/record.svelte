@@ -17,7 +17,7 @@
 
     import PianoRoll from "../../../components/pianoroll/PianoRoll.svelte";
     import Spotify from "../../../components/audioplayer/Spotify.svelte";
-    import { newPiano } from '../../../components/track/instrument';
+    import { newPiano } from '../../../lib/track/instrument';
 
     export let owner;
     export let lessonID;
