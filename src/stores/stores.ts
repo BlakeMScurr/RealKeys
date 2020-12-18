@@ -1,8 +1,8 @@
 import { writable } from 'svelte/store';
-import type { Player, VirtualInstrument } from '../lib/track/instrument'
+import type { VirtualInstrument } from '../lib/track/instrument'
 import { NewNote } from '../lib/music/theory/notes';
 import { TimedNote, TimedNotes } from '../lib/music/timed/timed';
-import { midiTrack, audioTrack } from "./track";
+import { midiTrack } from "./track";
 
 // Position set is only accessible via seek and play
 const { subscribe, set } = createPosition();
@@ -227,7 +227,6 @@ function createAudioReady() {
 }
 
 
-let mainTrackSet = false
 function createTracks() {
     const { subscribe, update } = writable(new Array<midiTrack>());
     return {
@@ -235,11 +234,13 @@ function createTracks() {
         newPlaybackTrack: (notes: Array<TimedNote>, playbackInstrument: VirtualInstrument) => {
             let t = new midiTrack(notes, playbackInstrument)
             t.link()
+            let index = -1;
             update((currentPlayers: Array<midiTrack>) => {
+                index = currentPlayers.length
                 currentPlayers.push(t)
                 return currentPlayers
             })
-            return t.interface()
+            return { playback: t.interface(), index: index}
         },
         clearAll: () => {
             update((currentPlayers: Array<midiTrack>) => {

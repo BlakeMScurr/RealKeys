@@ -5,38 +5,23 @@
     import Piano from "./piano/Piano.svelte";
     import { newPiano } from "../../lib/track/instrument";
     import type { VirtualInstrument } from "../../lib/track/instrument";
-    import PixiRoll from "./roll/PixiRoll.svelte";
+    import Roll from "./roll/Roll.svelte";
 
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;
-    export let recordMode:Boolean = false;
-    export let instrument: VirtualInstrument;
 
     // TODO: track handling at the lesson level
     let state = new Map<string, string>();
-    let updatenotes
-    let updateInstrument
-    if (!recordMode) {
-        let playbackinterface = tracks.newPlaybackTrack(notes.notes, instrument)
-        playbackinterface.subscribeToNotes((notes: Map<string, string>)=>{
-            // TODO: only bother sending the strings
-            state = new Map<string, string>();
-            notes.forEach((noteState, noteName: string)=>{
-                state.set(noteName, noteState)
-            })
-            state = state
-        })
-        updatenotes = (notes)=>{playbackinterface.updateNotes(notes)}
-        updateInstrument = (instrument) => {playbackinterface.updateInstrument(instrument)}
-    }
+    // let playbackinterface = tracks.newPlaybackTrack(notes.notes, instrument)
+    // playbackinterface.subscribeToNotes((notes: Map<string, string>)=>{
+    //     // TODO: only bother sending the strings
+    //     state = new Map<string, string>();
+    //     notes.forEach((noteState, noteName: string)=>{
+    //         state.set(noteName, noteState)
+    //     })
+    //     state = state
+    // })
 
-    $: {
-        updatenotes(notes)
-    }
-
-    $: {
-        updateInstrument(instrument)
-    }
 
     // TODO: allow one to use the same MIDI instrument as the track being played against
     let piano = newPiano("Player Piano")
@@ -168,6 +153,7 @@
             if (nextNotes.length >= 1) {
                 if (nextNotes[0].note.equals(event.detail)) {
                     if (nextNotes.length >= 2) {
+                        console.log("slowly seeking", nextNotes[1], "leaving note", nextNotes[0])
                         seek.setSlow(nextNotes[1].start)
                     }
                 }
@@ -201,9 +187,9 @@
 
 <div id="pianoroll" bind:clientWidth={width}>
     <div class="container roll" on:wheel={handleRollWheel} on:touchmove={handleTouchMove}>
-        <PixiRoll {keys} {bars} {notes} position={pos}></PixiRoll>
+        <Roll {keys} {bars} {notes} position={pos}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
-    <Piano {keys} lessonNotes={state} {playing} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untimeRemoveDupes()}></Piano>
+    <Piano {keys} lessonNotes={state} {playing} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={notes.untimeRemoveDupes()}></Piano>
     </div>
 </div>

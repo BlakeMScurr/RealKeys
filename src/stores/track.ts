@@ -208,20 +208,6 @@ class playbackInterface {
             callback(notes)
         })
     }
-
-    updateNotes(notes: TimedNotes) {
-        if (playing()) {
-            this.track.pause()
-            this.track.notes = notes
-            this.track.play()
-        } else {
-            this.track.notes = notes
-        }
-    }
-
-    updateInstrument(instrument: VirtualInstrument) {
-        this.track.playbackInstrument = instrument
-    }
 }
 
 export class audioTrack {

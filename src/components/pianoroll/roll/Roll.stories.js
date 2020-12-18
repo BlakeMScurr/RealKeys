@@ -1,4 +1,4 @@
-import PixiRoll from './PixiRoll.svelte';
+import Roll from './Roll.svelte';
 import { TimedNote, TimedNotes } from "../../../lib/music/timed/timed";
 import { Bars }  from "../pianoRollHelpers";
 import { NewNote, notesBetween } from "../../../lib/music/theory/notes";
@@ -9,7 +9,7 @@ export default {
 
 export const Pixi = () => {
   return {
-    Component: PixiRoll,
+    Component: Roll,
     props: {
       debugSliders: true,
       position: 0,

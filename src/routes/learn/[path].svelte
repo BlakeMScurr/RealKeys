@@ -16,7 +16,7 @@
     import Lesson from '../../components/lesson/Lesson.svelte'
     import { audioReady, playingStore, songDuration, tracks, seek } from '../../stores/stores'
     import { InertTrack, NewInstrument } from '../../lib/track/instrument';
-    import Navbar from '../../components/PageAreas/Navbar.svelte';
+    import Navbar from '../../components/Navbar/Navbar.svelte';
 
     export let path;
 
@@ -54,7 +54,7 @@
         let bars = new Bars(bs.map(b=>{return b/duration}))
 
         console.log("setting lesson")
-        lesson = {tracks: trackMap, artist: "", lessonID: songName, bars: bars, timeSignatures: midi.header.timeSignatures}
+        lesson = {tracks: trackMap, lessonID: songName, bars: bars, timeSignatures: midi.header.timeSignatures}
         return 
     }
 
@@ -84,7 +84,7 @@
         <p>{message}</p>
     {/await}
 {:then x}
-    <Lesson owner={lesson.artist} lessonID={lesson.lessonID} timesignatures={lesson.timeSignatures} bars={lesson.bars} tracks={lesson.tracks} artist={lesson.artist} spotify_id={""} gl={true}></Lesson>
+    <Lesson owner={lesson.artist} lessonID={lesson.lessonID} timesignatures={lesson.timeSignatures} bars={lesson.bars} tracks={lesson.tracks}></Lesson>
 {:catch error}
     <h1>Could not load lesson {console.log(error)}</h1>
 {/await}

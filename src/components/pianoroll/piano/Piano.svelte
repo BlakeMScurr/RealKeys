@@ -4,7 +4,7 @@
     import { blackAndGhostBetween, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote, label } from "./piano.ts";
     import WebMidi, { InputEventNoteon, InputEventNoteoff } from "webmidi";
     import Key from "./Key/Key.svelte";
-import { addGlobalKeyListener } from "../../../lib/util";
+    import { addGlobalKeyListener } from "../../../lib/util";
 
     export let keys:Array<Note>;
     export let usedNotes:Map<String, boolean> = new Map();

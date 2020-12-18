@@ -4,9 +4,6 @@ import { songDuration, seek } from "../../stores/stores"
 export default {
   title: 'PianoRoll',
   component: PianoRoll,
-  argTypes: {
-    recordMode: { control: 'boolean' },
-  },
 };
 
 // TODO: fix these, which broke when we updated to storybook 6.1.1

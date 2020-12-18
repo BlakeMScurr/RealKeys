@@ -1,47 +1,28 @@
 <script lang="ts">
-    import Spotify from "../audioplayer/Spotify.svelte"
-    import { playingStore } from "../../stores/stores"
+    import { playingStore, tracks } from "../../stores/stores"
     import UI from "../audioplayer/UI.svelte"
     import PianoRoll from "../pianoroll/PianoRoll.svelte";
     import Settings from "../settings/Settings.svelte";
-    import Dropdown from '../generic/dropdown/Dropdown.svelte';
-    import { SoundFont } from '../../lib/track/soundfont';
+    import Dropdown from '../dropdown/Dropdown.svelte';
     import type { InertTrack } from '../../lib/track/instrument';
 
     export let owner;
     export let lessonID;
-    export let tracks: Map<string, InertTrack>;
+    export let inertTracks: Map<string, InertTrack>;
     export let bars;
-    export let artist;
-    export let spotify_id;
     export let timesignatures;
-    export let gl:Boolean = false;
-    // deprecated
-    export let notes;
 
     let playing;
     playingStore.subscribe((val) => {
         playing = val;
     })
 
-    let selectedNotes;
-    let selectedInstrumentName;
-    let instrument
-    if (notes !== undefined) {
-        selectedNotes = notes
-        selectedInstrumentName = "acoustic_grand_piano"
-        instrument = new SoundFont(0, "Default Piano Player", false)
-    } else {
-        selectedInstrumentName = tracks.keys().next().value
-        selectedNotes = tracks.get(selectedInstrumentName).notes
-        instrument = tracks.get(selectedInstrumentName).instrument
-    }
-
-    $: hideTitle = playing && window.innerHeight <= 400
+    tracks.enable(inertTracks.keys().next().value);
+    let selectedNotes = tracks.enabledNotes();
 
     function handleTrackSelection(e) {
-        selectedNotes = e.detail.value.notes
-        instrument = e.detail.value.instrument
+        tracks.enable(e.detail.key);
+        selectedNotes = tracks.enabledNotes();
     }
 </script>
 
@@ -93,11 +74,6 @@
                 padding-right: $margins;
                 margin-left: auto;
             }
-
-            .soloSettings {
-                padding-top: 6px;
-                padding-bottom: 4px;
-            }
         }
     }
 
@@ -117,23 +93,15 @@
             <h1>{lessonID}</h1>
         </div>
         <div class="line2">
-            <div class="subtitle">
-                <h3>{artist}</h3>
-            </div>
-            {#if notes === undefined}
-                <Dropdown list={tracks} on:select={handleTrackSelection}></Dropdown>
-            {/if}
+            <!-- TODO: only pass the keys into the dropdown -->
+            <Dropdown list={tracks} on:select={handleTrackSelection}></Dropdown>
             <Settings bars={bars} timesignatures={timesignatures}></Settings>
-            <div class="settings {hideTitle ? "soloSettings": ""}">
-                {#if spotify_id !== ""}
-                    <Spotify track={spotify_id}></Spotify>
-                {:else}
-                    <UI></UI>
-                {/if}
+            <div class="settings">
+                <UI></UI>
             </div>
         </div>
     </div>
     <div class="piano">
-        <PianoRoll bars={bars} notes={selectedNotes} recordMode={false} instrument={instrument}></PianoRoll>
+        <PianoRoll bars={bars} notes={selectedNotes}></PianoRoll>
     </div>
 </div>

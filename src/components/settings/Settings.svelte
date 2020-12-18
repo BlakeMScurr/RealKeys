@@ -2,7 +2,7 @@
     import { playingStore, speedStore, tracks, waitMode } from "../../stores/stores"
     import { highClick, lowClick, newClicker } from "../../lib/track/instrument"
     import { TimedNote, TimedNotes } from "../../lib/music/timed/timed";
-import Slider from "../generic/Slider.svelte";
+    import Slider from "../slider/Slider.svelte";
 
     export let bars;
     export let timesignatures;

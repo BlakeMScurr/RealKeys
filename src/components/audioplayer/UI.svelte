@@ -2,7 +2,7 @@
     import { onDestroy } from "svelte";
     import { addGlobalKeyListener } from "../../lib/util";
     import { position, songDuration, seek, playingStore, audioReady } from "../../stores/stores";
-    import Slider from "../generic/Slider.svelte";
+    import Slider from "../slider/Slider.svelte";
 
     export let _storybook_position: number;
     export let _storybook_duration: number;

@@ -1,3 +1,5 @@
+// TODO: cache the actual instrument
+
 // Copied from soundfont-player used to create the appropriate caching URL
 // TODO: put the nameToUrl in the index.d.ts file in soundfont-player and make a PR upstream
 function nameToUrl (name: string, sf: string, format: string) {

@@ -4,7 +4,7 @@
     import type { Note } from "../../../lib/music/theory/notes";
     import type { TimedNotes } from "../../../lib/music/timed/timed";
     import type { Bars } from "../pianoRollHelpers";
-    import { zoomWidth } from './roll'
+    import { songDuration } from "../../../stores/stores";
 
     export let keys:Array<Note>;
     export let height:number;
@@ -17,6 +17,15 @@
 
     let mountPoint;
     let zw = zoomWidth()
+
+    function zoomWidth() {
+        let zoomLength = 4 * 1000 // length of the zoom window in seconds
+        let duration;
+        songDuration.subscribe((val)=>{
+            duration = val
+        })
+        return zoomLength / duration;
+    }
 
     let app;
     let foreground;
@@ -33,9 +42,11 @@
         drawNotes = helpers.drawNotes
 
         let initialHeight = mountPoint.clientHeight
+        // TODO: why does the mount point resize in the first place? It seems to add an extra 4px to its height when the child canvas mounts, and the child canvas remains at the mount point's original height.
         new rs(mountPoint, ()=> {
             if (mountPoint.clientHeight !== initialHeight) {
                 mountPoint.setAttribute("style","height:" + initialHeight + "px");
+                app.renderer.resize(mountPoint.clientWidth, mountPoint.clientHeight)
             }
         })
 

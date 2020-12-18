@@ -1,1 +1,0 @@
-The backend doesn't contain server API endpoints but rather CLI tools, long running process, storage, etc that support the server/API.
