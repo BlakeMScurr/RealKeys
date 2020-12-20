@@ -20,11 +20,14 @@
 
     export let path;
 
+    console.log("helllo")
+
     let lesson
     async function processMidiFile() {
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
         const midi = await Midi.fromUrl("api/midi?path=" + path)
+        console.log("called a midi thing")
         let songName = midiPathToName(path)
 
         let duration = midi.duration
@@ -64,7 +67,7 @@
         playingStore.pause()
         seek.set(0)
         tracks.clearAll()
-        goto("library/" + newpath)
+        goto("learn/" + newpath)
         path = newpath
         midiPromise = processMidiFile()
     }
@@ -84,7 +87,7 @@
         <p>{message}</p>
     {/await}
 {:then x}
-    <Lesson owner={lesson.artist} lessonID={lesson.lessonID} timesignatures={lesson.timeSignatures} bars={lesson.bars} tracks={lesson.tracks}></Lesson>
+    <Lesson owner={lesson.artist} lessonID={lesson.lessonID} timesignatures={lesson.timeSignatures} bars={lesson.bars} inertTracks={lesson.tracks}></Lesson>
 {:catch error}
     <h1>Could not load lesson {console.log(error)}</h1>
 {/await}

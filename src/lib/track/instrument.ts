@@ -23,8 +23,8 @@ export function newPiano(name: string){
 
 export class InertTrack {
     notes: TimedNotes;
-    instrument: Promise<VirtualInstrument>;
-    constructor(notes: TimedNotes, instrument: Promise<VirtualInstrument>) {
+    instrument: VirtualInstrument;
+    constructor(notes: TimedNotes, instrument: VirtualInstrument) {
         this.notes = notes
         this.instrument = instrument
     }

@@ -1,7 +1,7 @@
-import type { Player, VirtualInstrument } from '../lib/track/instrument'
+import type { VirtualInstrument } from '../lib/track/instrument'
 import type { TimedNote } from '../lib/music/timed/timed';
-import { TimedNotes } from '../lib/music/timed/timed';
-import { audioReady, songDuration, seek, playingStore, position, speedStore } from "./stores"
+import type { TimedNotes } from '../lib/music/timed/timed';
+import { songDuration, seek, playingStore, position, speedStore } from "./stores"
 import { writable } from 'svelte/store';
 
 function duration():number {
@@ -41,10 +41,10 @@ export class midiTrack {
     windowTimeouts: Array<ReturnType<typeof setTimeout>>;
     playbackInstrument: VirtualInstrument;
     currentNotes;
-    unlinked: Boolean;
+    private linked: Boolean;
 
-    constructor(notes: Array<TimedNote>, playbackInstrument: VirtualInstrument) {
-        this.notes = new TimedNotes(notes)
+    constructor(notes: TimedNotes, playbackInstrument: VirtualInstrument) {
+        this.notes = notes
         this.currentPosition = 0;
         this.noteTimeouts = new Map();
         this.windowTimeouts = [];
@@ -52,19 +52,26 @@ export class midiTrack {
         this.playbackInstrument = playbackInstrument
         this.currentNotes = writable(new Map<string, string>())
         this.playing = false
-        this.unlinked = false
+        this.linked = false
     }
 
     // links the track to stores
+    linkCalled: Boolean = false;
     link() {
+        if (this.linkCalled) {
+            throw new Error("link already called on track")
+        }
+        this.linkCalled = true
+        this.linked = true
+
         seek.subscribe((p) => {
-            if (!this.unlinked) {
+            if (this.linked) {
                 this.seek(p)
             }
         })
     
         playingStore.subscribe((play) => {
-            if (!this.unlinked) {
+            if (this.linked) {
                 if (play) {
                     this.play()
                 } else {
@@ -75,9 +82,16 @@ export class midiTrack {
     }
 
     unlink() {
-        // Can't relink
         this.pause()
-        this.unlinked = true
+        this.linked = false
+    }
+
+    relink() {
+        this.linked = true
+    }
+
+    islinked() {
+        return this.linked
     }
 
     pushTimeout(key, cb, dur) {
@@ -207,47 +221,5 @@ class playbackInterface {
         this.track.currentNotes.subscribe((notes)=>{
             callback(notes)
         })
-    }
-}
-
-export class audioTrack {
-    player: Player;
-    unlinked: Boolean;
-    constructor(player: Player) {
-        this.player = player
-        this.unlinked = false
-    }
-
-    // links the track to stores
-    link() {
-        audioReady.ready()
-        let duration = this.player.Duration()
-        songDuration.set(duration)
-
-        seek.subscribe((p) => {
-            if (!this.unlinked) {
-                let dur;
-                songDuration.subscribe((d) => {
-                    dur = d
-                })
-                this.player.Seek(p * dur)
-            }
-        })
-
-        playingStore.subscribe((play) => {
-            // TODO: use a method that won't leave little subscriptions spinning once unlinked
-            if (!this.unlinked) {
-                if (play) {
-                    this.player.Play()
-                } else {
-                    this.player.Pause()
-                }
-            }
-        })
-    }
-
-    unlink() {
-        this.player.Pause()
-        this.unlinked = true
     }
 }

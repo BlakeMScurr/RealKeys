@@ -47,6 +47,7 @@
             if (mountPoint.clientHeight !== initialHeight) {
                 mountPoint.setAttribute("style","height:" + initialHeight + "px");
                 app.renderer.resize(mountPoint.clientWidth, mountPoint.clientHeight)
+                fullRedraw()
             }
         })
 
@@ -56,7 +57,6 @@
 
         // TODO: handle dpr so it's crisp on retina displays
         app = new PIXI.Application({width:  mountPoint.clientWidth, height: mountPoint.clientHeight});
-        console.log(mountPoint.clientWidth, mountPoint.clientHeight)
         mountPoint.appendChild(app.view);
         // TODO: why is the canvas 4 pixels smaller than the mount point?
 
@@ -77,7 +77,6 @@
     // TODO: parameterise
     function fullRedraw() {
         if (app !== undefined) {
-            console.log("fully redrawing")
             background.removeChildren()
             foreground.removeChildren()
                     

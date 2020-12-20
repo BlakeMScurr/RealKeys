@@ -56,15 +56,21 @@ function createSpeed() {
 
 function createWaitMode() {
     const { subscribe, set } = writable(false);
+    let lastTrackSet
 
     return {
         subscribe,
 		set: (val: boolean) => {
             if (val) {
-                tracks.muteAll()
+                lastTrackSet = tracks.enabled()
+                tracks.enable([])
                 playingStore.pause()
             } else {
-                tracks.unmuteAll()
+                subscribe((previousWaitValue) => {
+                    if (!previousWaitValue && lastTrackSet !== undefined) {
+                        tracks.enable(lastTrackSet)
+                    }
+                })
             }
             set(val)
         },
@@ -228,41 +234,72 @@ function createAudioReady() {
 
 
 function createTracks() {
-    const { subscribe, update } = writable(new Array<midiTrack>());
+    const { subscribe, update } = writable(new Map<string, midiTrack>());
     return {
         subscribe,
-        newPlaybackTrack: (notes: Array<TimedNote>, playbackInstrument: VirtualInstrument) => {
+        newPlaybackTrack: (name: string, notes: TimedNotes, playbackInstrument: VirtualInstrument) => {
             let t = new midiTrack(notes, playbackInstrument)
             t.link()
-            let index = -1;
-            update((currentPlayers: Array<midiTrack>) => {
-                index = currentPlayers.length
-                currentPlayers.push(t)
+            update((currentPlayers: Map<string, midiTrack>) => {
+                if (currentPlayers.has(name)) {
+                    throw new Error(`Track ${name} already exists`)
+                }
+                currentPlayers.set(name, t)
                 return currentPlayers
             })
-            return { playback: t.interface(), index: index}
+            return t.interface()
         },
         clearAll: () => {
-            update((currentPlayers: Array<midiTrack>) => {
+            update((currentPlayers: Map<string, midiTrack>) => {
                 currentPlayers.forEach((track) => {
                     track.unlink()
                 })
-                return []
+                return new Map<string, midiTrack>();
             })
         },
-        muteAll: () => {
-            subscribe((currentPlayers: Array<midiTrack>) => {
-                currentPlayers.forEach((track) => {
-                    track.playbackInstrument.setVolume(0)
+        enable: (trackNames: Array<string>) => {
+            console.log("enabling", trackNames)
+            subscribe((currentPlayers: Map<string, midiTrack>) => {
+                let wasPlaying
+                playingStore.subscribe((val) => {
+                    wasPlaying = val
+                })()
+                playingStore.pause()
+                currentPlayers.forEach((track, name) => {
+                    if (trackNames.indexOf(name) !== -1) {
+                        track.relink()
+                    } else {
+                        track.unlink()
+                    }
                 })
+                if (wasPlaying) {
+                    playingStore.play()
+                }
             })
         },
-        unmuteAll: () => {
-            subscribe((currentPlayers: Array<midiTrack>) => {
-                currentPlayers.forEach((track) => {
-                    track.playbackInstrument.setVolume(1)
+        enabled: () => {
+            // TODO: refactor so we just have a currentlyEnabled variable to read
+            let currentlyEnabled = new Array<string>();
+            subscribe((currentPlayers: Map<string, midiTrack>) => {
+                currentPlayers.forEach((track, name) => {
+                    if (track.islinked()) {
+                        currentlyEnabled.push(name)
+                    }
                 })
             })
+            return currentlyEnabled
+        },
+        notes: (trackNames: Array<string>):Map<string, TimedNotes> => {
+            let noteMap = new Map<string, TimedNotes>();
+            subscribe((currentPlayers: Map<string, midiTrack>) => {
+                trackNames.forEach((name) => {
+                    if (!currentPlayers.has(name)) {
+                        throw new Error(`There is no track called ${name}. Current tracks are ${Array.from(currentPlayers.keys())}`)
+                    }
+                    noteMap.set(name, currentPlayers.get(name).notes)
+                })
+            })
+            return noteMap
         }
     }
 }

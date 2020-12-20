@@ -1,10 +1,11 @@
 <script lang="ts">
-    import { playingStore, tracks } from "../../stores/stores"
+    import { tracks } from "../../stores/stores"
     import UI from "../audioplayer/UI.svelte"
     import PianoRoll from "../pianoroll/PianoRoll.svelte";
     import Settings from "../settings/Settings.svelte";
     import Dropdown from '../dropdown/Dropdown.svelte';
     import type { InertTrack } from '../../lib/track/instrument';
+    import { makeClicks } from "./clickTrack";
 
     export let owner;
     export let lessonID;
@@ -12,17 +13,35 @@
     export let bars;
     export let timesignatures;
 
-    let playing;
-    playingStore.subscribe((val) => {
-        playing = val;
+    // make tracks
+    inertTracks.forEach((track, name) => {
+        tracks.newPlaybackTrack(name, track.notes, track.instrument)
     })
+    makeClicks(bars.bars, timesignatures)
 
-    tracks.enable(inertTracks.keys().next().value);
-    let selectedNotes = tracks.enabledNotes();
+    // handle reactivity and track selection
+    let clickTrackOn = false;
+
+
+    let currentTracks = [inertTracks.keys().next().value]
+    tracks.enable(addClick());
+    let selectedNotes = tracks.notes(currentTracks);
 
     function handleTrackSelection(e) {
-        tracks.enable(e.detail.key);
-        selectedNotes = tracks.enabledNotes();
+        currentTracks = [e.detail.key]
+        tracks.enable(addClick());
+        selectedNotes = tracks.notes(currentTracks);
+    }
+
+    function addClick() {
+        let fullTracks = JSON.parse(JSON.stringify(currentTracks))
+        if (clickTrackOn) fullTracks.push("clickTrack")
+        return fullTracks
+    }
+
+    function clickTrackChange() {
+        // tracks.enable(addClick());
+        selectedNotes = tracks.notes(currentTracks);
     }
 </script>
 
@@ -94,14 +113,17 @@
         </div>
         <div class="line2">
             <!-- TODO: only pass the keys into the dropdown -->
-            <Dropdown list={tracks} on:select={handleTrackSelection}></Dropdown>
-            <Settings bars={bars} timesignatures={timesignatures}></Settings>
+            <Dropdown list={inertTracks} on:select={handleTrackSelection}></Dropdown>
+            <label for="clickTrackOn">Click Track</label>
+            <input type="checkbox" id="clickTrackOn" bind:checked={clickTrackOn} on:change={clickTrackChange}>
+            <Settings bars={bars} timesignatures={timesignatures} ></Settings>
             <div class="settings">
                 <UI></UI>
             </div>
         </div>
     </div>
     <div class="piano">
-        <PianoRoll bars={bars} notes={selectedNotes}></PianoRoll>
+        <!-- TODO: allow multiple notes in the pianoroll -->
+        <PianoRoll bars={bars} notes={Array.from(selectedNotes.values())[0]}></PianoRoll>
     </div>
 </div>

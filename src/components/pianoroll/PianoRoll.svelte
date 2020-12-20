@@ -1,10 +1,9 @@
 <script lang="ts">
     import { range, Bars, pushBottomKey, pushTopKey, popBottomKey, popTopKey } from "./pianoRollHelpers";
     import { TimedNotes } from "../../lib/music/timed/timed"
-    import { currentSong, playingStore, position, songDuration, seek, tracks, waitMode } from "../../stores/stores"
+    import { playingStore, position, songDuration, seek, waitMode } from "../../stores/stores"
     import Piano from "./piano/Piano.svelte";
     import { newPiano } from "../../lib/track/instrument";
-    import type { VirtualInstrument } from "../../lib/track/instrument";
     import Roll from "./roll/Roll.svelte";
 
     export let notes:TimedNotes = new TimedNotes([]);
@@ -153,7 +152,6 @@
             if (nextNotes.length >= 1) {
                 if (nextNotes[0].note.equals(event.detail)) {
                     if (nextNotes.length >= 2) {
-                        console.log("slowly seeking", nextNotes[1], "leaving note", nextNotes[0])
                         seek.setSlow(nextNotes[1].start)
                     }
                 }
