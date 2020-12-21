@@ -144,7 +144,25 @@ export class TimedNotes {
                     notes[i].note.string() + " starts at " +
                     notes[i].start)
             }
+
         }
+        
+        for (let i = notes.length - 1; i > 0; i--) {
+            if (notes[i-1].end > notes[i].start && notes[i-1].note.equals(notes[i].note)){
+                // This removes any doubled up notes in a given track
+                // Some midi files appear to have doubled notes, that is, you are supposed to play a C4, for example, then play another C4
+                // without stopping the original note. In the case where I first found it, every single note in some tracks was doubled.
+                // This caused major issues with wait mode, and it seems likely that it could cause other issues.
+                // I can't think of an example where one would play the same note in the same track without stopping the first.
+                // TODO: figure out whether it's an issue with the tonesjs/midi library, or the midi files themselves.
+                // When we open the file with this tool https://onlinesequencer.net/import2/dcdfb44f4c34437373aae19b7d7c4b10?title=TheGirlFromIpanema.mid we can
+                // see the double up, but not with musescore. This could either be because onlinesequencer.net has the same bug as us, or because
+                // musescore cleverly deletes the notes like we do now. The relevant file is amongst the midi assets at T/T/TheGirlFromIpanema.mid
+                console.warn("doubled up note")
+                notes.splice(i, 1)
+            }
+        }
+
 
         this.notes = notes;
     }

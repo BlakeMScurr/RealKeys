@@ -167,6 +167,26 @@ test("NotesFrom0.9to7000", ()=>{
     ])
 })
 
+test ("DoubledUpNotes", ()=> {
+    // TODO: expect console warn
+    expect((new TimedNotes([
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+    ]))).toEqual(new TimedNotes([
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+    ]))
+})
+    
+test ("SimulatneousNotes", ()=> {
+    expect((new TimedNotes([
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+        new TimedNote(0, new Fraction("1/10"), NewNote("d", 4)), 
+    ]))).toEqual(new TimedNotes([
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+        new TimedNote(0, new Fraction("1/10"), NewNote("d", 4)), 
+    ]))
+})
+
 function Cs() {
     return new TimedNotes([
         new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 

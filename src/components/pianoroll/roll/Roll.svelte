@@ -18,16 +18,11 @@
     let mountPoint;
     let zw = zoomWidth()
 
-    console.log("running the roll rn")
-    console.log("songDuration", songDuration)
-
     function zoomWidth() {
         // TODO: remove hack
         if (!songDuration) {
             return 1
         }
-        console.trace()
-        console.log("songDuration in zw", songDuration, keys, notes)
         let zoomLength = 4 * 1000 // length of the zoom window in seconds
         let duration;
         songDuration.subscribe((val)=>{

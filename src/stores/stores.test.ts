@@ -18,5 +18,6 @@ test("seek", ()=>{
     expect(get(gm.songDuration)).toBe(100000)
     expect(get(gm.seek)).toBe(0)
     gm.seek.set(1)
-    expect(get(gm.seek)).toBe(10)
+    expect(get(gm.seek)).toBe(1)
+    expect(get(gm.position)).toBe(1)
 })
