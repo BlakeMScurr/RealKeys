@@ -4,7 +4,6 @@
     import type { Note } from "../../../lib/music/theory/notes";
     import type { TimedNotes } from "../../../lib/music/timed/timed";
     import type { Bars } from "../pianoRollHelpers";
-    import { songDuration } from "../../../stores/stores";
 
     export let keys:Array<Note>;
     export let height:number;
@@ -14,11 +13,21 @@
     export let position = 0;
     export let recording = true;
     export let debugSliders = false;
+    export let songDuration;
 
     let mountPoint;
     let zw = zoomWidth()
 
+    console.log("running the roll rn")
+    console.log("songDuration", songDuration)
+
     function zoomWidth() {
+        // TODO: remove hack
+        if (!songDuration) {
+            return 1
+        }
+        console.trace()
+        console.log("songDuration in zw", songDuration, keys, notes)
         let zoomLength = 4 * 1000 // length of the zoom window in seconds
         let duration;
         songDuration.subscribe((val)=>{

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { tracks } from "../../stores/stores"
+    import type { GameMaster } from "../../stores/stores"
     import UI from "../audioplayer/UI.svelte"
     import PianoRoll from "../pianoroll/PianoRoll.svelte";
     import Settings from "../settings/Settings.svelte";
@@ -12,37 +12,54 @@
     export let inertTracks: Map<string, InertTrack>;
     export let bars;
     export let timesignatures;
+    export let gm: GameMaster;
+
+    // Handle note state subscription
+    let state = new Map<string, string>();
+    function onNoteStateChange(notes: Map<string, string>) {
+        state = new Map<string, string>();
+        notes.forEach((noteState, noteName: string)=>{
+            state.set(noteName, noteState)
+        })
+        state = state
+    }
 
     // make tracks
     inertTracks.forEach((track, name) => {
-        tracks.newPlaybackTrack(name, track.notes, track.instrument)
+        gm.tracks.newPlaybackTrack(name, track.notes, track.instrument, gm)
     })
-    makeClicks(bars.bars, timesignatures)
+    makeClicks(bars.bars, timesignatures, gm)
 
     // handle reactivity and track selection
     let clickTrackOn = false;
 
-
     let currentTracks = [inertTracks.keys().next().value]
-    tracks.enable(addClick());
-    let selectedNotes = tracks.notes(currentTracks);
+    gm.tracks.enable(addClick(currentTracks));
+    let unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
+    let selectedNotes = gm.tracks.notes(currentTracks);
+
 
     function handleTrackSelection(e) {
         currentTracks = [e.detail.key]
-        tracks.enable(addClick());
-        selectedNotes = tracks.notes(currentTracks);
+        gm.tracks.enable(addClick(currentTracks));
+        unsubscribe()
+        unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
+        selectedNotes = gm.tracks.notes(currentTracks);
     }
 
-    function addClick() {
+    function addClick(currentTracks) {
         let fullTracks = JSON.parse(JSON.stringify(currentTracks))
         if (clickTrackOn) fullTracks.push("clickTrack")
         return fullTracks
     }
 
     function clickTrackChange() {
-        // tracks.enable(addClick());
-        selectedNotes = tracks.notes(currentTracks);
+        gm.tracks.enable(addClick(currentTracks));
+        unsubscribe()
+        unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
+        selectedNotes = gm.tracks.notes(currentTracks);
     }
+
 </script>
 
 <style lang="scss">
@@ -116,14 +133,14 @@
             <Dropdown list={inertTracks} on:select={handleTrackSelection}></Dropdown>
             <label for="clickTrackOn">Click Track</label>
             <input type="checkbox" id="clickTrackOn" bind:checked={clickTrackOn} on:change={clickTrackChange}>
-            <Settings bars={bars} timesignatures={timesignatures} ></Settings>
+            <Settings bars={bars} timesignatures={timesignatures} {gm}></Settings>
             <div class="settings">
-                <UI></UI>
+                <UI {gm}></UI>
             </div>
         </div>
     </div>
     <div class="piano">
         <!-- TODO: allow multiple notes in the pianoroll -->
-        <PianoRoll bars={bars} notes={Array.from(selectedNotes.values())[0]}></PianoRoll>
+        <PianoRoll bars={bars} {state} notes={Array.from(selectedNotes.values())[0]} {gm}></PianoRoll>
     </div>
 </div>

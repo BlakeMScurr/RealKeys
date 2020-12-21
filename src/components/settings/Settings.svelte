@@ -1,22 +1,23 @@
 <script lang="ts">
-    import { speedStore, waitMode } from "../../stores/stores"
+    import type { GameMaster } from "../../stores/stores"
     import Slider from "../slider/Slider.svelte";
 
     export let bars;
     export let timesignatures;
+    export let gm: GameMaster;
 
     let waitModeOn:boolean = false
-    waitMode.subscribe((val) => {
+    gm.waitMode.subscribe((val) => {
         waitModeOn = val
     })
 
     function waitModeChange() {
-        waitMode.set(waitModeOn)
+        gm.waitMode.set(waitModeOn)
     }
 
     let speed: number = 1
     $: {
-        speedStore.set(speed)
+        gm.speedStore.set(speed)
     }
 </script>
 

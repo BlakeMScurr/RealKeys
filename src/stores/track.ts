@@ -1,33 +1,9 @@
 import type { VirtualInstrument } from '../lib/track/instrument'
 import type { TimedNote } from '../lib/music/timed/timed';
 import type { TimedNotes } from '../lib/music/timed/timed';
-import { songDuration, seek, playingStore, position, speedStore } from "./stores"
+import { get } from '../lib/util';
 import { writable } from 'svelte/store';
-
-function duration():number {
-    let dur;
-    songDuration.subscribe((d) => {
-        dur = d
-    })
-    return dur
-}
-
-function speed():number {
-    let speed
-    speedStore.subscribe((s) => {
-        speed = s
-    })
-    return speed
-}
-
-function playing():Boolean {
-    let playing
-    playingStore.subscribe((play) => {
-        playing = play
-    })
-    return playing
-}
-
+import type { GameMaster } from './stores';
 export class midiTrack {
     notes: TimedNotes;
     currentPosition: number;
@@ -41,9 +17,10 @@ export class midiTrack {
     windowTimeouts: Array<ReturnType<typeof setTimeout>>;
     playbackInstrument: VirtualInstrument;
     currentNotes;
+    gm: GameMaster;
     private linked: Boolean;
 
-    constructor(notes: TimedNotes, playbackInstrument: VirtualInstrument) {
+    constructor(notes: TimedNotes, playbackInstrument: VirtualInstrument, gm: GameMaster) {
         this.notes = notes
         this.currentPosition = 0;
         this.noteTimeouts = new Map();
@@ -53,6 +30,8 @@ export class midiTrack {
         this.currentNotes = writable(new Map<string, string>())
         this.playing = false
         this.linked = false
+        // TODO: don't add the full game master. Just passing in relevant stores or functions will reduce scope creep and coupling.
+        this.gm = gm
     }
 
     // links the track to stores
@@ -64,13 +43,13 @@ export class midiTrack {
         this.linkCalled = true
         this.linked = true
 
-        seek.subscribe((p) => {
+        this.gm.seek.subscribe((p) => {
             if (this.linked) {
                 this.seek(p)
             }
         })
     
-        playingStore.subscribe((play) => {
+        this.gm.playingStore.subscribe((play) => {
             if (this.linked) {
                 if (play) {
                     this.play()
@@ -101,7 +80,7 @@ export class midiTrack {
     }
 
     play() {
-        let dur = duration()
+        let dur = get(this.gm.songDuration)
         const windowWidth = 10000 / dur // 10 seconds
         this.runWindow(this.currentPosition, windowWidth, dur)
     }
@@ -111,7 +90,7 @@ export class midiTrack {
         if (width + start <= 1) {
             this.windowTimeouts.push(setTimeout(() => {
                 this.runWindow(start + width, width, dur)
-            }, width * dur / speed()))
+            }, width * dur / get(this.gm.speedStore)))
         }
 
         let notes = this.notes.notesFrom(start, start + width)
@@ -122,7 +101,7 @@ export class midiTrack {
 
     triggerNote(note: TimedNote, pos: number) {
         let noteNumbers = new Map<string, number>();
-        let length = (note.end - note.start) * duration() / speed()
+        let length = (note.end - note.start) * get(this.gm.songDuration) / get(this.gm.speedStore)
         if (!noteNumbers.has(note.note.string())) {
             noteNumbers.set(note.note.string(), -1)
         }
@@ -170,7 +149,7 @@ export class midiTrack {
         // Take actions
         // TODO: handle cases where note is less than or near noteLeeway
         const noteLeeway = 100
-        let firstNote = (note.start - pos) * duration() / speed()
+        let firstNote = (note.start - pos) * get(this.gm.songDuration) / get(this.gm.speedStore)
         this.pushTimeout(key, startPlayable,    firstNote - noteLeeway)
         this.pushTimeout(key, playNote,         firstNote)
         this.pushTimeout(key, set("strict"),    firstNote + noteLeeway)
@@ -179,7 +158,7 @@ export class midiTrack {
     }
 
     pause() {
-        position.subscribe(p => {
+        this.gm.position.subscribe(p => {
             this.currentPosition = p
         })
 
@@ -201,7 +180,7 @@ export class midiTrack {
 
     seek(d: number) {
         this.currentPosition = d
-        if (playing()) {
+        if (get(this.gm.playingStore)) {
             this.play()
         }
     }
@@ -218,7 +197,7 @@ class playbackInterface {
     }
 
     subscribeToNotes(callback: (notes: Map<string, string>)=> void) {
-        this.track.currentNotes.subscribe((notes)=>{
+        return this.track.currentNotes.subscribe((notes)=>{
             callback(notes)
         })
     }

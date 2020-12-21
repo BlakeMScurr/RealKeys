@@ -1,32 +1,21 @@
 <script lang="ts">
     import { range, Bars, pushBottomKey, pushTopKey, popBottomKey, popTopKey } from "./pianoRollHelpers";
     import { TimedNotes } from "../../lib/music/timed/timed"
-    import { playingStore, position, songDuration, seek, waitMode } from "../../stores/stores"
+    import type { GameMaster } from "../../stores/stores"
     import Piano from "./piano/Piano.svelte";
     import { newPiano } from "../../lib/track/instrument";
     import Roll from "./roll/Roll.svelte";
 
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;
-
-    // TODO: track handling at the lesson level
-    let state = new Map<string, string>();
-    // let playbackinterface = tracks.newPlaybackTrack(notes.notes, instrument)
-    // playbackinterface.subscribeToNotes((notes: Map<string, string>)=>{
-    //     // TODO: only bother sending the strings
-    //     state = new Map<string, string>();
-    //     notes.forEach((noteState, noteName: string)=>{
-    //         state.set(noteName, noteState)
-    //     })
-    //     state = state
-    // })
-
+    export let state: Map<string, string> = new Map<string, string>();
+    export let gm: GameMaster;
 
     // TODO: allow one to use the same MIDI instrument as the track being played against
     let piano = newPiano("Player Piano")
 
     let pos = 0;
-    position.subscribe((value) => {
+    gm.position.subscribe((value) => {
         pos = value
     })
 
@@ -44,12 +33,12 @@
     
     // ROLL ZOOM
     function handleRollWheel(event) {
-        playingStore.pause()
+        gm.playingStore.pause()
         event.preventDefault()
         pos -= event.deltaY * 2 / duration
         pos = pos < 0 ? 0 : pos
         pos = pos > 1 ? 1 : pos
-        seek.set(pos)
+        gm.seek.set(pos)
         // TODO: widen the piano with deltaX
     }
 
@@ -58,7 +47,7 @@
     }
 
     let duration = 5;
-    songDuration.subscribe((val)=> {
+    gm.songDuration.subscribe((val)=> {
         duration = val
     })
 
@@ -128,7 +117,7 @@
     }
 
     let playing = false
-    playingStore.subscribe((p: boolean)=>{
+    gm.playingStore.subscribe((p: boolean)=>{
         playing = p
     })
 
@@ -137,7 +126,7 @@
     }
 
     let inWaitMode = false;
-    waitMode.subscribe((val) => {
+    gm.waitMode.subscribe((val) => {
         inWaitMode = val
     })
 
@@ -152,7 +141,7 @@
             if (nextNotes.length >= 1) {
                 if (nextNotes[0].note.equals(event.detail)) {
                     if (nextNotes.length >= 2) {
-                        seek.setSlow(nextNotes[1].start)
+                        gm.seek.setSlow(nextNotes[1].start)
                     }
                 }
             }
@@ -185,7 +174,7 @@
 
 <div id="pianoroll" bind:clientWidth={width}>
     <div class="container roll" on:wheel={handleRollWheel} on:touchmove={handleTouchMove}>
-        <Roll {keys} {bars} {notes} position={pos}></Roll>
+        <Roll {keys} {bars} {notes} position={pos} songDuration={gm.songDuration}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
     <Piano {keys} lessonNotes={state} {playing} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={notes.untimeRemoveDupes()}></Piano>

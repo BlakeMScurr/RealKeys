@@ -2,27 +2,49 @@ import { writable } from 'svelte/store';
 import type { VirtualInstrument } from '../lib/track/instrument'
 import { NewNote } from '../lib/music/theory/notes';
 import { TimedNote, TimedNotes } from '../lib/music/timed/timed';
+import { get } from '../lib/util'
 import { midiTrack } from "./track";
 
-// Position set is only accessible via seek and play
-const { subscribe, set } = createPosition();
-const setPosition = set
-export const position = { subscribe }
+// TODO: refactor to eliminate all the store boilerplate
+// TODO: consider using a state machine, as it will have stricter guarantees about the possible states the game can be in
+export class GameMaster {
+    private setPosition: any;
+    position: any;
+    seek: any;
+    currentSong: any;
+    repeats: any;
+    playingStore: any;
+    songDuration: any;
+    audioReady: any;
+    tracks: any;
+    speedStore: any;
+    waitMode: any;
+    constructor() {
+        // TODO: make all of these classes so we have well defined types
+        const { subscribe, set } = createPosition();
+        this.setPosition = set
+        this.position = { subscribe }
+        this.currentSong = createCurrentSong();
+        this.repeats = createRepeats();
+        this.playingStore = createPlay();
+        this.songDuration = createSongDuration();
+        this.audioReady = createAudioReady();
+        this.seek = createSeek(this.setPosition, this.playingStore, this.position, this.songDuration);
+        this.tracks = createTracks(this.playingStore);
+        this.speedStore = createSpeed(this.playingStore);
+        this.waitMode = createWaitMode(this.tracks, this.playingStore);
 
-// TODO: consoldiate into highly testable time manager class
-export const seek = createSeek();
-export const currentSong = createCurrentSong();
-export const repeats = createRepeats();
-export const playingStore = createPlay();
-export const songDuration = createSongDuration();
-export const audioReady = createAudioReady();
-export const tracks = createTracks();
-export const speedStore = createSpeed();
-export const waitMode = createWaitMode();
+        // Resolve cyclic store dependencies
+        // TODO: simplify
+        this.playingStore.setStores(this.waitMode, this.audioReady, this.position, this.songDuration, this.speedStore, this.setPosition)
+        this.tracks.setWaitModeStore(this.waitMode)
+    }
+}
+
+// stores that don't depend on others
 
 // Position refers to how far through the audio we are
 // TODO: replace position binding, prop passing, and event firing with this
-let x = 0
 function createPosition() {
     const { subscribe, set } = writable(0);
 
@@ -38,42 +60,18 @@ function createPosition() {
     }
 }
 
-function createSpeed() {
-    const { subscribe, set } = writable(0);
+// TODO: only expose subscribe
+function createAudioReady() {
+    const { subscribe, set } = writable({reason: "Loading Audio", ready: false});
 
     return {
         subscribe,
-		set: (val: number) => {
-            playingStore.pause()
-            if (val < 0 || val > 1) {
-                throw new Error("speeds must be between 0 and 1, got: " + val)
-            } else {
-                set(val)
-            }
+        notReady: (reason: string) => {
+            set({reason: reason, ready: false})
         },
-    }
-}
-
-function createWaitMode() {
-    const { subscribe, set } = writable(false);
-    let lastTrackSet
-
-    return {
-        subscribe,
-		set: (val: boolean) => {
-            if (val) {
-                lastTrackSet = tracks.enabled()
-                tracks.enable([])
-                playingStore.pause()
-            } else {
-                subscribe((previousWaitValue) => {
-                    if (!previousWaitValue && lastTrackSet !== undefined) {
-                        tracks.enable(lastTrackSet)
-                    }
-                })
-            }
-            set(val)
-        },
+        ready: () => {
+            set({reason: "", ready: true})
+        }
     }
 }
 
@@ -124,10 +122,10 @@ function createSongDuration() {
     }
 }
 
-const frameRate = 40;
-export const frameLength = 1000 / frameRate // length of a frame in milliseconds
-let slto;
-function createSeek() {
+// stores that depend on others
+
+function createSeek(setPosition, playingStore, position, songDuration) {
+    let slto;
     const { subscribe, set } = writable(0);
 
     return {
@@ -137,29 +135,30 @@ function createSeek() {
             set(val)
         },
         setSlow: (val: number) => {
-           let diff;
-           position.subscribe((pos)=>{
-               diff = val - pos
-           })
-           let durr;
-            songDuration.subscribe((d) => {
-                durr = d
-            })
-
            playingStore.play(true)
            clearTimeout(slto)
            slto = setTimeout(()=> {
                playingStore.pause()
                set(val)
-            }, diff * durr)
+            }, (val - get(position)) * get(songDuration))
         }
     }
 }
 
-// TODO: does this work in the function's scope too? That would be better and more encapsulated
-let playInterval;
 function createPlay() {
+    // TODO: does this work in the function's scope too? That would be better and more encapsulated
+    let playInterval;
+    const frameRate = 40;
+    const frameLength = 1000 / frameRate // length of a frame in milliseconds
     const { subscribe, set } = writable(false);
+    
+    // TODO: add types
+    let waitMode;
+    let audioReady;
+    let position;
+    let songDuration;
+    let speedStore;
+    let setPosition;
     
     return {
         subscribe,
@@ -173,31 +172,13 @@ function createPlay() {
                 alreadyPlaying = val
             })
 
-            let ready;
-            audioReady.subscribe((val) => {
-                ready = val.ready
-            })
-            if (ready && !alreadyPlaying) {
+            if (get(audioReady).ready && !alreadyPlaying) {
                 set(true)
-                
                 let timeAtPlayStart = Date.now()
-                let pos;
-                position.subscribe((val) => {
-                    pos = val
-                });
-                let duration;
-                songDuration.subscribe((val) => {
-                    duration = val
-                })
-
-                let speed;
-                speedStore.subscribe((val) => {
-                    speed = val;
-                })
                 
                 playInterval = setInterval(()=>{
                     let timeNow = Date.now()
-                    let newPosition = pos + ((timeNow - timeAtPlayStart)/duration) * speed
+                    let newPosition = get(position) + ((timeNow - timeAtPlayStart)/get(songDuration)) * get(speedStore)
                     if (newPosition < 1) {
                         setPosition(newPosition)
                         timeAtPlayStart = timeNow // have to update this as pos will vary as it's set
@@ -213,32 +194,54 @@ function createPlay() {
         pause: () => {
             set(false)
             clearInterval(playInterval)
-        }
-    }
-}
-
-// TODO: only expose subscribe
-function createAudioReady() {
-    const { subscribe, set } = writable({reason: "Loading Audio", ready: false});
-
-    return {
-        subscribe,
-        notReady: (reason: string) => {
-            set({reason: reason, ready: false})
         },
-        ready: () => {
-            set({reason: "", ready: true})
+        // This enables cyclic store dependencies
+        // TODO: eliminate this hack
+        setStores: (waitModeArg, audioReadyArg, positionArg, songDurationArg, speedStoreArg, setPositionArg) => {
+            waitMode = waitModeArg
+            audioReady = audioReadyArg
+            position = positionArg
+            songDuration = songDurationArg
+            speedStore = speedStoreArg
+            setPosition = setPositionArg
         }
     }
 }
 
+function createWaitMode(tracks, playingStore) {
+    const { subscribe, set } = writable(false);
+    let lastTrackSet: string[];
 
-function createTracks() {
-    const { subscribe, update } = writable(new Map<string, midiTrack>());
     return {
         subscribe,
-        newPlaybackTrack: (name: string, notes: TimedNotes, playbackInstrument: VirtualInstrument) => {
-            let t = new midiTrack(notes, playbackInstrument)
+		set: (val: boolean) => {
+            if (val) {
+                lastTrackSet = tracks.enabled()
+                tracks.enable([])
+                playingStore.pause()
+            } else {
+                subscribe((previousWaitValue) => {
+                    if (!previousWaitValue && lastTrackSet !== undefined) {
+                        tracks.enable(lastTrackSet)
+                    }
+                })
+            }
+            set(val)
+        },
+        setLastTrackSet: (trackSet: string[]) => {
+            lastTrackSet = trackSet
+        }
+    }
+}
+
+function createTracks(playingStore) {
+    const { subscribe, update } = writable(new Map<string, midiTrack>());
+    // TODO: add types
+    let waitMode: any;
+    return {
+        subscribe,
+        newPlaybackTrack: (name: string, notes: TimedNotes, playbackInstrument: VirtualInstrument, gm: GameMaster) => {
+            let t = new midiTrack(notes, playbackInstrument, gm)
             t.link()
             update((currentPlayers: Map<string, midiTrack>) => {
                 if (currentPlayers.has(name)) {
@@ -247,7 +250,6 @@ function createTracks() {
                 currentPlayers.set(name, t)
                 return currentPlayers
             })
-            return t.interface()
         },
         clearAll: () => {
             update((currentPlayers: Map<string, midiTrack>) => {
@@ -257,25 +259,25 @@ function createTracks() {
                 return new Map<string, midiTrack>();
             })
         },
-        enable: (trackNames: Array<string>) => {
-            console.log("enabling", trackNames)
-            subscribe((currentPlayers: Map<string, midiTrack>) => {
-                let wasPlaying
-                playingStore.subscribe((val) => {
-                    wasPlaying = val
-                })()
-                playingStore.pause()
-                currentPlayers.forEach((track, name) => {
-                    if (trackNames.indexOf(name) !== -1) {
-                        track.relink()
-                    } else {
-                        track.unlink()
+        enable: (trackNames: string[]) => {
+            if (get(waitMode)) {
+                waitMode.setLastTrackSet(trackNames)
+            } else {
+                subscribe((currentPlayers: Map<string, midiTrack>) => {
+                    let wasPlaying = get(playingStore)
+                    playingStore.pause()
+                    currentPlayers.forEach((track, name) => {
+                        if (trackNames.indexOf(name) !== -1) {
+                            track.relink()
+                        } else {
+                            track.unlink()
+                        }
+                    })
+                    if (wasPlaying) {
+                        playingStore.play()
                     }
                 })
-                if (wasPlaying) {
-                    playingStore.play()
-                }
-            })
+            }
         },
         enabled: () => {
             // TODO: refactor so we just have a currentlyEnabled variable to read
@@ -286,10 +288,10 @@ function createTracks() {
                         currentlyEnabled.push(name)
                     }
                 })
-            })
+            })()
             return currentlyEnabled
         },
-        notes: (trackNames: Array<string>):Map<string, TimedNotes> => {
+        notes: (trackNames: string[]):Map<string, TimedNotes> => {
             let noteMap = new Map<string, TimedNotes>();
             subscribe((currentPlayers: Map<string, midiTrack>) => {
                 trackNames.forEach((name) => {
@@ -298,8 +300,43 @@ function createTracks() {
                     }
                     noteMap.set(name, currentPlayers.get(name).notes)
                 })
-            })
+            })()
             return noteMap
-        }
+        },
+        subscribeToNotesOfTracks: (tracks: string[], onStateChange: (notes: Map<string, string>) => void) => {
+            if (tracks.length != 1) {
+                throw new Error(`TODO: implement subscription to ${tracks.length} tracks`)
+            }
+
+            let unsubscriber
+            subscribe((currentPlayers: Map<string, midiTrack>) => {
+                if (!currentPlayers.has(tracks[0])) {
+                    throw new Error(`player has no track ${tracks[0]}`)
+                }
+
+                unsubscriber = currentPlayers.get(tracks[0]).interface().subscribeToNotes(onStateChange)
+            })()
+
+            return unsubscriber
+        },
+        setWaitModeStore: (wms) => {
+            waitMode = wms
+        },
+    }
+}
+
+function createSpeed(playingStore) {
+    const { subscribe, set } = writable(0);
+
+    return {
+        subscribe,
+		set: (val: number) => {
+            playingStore.pause()
+            if (val < 0 || val > 1) {
+                throw new Error("speeds must be between 0 and 1, got: " + val)
+            } else {
+                set(val)
+            }
+        },
     }
 }

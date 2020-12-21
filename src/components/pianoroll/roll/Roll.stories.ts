@@ -15,6 +15,9 @@ export const Pixi = () => {
       position: 0,
       zoomWidth: 0.5,
       keys: notesBetween(NewNote("C", 4), NewNote("C", 5)),
+      songDuraion: { subscribe: (cb)=>{
+        cb(10000)
+      }},
       height: 500,
       unit: "px",
       bars: new Bars([0.2, 0.2, 0.2, 0.2, 0.2]),

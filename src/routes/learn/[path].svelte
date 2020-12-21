@@ -14,13 +14,13 @@
     import { uniqueKey, midiPathToName } from '../../lib/util'
     import { Bars } from '../../components/pianoroll/pianoRollHelpers';
     import Lesson from '../../components/lesson/Lesson.svelte'
-    import { audioReady, playingStore, songDuration, tracks, seek } from '../../stores/stores'
+    import { GameMaster } from '../../stores/stores'
     import { InertTrack, NewInstrument } from '../../lib/track/instrument';
     import Navbar from '../../components/Navbar/Navbar.svelte';
 
     export let path;
 
-    console.log("helllo")
+    let gm = new GameMaster()
 
     let lesson
     async function processMidiFile() {
@@ -31,7 +31,7 @@
         let songName = midiPathToName(path)
 
         let duration = midi.duration
-        songDuration.set(duration*1000)
+        gm.songDuration.set(duration*1000)
 
         let trackMap = new Map()
         midi.tracks.filter((track)=>{
@@ -61,12 +61,12 @@
         return 
     }
 
-    audioReady.ready()
+    gm.audioReady.ready()
 
     function loadNew(newpath) {
-        playingStore.pause()
-        seek.set(0)
-        tracks.clearAll()
+        gm.playingStore.pause()
+        gm.seek.set(0)
+        gm.tracks.clearAll()
         goto("learn/" + newpath)
         path = newpath
         midiPromise = processMidiFile()
@@ -87,7 +87,7 @@
         <p>{message}</p>
     {/await}
 {:then x}
-    <Lesson owner={lesson.artist} lessonID={lesson.lessonID} timesignatures={lesson.timeSignatures} bars={lesson.bars} inertTracks={lesson.tracks}></Lesson>
+    <Lesson owner={lesson.artist} lessonID={lesson.lessonID} timesignatures={lesson.timeSignatures} bars={lesson.bars} inertTracks={lesson.tracks} {gm}></Lesson>
 {:catch error}
     <h1>Could not load lesson {console.log(error)}</h1>
 {/await}

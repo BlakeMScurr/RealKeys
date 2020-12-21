@@ -1,79 +1,62 @@
 <script lang="ts">
     import { onDestroy } from "svelte";
-    import { addGlobalKeyListener } from "../../lib/util";
-    import { position, songDuration, seek, playingStore, audioReady } from "../../stores/stores";
+    import { addGlobalKeyListener, get } from "../../lib/util";
+    import type { GameMaster } from "../../stores/stores";
     import Slider from "../slider/Slider.svelte";
 
     export let _storybook_position: number;
     export let _storybook_duration: number;
     export let _storybook_ready: number;
+    export let gm: GameMaster;
     
-    let duration: number;
-    let pos: number;
-    let ready: {ready: boolean, reason: string};
+    let duration = get(gm.songDuration)
+    let pos = get(gm.position)
+    let ready = get(gm.audioReady)
 
     let destroyed = false
-
-    songDuration.subscribe((val)=> {
-        duration = val
-    })
-    position.subscribe((val)=> {
-        pos = val
-    })
-    audioReady.subscribe((val)=> {
-        ready = val
-    })
 
     $: {
         if (_storybook_ready !== undefined) {
             if (_storybook_ready) {
-                audioReady.ready()
+                gm.audioReady.ready()
             } else {
-                audioReady.notReady("storybook user said so")
+                gm.audioReady.notReady("storybook user said so")
             }
         }
         if (_storybook_position !== undefined) {
-            seek.set(_storybook_position)
+            gm.seek.set(_storybook_position)
         }
         if (_storybook_duration !== undefined) {
-            songDuration.set(_storybook_duration)
+            gm.songDuration.set(_storybook_duration)
         }
     }
 
     // TODO: get this from store
     let loaded = true
     let playing;
-    playingStore.subscribe((val) => {
+    gm.playingStore.subscribe((val) => {
         playing = val
     })
     
-    function currentlyPlaying() {
-        let p
-        playingStore.subscribe((val) => {
-            p = val
-        })
-        return p
-    }
-
     function rewind () {
-        seek.set(pos - 1000/duration)
+        gm.seek.set(pos - 1000/duration)
     }
 
     function togglePlay () {
-        if (currentlyPlaying()) {
-            playingStore.pause()
+        if (get(gm.playingStore)) {
+            gm.playingStore.pause()
         } else {
-            playingStore.play()
+            gm.playingStore.play()
         }
     }
 
     function fastForward () {
-        seek.set(pos + 1000/duration)
+        gm.seek.set(pos + 1000/duration)
     }
 
     function handleSliderSeek(event) {
-        playingStore.pause()
-        seek.set(event.detail)
+        gm.playingStore.pause()
+        gm.seek.set(event.detail)
     }
 
     addGlobalKeyListener(true, handleKeyDown)
