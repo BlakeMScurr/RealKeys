@@ -116,11 +116,6 @@
         dx += event.deltaX * invert
     }
 
-    let playing = false
-    gm.playingStore.subscribe((p: boolean)=>{
-        playing = p
-    })
-
     function noteOff(event) {
         piano.stop(event.detail)
     }
@@ -177,6 +172,6 @@
         <Roll {keys} {bars} {notes} position={pos} songDuration={gm.songDuration}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
-    <Piano {keys} lessonNotes={state} {playing} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={notes.untimeRemoveDupes()}></Piano>
+    <Piano {keys} lessonNotes={state} playing={gm.playingStore} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={notes.untimeRemoveDupes()}></Piano>
     </div>
 </div>

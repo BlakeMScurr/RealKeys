@@ -3,7 +3,6 @@ import { highClick, lowClick, newClicker } from "../../lib/track/instrument"
 import { TimedNote, TimedNotes } from "../../lib/music/timed/timed";
 
 export function makeClicks(bars: Array<number>, timesignatures, gm: GameMaster) {
-    console.log(bars)
     let barLength = 4
     if (timesignatures != undefined && timesignatures[0] != undefined && timesignatures[0].timeSignature != undefined && timesignatures[0].timeSignature[1] != undefined) {
         barLength = timesignatures[0].timeSignature[1]

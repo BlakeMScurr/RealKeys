@@ -60,6 +60,15 @@
         selectedNotes = gm.tracks.notes(currentTracks);
     }
 
+    gm.waitMode.subscribe((waitModeOn) => {
+        if (waitModeOn) {
+            unsubscribe()
+            state = new Map<string, string>();
+        } else {
+            unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
+        }
+    })
+
 </script>
 
 <style lang="scss">

@@ -4,12 +4,12 @@
     import { blackAndGhostBetween, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote, label } from "./piano.ts";
     import WebMidi, { InputEventNoteon, InputEventNoteoff } from "webmidi";
     import Key from "./Key/Key.svelte";
-    import { addGlobalKeyListener } from "../../../lib/util";
+    import { addGlobalKeyListener, get } from "../../../lib/util";
 
     export let keys:Array<Note>;
     export let usedNotes:Map<String, boolean> = new Map();
     export let lessonNotes: Map<string, string>;
-    export let playing: Boolean;
+    export let playing; // TODO: type playing store
 
     let midiConnected = false
     let mobile = false // TODO: figure out how to know this before we get any events
@@ -91,7 +91,7 @@
     // TODO: surely make it more concise
     function getState(note: Note, activeMap, lessonNotes) {
         let str = note.string()
-        if (!playing) {
+        if (!get(playing)) {
             return activeMap.get(str) ? "active" : ""
         } else {
             if (lessonNotes.has(str)) {
