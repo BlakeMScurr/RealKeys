@@ -5,6 +5,7 @@
     import Settings from "../settings/Settings.svelte";
     import Dropdown from '../dropdown/Dropdown.svelte';
     import type { InertTrack } from '../../lib/track/instrument';
+    import { get } from '../../lib/util';
     import { makeClicks } from "./clickTrack";
 
     export let owner;
@@ -68,6 +69,30 @@
             unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
         }
     })
+
+    // Handle wait mode
+    function handleNoteOn(event) {
+        // TODO: handle chords.
+        // i.e., you must have all the relevant notes at the same time before we move on
+        // handle edge cases like if one note is held over, or there's a tiny epsilon discrepency between notes
+        if (get(gm.waitMode)) {
+            let nextNotes = Array.from(selectedNotes.values())[0].notesFrom(get(gm.position), 1)
+            if (nextNotes.length >= 1) {
+                let note = event.detail
+                if (nextNotes[0].note.equals(note)) {
+                    if (nextNotes.length >= 2) {
+                        gm.seek.setSlow(nextNotes[1].start)
+                        state.set(note.string(), "soft")
+                        state = state
+                        setTimeout(()=> {
+                            state.delete(note.string())
+                            state = state
+                        }, (nextNotes[0].end - get(gm.position)) * get(gm.songDuration))
+                    }
+                }
+            }
+        }
+    }
 
 </script>
 
@@ -150,6 +175,6 @@
     </div>
     <div class="piano">
         <!-- TODO: allow multiple notes in the pianoroll -->
-        <PianoRoll bars={bars} {state} notes={Array.from(selectedNotes.values())[0]} {gm}></PianoRoll>
+        <PianoRoll bars={bars} {state} on:noteOn={handleNoteOn} notes={Array.from(selectedNotes.values())[0]} {gm}></PianoRoll>
     </div>
 </div>

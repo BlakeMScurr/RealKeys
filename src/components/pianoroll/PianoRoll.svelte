@@ -5,11 +5,14 @@
     import Piano from "./piano/Piano.svelte";
     import { newPiano } from "../../lib/track/instrument";
     import Roll from "./roll/Roll.svelte";
+    import { createEventDispatcher } from 'svelte';
 
     export let notes:TimedNotes = new TimedNotes([]);
     export let bars:Bars;
     export let state: Map<string, string> = new Map<string, string>();
     export let gm: GameMaster;
+
+    let dispatch = createEventDispatcher();
 
     // TODO: allow one to use the same MIDI instrument as the track being played against
     let piano = newPiano("Player Piano")
@@ -127,20 +130,7 @@
 
     function noteOn(event) {
         piano.play(event.detail)
-
-        // TODO: handle chords.
-        // i.e., you must have all the relevant notes at the same time before we move on
-        // handle edge cases like if one note is held over, or there's a tiny epsilon discrepency between notes
-        if (inWaitMode) {
-            let nextNotes = notes.notesFrom(pos, 1)
-            if (nextNotes.length >= 1) {
-                if (nextNotes[0].note.equals(event.detail)) {
-                    if (nextNotes.length >= 2) {
-                        gm.seek.setSlow(nextNotes[1].start)
-                    }
-                }
-            }
-        }
+        dispatch("noteOn", event.detail)
     }
 </script>
 
