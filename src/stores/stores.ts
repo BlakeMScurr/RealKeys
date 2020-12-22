@@ -29,9 +29,9 @@ export class GameMaster {
         this.playingStore = createPlay();
         this.songDuration = createSongDuration();
         this.audioReady = createAudioReady();
-        this.seek = createSeek(this.setPosition, this.playingStore, this.position, this.songDuration);
-        this.tracks = createTracks(this.playingStore);
         this.speedStore = createSpeed(this.playingStore);
+        this.seek = createSeek(this.setPosition, this.playingStore, this.position, this.songDuration, this.speedStore);
+        this.tracks = createTracks(this.playingStore);
         this.waitMode = createWaitMode(this.tracks, this.playingStore);
 
         // Resolve cyclic store dependencies
@@ -124,7 +124,7 @@ function createSongDuration() {
 
 // stores that depend on others
 
-function createSeek(setPosition, playingStore, position, songDuration) {
+function createSeek(setPosition, playingStore, position, songDuration, speed) {
     let slto;
     const { subscribe, set } = writable(0);
 
@@ -140,7 +140,7 @@ function createSeek(setPosition, playingStore, position, songDuration) {
            slto = setTimeout(()=> {
                playingStore.pause()
                set(val)
-            }, (val - get(position)) * get(songDuration))
+            }, (val - get(position)) * get(songDuration) * (1/get(speed)))
         }
     }
 }

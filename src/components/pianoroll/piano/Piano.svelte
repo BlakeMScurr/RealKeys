@@ -10,6 +10,7 @@
     export let usedNotes:Map<String, boolean> = new Map();
     export let lessonNotes: Map<string, string>;
     export let playing; // TODO: type playing store
+    export let waitMode; // TODO: type playing stor
 
     let midiConnected = false
     let mobile = false // TODO: figure out how to know this before we get any events
@@ -91,7 +92,7 @@
     // TODO: surely make it more concise
     function getState(note: Note, activeMap, lessonNotes) {
         let str = note.string()
-        if (!get(playing)) {
+        if (!get(playing) && !get(waitMode)) {
             return activeMap.get(str) ? "active" : ""
         } else {
             if (lessonNotes.has(str)) {
