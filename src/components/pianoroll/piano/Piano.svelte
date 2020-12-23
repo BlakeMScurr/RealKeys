@@ -21,6 +21,14 @@
     function forward(e) {
         activeMap.set(e.detail.string(), e.type === "noteOn")
         activeMap = activeMap
+
+        let playingNotes = new Array<string>();
+        activeMap.forEach((k, v) => {
+            if (k) {
+                playingNotes.push(v)
+            }
+        })
+        dispatch("playingNotes", playingNotes)
         dispatch(e.type, e.detail);
     }
 
@@ -102,7 +110,7 @@
                 } else if (val == "soft") {
                     return activeMap.get(str) ? "right" : ""
                 } else if (val == "expecting") {
-                    return "expecting"
+                    return activeMap.get(str) ? "right" : "expecting"
                 }
                 throw new Error("unexpected note state value " + val)
             } else {

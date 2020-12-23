@@ -132,6 +132,10 @@
         piano.play(event.detail)
         dispatch("noteOn", event.detail)
     }
+
+    function forward(event) {
+        dispatch(event.type, event.detail)
+    }
 </script>
 
 <style lang="scss">
@@ -162,6 +166,6 @@
         <Roll {keys} {bars} {notes} position={pos} songDuration={gm.songDuration}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
-    <Piano {keys} lessonNotes={state} playing={gm.playingStore} waitMode={gm.waitMode} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={notes.untimeRemoveDupes()}></Piano>
+    <Piano {keys} lessonNotes={state} playing={gm.playingStore} waitMode={gm.waitMode} on:noteOff={noteOff} on:noteOn={noteOn} on:playingNotes={forward} usedNotes={notes.untimeRemoveDupes()}></Piano>
     </div>
 </div>

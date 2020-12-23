@@ -147,7 +147,17 @@ export class TimedNotes {
 
         }
         
+        let toDelete = []
         for (let i = notes.length - 1; i > 0; i--) {
+            // TODO: fix note overlap in chords
+            // this code managed to delete overlapped chord note, but was prohibitvely expensive, and altered the music
+            //
+            // for (let j = i - 1; j >= 0 && notes[j].end > notes[i].start; j--) {
+            // if (notes[i].note.equals(notes[j].note)) {
+            //
+            // Example of doubled up chord note in http://localhost:3000/learn/%2FJ%2FJ%2Fjustin_bieber-baby.mid `acoustic guitar (nylon) 0` at the first held chord
+            // the Eb overlaps with the previous one, but because it is in a chord it isn't directly beside the previous Eb in the note list, so it's not deleted here
+
             if (notes[i-1].end > notes[i].start && notes[i-1].note.equals(notes[i].note)){
                 // This removes any doubled up notes in a given track
                 // Some midi files appear to have doubled notes, that is, you are supposed to play a C4, for example, then play another C4
@@ -159,10 +169,13 @@ export class TimedNotes {
                 // see the double up, but not with musescore. This could either be because onlinesequencer.net has the same bug as us, or because
                 // musescore cleverly deletes the notes like we do now. The relevant file is amongst the midi assets at T/T/TheGirlFromIpanema.mid
                 console.warn("doubled up note")
-                notes.splice(i, 1)
+                toDelete.push(i)
             }
         }
 
+        toDelete.sort().reverse().forEach(i => {
+            notes.splice(i, 1)
+        })
 
         this.notes = notes;
     }

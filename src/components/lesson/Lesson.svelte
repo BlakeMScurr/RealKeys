@@ -5,7 +5,7 @@
     import Settings from "../settings/Settings.svelte";
     import Dropdown from '../dropdown/Dropdown.svelte';
     import type { InertTrack } from '../../lib/track/instrument';
-    import { get } from '../../lib/util';
+    import { arraysEqual, get } from '../../lib/util';
     import type { TimedNote } from '../../lib/music/timed/timed';
     import { makeClicks } from "./clickTrack";
 
@@ -47,6 +47,13 @@
         unsub()
         unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
         selectedNotes = gm.tracks.notes(currentTracks);
+        if (get(gm.waitMode)) {
+            state = new Map<string, string>();
+            nextWaitModeNote().sameStart.forEach(note => {
+                state.set(note.note.string(), "expecting")
+            })
+            state = state
+        }
     }
 
     function addClick(currentTracks) {
@@ -66,7 +73,9 @@
         if (waitModeOn) {
             unsub()
             state = new Map<string, string>();
-            state.set(nextWaitModeNote().sameStart[0].note.string(), "expecting")
+            nextWaitModeNote().sameStart.forEach(note => {
+                state.set(note.note.string(), "expecting")
+            })
             state = state
         } else {
             unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
@@ -76,7 +85,9 @@
     gm.seek.subscribe(() => {
         if (get(gm.waitMode)) {
             state = new Map<string, string>();
-            state.set(nextWaitModeNote().sameStart[0].note.string(), "expecting")
+            nextWaitModeNote().sameStart.forEach(note => {
+                state.set(note.note.string(), "expecting")
+            })
             state = state
         }
     })
@@ -94,32 +105,39 @@
         if (i < nextNotes.length) {
             next = nextNotes[i]
         }
+
         return { sameStart: sameStart, next: next }
     }
 
     // Handle wait mode
-    function handleNoteOn(event) {
+    function handlePlayingNotes(event) {
         // TODO: handle chords.
         // i.e., you must have all the relevant notes at the same time before we move on
         // handle edge cases like if one note is held over, or there's a tiny epsilon discrepency between notes
         if (get(gm.waitMode)) {
             let nextNotes = nextWaitModeNote()
             if (nextNotes.sameStart.length >= 1) {
-                let note = event.detail
-                if (nextNotes.sameStart[0].note.equals(note)) {
-                    if (nextNotes.next) {
-                        gm.seek.setSlow(nextNotes.next.start)
-                        state.set(note.string(), "soft")
-                        state = state
-                        setTimeout(()=> {
-                            state.delete(note.string())
-                            state = state
-                        }, (nextNotes.sameStart[0].end - get(gm.position)) * get(gm.songDuration))
+                let currentlyPlaing = event.detail.sort()
+                let shouldPlay = nextNotes.sameStart.map((note) => { return note.note.string() }).sort()
 
-                        setTimeout(() => {
-                            state.set(nextWaitModeNote().sameStart[0].note.string(), "expecting")
-                            state = state
-                        }, (nextNotes.next.start - get(gm.position)) * get(gm.songDuration))
+                if (arraysEqual(currentlyPlaing, shouldPlay)) {
+                    if (nextNotes.next) {
+                        nextNotes.sameStart.forEach((note) => {
+                            setTimeout(()=> {
+                                state.delete(note.note.string())
+                                state = state
+                            }, (note.end - get(gm.position)) * get(gm.songDuration))
+                        })
+
+                        // we have to set the deletion timeouts before seeking, as when there are two directly adjacent notes of the same pitch, there is
+                        // a race condiion between the timeout deleting the previous one from the state map, and the seek listener which sets the next one.
+                        // The seek listener depends directly on seek.setSlow, and it needs to happen second, so we run seek.setSlow second
+                        // TODO: find a solution that can provide strict certainty about time.
+                        gm.seek.setSlow(nextNotes.next.start)
+                        shouldPlay.forEach((noteName) => {
+                            state.set(noteName, "soft")
+                        })
+                        state = state
                     }
                 }
             }
@@ -217,6 +235,6 @@
     </div>
     <div class="piano">
         <!-- TODO: allow multiple notes in the pianoroll -->
-        <PianoRoll bars={bars} {state} on:noteOn={handleNoteOn} notes={Array.from(selectedNotes.values())[0]} {gm}></PianoRoll>
+        <PianoRoll bars={bars} {state} on:playingNotes={handlePlayingNotes} notes={Array.from(selectedNotes.values())[0]} {gm}></PianoRoll>
     </div>
 </div>
