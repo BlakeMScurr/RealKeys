@@ -108,7 +108,7 @@
                 let note = event.detail
                 if (nextNotes.sameStart[0].note.equals(note)) {
                     if (nextNotes.next) {
-                        gm.seek.setSlow(nextNotes.next)
+                        gm.seek.setSlow(nextNotes.next.start)
                         state.set(note.string(), "soft")
                         state = state
                         setTimeout(()=> {
