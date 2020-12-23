@@ -138,8 +138,9 @@ function createSeek(setPosition, playingStore, position, songDuration, speed) {
            playingStore.play(true)
            clearTimeout(slto)
            slto = setTimeout(()=> {
-               playingStore.pause()
-               set(val)
+                playingStore.pause()
+                setPosition(val)
+                set(val)
             }, (val - get(position)) * get(songDuration) * (1/get(speed)))
         }
     }
