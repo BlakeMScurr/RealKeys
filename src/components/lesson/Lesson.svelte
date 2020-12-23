@@ -72,6 +72,14 @@
         }
     })
 
+    gm.seek.subscribe(() => {
+        if (get(gm.waitMode)) {
+            state = new Map<string, string>();
+            state.set(nextWaitModeNote()[0].note.string(), "expecting")
+            state = state
+        }
+    })
+
     function nextWaitModeNote():Array<TimedNote> {
         return Array.from(selectedNotes.values())[0].notesFrom(get(gm.position), 1)
     }
