@@ -43,7 +43,7 @@
     function handleTrackSelection(e) {
         currentTracks = [e.detail.key]
         gm.tracks.enable(addClick(currentTracks));
-        unsubscribe()
+        unsub()
         unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
         selectedNotes = gm.tracks.notes(currentTracks);
     }
@@ -56,19 +56,25 @@
 
     function clickTrackChange() {
         gm.tracks.enable(addClick(currentTracks));
-        unsubscribe()
+        unsub()
         unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
         selectedNotes = gm.tracks.notes(currentTracks);
     }
 
     gm.waitMode.subscribe((waitModeOn) => {
         if (waitModeOn) {
-            unsubscribe()
+            unsub()
             state = new Map<string, string>();
+            state.set(nextWaitModeNote()[0].note.string(), "expecting")
+            state = state
         } else {
             unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
         }
     })
+
+    function nextWaitModeNote():Array<TimedNote> {
+        return Array.from(selectedNotes.values())[0].notesFrom(get(gm.position), 1)
+    }
 
     // Handle wait mode
     function handleNoteOn(event) {
@@ -76,7 +82,7 @@
         // i.e., you must have all the relevant notes at the same time before we move on
         // handle edge cases like if one note is held over, or there's a tiny epsilon discrepency between notes
         if (get(gm.waitMode)) {
-            let nextNotes = Array.from(selectedNotes.values())[0].notesFrom(get(gm.position), 1)
+            let nextNotes = nextWaitModeNote()
             if (nextNotes.length >= 1) {
                 let note = event.detail
                 if (nextNotes[0].note.equals(note)) {
@@ -88,9 +94,24 @@
                             state.delete(note.string())
                             state = state
                         }, (nextNotes[0].end - get(gm.position)) * get(gm.songDuration))
+
+                        setTimeout(() => {
+                            state.set(nextWaitModeNote()[0].note.string(), "expecting")
+                            state = state
+                        }, (nextNotes[1].start - get(gm.position)) * get(gm.songDuration))
                     }
                 }
             }
+        }
+    }
+
+    // We are getting from svelte's unsubscribe method saying "stop is not a function", which really don't make an awful lot of sense
+    // TODO: investigate deeply and get rid of this.
+    function unsub() {
+        try {
+            unsubscribe()
+        } catch (e) {
+            console.warn(e)
         }
     }
 

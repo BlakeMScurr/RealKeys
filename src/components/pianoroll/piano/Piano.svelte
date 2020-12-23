@@ -101,6 +101,8 @@
                     return activeMap.get(str) ? "right" : "wrong"
                 } else if (val == "soft") {
                     return activeMap.get(str) ? "right" : ""
+                } else if (val == "expecting") {
+                    return "active"
                 }
                 throw new Error("unexpected note state value " + val)
             } else {
