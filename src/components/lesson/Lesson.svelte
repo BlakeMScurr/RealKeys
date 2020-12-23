@@ -6,6 +6,7 @@
     import Dropdown from '../dropdown/Dropdown.svelte';
     import type { InertTrack } from '../../lib/track/instrument';
     import { get } from '../../lib/util';
+    import type { TimedNote } from '../../lib/music/timed/timed';
     import { makeClicks } from "./clickTrack";
 
     export let owner;
@@ -65,7 +66,7 @@
         if (waitModeOn) {
             unsub()
             state = new Map<string, string>();
-            state.set(nextWaitModeNote()[0].note.string(), "expecting")
+            state.set(nextWaitModeNote().sameStart[0].note.string(), "expecting")
             state = state
         } else {
             unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
@@ -75,13 +76,25 @@
     gm.seek.subscribe(() => {
         if (get(gm.waitMode)) {
             state = new Map<string, string>();
-            state.set(nextWaitModeNote()[0].note.string(), "expecting")
+            state.set(nextWaitModeNote().sameStart[0].note.string(), "expecting")
             state = state
         }
     })
 
-    function nextWaitModeNote():Array<TimedNote> {
-        return Array.from(selectedNotes.values())[0].notesFrom(get(gm.position), 1)
+    function nextWaitModeNote() {
+        let nextNotes: Array<TimedNote> = Array.from(selectedNotes.values())[0].notesFrom(get(gm.position), 1)
+        let i = 0
+        let sameStart = []
+        while (i < nextNotes.length && nextNotes[i].start == nextNotes[0].start) {
+            sameStart.push(nextNotes[i])
+            i++
+        }
+
+        let next = undefined;
+        if (i < nextNotes.length) {
+            next = nextNotes[i]
+        }
+        return { sameStart: sameStart, next: next }
     }
 
     // Handle wait mode
@@ -91,22 +104,22 @@
         // handle edge cases like if one note is held over, or there's a tiny epsilon discrepency between notes
         if (get(gm.waitMode)) {
             let nextNotes = nextWaitModeNote()
-            if (nextNotes.length >= 1) {
+            if (nextNotes.sameStart.length >= 1) {
                 let note = event.detail
-                if (nextNotes[0].note.equals(note)) {
-                    if (nextNotes.length >= 2) {
-                        gm.seek.setSlow(nextNotes[1].start)
+                if (nextNotes.sameStart[0].note.equals(note)) {
+                    if (nextNotes.next) {
+                        gm.seek.setSlow(nextNotes.next)
                         state.set(note.string(), "soft")
                         state = state
                         setTimeout(()=> {
                             state.delete(note.string())
                             state = state
-                        }, (nextNotes[0].end - get(gm.position)) * get(gm.songDuration))
+                        }, (nextNotes.sameStart[0].end - get(gm.position)) * get(gm.songDuration))
 
                         setTimeout(() => {
-                            state.set(nextWaitModeNote()[0].note.string(), "expecting")
+                            state.set(nextWaitModeNote().sameStart[0].note.string(), "expecting")
                             state = state
-                        }, (nextNotes[1].start - get(gm.position)) * get(gm.songDuration))
+                        }, (nextNotes.next.start - get(gm.position)) * get(gm.songDuration))
                     }
                 }
             }
