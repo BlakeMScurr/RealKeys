@@ -1,4 +1,4 @@
-import { niceBlue, rightGreen, white, wrongRed, black } from "../../../colours"
+import { niceBlue, rightGreen, white, wrongRed, black, expectingOrange } from "../../../colours"
 
 export function colour(state: string, isBlack: Boolean) {
     switch (state) {
@@ -8,6 +8,8 @@ export function colour(state: string, isBlack: Boolean) {
             return rightGreen
         case 'wrong':
             return wrongRed
+        case 'expecting':
+            return expectingOrange
         default:
             return isBlack ? black : white
     }
