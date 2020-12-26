@@ -10,7 +10,10 @@
     export let gm: GameMaster;
     
     let duration = get(gm.songDuration)
-    let pos = get(gm.position)
+    let pos;
+    gm.position.subscribe((p)=>{
+        pos = p;
+    })
     let ready = get(gm.audioReady)
 
     let destroyed = false
@@ -32,7 +35,6 @@
     }
 
     // TODO: get this from store
-    let loaded = true
     let playing;
     gm.playingStore.subscribe((val) => {
         playing = val
