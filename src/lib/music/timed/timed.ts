@@ -144,45 +144,52 @@ export class TimedNotes {
                     notes[i].note.string() + " starts at " +
                     notes[i].start)
             }
-
         }
+
         
         let toDelete = []
-        for (let i = notes.length - 1; i > 0; i--) {
-            // TODO: fix note overlap in chords
-            // this code managed to delete overlapped chord note, but was prohibitvely expensive, and altered the music
-            //
-            // for (let j = i - 1; j >= 0 && notes[j].end > notes[i].start; j--) {
-            // if (notes[i].note.equals(notes[j].note)) {
-            //
-            // Example of doubled up chord note in http://localhost:3000/learn/%2FJ%2FJ%2Fjustin_bieber-baby.mid `acoustic guitar (nylon) 0` at the first held chord
-            // the Eb overlaps with the previous one, but because it is in a chord it isn't directly beside the previous Eb in the note list, so it's not deleted here
-
-            if (notes[i-1].end > notes[i].start && notes[i-1].note.equals(notes[i].note)){
-                // This removes any doubled up notes in a given track
-                // Some midi files appear to have doubled notes, that is, you are supposed to play a C4, for example, then play another C4
-                // without stopping the original note. In the case where I first found it, every single note in some tracks was doubled.
-                // This caused major issues with wait mode, and it seems likely that it could cause other issues.
-                // I can't think of an example where one would play the same note in the same track without stopping the first.
-                // TODO: figure out whether it's an issue with the tonesjs/midi library, or the midi files themselves.
-                // When we open the file with this tool https://onlinesequencer.net/import2/dcdfb44f4c34437373aae19b7d7c4b10?title=TheGirlFromIpanema.mid we can
-                // see the double up, but not with musescore. This could either be because onlinesequencer.net has the same bug as us, or because
-                // musescore cleverly deletes the notes like we do now. The relevant file is amongst the midi assets at T/T/TheGirlFromIpanema.mid
-                console.warn("doubled up note")
-                toDelete.push(i)
+        notes.forEach((earlierNote, i) => {
+            for (var j = i + 1; j < notes.length; j++) {
+                if (earlierNote.end < notes[j].start) {
+                    break
+                }
+                
+                if (earlierNote.end > notes[j].start && notes[j].note.equals(earlierNote.note)){
+                    console.warn("note overlap")
+                    if (earlierNote.start === notes[j].start) {
+                        // This removes any doubled up notes in a given track
+                        // Some midi files appear to have doubled notes, that is, you are supposed to play a C4, for example, then play another C4
+                        // without stopping the original note. In the case where I first found it, every single note in some tracks was doubled.
+                        // This caused major issues with wait mode, and it seems likely that it could cause other issues.
+                        // I can't think of an example where one would play the same note in the same track without stopping the first.
+                        // TODO: figure out whether it's an issue with the tonesjs/midi library, or the midi files themselves.
+                        // When we open the file with this tool https://onlinesequencer.net/import2/dcdfb44f4c34437373aae19b7d7c4b10?title=TheGirlFromIpanema.mid we can
+                        // see the double up, but not with musescore. This could either be because onlinesequencer.net has the same bug as us, or because
+                        // musescore cleverly deletes the notes like we do now. The relevant file is amongst the midi assets at T/T/TheGirlFromIpanema.mid
+                        toDelete.push(j)
+                    } else {
+                        // Example of overlap here in http://localhost:3000/learn/%2FJ%2FJ%2Fjustin_bieber-baby.mid `acoustic guitar (nylon) 0` at the first held chord
+                        // where the Eb overlaps with the previous one.
+                        earlierNote.end = notes[j].start
+                    }
+                }
             }
-        }
+
+        })
+        
+        toDelete = [...new Set(toDelete)]
 
         toDelete.sort().reverse().forEach(i => {
             notes.splice(i, 1)
         })
-
+        
         this.notes = notes;
     }
 
     notesFrom(start: number, end: number):Array<TimedNote>{
         if (start >= end) {
-            throw new Error("Start must be before end")
+            console.warn("Start must be before end")
+            return []
         }
 
         if (this.notes.length == 0) {

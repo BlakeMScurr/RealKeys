@@ -176,14 +176,34 @@ test ("DoubledUpNotes", ()=> {
         new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
     ]))
 })
+test ("DoublyDoubledUpNotes", ()=> {
+    // TODO: expect console warn
+    expect((new TimedNotes([
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+    ]))).toEqual(new TimedNotes([
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+    ]))
+})
     
-test ("SimulatneousNotes", ()=> {
+test("SimulatneousNotes", ()=> {
     expect((new TimedNotes([
         new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
         new TimedNote(0, new Fraction("1/10"), NewNote("d", 4)), 
     ]))).toEqual(new TimedNotes([
         new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
         new TimedNote(0, new Fraction("1/10"), NewNote("d", 4)), 
+    ]))
+})
+
+test("TruncateNotes", () => {
+    expect((new TimedNotes([
+        new TimedNote(0, new Fraction("2/10"), NewNote("c", 4)), 
+        new TimedNote(new Fraction("1/10"), new Fraction("2/10"), NewNote("c", 4)), 
+    ]))).toEqual(new TimedNotes([
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+        new TimedNote(new Fraction("1/10"), new Fraction("2/10"), NewNote("c", 4)), 
     ]))
 })
 
