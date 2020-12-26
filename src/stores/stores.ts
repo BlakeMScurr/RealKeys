@@ -209,6 +209,7 @@ function createPlay() {
     }
 }
 
+// TODO: create a class for each mode following some interface, so we can easily add new modes like "By Ear" without complex interactions of existing mode.
 function createWaitMode(tracks, playingStore) {
     const { subscribe, set } = writable(false);
     let lastTrackSet: string[];
