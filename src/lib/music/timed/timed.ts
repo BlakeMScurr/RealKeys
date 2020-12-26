@@ -1,6 +1,6 @@
 // timed.ts has logic for handled music in time
 
-import type { Note } from "../theory/notes";
+import { highestPianoNote, lowestPianoNote, Note } from "../theory/notes";
 
 class NoteStart {
     start: number;
@@ -174,7 +174,15 @@ export class TimedNotes {
                     }
                 }
             }
+        })
 
+        // Sometimes we have super low notes that are intentionally out of range that store data like the author of the midi file and their email address etc. These should
+        // not be parsed as actual notes, hence they're cut off here.
+        // Example in the `lead 3 (calliope)` in http://localhost:3000/learn/%2FJ%2FJ%2Fjustin_bieber-baby.mid
+        notes.forEach((note, i) => {
+            if (note.note.lowerThan(lowestPianoNote) || highestPianoNote.lowerThan(note.note)) {
+                toDelete.push(i)
+            }
         })
         
         toDelete = [...new Set(toDelete)]

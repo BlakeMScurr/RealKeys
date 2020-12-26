@@ -119,10 +119,6 @@ test("NotesFrom0to0.1", ()=>{
     ])
 })
 
-test("NotesFrom0.1to0.1", ()=>{
-    expect(()=>{LoadsOfCs().notesFrom(0.1, 0.1)}).toThrow("Start must be before end")
-})
-
 test("NotesFrom0to0.31", ()=>{
     expect(LoadsOfCs().notesFrom(0, 0.31)).toEqual([
         new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)),
@@ -205,6 +201,12 @@ test("TruncateNotes", () => {
         new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
         new TimedNote(new Fraction("1/10"), new Fraction("2/10"), NewNote("c", 4)), 
     ]))
+})
+
+test("OutOfRangeNotes", () => {
+    expect((new TimedNotes([
+        new TimedNote(0, new Fraction("2/10"), NewNote("c", -1)),
+    ]))).toEqual(new TimedNotes([]))
 })
 
 function Cs() {
