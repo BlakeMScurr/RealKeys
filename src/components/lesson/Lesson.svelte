@@ -40,9 +40,20 @@
     let unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
     let selectedNotes = gm.tracks.notes(currentTracks);
 
+    let trackList = Array.from(inertTracks.keys())
+    trackList.unshift("All")
+    // TODO: make dropdown accept list, not just map
+    let trackMap = new Map()
+    trackList.forEach((track) => {
+        trackMap.set(track, true)
+    })
 
     function handleTrackSelection(e) {
-        currentTracks = [e.detail.key]
+        if (e.detail.key === "All") {
+            currentTracks = trackList.slice(1)
+        } else {
+            currentTracks = [e.detail.key]
+        }
         gm.tracks.enable(addClick(currentTracks));
         unsub()
         unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
@@ -224,7 +235,7 @@
         </div>
         <div class="line2">
             <!-- TODO: only pass the keys into the dropdown -->
-            <Dropdown list={inertTracks} on:select={handleTrackSelection}></Dropdown>
+            <Dropdown list={trackMap} on:select={handleTrackSelection}></Dropdown>
             <label for="clickTrackOn">Click Track</label>
             <input type="checkbox" id="clickTrackOn" bind:checked={clickTrackOn} on:change={clickTrackChange}>
             <Settings bars={bars} timesignatures={timesignatures} {gm}></Settings>
@@ -235,6 +246,6 @@
     </div>
     <div class="piano">
         <!-- TODO: allow multiple notes in the pianoroll -->
-        <PianoRoll bars={bars} {state} on:playingNotes={handlePlayingNotes} notes={Array.from(selectedNotes.values())[0]} {gm}></PianoRoll>
+        <PianoRoll bars={bars} {state} on:playingNotes={handlePlayingNotes} tracks={selectedNotes} {gm}></PianoRoll>
     </div>
 </div>

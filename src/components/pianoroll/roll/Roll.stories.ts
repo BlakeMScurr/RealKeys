@@ -21,19 +21,24 @@ export const Pixi = () => {
       height: 500,
       unit: "px",
       bars: new Bars([0.2, 0.2, 0.2, 0.2, 0.2]),
-      notes: new TimedNotes([
-        // Picardy
-        new TimedNote(0, 0.4, NewNote("C", 4)),
-        new TimedNote(0, 0.4, NewNote("F", 4)),
-        new TimedNote(0, 1, NewNote("G", 4)),
-        
-        // Moving "Third"
-        new TimedNote(0.4, 0.6, NewNote("C", 4)),
-        new TimedNote(0.4, 0.6, NewNote("D", 4)),
-        new TimedNote(0.6, 0.8, NewNote("C", 4)),
-        new TimedNote(0.6, 0.8, NewNote("Eb", 4)),
-        new TimedNote(0.8, 1, NewNote("C", 4)),
-        new TimedNote(0.8, 1, NewNote("E", 4)),
+      tracks: new Map<string, TimedNotes>([
+        ["track1", new TimedNotes([
+          // Picardy
+          new TimedNote(0, 0.4, NewNote("C", 4)),
+          new TimedNote(0, 0.4, NewNote("F", 4)),
+          new TimedNote(0, 1, NewNote("G", 4)),
+        ])],
+        ["track2", new TimedNotes([
+          // Moving "Third"
+          new TimedNote(0.4, 0.6, NewNote("C", 4)),
+          new TimedNote(0.4, 0.6, NewNote("D", 4)),
+          new TimedNote(0.6, 0.8, NewNote("C", 4)),
+        ])],
+        ["track3", new TimedNotes([
+          new TimedNote(0.6, 0.8, NewNote("Eb", 4)),
+          new TimedNote(0.8, 1, NewNote("C", 4)),
+          new TimedNote(0.8, 1, NewNote("E", 4)),
+        ])]
       ]),
       overlayNotes: new TimedNotes([]),
       recording: true,

@@ -306,20 +306,18 @@ function createTracks(playingStore) {
             return noteMap
         },
         subscribeToNotesOfTracks: (tracks: string[], onStateChange: (notes: Map<string, string>) => void) => {
-            if (tracks.length != 1) {
-                throw new Error(`TODO: implement subscription to ${tracks.length} tracks`)
-            }
+            let unsubscribers = []
+            tracks.forEach(track => {
+                subscribe((currentPlayers: Map<string, midiTrack>) => {
+                    if (!currentPlayers.has(track)) {
+                        throw new Error(`player has no track ${track}`)
+                    }
 
-            let unsubscriber
-            subscribe((currentPlayers: Map<string, midiTrack>) => {
-                if (!currentPlayers.has(tracks[0])) {
-                    throw new Error(`player has no track ${tracks[0]}`)
-                }
+                    unsubscribers.push(currentPlayers.get(track).interface().subscribeToNotes(onStateChange))
+                })()
+            })
 
-                unsubscriber = currentPlayers.get(tracks[0]).interface().subscribeToNotes(onStateChange)
-            })()
-
-            return unsubscriber
+            return ()=>{unsubscribers.forEach(u => u())}
         },
         setWaitModeStore: (wms) => {
             waitMode = wms

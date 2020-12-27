@@ -9,7 +9,7 @@
     export let height:number;
     export let unit:string;
     export let bars:Bars;
-    export let notes:TimedNotes;
+    export let tracks:Map<string, TimedNotes>;
     export let position = 0;
     export let recording = true;
     export let debugSliders = false;
@@ -38,12 +38,17 @@
     let drawKeys
     let drawBarLines
     let drawNotes
+    let ticker
     onMount(async ()=>{
         PIXI = await import('pixi.js') 		 
         let helpers = await import('./Pixi')
         drawKeys = helpers.drawKeys
         drawBarLines = helpers.drawBarLines
         drawNotes = helpers.drawNotes
+
+        if (height !== undefined) {
+            mountPoint.setAttribute("style","height:" + height + "px");
+        }
 
         let initialHeight = mountPoint.clientHeight
         // TODO: why does the mount point resize in the first place? It seems to add an extra 4px to its height when the child canvas mounts, and the child canvas remains at the mount point's original height.
@@ -55,15 +60,13 @@
             }
         })
 
-        if (height !== undefined) {
-            mountPoint.setAttribute("style","height:" + height + "px");
-        }
-
         // TODO: handle dpr so it's crisp on retina displays
-        app = new PIXI.Application({width:  mountPoint.clientWidth, height: mountPoint.clientHeight});
+        app = new PIXI.Application({width:  mountPoint.clientWidth, height: mountPoint.clientHeight, autoStart: false});
         mountPoint.appendChild(app.view);
         // TODO: why is the canvas 4 pixels smaller than the mount point?
 
+        // prevent internal ticker a la https://github.com/pixijs/pixi.js/issues/1897#issuecomment-112001406 and https://github.com/pixijs/pixi.js/issues/5702
+        ticker = app.ticker;
 
         foreground = new PIXI.Container();
         background = new PIXI.Container();
@@ -88,13 +91,15 @@
             drawKeys(keys, background, keyWidth, mountPoint.clientHeight)
             translate(foreground)
             drawBarLines(bars, foreground, mountPoint.clientWidth, mountPoint.clientHeight, zw)
-            drawNotes(notes, foreground, keys, keyWidth, mountPoint.clientHeight, zw)
+            drawNotes(tracks, foreground, keys, keyWidth, mountPoint.clientHeight, zw)
+            ticker.update();
         }
     }
 
     function translate(foreground: PIXI.Container) {
         if (foreground !== undefined) {
             foreground.setTransform(0, mountPoint.clientHeight * position / zw, 1, 1, 0, 0, 0, 0, 0)
+            ticker.update()
         }
     }
 
@@ -105,7 +110,7 @@
 
     $: {
         let _ = keys
-        let __ = notes
+        let __ = tracks
         fullRedraw()
     }
 </script>
