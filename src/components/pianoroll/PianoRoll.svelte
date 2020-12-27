@@ -6,11 +6,13 @@
     import { newPiano } from "../../lib/track/instrument";
     import Roll from "./roll/Roll.svelte";
     import { createEventDispatcher } from 'svelte';
+    import type { Colourer } from "../colours";
 
     export let tracks:Map<string, TimedNotes> = new Map<string, TimedNotes>();
     export let bars:Bars;
     export let state: Map<string, string> = new Map<string, string>();
     export let gm: GameMaster;
+    export let colourer: Colourer;
 
     let notes = Array.from(tracks.values())[0] || new TimedNotes([]);
 
@@ -155,7 +157,7 @@
 
 <div id="pianoroll">
     <div class="container roll" on:wheel={handleRollWheel} on:touchmove={handleTouchMove}>
-        <Roll {keys} {bars} {tracks} position={pos} songDuration={gm.songDuration}></Roll>
+        <Roll {keys} {bars} {tracks} position={pos} songDuration={gm.songDuration} {colourer}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
     <Piano {keys} lessonNotes={state} playing={gm.playingStore} waitMode={gm.waitMode} on:noteOff={noteOff} on:noteOn={noteOn} on:playingNotes={forward} usedNotes={notes.untimeRemoveDupes()}></Piano>

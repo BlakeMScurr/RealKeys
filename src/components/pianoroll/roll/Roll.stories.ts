@@ -2,6 +2,7 @@ import Roll from './Roll.svelte';
 import { TimedNote, TimedNotes } from "../../../lib/music/timed/timed";
 import { Bars }  from "../pianoRollHelpers";
 import { NewNote, notesBetween } from "../../../lib/music/theory/notes";
+import { Colourer } from '../../colours';
 
 export default {
   title: 'Roll',
@@ -18,6 +19,7 @@ export const Pixi = () => {
       songDuraion: { subscribe: (cb)=>{
         cb(10000)
       }},
+      colourer: new Colourer(3),
       height: 500,
       unit: "px",
       bars: new Bars([0.2, 0.2, 0.2, 0.2, 0.2]),

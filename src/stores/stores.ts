@@ -296,6 +296,10 @@ function createTracks(playingStore) {
         notes: (trackNames: string[]):Map<string, TimedNotes> => {
             let noteMap = new Map<string, TimedNotes>();
             subscribe((currentPlayers: Map<string, midiTrack>) => {
+                currentPlayers.forEach((v, name) => {
+                    noteMap.set(name, new TimedNotes([]))
+                })
+
                 trackNames.forEach((name) => {
                     if (!currentPlayers.has(name)) {
                         throw new Error(`There is no track called ${name}. Current tracks are ${Array.from(currentPlayers.keys())}`)

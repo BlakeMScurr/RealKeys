@@ -4,7 +4,7 @@
     import type { Note } from "../../../lib/music/theory/notes";
     import type { TimedNotes } from "../../../lib/music/timed/timed";
     import type { Bars } from "../pianoRollHelpers";
-import { Colourer } from "../../colours";
+    import type { Colourer } from "../../colours";
 
     export let keys:Array<Note>;
     export let height:number;
@@ -15,10 +15,10 @@ import { Colourer } from "../../colours";
     export let recording = true;
     export let debugSliders = false;
     export let songDuration;
+    export let colourer: Colourer;
 
     let mountPoint;
     let zw = zoomWidth()
-    let colourer = new Colourer(tracks.size)
 
     function zoomWidth() {
         // TODO: remove hack
@@ -112,7 +112,6 @@ import { Colourer } from "../../colours";
 
     $: {
         let __ = tracks
-        colourer = new Colourer(tracks.size)
         fullRedraw()
     }
 

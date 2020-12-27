@@ -17,6 +17,7 @@
     import { GameMaster } from '../../stores/stores'
     import { InertTrack, NewInstrument } from '../../lib/track/instrument';
     import Navbar from '../../components/Navbar/Navbar.svelte';
+import { Colourer } from '../../components/colours';
 
     export let path;
 
@@ -87,7 +88,7 @@
         <p>{message}</p>
     {/await}
 {:then x}
-    <Lesson owner={lesson.artist} lessonID={lesson.lessonID} timesignatures={lesson.timeSignatures} bars={lesson.bars} inertTracks={lesson.tracks} {gm}></Lesson>
+    <Lesson owner={lesson.artist} lessonID={lesson.lessonID} timesignatures={lesson.timeSignatures} bars={lesson.bars} inertTracks={lesson.tracks} {gm} colourer={new Colourer(lesson.tracks.size)}></Lesson>
 {:catch error}
     <h1>Could not load lesson {console.log(error)}</h1>
 {/await}

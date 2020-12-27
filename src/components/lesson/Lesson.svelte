@@ -8,6 +8,7 @@
     import { arraysEqual, get } from '../../lib/util';
     import type { TimedNote } from '../../lib/music/timed/timed';
     import { makeClicks } from "./clickTrack";
+    import type { Colourer } from "../colours";
 
     export let owner;
     export let lessonID;
@@ -15,6 +16,7 @@
     export let bars;
     export let timesignatures;
     export let gm: GameMaster;
+    export let colourer: Colourer;
 
     // Handle note state subscription
     let state = new Map<string, string>();
@@ -246,6 +248,6 @@
     </div>
     <div class="piano">
         <!-- TODO: allow multiple notes in the pianoroll -->
-        <PianoRoll bars={bars} {state} on:playingNotes={handlePlayingNotes} tracks={selectedNotes} {gm}></PianoRoll>
+        <PianoRoll bars={bars} {colourer} {state} on:playingNotes={handlePlayingNotes} tracks={selectedNotes} {gm}></PianoRoll>
     </div>
 </div>
