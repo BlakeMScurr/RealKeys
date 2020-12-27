@@ -1,78 +1,39 @@
 <script lang="ts">
     import { range, Bars, pushBottomKey, pushTopKey, popBottomKey, popTopKey } from "./pianoRollHelpers";
-    import { RecordState } from "./recorder";
     import { TimedNotes } from "../../lib/music/timed/timed"
-    import { currentSong, playingStore, position, songDuration, seek, tracks } from "../../stores/stores"
-    import RecordButton from "../generic/RecordButton.svelte"
-    import Roll from "./roll/Roll.svelte";
-    import GLRoll from "./roll/GLRoll.svelte";
+    import type { GameMaster } from "../../stores/stores"
     import Piano from "./piano/Piano.svelte";
-    import type { VirtualInstrument } from "../track/instrument";
-    import { newPiano } from "../track/instrument";
+    import { newPiano } from "../../lib/track/instrument";
+    import Roll from "./roll/Roll.svelte";
+    import { createEventDispatcher } from 'svelte';
 
-    export let notes:TimedNotes = new TimedNotes([]);
+    export let tracks:Map<string, TimedNotes> = new Map<string, TimedNotes>();
     export let bars:Bars;
-    export let recordMode:Boolean = false;
-    export let instrument: VirtualInstrument;
-    export let gl:Boolean = false;
+    export let state: Map<string, string> = new Map<string, string>();
+    export let gm: GameMaster;
 
-    // TODO: track handling at the lesson level
-    let state = new Map<string, string>();
-    let updatenotes
-    let updateInstrument
-    if (!recordMode) {
-        let playbackinterface = tracks.newPlaybackTrack(notes.notes, instrument)
-        playbackinterface.subscribeToNotes((notes: Map<string, string>)=>{
-            // TODO: only bother sending the strings
-            state = new Map<string, string>();
-            notes.forEach((noteState, noteName: string)=>{
-                state.set(noteName, noteState)
-            })
-            state = state
-        })
-        updatenotes = (notes)=>{playbackinterface.updateNotes(notes)}
-        updateInstrument = (instrument) => {playbackinterface.updateInstrument(instrument)}
-    }
+    let notes = Array.from(tracks.values())[0] || new TimedNotes([]);
 
-    $: {
-        updatenotes(notes)
-    }
-
-    $: {
-        updateInstrument(instrument)
-    }
+    let dispatch = createEventDispatcher();
 
     // TODO: allow one to use the same MIDI instrument as the track being played against
     let piano = newPiano("Player Piano")
 
     let pos = 0;
-    position.subscribe((value) => {
+    gm.position.subscribe((value) => {
         pos = value
     })
 
-    let width = 0;
-    $: keys = range(notes.untime(), piano.highest(), piano.lowest())
-    let lastWidth = -1;
-    $: {
-        if (width == lastWidth) {} else if (width <= 0) {
-            setTimeout(() => {
-                keys = range(notes.untime(), piano.highest(), piano.lowest())
-            }, 1000);
-        }
-        lastWidth = width
-    }
+    $: keys = range(Array.from(tracks.values()).reduce((acc, curr) => { return acc.concat(curr.untime())}, []), piano.highest(), piano.lowest())
     
     // ROLL ZOOM
-    let seekTimeout;
     function handleRollWheel(event) {
+        gm.playingStore.pause()
         event.preventDefault()
         pos -= event.deltaY * 2 / duration
         pos = pos < 0 ? 0 : pos
         pos = pos > 1 ? 1 : pos
-        clearTimeout(seekTimeout)
-        seekTimeout = setTimeout(()=> {
-            seek.set(pos)
-        }, 200)
+        gm.seek.set(pos)
         // TODO: widen the piano with deltaX
     }
 
@@ -81,7 +42,7 @@
     }
 
     let duration = 5;
-    songDuration.subscribe((val)=> {
+    gm.songDuration.subscribe((val)=> {
         duration = val
     })
 
@@ -150,67 +111,22 @@
         dx += event.deltaX * invert
     }
 
-    // RecordMode stuff
-    // TODO: in play mode, send signals to piano to render success or failure of attempt
-    // - Extra or missed note should make played key red
-    // - Hit note should be green
-    // Have some leeway
-
-    let overlayNotes = new TimedNotes([]);
-
-    let recorder;
-    if (recordMode) {
-        recorder = new RecordState(notes)
-    } else {
-        recorder = new RecordState(overlayNotes)
-    }
-
-    let playing = false
-    playingStore.subscribe((p: boolean)=>{
-        playing = p
-        if (!recordMode) {
-            if (p) {
-                startRecording()
-            } else {
-                stopRecording()
-            }
-        }
-    })
-
     function noteOff(event) {
         piano.stop(event.detail)
-        if (recordMode) {
-            notes = recorder.noteOff(event, pos)
-        } else {
-            overlayNotes = recorder.noteOff(event, pos)
-        }
     }
+
+    let inWaitMode = false;
+    gm.waitMode.subscribe((val) => {
+        inWaitMode = val
+    })
 
     function noteOn(event) {
         piano.play(event.detail)
-        if (recordMode) {
-            notes = recorder.noteOn(event, pos)
-        } else {
-            overlayNotes = recorder.noteOn(event, pos)
-        }
+        dispatch("noteOn", event.detail)
     }
 
-    function startRecording() {
-        if (recordMode) {
-            notes = recorder.startRecording(pos)
-        } else {
-            overlayNotes = recorder.startRecording(pos)
-        }
-    }
-
-    function stopRecording() {
-        if (recordMode) {
-            notes = recorder.stopRecording(pos, true)
-            currentSong.set(notes)
-        } else {
-            overlayNotes = recorder.stopRecording(pos, true)
-            currentSong.set(overlayNotes)
-        }
+    function forward(event) {
+        dispatch(event.type, event.detail)
     }
 </script>
 
@@ -237,19 +153,11 @@
     }
 </style>
 
-{#if recordMode}
-    <RecordButton on:startRecording={startRecording} on:stopRecording={stopRecording}></RecordButton>
-{/if}
-
-<div id="pianoroll" bind:clientWidth={width}>
+<div id="pianoroll">
     <div class="container roll" on:wheel={handleRollWheel} on:touchmove={handleTouchMove}>
-        {#if !gl}
-            <Roll {keys} {bars} {notes} {overlayNotes} height={100} unit={"%"} position={pos} recording={recordMode} editable={recordMode} playing={playing}></Roll>
-        {:else}
-            <GLRoll {keys} {bars} {notes} {overlayNotes} position={pos} recording={recordMode} editable={recordMode} playing={playing}></GLRoll>
-        {/if}
+        <Roll {keys} {bars} {tracks} position={pos} songDuration={gm.songDuration}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
-    <Piano {keys} lessonNotes={state} {playing} on:noteOff={noteOff} on:noteOn={noteOn} usedNotes={recordMode ? new Map() : notes.untimeRemoveDupes()}></Piano>
+    <Piano {keys} lessonNotes={state} playing={gm.playingStore} waitMode={gm.waitMode} on:noteOff={noteOff} on:noteOn={noteOn} on:playingNotes={forward} usedNotes={notes.untimeRemoveDupes()}></Piano>
     </div>
 </div>

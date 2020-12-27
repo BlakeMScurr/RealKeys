@@ -85,7 +85,7 @@ let naturalKeys = ["a","s","d","f","g","h","j","k","l"]
 let accidentalKeys = ["w","e","r","t","y","u","i","o","p"]
 const naturals = makeNaturals()
 const accidentals = makeAccidentals()
-naturalKeys.push(":")
+naturalKeys.push(";")
 naturalKeys.push("'")
 accidentalKeys.push("[")
 accidentalKeys.push("]")

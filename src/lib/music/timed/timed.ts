@@ -1,6 +1,6 @@
 // timed.ts has logic for handled music in time
 
-import type { Note } from "../theory/notes";
+import { highestPianoNote, lowestPianoNote, Note } from "../theory/notes";
 
 class NoteStart {
     start: number;
@@ -134,10 +134,6 @@ export class TimedNote {
     
 export class TimedNotes {
     notes: Array<TimedNote>;
-    // // records the indices of each note
-    // byNotes: Map<string, Array<number>>
-    // // records the index of this note by pitch
-    // nthNoteOfPitch: Array<number>
     constructor(notes: Array<TimedNote>) {
         // check that the notes are in order
         for (let i = 1; i < notes.length; i++) {
@@ -150,15 +146,58 @@ export class TimedNotes {
             }
         }
 
-        // let tmp = generateByNotes(notes) // TODO: is it possible to not have this tmp variable, yet only have a single function that returns byNotes and nthNoteOfPitch?
-        // this.byNotes = tmp.byNotes
-        // this.nthNoteOfPitch = tmp.nthNoteOfPitch
+        
+        let toDelete = []
+        notes.forEach((earlierNote, i) => {
+            for (var j = i + 1; j < notes.length; j++) {
+                if (earlierNote.end < notes[j].start) {
+                    break
+                }
+                
+                if (earlierNote.end > notes[j].start && notes[j].note.equals(earlierNote.note)){
+                    console.warn("note overlap")
+                    if (earlierNote.start === notes[j].start) {
+                        // This removes any doubled up notes in a given track
+                        // Some midi files appear to have doubled notes, that is, you are supposed to play a C4, for example, then play another C4
+                        // without stopping the original note. In the case where I first found it, every single note in some tracks was doubled.
+                        // This caused major issues with wait mode, and it seems likely that it could cause other issues.
+                        // I can't think of an example where one would play the same note in the same track without stopping the first.
+                        // TODO: figure out whether it's an issue with the tonesjs/midi library, or the midi files themselves.
+                        // When we open the file with this tool https://onlinesequencer.net/import2/dcdfb44f4c34437373aae19b7d7c4b10?title=TheGirlFromIpanema.mid we can
+                        // see the double up, but not with musescore. This could either be because onlinesequencer.net has the same bug as us, or because
+                        // musescore cleverly deletes the notes like we do now. The relevant file is amongst the midi assets at T/T/TheGirlFromIpanema.mid
+                        toDelete.push(j)
+                    } else {
+                        // Example of overlap here in http://localhost:3000/learn/%2FJ%2FJ%2Fjustin_bieber-baby.mid `acoustic guitar (nylon) 0` at the first held chord
+                        // where the Eb overlaps with the previous one.
+                        earlierNote.end = notes[j].start
+                    }
+                }
+            }
+        })
+
+        // Sometimes we have super low notes that are intentionally out of range that store data like the author of the midi file and their email address etc. These should
+        // not be parsed as actual notes, hence they're cut off here.
+        // Example in the `lead 3 (calliope)` in http://localhost:3000/learn/%2FJ%2FJ%2Fjustin_bieber-baby.mid
+        notes.forEach((note, i) => {
+            if (note.note.lowerThan(lowestPianoNote) || highestPianoNote.lowerThan(note.note)) {
+                toDelete.push(i)
+            }
+        })
+        
+        toDelete = [...new Set(toDelete)]
+
+        toDelete.sort().reverse().forEach(i => {
+            notes.splice(i, 1)
+        })
+        
         this.notes = notes;
     }
 
     notesFrom(start: number, end: number):Array<TimedNote>{
         if (start >= end) {
-            throw new Error("Start must be before end")
+            console.warn("Start must be before end")
+            return []
         }
 
         if (this.notes.length == 0) {
@@ -223,45 +262,4 @@ export class TimedNotes {
         })
         return map
     }
-
-    // nextSame(i: number) {
-    //     let nthNote = this.nthNoteOfPitch[i]
-    //     let noteString = this.notes[i].note.string()
-    //     let arr = this.byNotes.get(noteString)
-    //     if (i == arr.length - 1) {
-    //         return
-    //     }
-    //     return this.notes[arr[nthNote + 1]]
-    // }
 }
-
-// function generateByNotes(notes: Array<TimedNote>) {
-//     let byNotes = new Map()
-//     for (let i = 0; i < notes.length; i++) {
-//         const noteStr = notes[i].note.string()
-//         if (byNotes.get(noteStr)) {
-//             byNotes.set(noteStr, new Array())
-//         }
-//         byNotes.get(noteStr).push(i)
-//     }
-
-//     byNotes.forEach((noteList) => {
-//         for (let i = 0; i < noteList.length - 1; i++) {
-//             const a = notes[noteList[i]];
-//             const b = notes[noteList[i + 1]];
-
-//             if (a.end < b.start) {
-//                 throw new Error(`Overlapping notes for pitch ${a.note.string()}: first note is from ${a.start} to ${a.end}, second note is from ${b.start} to ${b.end}`)
-//             }
-//         }
-//     })
-
-//     let nthNoteOfPitch = new Array(notes.length)
-//     byNotes.forEach((notelist) => {
-//         notelist.forEach((noteIndex, i) => {
-//             nthNoteOfPitch[i] = noteIndex
-//         })
-//     })
-
-//     return {byNotes: byNotes, nthNoteOfPitch: nthNoteOfPitch}
-// }

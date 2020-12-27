@@ -1,218 +1,141 @@
 <script lang="ts">
-    // TOOD: use webgl - cpu spikes on scroll right now
-    // TODO: allow scrolling
-    import { niceBlue } from "../../colours";
+    import { onMount } from "svelte";
+    import rs from 'css-element-queries/src/ResizeSensor';
     import type { Note } from "../../../lib/music/theory/notes";
     import type { TimedNotes } from "../../../lib/music/timed/timed";
-    import { TimedNote } from "../../../lib/music/timed/timed";
-    import type { Bars } from "../pianoroll";
-    import RollKey from "./RollKey.svelte";
-    import { zoomWidth } from './roll.ts'
-    import { currentSong } from "../../../stores/stores";
+    import type { Bars } from "../pianoRollHelpers";
+import { Colourer } from "../../colours";
 
     export let keys:Array<Note>;
     export let height:number;
     export let unit:string;
     export let bars:Bars;
-    export let notes:TimedNotes;
+    export let tracks:Map<string, TimedNotes>;
     export let position = 0;
     export let recording = true;
-    export let editable = false;
-    export let playing;
+    export let debugSliders = false;
+    export let songDuration;
 
-    // the place on the screen where the user should start playing the note
-    // TODO: why does the length actually seem a bit long, perhaps 5x longer
+    let mountPoint;
     let zw = zoomWidth()
-    $: zoomEnd = recording ? position : position + zw
-    $: zoomStart = recording ? position - zw : position
+    let colourer = new Colourer(tracks.size)
 
-    // Reverse stuff so that it looks right
-    // TODO: no ugly reversing stuff
-    $: zs = 1- zoomEnd
-    $: ze = 1 - zoomStart
-
-    $: zoomRatio = ze - zs
-    $: viewHeight = height / zoomRatio
-    $: zoomOffset = height * zs / zoomRatio
-
-    function find(n: Note, ns: Array<Note>) {
-        // TODO: efficient lookup
-        for (let i = 0; i < ns.length; i++) {
-            const note = ns[i];
-            if (note.equals(n)) {
-                return i
-            }
-            
+    function zoomWidth() {
+        // TODO: remove hack
+        if (!songDuration) {
+            return 1
         }
-        return -1
+        let zoomLength = 4 * 1000 // length of the zoom window in seconds
+        let duration;
+        songDuration.subscribe((val)=>{
+            duration = val
+        })
+        return zoomLength / duration;
     }
 
-    let index = -1
-    let type = ""
-    let unsaved = false
-    const scaledown = 400
-    function handleMouseMove(e) {
-        if (index != -1) {
-            if (type == "start") {
-                notes.notes[index].start -= zoomRatio * e.movementY / scaledown
-            } else if (type == "end") {
-                notes.notes[index].end -= zoomRatio * e.movementY / scaledown
-            } else if (type == "middle") {
-                notes.notes[index].start -= zoomRatio * e.movementY / scaledown
-                notes.notes[index].end -= zoomRatio * e.movementY / scaledown
-            }
+    let app;
+    let foreground;
+    let background;
+    let PIXI	
+    let drawKeys
+    let drawBarLines
+    let drawNotes
+    let ticker
+    onMount(async ()=>{
+        PIXI = await import('pixi.js') 		 
+        let helpers = await import('./Pixi')
+        drawKeys = helpers.drawKeys
+        drawBarLines = helpers.drawBarLines
+        drawNotes = helpers.drawNotes
 
-            if (notes.notes[index].end <= notes.notes[index].start) {
-                notes.notes.splice(index, 1)
-                index = -1
-                type = ""
-            }
-            notes = notes
-            unsaved = true
+        if (height !== undefined) {
+            mountPoint.setAttribute("style","height:" + height + "px");
         }
-    }
 
-    function mouseup(){
-        if (editable) {
-            index = -1
-            type = ""
-        }
-    }
-   
-    function mousedown(i: number, newtype: string) {
-        return function (e) {
-            if (editable) {
-                e.stopPropagation()
-                index = i
-                type = newtype
+        let initialHeight = mountPoint.clientHeight
+        // TODO: why does the mount point resize in the first place? It seems to add an extra 4px to its height when the child canvas mounts, and the child canvas remains at the mount point's original height.
+        new rs(mountPoint, ()=> {
+            if (mountPoint.clientHeight !== initialHeight) {
+                mountPoint.setAttribute("style","height:" + initialHeight + "px");
+                app.renderer.resize(mountPoint.clientWidth, mountPoint.clientHeight)
+                fullRedraw()
             }
-        }
-    }
+        })
 
-    function handleNewNote(e) {
-        if (editable) {
-            if (Array.from(e.path[0].classList.values()).indexOf("notescontainer") == -1) {
-                console.log("clicking where note already exists")
-                return
-            }
-    
-            let clientWidth = e.path[0].clientWidth
-            let noteIndex = Math.floor((e.offsetX / clientWidth) * keys.length)
-            
-            let notemiddle = (1 - ((e.offsetY)/e.path[0].clientHeight)) * zoomRatio + position - zw
+        // TODO: handle dpr so it's crisp on retina displays
+        app = new PIXI.Application({width:  mountPoint.clientWidth, height: mountPoint.clientHeight, autoStart: false});
+        mountPoint.appendChild(app.view);
+        // TODO: why is the canvas 4 pixels smaller than the mount point?
 
-            const noteRadius = 1000/duration // one second
-            notes.add(new TimedNote(notemiddle - noteRadius, notemiddle + noteRadius, keys[noteIndex].deepCopy()))
-            notes = notes
-            unsaved = true
+        // prevent internal ticker a la https://github.com/pixijs/pixi.js/issues/1897#issuecomment-112001406 and https://github.com/pixijs/pixi.js/issues/5702
+        ticker = app.ticker;
+
+        foreground = new PIXI.Container();
+        background = new PIXI.Container();
+        app.stage.addChild(background)
+        app.stage.addChild(foreground)
+       
+        fullRedraw()
+
+        window.addEventListener("resize", ()=>{
+            app.renderer.resize(mountPoint.clientWidth, mountPoint.clientHeight)
+            fullRedraw()
+        })
+    })
+
+    // TODO: parameterise
+    function fullRedraw() {
+        if (app !== undefined) {
+            background.removeChildren()
+            foreground.removeChildren()
+                    
+            let keyWidth = mountPoint.clientWidth / keys.length
+            drawKeys(keys, background, keyWidth, mountPoint.clientHeight)
+            translate(foreground)
+            drawBarLines(bars, foreground, mountPoint.clientWidth, mountPoint.clientHeight, zw)
+            drawNotes(tracks, foreground, keys, keyWidth, mountPoint.clientHeight, zw, colourer)
+            ticker.update();
         }
     }
 
-    function handleSave() {
-        // TODO: show recent edits etc
-        unsaved = false
-        notes.sort()
-        currentSong.set(notes)
+    function translate(foreground: PIXI.Container) {
+        if (foreground !== undefined) {
+            foreground.setTransform(0, mountPoint.clientHeight * position / zw, 1, 1, 0, 0, 0, 0, 0)
+            ticker.update()
+        }
+    }
+
+    $: {
+        let _ = position
+        translate(foreground)
+    }
+
+    $: {
+        let __ = tracks
+        colourer = new Colourer(tracks.size)
+        fullRedraw()
+    }
+
+    $: {
+        let _ = keys
+        fullRedraw()
     }
 </script>
 
 <style>
     div {
-        overflow: hidden;
-    }
-
-    .container {
         width: 100%;
-        height: var(--height);
-        position: absolute;
-    }
-
-    .bar {
-        top: var(--top);
-        height: 1px;
-        background-color: white;
-        width: 100%;
-        position: absolute;
-    }
-
-    .note {
-        position: absolute;
-        height: 10px;
-        left: var(--left);
-        top: var(--top);
-        width: var(--width);
-        /* Subtracting a pixel is a hack to make sure we don't cover the barlines with notes when we have notes that fill up entire bars */
-        /* This will probably be irrelevant when most values are input with live audio rather than as numbers */
-        /* TODO: either remove this, or only attempt to reveal barlines in select cases, say, those where the next note is immediate or almost immediate */
-        height: calc(var(--height) - 1px);
-    }
-
-    .mainnote {
-        background-color: #667ED4;
-    }
-
-    .movable {
-        cursor: move;
-    }
-
-    .keybackground {
-        z-index: 0;
-    }
-
-    .barlines {
-        z-index: 3;
-    }
-
-    .notescontainer {
-        z-index: 4;
-    }
-
-    .edit {
-        width: 100%;
-        height: 8px;
-        cursor: ns-resize;
-    }
-
-    .StartNote {
-        position: absolute;
-        bottom: 0;
+        height: 100%;
+        background-color: grey;
     }
 </style>
 
-{#if unsaved}
-    <button on:click={handleSave}>Save</button>
-{/if}
+<div bind:this={mountPoint}></div>
 
-<!-- Key Backgrounds -->
-<div class="container keybackground" style="--height: {height + unit};">
-    {#each keys as key, i}
-        <RollKey width={100/keys.length + "%"} height={"100%"} white={key.color()=="white"} rightBorder={(key.abstract.letter == "b" || key.abstract.letter == "e") && i != keys.length - 1}></RollKey>
-    {/each}
-</div>
-<!-- Bar Lines -->
-<div class="container barlines" style="--height: {height + unit};">
-    {#each bars.sums() as bar}
-        <div class="bar" style="--top: {(viewHeight * (1-bar) - zoomOffset) + unit};"></div>
-    {/each}
-</div>
-<!-- Notes -->
-<div class="container notescontainer" style="--height: {height + unit};" on:mouseup={mouseup} on:mousemove={handleMouseMove} on:dblclick={handleNewNote}>
-    {#each notes.notes as note, i}
-        {#if find(note.note, keys) != -1}
-            <div class="{"note mainnote" + (editable ? " movable" : "")}" style="--width: {100/keys.length}%;
-                --left: {find(note.note, keys) * 100/keys.length}%;
-                --height: {100*((1-note.start)-(1-note.end))/zoomRatio}%;
-                --top:{
-                    100*(1-note.end)/zoomRatio - zoomOffset
-                }%;
-                --color: {niceBlue}"
-                on:mousedown={mousedown(i, "middle")}
-            >
-                {#if editable}
-                    <div class="edit EndNote" on:mousedown={mousedown(i, "end")}></div>
-                    <div class="edit StartNote" on:mousedown={mousedown(i, "start")}></div>
-                {/if}
-            </div>
-        {/if}
-    {/each}
-</div>
+{#if debugSliders}
+    <input type="range" on:input={()=>{translate(foreground)}} bind:value={position} min="0" max="1" step="0.0001">
+    position {position}
+    <br>
+    <input type="range" on:input={fullRedraw} bind:value={zw} min="0" max="1" step="0.0001">
+    zoom {zw}
+{/if}

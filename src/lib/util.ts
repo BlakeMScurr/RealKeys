@@ -121,3 +121,26 @@ export function addGlobalKeyListener(down: boolean, callback: any) {
 }
 
 export const separator = "%2F" // this is an alternative to / that doesn't exist in any of the paths in the midi library and shows up in the url
+
+// TODO: use this everywhere the boilerplate is used to make sure we don't waste memory
+// TODO: make sure store has subscribe function
+// gets the value of a store and calls the unsubscriber to prevent memory leaks
+export function get(store) {
+    let val
+    store.subscribe((innerVal) => {
+        val = innerVal
+    })()
+    return val
+}
+
+// from https://stackoverflow.com/a/16436975
+export function arraysEqual(a, b) {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length !== b.length) return false;
+
+    for (var i = 0; i < a.length; ++i) {
+      if (a[i] !== b[i]) return false;
+    }
+    return true;
+  }

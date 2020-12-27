@@ -1,7 +1,7 @@
 // TODO: get typescript definition and replace all references to "any" type in this file with "Fraction", or whatever the type is
 import Fraction from 'fraction.js';
-import type { VirtualInstrument } from "../track/instrument";
-import { Note, NewNote, notesBetween, highestPianoNote, lowestPianoNote } from "../../lib/music/theory/notes";
+import type { VirtualInstrument } from "../../lib/track/instrument";
+import { Note, NewNote, notesBetween } from "../../lib/music/theory/notes";
 
 // gives a range of keys to present a given set of notes
 // - should work with no notes

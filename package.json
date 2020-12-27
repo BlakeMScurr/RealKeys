@@ -21,6 +21,8 @@
     "@types/mocha": "^8.0.3",
     "abort-controller": "^3.0.0",
     "compression": "^1.7.1",
+    "css-element-queries": "^1.2.3",
+    "distinct-colors": "^3.0.0",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "fraction.js": "^4.0.12",

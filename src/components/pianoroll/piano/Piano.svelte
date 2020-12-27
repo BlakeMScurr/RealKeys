@@ -4,12 +4,13 @@
     import { blackAndGhostBetween, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote, label } from "./piano.ts";
     import WebMidi, { InputEventNoteon, InputEventNoteoff } from "webmidi";
     import Key from "./Key/Key.svelte";
-import { addGlobalKeyListener } from "../../../lib/util";
+    import { addGlobalKeyListener, get } from "../../../lib/util";
 
     export let keys:Array<Note>;
     export let usedNotes:Map<String, boolean> = new Map();
     export let lessonNotes: Map<string, string>;
-    export let playing: Boolean;
+    export let playing; // TODO: type playing store
+    export let waitMode; // TODO: type playing stor
 
     let midiConnected = false
     let mobile = false // TODO: figure out how to know this before we get any events
@@ -20,6 +21,14 @@ import { addGlobalKeyListener } from "../../../lib/util";
     function forward(e) {
         activeMap.set(e.detail.string(), e.type === "noteOn")
         activeMap = activeMap
+
+        let playingNotes = new Array<string>();
+        activeMap.forEach((k, v) => {
+            if (k) {
+                playingNotes.push(v)
+            }
+        })
+        dispatch("playingNotes", playingNotes)
         dispatch(e.type, e.detail);
     }
 
@@ -91,7 +100,7 @@ import { addGlobalKeyListener } from "../../../lib/util";
     // TODO: surely make it more concise
     function getState(note: Note, activeMap, lessonNotes) {
         let str = note.string()
-        if (!playing) {
+        if (!get(playing) && !get(waitMode)) {
             return activeMap.get(str) ? "active" : ""
         } else {
             if (lessonNotes.has(str)) {
@@ -100,6 +109,8 @@ import { addGlobalKeyListener } from "../../../lib/util";
                     return activeMap.get(str) ? "right" : "wrong"
                 } else if (val == "soft") {
                     return activeMap.get(str) ? "right" : ""
+                } else if (val == "expecting") {
+                    return activeMap.get(str) ? "right" : "expecting"
                 }
                 throw new Error("unexpected note state value " + val)
             } else {

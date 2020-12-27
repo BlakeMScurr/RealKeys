@@ -119,10 +119,6 @@ test("NotesFrom0to0.1", ()=>{
     ])
 })
 
-test("NotesFrom0.1to0.1", ()=>{
-    expect(()=>{LoadsOfCs().notesFrom(0.1, 0.1)}).toThrow("Start must be before end")
-})
-
 test("NotesFrom0to0.31", ()=>{
     expect(LoadsOfCs().notesFrom(0, 0.31)).toEqual([
         new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)),
@@ -165,6 +161,52 @@ test("NotesFrom0.9to7000", ()=>{
     expect(LoadsOfCs().notesFrom(0.9, 7000)).toEqual([
         new TimedNote(new Fraction("9/10"), new Fraction("10/10"), NewNote("c", 4)),
     ])
+})
+
+test ("DoubledUpNotes", ()=> {
+    // TODO: expect console warn
+    expect((new TimedNotes([
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+    ]))).toEqual(new TimedNotes([
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+    ]))
+})
+test ("DoublyDoubledUpNotes", ()=> {
+    // TODO: expect console warn
+    expect((new TimedNotes([
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+    ]))).toEqual(new TimedNotes([
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+    ]))
+})
+    
+test("SimulatneousNotes", ()=> {
+    expect((new TimedNotes([
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+        new TimedNote(0, new Fraction("1/10"), NewNote("d", 4)), 
+    ]))).toEqual(new TimedNotes([
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+        new TimedNote(0, new Fraction("1/10"), NewNote("d", 4)), 
+    ]))
+})
+
+test("TruncateNotes", () => {
+    expect((new TimedNotes([
+        new TimedNote(0, new Fraction("2/10"), NewNote("c", 4)), 
+        new TimedNote(new Fraction("1/10"), new Fraction("2/10"), NewNote("c", 4)), 
+    ]))).toEqual(new TimedNotes([
+        new TimedNote(0, new Fraction("1/10"), NewNote("c", 4)), 
+        new TimedNote(new Fraction("1/10"), new Fraction("2/10"), NewNote("c", 4)), 
+    ]))
+})
+
+test("OutOfRangeNotes", () => {
+    expect((new TimedNotes([
+        new TimedNote(0, new Fraction("2/10"), NewNote("c", -1)),
+    ]))).toEqual(new TimedNotes([]))
 })
 
 function Cs() {
