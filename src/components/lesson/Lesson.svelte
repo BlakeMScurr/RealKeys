@@ -37,7 +37,7 @@
 
     let currentTracks = [inertTracks.keys().next().value]
     gm.tracks.enable(addClick(currentTracks));
-    let unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
+    let unsubscribe = gm.tracks.subscribeToNotesOfTracks([currentTracks[0]], onNoteStateChange)
     let selectedNotes = gm.tracks.notes(currentTracks);
 
     let trackList = Array.from(inertTracks.keys())
@@ -56,7 +56,7 @@
         }
         gm.tracks.enable(addClick(currentTracks));
         unsub()
-        unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
+        unsubscribe = gm.tracks.subscribeToNotesOfTracks([currentTracks[0]], onNoteStateChange)
         selectedNotes = gm.tracks.notes(currentTracks);
         if (get(gm.waitMode)) {
             state = new Map<string, string>();
@@ -76,7 +76,7 @@
     function clickTrackChange() {
         gm.tracks.enable(addClick(currentTracks));
         unsub()
-        unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
+        unsubscribe = gm.tracks.subscribeToNotesOfTracks([currentTracks[0]], onNoteStateChange)
         selectedNotes = gm.tracks.notes(currentTracks);
     }
 
@@ -89,7 +89,7 @@
             })
             state = state
         } else {
-            unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
+            unsubscribe = gm.tracks.subscribeToNotesOfTracks([currentTracks[0]], onNoteStateChange)
         }
     })
 

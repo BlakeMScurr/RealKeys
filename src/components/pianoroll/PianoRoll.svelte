@@ -24,17 +24,7 @@
         pos = value
     })
 
-    let width = 0;
-    $: keys = range(notes.untime(), piano.highest(), piano.lowest())
-    let lastWidth = -1;
-    $: {
-        if (width == lastWidth) {} else if (width <= 0) {
-            setTimeout(() => {
-                keys = range(notes.untime(), piano.highest(), piano.lowest())
-            }, 1000);
-        }
-        lastWidth = width
-    }
+    $: keys = range(Array.from(tracks.values()).reduce((acc, curr) => { return acc.concat(curr.untime())}, []), piano.highest(), piano.lowest())
     
     // ROLL ZOOM
     function handleRollWheel(event) {
@@ -163,7 +153,7 @@
     }
 </style>
 
-<div id="pianoroll" bind:clientWidth={width}>
+<div id="pianoroll">
     <div class="container roll" on:wheel={handleRollWheel} on:touchmove={handleTouchMove}>
         <Roll {keys} {bars} {tracks} position={pos} songDuration={gm.songDuration}></Roll>
     </div>

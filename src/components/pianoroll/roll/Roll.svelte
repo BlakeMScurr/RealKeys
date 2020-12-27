@@ -4,6 +4,7 @@
     import type { Note } from "../../../lib/music/theory/notes";
     import type { TimedNotes } from "../../../lib/music/timed/timed";
     import type { Bars } from "../pianoRollHelpers";
+import { Colourer } from "../../colours";
 
     export let keys:Array<Note>;
     export let height:number;
@@ -17,6 +18,7 @@
 
     let mountPoint;
     let zw = zoomWidth()
+    let colourer = new Colourer(tracks.size)
 
     function zoomWidth() {
         // TODO: remove hack
@@ -91,7 +93,7 @@
             drawKeys(keys, background, keyWidth, mountPoint.clientHeight)
             translate(foreground)
             drawBarLines(bars, foreground, mountPoint.clientWidth, mountPoint.clientHeight, zw)
-            drawNotes(tracks, foreground, keys, keyWidth, mountPoint.clientHeight, zw)
+            drawNotes(tracks, foreground, keys, keyWidth, mountPoint.clientHeight, zw, colourer)
             ticker.update();
         }
     }
@@ -109,8 +111,13 @@
     }
 
     $: {
-        let _ = keys
         let __ = tracks
+        colourer = new Colourer(tracks.size)
+        fullRedraw()
+    }
+
+    $: {
+        let _ = keys
         fullRedraw()
     }
 </script>

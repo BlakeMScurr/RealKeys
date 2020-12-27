@@ -3,7 +3,7 @@ import type { Note } from "../../../lib/music/theory/notes";
 import type { TimedNotes } from "../../../lib/music/timed/timed";
 import * as PIXI from 'pixi.js';
 import type { Bars } from "../pianoRollHelpers";
-import distinctColors from 'distinct-colors'
+import { colour } from "../piano/Key/helper";
 
 export function drawBarLines(bars: Bars, container: PIXI.Container, width: number, height: number, zoom: number) {
     let sum = 0;
@@ -17,17 +17,14 @@ export function drawBarLines(bars: Bars, container: PIXI.Container, width: numbe
     })
 }
 
-export function drawNotes(tracks: Map<string, TimedNotes>, container: PIXI.Container, keys, keyWidth: number, height: number, zoom: number){
+export function drawNotes(tracks: Map<string, TimedNotes>, container: PIXI.Container, keys, keyWidth: number, height: number, zoom: number, colourer){
     let ts = Array.from(tracks.values())
-    // TODO: figure out why distinctColours is imported as a library as opposed to a function in the dev server, whereas it's a function in storybook
-    let dcf = distinctColors.hasOwnProperty("default") ? distinctColors.default : distinctColors
-    var palette = dcf({ count: ts.length, hueMin: 100 })
 
     ts.forEach((notes, i) => {
         notes.notes.forEach((note) => {
             let noteGraphic = new PIXI.Graphics();
             container.addChild(noteGraphic)
-            noteGraphic.beginFill(parseInt(palette[i].hex().slice(1), 16))
+            noteGraphic.beginFill(colourer.trackColour(i))
             let noteLen = note.end - note.start
             noteGraphic.drawRoundedRect(keyWidth * keyIndex(keys, note.note), (1-(note.end / zoom)) * height, keyWidth, noteLen * height / zoom, keyWidth / 5)
         })

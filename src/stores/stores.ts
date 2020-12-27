@@ -306,6 +306,7 @@ function createTracks(playingStore) {
             return noteMap
         },
         subscribeToNotesOfTracks: (tracks: string[], onStateChange: (notes: Map<string, string>) => void) => {
+            console.log("subscribed to", tracks)
             let unsubscribers = []
             tracks.forEach(track => {
                 subscribe((currentPlayers: Map<string, midiTrack>) => {
