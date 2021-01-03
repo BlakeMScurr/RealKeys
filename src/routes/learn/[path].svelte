@@ -17,7 +17,7 @@
     import { GameMaster } from '../../stores/stores'
     import { InertTrack, NewInstrument } from '../../lib/track/instrument';
     import Navbar from '../../components/Navbar/Navbar.svelte';
-import { Colourer } from '../../components/colours';
+    import { Colourer } from '../../components/colours';
 
     export let path;
 
@@ -40,7 +40,8 @@ import { Colourer } from '../../components/colours';
         }).forEach((track, i) => {
             let notes = new Array<TimedNote>();
             track.notes.forEach(note => {
-                notes.push(new TimedNote(note.time / duration, (note.time + note.duration)/duration, NoteFromMidiNumber(note.midi)))
+                console.log("velocity", note.velocity)
+                notes.push(new TimedNote(note.time / duration, (note.time + note.duration)/duration, NoteFromMidiNumber(note.midi), note.velocity))
             })
 
             trackMap.set(uniqueKey(trackMap, track.instrument.name), new InertTrack(new TimedNotes(notes), NewInstrument(track.instrument.number, track.name, track.instrument.percussion, notes.map((tn)=>{return tn.note}))))

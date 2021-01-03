@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     import rs from 'css-element-queries/src/ResizeSensor';
     import type { Note } from "../../../lib/music/theory/notes";
     import type { TimedNotes } from "../../../lib/music/timed/timed";
@@ -41,6 +41,13 @@
     let drawBarLines
     let drawNotes
     let ticker
+
+    const dispatch = createEventDispatcher()
+
+    function selectTrack(i: number) {
+        dispatch("selectTrack", i)
+    }
+
     onMount(async ()=>{
         PIXI = await import('pixi.js') 		 
         let helpers = await import('./Pixi')
@@ -83,6 +90,8 @@
         })
     })
 
+    let renderables: {starts: {start: number, pixi: any}[], ends: {end: number, pixi: any}[]};
+
     // TODO: parameterise
     function fullRedraw() {
         if (app !== undefined) {
@@ -93,7 +102,8 @@
             drawKeys(keys, background, keyWidth, mountPoint.clientHeight)
             translate(foreground)
             drawBarLines(bars, foreground, mountPoint.clientWidth, mountPoint.clientHeight, zw)
-            drawNotes(tracks, foreground, keys, keyWidth, mountPoint.clientHeight, zw, colourer)
+            renderables = drawNotes(tracks, foreground, keys, keyWidth, mountPoint.clientHeight, zw, colourer, selectTrack)
+            setRenderables();
             ticker.update();
         }
     }
@@ -101,7 +111,23 @@
     function translate(foreground: PIXI.Container) {
         if (foreground !== undefined) {
             foreground.setTransform(0, mountPoint.clientHeight * position / zw, 1, 1, 0, 0, 0, 0, 0)
-            ticker.update()
+            setRenderables();
+            ticker.update();
+        }
+    }
+
+    // Manually set notes to renderable or otherwise, as pixi doesn't do that itself https://github.com/pixijs/pixi.js/issues/1243
+    function setRenderables () {
+        if (renderables != undefined) {
+            let startWindow = position
+            let endWindow = position + zw
+            renderables.ends.forEach((e) => {
+                e.pixi.renderable = e.end > startWindow
+            })
+    
+            renderables.starts.forEach((s) => {
+                s.pixi.renderable = s.start < endWindow && s.pixi.renderable
+            })
         }
     }
 

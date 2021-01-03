@@ -6,9 +6,10 @@
     import Dropdown from '../dropdown/Dropdown.svelte';
     import type { InertTrack } from '../../lib/track/instrument';
     import { arraysEqual, get } from '../../lib/util';
-    import type { TimedNote } from '../../lib/music/timed/timed';
+    import { TimedNote, TimedNotes } from '../../lib/music/timed/timed';
     import { makeClicks } from "./clickTrack";
     import type { Colourer } from "../colours";
+    import { writable } from 'svelte/store';
 
     export let owner;
     export let lessonID;
@@ -37,11 +38,6 @@
     // handle reactivity and track selection
     let clickTrackOn = false;
 
-    let currentTracks = [inertTracks.keys().next().value]
-    gm.tracks.enable(addClick(currentTracks));
-    let unsubscribe = gm.tracks.subscribeToNotesOfTracks([currentTracks[0]], onNoteStateChange)
-    let selectedNotes = gm.tracks.notes(currentTracks);
-
     let trackList = Array.from(inertTracks.keys())
     trackList.unshift("All")
     // TODO: make dropdown accept list, not just map
@@ -49,6 +45,16 @@
     trackList.forEach((track) => {
         trackMap.set(track, true)
     })
+    
+    let currentTracks = trackList.slice(1)
+    gm.tracks.enable(addClick(currentTracks));
+    let unsubscribe = gm.tracks.subscribeToNotesOfTracks([currentTracks[0]], onNoteStateChange)
+    let selectedNotes = gm.tracks.notes(currentTracks);
+
+    const outsideTrackSelector = writable(0);
+    function handleRollTrackSelection(e) {
+        outsideTrackSelector.set(e.detail + 1)
+    }
 
     function handleTrackSelection(e) {
         if (e.detail.key === "All") {
@@ -105,8 +111,18 @@
         }
     })
 
+    function activeTrack(sn: Map<string, TimedNotes>):TimedNotes  {
+        let t;
+        Array.from(sn.values()).forEach((track)=>{
+            if (track.notes.length !== 0) {
+                t = track
+            }
+        })
+        return t || new TimedNotes([])
+    }
+
     function nextWaitModeNote() {
-        let nextNotes: Array<TimedNote> = Array.from(selectedNotes.values())[0].notesFrom(get(gm.position), 1)
+        let nextNotes = activeTrack(selectedNotes).notesFrom(get(gm.position), 1)
         let i = 0
         let sameStart = []
         while (i < nextNotes.length && nextNotes[i].start == nextNotes[0].start) {
@@ -237,7 +253,7 @@
         </div>
         <div class="line2">
             <!-- TODO: only pass the keys into the dropdown -->
-            <Dropdown list={trackMap} on:select={handleTrackSelection}></Dropdown>
+            <Dropdown list={trackMap} outsideSelector={outsideTrackSelector.subscribe} on:select={handleTrackSelection}></Dropdown>
             <label for="clickTrackOn">Click Track</label>
             <input type="checkbox" id="clickTrackOn" bind:checked={clickTrackOn} on:change={clickTrackChange}>
             <Settings bars={bars} timesignatures={timesignatures} {gm}></Settings>
@@ -248,6 +264,6 @@
     </div>
     <div class="piano">
         <!-- TODO: allow multiple notes in the pianoroll -->
-        <PianoRoll bars={bars} {colourer} {state} on:playingNotes={handlePlayingNotes} tracks={selectedNotes} {gm}></PianoRoll>
+        <PianoRoll bars={bars} {colourer} {state} on:playingNotes={handlePlayingNotes} tracks={selectedNotes} notes={activeTrack(selectedNotes)} {gm} on:selectTrack={handleRollTrackSelection}></PianoRoll>
     </div>
 </div>

@@ -98,6 +98,8 @@ export function midiPathToName(path: string):string {
     path = path.replace(/_/g, " ")
     path = path.replace("-", " - ")
     path = path.replace(/\b\w/g, l => l.toUpperCase()) // capitalise per https://stackoverflow.com/a/38530325
+    path = path.replace(/([a-zA-Z])([A-Z])/g, "$1 $2") // add camelcase spaces
+
     return path
 }
 

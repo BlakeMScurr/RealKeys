@@ -41,6 +41,7 @@ export interface VirtualInstrument {
     lowest():Note
 }
 
+// TODO: delete any use soundfont instruments
 export class Synth {
     private internal: any;
     private instrumentName: string;
@@ -72,8 +73,9 @@ export class Synth {
     }
 
     setVolume(volume: number) {
+        console.log("setting volume to", volume)
         this.volume = volume
-        this.internal.volume.value = Math.log10(this.volume)
+        this.internal.volume.value = this.volume
     }
 
     name():string {

@@ -136,6 +136,7 @@ export class midiTrack {
         }
 
         const playNote = () => {
+            this.playbackInstrument.setVolume(note.velocity)
             this.playbackInstrument.play(note.note, length)
         }
 

@@ -13,8 +13,7 @@
     export let state: Map<string, string> = new Map<string, string>();
     export let gm: GameMaster;
     export let colourer: Colourer;
-
-    let notes = Array.from(tracks.values())[0] || new TimedNotes([]);
+    export let notes = new TimedNotes([]);
 
     let dispatch = createEventDispatcher();
 
@@ -157,7 +156,7 @@
 
 <div id="pianoroll">
     <div class="container roll" on:wheel={handleRollWheel} on:touchmove={handleTouchMove}>
-        <Roll {keys} {bars} {tracks} position={pos} songDuration={gm.songDuration} {colourer}></Roll>
+        <Roll {keys} {bars} {tracks} position={pos} songDuration={gm.songDuration} {colourer} on:selectTrack={forward}></Roll>
     </div>
     <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
     <Piano {keys} lessonNotes={state} playing={gm.playingStore} waitMode={gm.waitMode} on:noteOff={noteOff} on:noteOn={noteOn} on:playingNotes={forward} usedNotes={notes.untimeRemoveDupes()}></Piano>

@@ -16,7 +16,7 @@ export class GameMaster {
     playingStore: any;
     songDuration: any;
     audioReady: any;
-    tracks: any;
+    tracks: tracks;
     speedStore: any;
     waitMode: any;
     constructor() {
@@ -31,7 +31,7 @@ export class GameMaster {
         this.audioReady = createAudioReady();
         this.speedStore = createSpeed(this.playingStore);
         this.seek = createSeek(this.setPosition, this.playingStore, this.position, this.songDuration, this.speedStore);
-        this.tracks = createTracks(this.playingStore);
+        this.tracks = new tracks(this.playingStore);
         this.waitMode = createWaitMode(this.tracks, this.playingStore);
 
         // Resolve cyclic store dependencies
@@ -236,97 +236,108 @@ function createWaitMode(tracks, playingStore) {
     }
 }
 
-function createTracks(playingStore) {
-    const { subscribe, update } = writable(new Map<string, midiTrack>());
-    // TODO: add types
-    let waitMode: any;
-    return {
-        subscribe,
-        newPlaybackTrack: (name: string, notes: TimedNotes, playbackInstrument: VirtualInstrument, gm: GameMaster) => {
-            let t = new midiTrack(notes, playbackInstrument, gm)
-            t.link()
-            update((currentPlayers: Map<string, midiTrack>) => {
-                if (currentPlayers.has(name)) {
-                    throw new Error(`Track ${name} already exists`)
-                }
-                currentPlayers.set(name, t)
-                return currentPlayers
-            })
-        },
-        clearAll: () => {
-            update((currentPlayers: Map<string, midiTrack>) => {
-                currentPlayers.forEach((track) => {
-                    track.unlink()
-                })
-                return new Map<string, midiTrack>();
-            })
-        },
-        enable: (trackNames: string[]) => {
-            if (get(waitMode)) {
-                waitMode.setLastTrackSet(trackNames)
-            } else {
-                subscribe((currentPlayers: Map<string, midiTrack>) => {
-                    let wasPlaying = get(playingStore)
-                    playingStore.pause()
-                    currentPlayers.forEach((track, name) => {
-                        if (trackNames.indexOf(name) !== -1) {
-                            track.relink()
-                        } else {
-                            track.unlink()
-                        }
-                    })
-                    if (wasPlaying) {
-                        playingStore.play()
-                    }
-                })
+class tracks {
+    playingStore
+    subscribe
+    private update
+    // TODO: add type
+    waitMode: any;
+    constructor(playingStore) {
+        this.playingStore = playingStore
+        const { subscribe, update } = writable(new Map<string, midiTrack>());
+        this.subscribe = subscribe
+        this.update = update
+    }
+
+    newPlaybackTrack (name: string, notes: TimedNotes, playbackInstrument: VirtualInstrument, gm: GameMaster) {
+        let t = new midiTrack(notes, playbackInstrument, gm)
+        t.link()
+        this.update((currentPlayers: Map<string, midiTrack>) => {
+            if (currentPlayers.has(name)) {
+                throw new Error(`Track ${name} already exists`)
             }
-        },
-        enabled: () => {
-            // TODO: refactor so we just have a currentlyEnabled variable to read
-            let currentlyEnabled = new Array<string>();
-            subscribe((currentPlayers: Map<string, midiTrack>) => {
+            currentPlayers.set(name, t)
+            return currentPlayers
+        })
+    }
+
+    clearAll() {
+        this.update((currentPlayers: Map<string, midiTrack>) => {
+            currentPlayers.forEach((track) => {
+                track.unlink()
+            })
+            return new Map<string, midiTrack>();
+        })
+    }
+
+    enable(trackNames: string[]) {
+        if (get(this.waitMode)) {
+            this.waitMode.setLastTrackSet(trackNames)
+        } else {
+            this.subscribe((currentPlayers: Map<string, midiTrack>) => {
+                let wasPlaying = get(this.playingStore)
+                this.playingStore.pause()
                 currentPlayers.forEach((track, name) => {
-                    if (track.islinked()) {
-                        currentlyEnabled.push(name)
+                    if (trackNames.indexOf(name) !== -1) {
+                        track.relink()
+                    } else {
+                        track.unlink()
                     }
                 })
-            })()
-            return currentlyEnabled
-        },
-        notes: (trackNames: string[]):Map<string, TimedNotes> => {
-            let noteMap = new Map<string, TimedNotes>();
-            subscribe((currentPlayers: Map<string, midiTrack>) => {
-                currentPlayers.forEach((v, name) => {
-                    noteMap.set(name, new TimedNotes([]))
-                })
+                if (wasPlaying) {
+                    this.playingStore.play()
+                }
+            })
+        }
+    }
 
-                trackNames.forEach((name) => {
-                    if (!currentPlayers.has(name)) {
-                        throw new Error(`There is no track called ${name}. Current tracks are ${Array.from(currentPlayers.keys())}`)
-                    }
-                    noteMap.set(name, currentPlayers.get(name).notes)
-                })
-            })()
-            return noteMap
-        },
-        subscribeToNotesOfTracks: (tracks: string[], onStateChange: (notes: Map<string, string>) => void) => {
-            console.log("subscribed to", tracks)
-            let unsubscribers = []
-            tracks.forEach(track => {
-                subscribe((currentPlayers: Map<string, midiTrack>) => {
-                    if (!currentPlayers.has(track)) {
-                        throw new Error(`player has no track ${track}`)
-                    }
+    enabled() {
+        // TODO: refactor so we just have a currentlyEnabled variable to read
+        let currentlyEnabled = new Array<string>();
+        this.subscribe((currentPlayers: Map<string, midiTrack>) => {
+            currentPlayers.forEach((track, name) => {
+                if (track.islinked()) {
+                    currentlyEnabled.push(name)
+                }
+            })
+        })()
+        return currentlyEnabled
+    }
 
-                    unsubscribers.push(currentPlayers.get(track).interface().subscribeToNotes(onStateChange))
-                })()
+    notes (trackNames: string[]):Map<string, TimedNotes> {
+        let noteMap = new Map<string, TimedNotes>();
+        this.subscribe((currentPlayers: Map<string, midiTrack>) => {
+            currentPlayers.forEach((v, name) => {
+                noteMap.set(name, new TimedNotes([]))
             })
 
-            return ()=>{unsubscribers.forEach(u => u())}
-        },
-        setWaitModeStore: (wms) => {
-            waitMode = wms
-        },
+            trackNames.forEach((name) => {
+                if (!currentPlayers.has(name)) {
+                    throw new Error(`There is no track called ${name}. Current tracks are ${Array.from(currentPlayers.keys())}`)
+                }
+                noteMap.set(name, currentPlayers.get(name).notes)
+            })
+        })()
+        return noteMap
+    }
+
+    subscribeToNotesOfTracks(tracks: string[], onStateChange: (notes: Map<string, string>) => void) {
+        let unsubscribers = []
+        tracks.forEach(track => {
+            this.subscribe((currentPlayers: Map<string, midiTrack>) => {
+                if (!currentPlayers.has(track)) {
+                    throw new Error(`player has no track ${track}`)
+                }
+
+                unsubscribers.push(currentPlayers.get(track).interface().subscribeToNotes(onStateChange))
+            })()
+        })
+
+        return ()=>{unsubscribers.forEach(u => u())}
+    }
+
+    setWaitModeStore(wms) {
+        this.waitMode = wms
     }
 }
 
