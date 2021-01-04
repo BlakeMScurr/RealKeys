@@ -1,11 +1,11 @@
-import Navbar from "./Navbar.svelte";
+import Search from "./Search.svelte";
 
 export default {
-    title: 'AudioPlayer Navbar',
+    title: 'Search',
 };
 
 const Template = ({...args }) => ({
-    Component: Navbar,
+    Component: Search,
     props: {
       ...args,
     },

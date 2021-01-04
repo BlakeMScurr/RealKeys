@@ -18,7 +18,7 @@ export class GameMaster {
     audioReady: any;
     tracks: tracks;
     speedStore: any;
-    waitMode: any;
+    waitMode: waitMode;
     constructor() {
         // TODO: make all of these classes so we have well defined types
         const { subscribe, set } = createPosition();
@@ -32,12 +32,13 @@ export class GameMaster {
         this.speedStore = createSpeed(this.playingStore);
         this.seek = createSeek(this.setPosition, this.playingStore, this.position, this.songDuration, this.speedStore);
         this.tracks = new tracks(this.playingStore);
-        this.waitMode = createWaitMode(this.tracks, this.playingStore);
+        this.waitMode = new waitMode(this.tracks, this.playingStore);
 
         // Resolve cyclic store dependencies
         // TODO: simplify
         this.playingStore.setStores(this.waitMode, this.audioReady, this.position, this.songDuration, this.speedStore, this.setPosition)
         this.tracks.setWaitModeStore(this.waitMode)
+        console.log("finished making gm")
     }
 }
 
@@ -210,30 +211,41 @@ function createPlay() {
 }
 
 // TODO: create a class for each mode following some interface, so we can easily add new modes like "By Ear" without complex interactions of existing mode.
-function createWaitMode(tracks, playingStore) {
-    const { subscribe, set } = writable(false);
-    let lastTrackSet: string[];
+// This is simply a class representing whether we're in wait mode
+class waitMode {
+    subscribe;
+    private internalSet;
+    private lastTrackSet: string[];
+    private tracks: tracks;
+    private playingStore;
+    constructor(tracks: tracks, playingStore) {
+        this.tracks = tracks
+        this.playingStore = playingStore
 
-    return {
-        subscribe,
-		set: (val: boolean) => {
-            if (val) {
-                lastTrackSet = tracks.enabled()
-                tracks.enable([])
-                playingStore.pause()
-            } else {
-                subscribe((previousWaitValue) => {
-                    if (!previousWaitValue && lastTrackSet !== undefined) {
-                        tracks.enable(lastTrackSet)
-                    }
-                })
-            }
-            set(val)
-        },
-        setLastTrackSet: (trackSet: string[]) => {
-            lastTrackSet = trackSet
-        }
+        const { subscribe, set } = writable(false);
+        this.subscribe = subscribe
+        this.internalSet = set
     }
+
+    set (val: boolean) {
+        if (val) {
+            this.lastTrackSet = this.tracks.enabled()
+            this.tracks.enable([])
+            this.playingStore.pause()
+        } else {
+            this.subscribe((previousWaitValue) => {
+                if (!previousWaitValue && this.lastTrackSet !== undefined) {
+                    this.tracks.enable(this.lastTrackSet)
+                }
+            })
+        }
+        this.internalSet(val)
+    }
+
+    setLastTrackSet(trackSet: string[]) {
+        this.lastTrackSet = trackSet
+    }
+
 }
 
 class tracks {

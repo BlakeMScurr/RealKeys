@@ -4,10 +4,9 @@
     import type { GameMaster } from "../../stores/stores";
     import Slider from "../slider/Slider.svelte";
 
-    export let _storybook_position: number;
-    export let _storybook_duration: number;
-    export let _storybook_ready: number;
     export let gm: GameMaster;
+    console.log("gm")
+    console.log(gm)
     
     let duration = get(gm.songDuration)
     let pos;
@@ -17,22 +16,6 @@
     let ready = get(gm.audioReady)
 
     let destroyed = false
-
-    $: {
-        if (_storybook_ready !== undefined) {
-            if (_storybook_ready) {
-                gm.audioReady.ready()
-            } else {
-                gm.audioReady.notReady("storybook user said so")
-            }
-        }
-        if (_storybook_position !== undefined) {
-            gm.seek.set(_storybook_position)
-        }
-        if (_storybook_duration !== undefined) {
-            gm.songDuration.set(_storybook_duration)
-        }
-    }
 
     // TODO: get this from store
     let playing;
@@ -170,8 +153,9 @@
         }
     }
 
-    .slider {
-        margin-top: 5px;
+    .sliderHolder {
+        position: relative;
+        top: -6px; // hack to make it a little nicer and more compact
     }
 </style>
 
@@ -195,7 +179,7 @@
             ><div class="block"></div>
         </div>
     </div>
-    <div class="slider">
+    <div class="sliderHolder">
         <Slider value={pos} on:input={handleSliderSeek}></Slider>
     </div>
 </div>

@@ -73,7 +73,6 @@ export class Synth {
     }
 
     setVolume(volume: number) {
-        console.log("setting volume to", volume)
         this.volume = volume
         this.internal.volume.value = this.volume
     }

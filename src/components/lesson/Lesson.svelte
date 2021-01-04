@@ -2,7 +2,6 @@
     import type { GameMaster } from "../../stores/stores"
     import UI from "../audioplayer/UI.svelte"
     import PianoRoll from "../pianoroll/PianoRoll.svelte";
-    import Settings from "../settings/Settings.svelte";
     import Dropdown from '../dropdown/Dropdown.svelte';
     import type { InertTrack } from '../../lib/track/instrument';
     import { arraysEqual, get } from '../../lib/util';
@@ -10,6 +9,9 @@
     import { makeClicks } from "./clickTrack";
     import type { Colourer } from "../colours";
     import { writable } from 'svelte/store';
+    import Slider from "../slider/Slider.svelte";
+    import Search from "../NavBar/Search.svelte";
+    import { Midi } from '@tonejs/midi'
 
     export let owner;
     export let lessonID;
@@ -18,6 +20,14 @@
     export let timesignatures;
     export let gm: GameMaster;
     export let colourer: Colourer;
+    // This is a horrible hack to pass in a lesson loader from above, as the above component used to be where we'd have the lesson selection logic
+    // TODO: combine them as there's no point in decoupling the logic anymore, and the UI and logic is much cleaner here
+    export let loadNew;
+    export let loadLocal;
+
+    $: {
+        console.log("new lessonID", lessonID)
+    }
 
     // Handle note state subscription
     let state = new Map<string, string>();
@@ -39,7 +49,8 @@
     let clickTrackOn = false;
 
     let trackList = Array.from(inertTracks.keys())
-    trackList.unshift("All")
+    const allTracks = "All Tracks"
+    trackList.unshift(allTracks)
     // TODO: make dropdown accept list, not just map
     let trackMap = new Map()
     trackList.forEach((track) => {
@@ -57,7 +68,7 @@
     }
 
     function handleTrackSelection(e) {
-        if (e.detail.key === "All") {
+        if (e.detail.key === allTracks) {
             currentTracks = trackList.slice(1)
         } else {
             currentTracks = [e.detail.key]
@@ -79,6 +90,11 @@
         let fullTracks = JSON.parse(JSON.stringify(currentTracks))
         if (clickTrackOn) fullTracks.push("clickTrack")
         return fullTracks
+    }
+
+    $: {
+        let _ = clickTrackOn
+        clickTrackChange()
     }
 
     function clickTrackChange() {
@@ -183,11 +199,44 @@
         }
     }
 
+
+    let speed: number = 1
+    $: {
+        gm.speedStore.set(speed)
+    }
+
+    let playAlongMode = "Play Along Mode"
+    // TODO: show descriptions in the dropdown
+    let modeList = new Map([
+        [playAlongMode, "Play notes as they come"],
+        ["Wait Mode", "Playback waits until you play the next note"],
+    ])
+
+    function handleModeSelect(e) {
+        gm.waitMode.set(e.detail.key !== playAlongMode)
+    }
+
+    
+    const outsideWMSelector = writable(0);
+    gm.waitMode.subscribe((wm) => {
+        outsideWMSelector.set(wm?1:0)
+    })
+
+    let uploader
+    function handleUploadSelection () {
+        console.log(uploader, uploader.files)
+        if (uploader.files.length === 1) {
+            loadLocal(uploader.files[0])
+        } else {
+            console.warn(`uploaded ${uploader.files.length} files, expected 1`)
+        }
+    }
 </script>
 
 <style lang="scss">
     $piano-height: 80vh;
     $margins: 1.5em;
+    $little-margins: 0.5em;
 
     .page {
         display: flex;
@@ -223,15 +272,21 @@
 
         .line2 {
             display: flex;
-            align-items: center;
+            align-items: center;        
+            padding-left: $margins;
 
-            .subtitle {
-                padding-left: $margins;
+            .upload {
+                margin-left: $little-margins;
             }
-
             .settings {
                 padding-right: $margins;
                 margin-left: auto;
+                display: flex;
+                align-items: center;
+
+                div {
+                    margin-right: $little-margins;
+                }
             }
         }
     }
@@ -244,6 +299,13 @@
     h3 {
         color: grey;
     }
+
+    .slider {
+        max-width: 100px;
+        p {
+            margin: 0;
+        }
+    }
 </style>
 
 <div class="page">
@@ -252,14 +314,26 @@
             <h1>{lessonID}</h1>
         </div>
         <div class="line2">
+            <Search loadNew={loadNew}></Search>
+
+            <div class="upload">
+                <button>
+                    <label for="files" class="btn">Upload MIDI file</label>
+                </button>
+                <input id="files" style="display:none;" type="file" on:change={handleUploadSelection} bind:this={uploader}>
+            </div>
+            
             <!-- TODO: only pass the keys into the dropdown -->
-            <Dropdown list={trackMap} outsideSelector={outsideTrackSelector.subscribe} on:select={handleTrackSelection}></Dropdown>
-            <label for="clickTrackOn">Click Track</label>
-            <input type="checkbox" id="clickTrackOn" bind:checked={clickTrackOn} on:change={clickTrackChange}>
-            <Settings bars={bars} timesignatures={timesignatures} {gm}></Settings>
             <div class="settings">
+                <div><Dropdown list={trackMap} outsideSelector={outsideTrackSelector.subscribe} on:select={handleTrackSelection}></Dropdown></div>
+                <div><Dropdown list={modeList} outsideSelector={outsideWMSelector.subscribe} on:select={handleModeSelect}></Dropdown></div>
+                <div class="slider">
+                    <p>Speed {Math.round(speed * 100)}%</p>
+                    <Slider min={0.1} max={1} step={0.01} bind:value={speed}></Slider>
+                </div>
                 <UI {gm}></UI>
             </div>
+
         </div>
     </div>
     <div class="piano">
@@ -267,3 +341,5 @@
         <PianoRoll bars={bars} {colourer} {state} on:playingNotes={handlePlayingNotes} tracks={selectedNotes} notes={activeTrack(selectedNotes)} {gm} on:selectTrack={handleRollTrackSelection}></PianoRoll>
     </div>
 </div>
+
+<!-- TODO: add in again once the click sounds good again -->

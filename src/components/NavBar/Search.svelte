@@ -34,7 +34,7 @@
                 }).then((json) => {
                     searchResults = JSON.parse(json).map((item) => {return item.item})
                 })
-            }, 200)
+            }, 60)
         }
     }
 
@@ -47,19 +47,6 @@
 </script>
 
 <style lang="scss">
-    .navbar {
-        width: 100%;
-        h1 {
-            display: inline;
-        }
-
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-    }
-
-
     .dropdown-content {
         display: block;
         position: absolute;
@@ -79,17 +66,13 @@
     .dropdown-content p:hover {background-color: #f1f1f1}
 </style>
 
-<div class="navbar">
-    <h1>RealKeys</h1>
-    <!-- TODO: add a magnifying glass that one can search to get to a full results page -->
-    <div class="dropdown">
-        <input type="text" placeholder="Search for lessons..." bind:value={searchQuery} on:focus={disableGlobalKeys} on:focusout={enableGlobalKeys}>
-        <div class="dropdown-content">
-            {#each searchResults as result}
-                <p on:click={ () => {handleClick(result.path)}}>{result.name}</p>
-            {/each}
-        </div>
+<!-- TODO: add a magnifying glass that one can search to get to a full results page -->
+<div class="dropdown">
+    <input type="text" placeholder="Search library ..." bind:value={searchQuery} on:focus={disableGlobalKeys} on:focusout={enableGlobalKeys}>
+    <div class="dropdown-content">
+        {#each searchResults as result}
+            <p on:click={ () => {handleClick(result.path)}}>{result.name}</p>
+        {/each}
     </div>
-    <hr>
 </div>
 
