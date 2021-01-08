@@ -16,9 +16,9 @@ export class GameMaster {
     playingStore: any;
     songDuration: any;
     audioReady: any;
-    tracks: any;
+    tracks: tracks;
     speedStore: any;
-    waitMode: any;
+    waitMode: waitMode;
     constructor() {
         // TODO: make all of these classes so we have well defined types
         const { subscribe, set } = createPosition();
@@ -31,13 +31,14 @@ export class GameMaster {
         this.audioReady = createAudioReady();
         this.speedStore = createSpeed(this.playingStore);
         this.seek = createSeek(this.setPosition, this.playingStore, this.position, this.songDuration, this.speedStore);
-        this.tracks = createTracks(this.playingStore);
-        this.waitMode = createWaitMode(this.tracks, this.playingStore);
+        this.tracks = new tracks(this.playingStore);
+        this.waitMode = new waitMode(this.tracks, this.playingStore);
 
         // Resolve cyclic store dependencies
         // TODO: simplify
         this.playingStore.setStores(this.waitMode, this.audioReady, this.position, this.songDuration, this.speedStore, this.setPosition)
         this.tracks.setWaitModeStore(this.waitMode)
+        console.log("finished making gm")
     }
 }
 
@@ -210,119 +211,145 @@ function createPlay() {
 }
 
 // TODO: create a class for each mode following some interface, so we can easily add new modes like "By Ear" without complex interactions of existing mode.
-function createWaitMode(tracks, playingStore) {
-    const { subscribe, set } = writable(false);
-    let lastTrackSet: string[];
+// This is simply a class representing whether we're in wait mode
+class waitMode {
+    subscribe;
+    private internalSet;
+    private lastTrackSet: string[];
+    private tracks: tracks;
+    private playingStore;
+    constructor(tracks: tracks, playingStore) {
+        this.tracks = tracks
+        this.playingStore = playingStore
 
-    return {
-        subscribe,
-		set: (val: boolean) => {
-            if (val) {
-                lastTrackSet = tracks.enabled()
-                tracks.enable([])
-                playingStore.pause()
-            } else {
-                subscribe((previousWaitValue) => {
-                    if (!previousWaitValue && lastTrackSet !== undefined) {
-                        tracks.enable(lastTrackSet)
-                    }
-                })
-            }
-            set(val)
-        },
-        setLastTrackSet: (trackSet: string[]) => {
-            lastTrackSet = trackSet
-        }
+        const { subscribe, set } = writable(false);
+        this.subscribe = subscribe
+        this.internalSet = set
     }
+
+    set (val: boolean) {
+        if (val) {
+            this.lastTrackSet = this.tracks.enabled()
+            this.tracks.enable([])
+            this.playingStore.pause()
+        } else {
+            this.subscribe((previousWaitValue) => {
+                if (!previousWaitValue && this.lastTrackSet !== undefined) {
+                    this.tracks.enable(this.lastTrackSet)
+                }
+            })
+        }
+        this.internalSet(val)
+    }
+
+    setLastTrackSet(trackSet: string[]) {
+        this.lastTrackSet = trackSet
+    }
+
 }
 
-function createTracks(playingStore) {
-    const { subscribe, update } = writable(new Map<string, midiTrack>());
-    // TODO: add types
-    let waitMode: any;
-    return {
-        subscribe,
-        newPlaybackTrack: (name: string, notes: TimedNotes, playbackInstrument: VirtualInstrument, gm: GameMaster) => {
-            let t = new midiTrack(notes, playbackInstrument, gm)
-            t.link()
-            update((currentPlayers: Map<string, midiTrack>) => {
-                if (currentPlayers.has(name)) {
-                    throw new Error(`Track ${name} already exists`)
-                }
-                currentPlayers.set(name, t)
-                return currentPlayers
-            })
-        },
-        clearAll: () => {
-            update((currentPlayers: Map<string, midiTrack>) => {
-                currentPlayers.forEach((track) => {
-                    track.unlink()
-                })
-                return new Map<string, midiTrack>();
-            })
-        },
-        enable: (trackNames: string[]) => {
-            if (get(waitMode)) {
-                waitMode.setLastTrackSet(trackNames)
-            } else {
-                subscribe((currentPlayers: Map<string, midiTrack>) => {
-                    let wasPlaying = get(playingStore)
-                    playingStore.pause()
-                    currentPlayers.forEach((track, name) => {
-                        if (trackNames.indexOf(name) !== -1) {
-                            track.relink()
-                        } else {
-                            track.unlink()
-                        }
-                    })
-                    if (wasPlaying) {
-                        playingStore.play()
-                    }
-                })
+class tracks {
+    playingStore
+    subscribe
+    private update
+    // TODO: add type
+    waitMode: any;
+    constructor(playingStore) {
+        this.playingStore = playingStore
+        const { subscribe, update } = writable(new Map<string, midiTrack>());
+        this.subscribe = subscribe
+        this.update = update
+    }
+
+    newPlaybackTrack (name: string, notes: TimedNotes, playbackInstrument: VirtualInstrument, gm: GameMaster) {
+        let t = new midiTrack(notes, playbackInstrument, gm)
+        t.link()
+        this.update((currentPlayers: Map<string, midiTrack>) => {
+            if (currentPlayers.has(name)) {
+                throw new Error(`Track ${name} already exists`)
             }
-        },
-        enabled: () => {
-            // TODO: refactor so we just have a currentlyEnabled variable to read
-            let currentlyEnabled = new Array<string>();
-            subscribe((currentPlayers: Map<string, midiTrack>) => {
-                currentPlayers.forEach((track, name) => {
-                    if (track.islinked()) {
-                        currentlyEnabled.push(name)
-                    }
-                })
-            })()
-            return currentlyEnabled
-        },
-        notes: (trackNames: string[]):Map<string, TimedNotes> => {
-            let noteMap = new Map<string, TimedNotes>();
-            subscribe((currentPlayers: Map<string, midiTrack>) => {
-                trackNames.forEach((name) => {
-                    if (!currentPlayers.has(name)) {
-                        throw new Error(`There is no track called ${name}. Current tracks are ${Array.from(currentPlayers.keys())}`)
-                    }
-                    noteMap.set(name, currentPlayers.get(name).notes)
-                })
-            })()
-            return noteMap
-        },
-        subscribeToNotesOfTracks: (tracks: string[], onStateChange: (notes: Map<string, string>) => void) => {
-            console.log("subscribed to", tracks)
-            let unsubscribers = []
-            tracks.forEach(track => {
-                subscribe((currentPlayers: Map<string, midiTrack>) => {
-                    if (!currentPlayers.has(track)) {
-                        throw new Error(`player has no track ${track}`)
-                    }
+            currentPlayers.set(name, t)
+            return currentPlayers
+        })
+    }
 
-                    unsubscribers.push(currentPlayers.get(track).interface().subscribeToNotes(onStateChange))
-                })()
+    clearAll() {
+        this.update((currentPlayers: Map<string, midiTrack>) => {
+            currentPlayers.forEach((track) => {
+                track.unlink()
+            })
+            return new Map<string, midiTrack>();
+        })
+    }
+
+    enable(trackNames: string[]) {
+        if (get(this.waitMode)) {
+            this.waitMode.setLastTrackSet(trackNames)
+        } else {
+            this.subscribe((currentPlayers: Map<string, midiTrack>) => {
+                let wasPlaying = get(this.playingStore)
+                this.playingStore.pause()
+                currentPlayers.forEach((track, name) => {
+                    if (trackNames.indexOf(name) !== -1) {
+                        track.relink()
+                    } else {
+                        track.unlink()
+                    }
+                })
+                if (wasPlaying) {
+                    this.playingStore.play()
+                }
+            })
+        }
+    }
+
+    enabled() {
+        // TODO: refactor so we just have a currentlyEnabled variable to read
+        let currentlyEnabled = new Array<string>();
+        this.subscribe((currentPlayers: Map<string, midiTrack>) => {
+            currentPlayers.forEach((track, name) => {
+                if (track.islinked()) {
+                    currentlyEnabled.push(name)
+                }
+            })
+        })()
+        return currentlyEnabled
+    }
+
+    notes (trackNames: string[]):Map<string, TimedNotes> {
+        let noteMap = new Map<string, TimedNotes>();
+        this.subscribe((currentPlayers: Map<string, midiTrack>) => {
+            currentPlayers.forEach((v, name) => {
+                noteMap.set(name, new TimedNotes([]))
             })
 
-            return ()=>{unsubscribers.forEach(u => u())}
-        },
-        setWaitModeStore: (wms) => {
-            waitMode = wms
-        },
+            trackNames.forEach((name) => {
+                if (!currentPlayers.has(name)) {
+                    throw new Error(`There is no track called ${name}. Current tracks are ${Array.from(currentPlayers.keys())}`)
+                }
+                noteMap.set(name, currentPlayers.get(name).notes)
+            })
+        })()
+        return noteMap
+    }
+
+    subscribeToNotesOfTracks(tracks: string[], onStateChange: (notes: Map<string, string>) => void) {
+        let unsubscribers = []
+        tracks.forEach(track => {
+            this.subscribe((currentPlayers: Map<string, midiTrack>) => {
+                if (!currentPlayers.has(track)) {
+                    throw new Error(`player has no track ${track}`)
+                }
+
+                unsubscribers.push(currentPlayers.get(track).interface().subscribeToNotes(onStateChange))
+            })()
+        })
+
+        return ()=>{unsubscribers.forEach(u => u())}
+    }
+
+    setWaitModeStore(wms) {
+        this.waitMode = wms
     }
 }
 

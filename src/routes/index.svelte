@@ -3,6 +3,6 @@
     import { onMount } from 'svelte';
 
     onMount(()=> {
-        goto('/learn/K%2FK%2Fkaty_perry-birthday.mid')
+        goto('/learn/%2FClassical_mfiles.co.uk_MIDIRip%2Ftwinkle-twinkle-little-star.mid')
     })
 </script>

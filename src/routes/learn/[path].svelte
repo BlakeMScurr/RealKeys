@@ -16,19 +16,30 @@
     import Lesson from '../../components/lesson/Lesson.svelte'
     import { GameMaster } from '../../stores/stores'
     import { InertTrack, NewInstrument } from '../../lib/track/instrument';
-    import Navbar from '../../components/Navbar/Navbar.svelte';
+    import { Colourer } from '../../components/colours';
 
     export let path;
 
     let gm = new GameMaster()
 
     let lesson
-    async function processMidiFile() {
+
+    async function getMidi(url) {
         window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
-        const midi = await Midi.fromUrl("api/midi?path=" + path)
-        console.log("called a midi thing")
-        let songName = midiPathToName(path)
+        let midi
+        try {
+            midi = await Midi.fromUrl(url)
+        } catch (e) {
+            console.error(e)
+            return
+        }
+        return midi
+    }
+
+    async function processMidiFile(midiPromise, songName) {
+        let midi = await midiPromise
+        console.log('midi')
 
         let duration = midi.duration
         gm.songDuration.set(duration*1000)
@@ -39,7 +50,7 @@
         }).forEach((track, i) => {
             let notes = new Array<TimedNote>();
             track.notes.forEach(note => {
-                notes.push(new TimedNote(note.time / duration, (note.time + note.duration)/duration, NoteFromMidiNumber(note.midi)))
+                notes.push(new TimedNote(note.time / duration, (note.time + note.duration)/duration, NoteFromMidiNumber(note.midi), note.velocity))
             })
 
             trackMap.set(uniqueKey(trackMap, track.instrument.name), new InertTrack(new TimedNotes(notes), NewInstrument(track.instrument.number, track.name, track.instrument.percussion, notes.map((tn)=>{return tn.note}))))
@@ -54,32 +65,40 @@
             bs.push(60/tempo)
             x += 60/tempo
         }
-        let bars = new Bars(bs.map(b=>{return b/duration}))
 
-        console.log("setting lesson")
+        let bars = new Bars(bs.map(b=>{return b/duration}))
+        console.log(bars)
+
         lesson = {tracks: trackMap, lessonID: songName, bars: bars, timeSignatures: midi.header.timeSignatures}
+ 
         return 
     }
 
     gm.audioReady.ready()
 
-    function loadNew(newpath) {
+    function loadLocal(newpath) {
         gm.playingStore.pause()
         gm.seek.set(0)
         gm.tracks.clearAll()
-        goto("learn/" + newpath)
+        midiPromise = processMidiFile(getMidi(URL.createObjectURL(newpath)), newpath.name)
+    }
+
+    function loadNew(newpath) {
+        console.log('running loadnew')
+        gm.playingStore.pause()
+        gm.seek.set(0)
+        gm.tracks.clearAll()
         path = newpath
-        midiPromise = processMidiFile()
+        goto("learn/" + newpath)
+        midiPromise = processMidiFile(getMidi("api/midi?path=" + path), midiPathToName(path))
     }
     
-    let midiPromise = processMidiFile()
+    let midiPromise = processMidiFile(getMidi("api/midi?path=" + path), midiPathToName(path))
 
     function refreshMessage() {
         return new Promise(resolve => setTimeout(() => resolve("try refreshing"), 3000));
     }
 </script>
-
-<Navbar {loadNew}></Navbar>
 
 {#await midiPromise}
     <h1>Loading</h1>
@@ -87,7 +106,7 @@
         <p>{message}</p>
     {/await}
 {:then x}
-    <Lesson owner={lesson.artist} lessonID={lesson.lessonID} timesignatures={lesson.timeSignatures} bars={lesson.bars} inertTracks={lesson.tracks} {gm}></Lesson>
+    <Lesson owner={lesson.artist} lessonID={lesson.lessonID} timesignatures={lesson.timeSignatures} bars={lesson.bars} inertTracks={lesson.tracks} {gm} colourer={new Colourer(lesson.tracks.size)} {loadNew} {loadLocal}></Lesson>
 {:catch error}
     <h1>Could not load lesson {console.log(error)}</h1>
 {/await}

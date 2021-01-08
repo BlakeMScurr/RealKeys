@@ -1,10 +1,10 @@
 <script lang="ts">
-    import { onMount } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     import rs from 'css-element-queries/src/ResizeSensor';
     import type { Note } from "../../../lib/music/theory/notes";
     import type { TimedNotes } from "../../../lib/music/timed/timed";
     import type { Bars } from "../pianoRollHelpers";
-import { Colourer } from "../../colours";
+    import type { Colourer } from "../../colours";
 
     export let keys:Array<Note>;
     export let height:number;
@@ -15,10 +15,10 @@ import { Colourer } from "../../colours";
     export let recording = true;
     export let debugSliders = false;
     export let songDuration;
+    export let colourer: Colourer;
 
     let mountPoint;
     let zw = zoomWidth()
-    let colourer = new Colourer(tracks.size)
 
     function zoomWidth() {
         // TODO: remove hack
@@ -41,6 +41,13 @@ import { Colourer } from "../../colours";
     let drawBarLines
     let drawNotes
     let ticker
+
+    const dispatch = createEventDispatcher()
+
+    function selectTrack(i: number) {
+        dispatch("selectTrack", i)
+    }
+
     onMount(async ()=>{
         PIXI = await import('pixi.js') 		 
         let helpers = await import('./Pixi')
@@ -83,6 +90,8 @@ import { Colourer } from "../../colours";
         })
     })
 
+    let renderables: {starts: {start: number, pixi: any}[], ends: {end: number, pixi: any}[]};
+
     // TODO: parameterise
     function fullRedraw() {
         if (app !== undefined) {
@@ -93,7 +102,8 @@ import { Colourer } from "../../colours";
             drawKeys(keys, background, keyWidth, mountPoint.clientHeight)
             translate(foreground)
             drawBarLines(bars, foreground, mountPoint.clientWidth, mountPoint.clientHeight, zw)
-            drawNotes(tracks, foreground, keys, keyWidth, mountPoint.clientHeight, zw, colourer)
+            renderables = drawNotes(tracks, foreground, keys, keyWidth, mountPoint.clientHeight, zw, colourer, selectTrack)
+            setRenderables();
             ticker.update();
         }
     }
@@ -101,7 +111,23 @@ import { Colourer } from "../../colours";
     function translate(foreground: PIXI.Container) {
         if (foreground !== undefined) {
             foreground.setTransform(0, mountPoint.clientHeight * position / zw, 1, 1, 0, 0, 0, 0, 0)
-            ticker.update()
+            setRenderables();
+            ticker.update();
+        }
+    }
+
+    // Manually set notes to renderable or otherwise, as pixi doesn't do that itself https://github.com/pixijs/pixi.js/issues/1243
+    function setRenderables () {
+        if (renderables != undefined) {
+            let startWindow = position
+            let endWindow = position + zw
+            renderables.ends.forEach((e) => {
+                e.pixi.renderable = e.end > startWindow
+            })
+    
+            renderables.starts.forEach((s) => {
+                s.pixi.renderable = s.start < endWindow && s.pixi.renderable
+            })
         }
     }
 
@@ -112,7 +138,6 @@ import { Colourer } from "../../colours";
 
     $: {
         let __ = tracks
-        colourer = new Colourer(tracks.size)
         fullRedraw()
     }
 

@@ -1,9 +1,8 @@
-import { barLineGrey, blackRollKey, niceBlueNum, whiteNum, whiteRollKey } from "../../colours";
+import { barLineGrey, blackRollKey, whiteNum, whiteRollKey } from "../../colours";
 import type { Note } from "../../../lib/music/theory/notes";
 import type { TimedNotes } from "../../../lib/music/timed/timed";
 import * as PIXI from 'pixi.js';
 import type { Bars } from "../pianoRollHelpers";
-import { colour } from "../piano/Key/helper";
 
 export function drawBarLines(bars: Bars, container: PIXI.Container, width: number, height: number, zoom: number) {
     let sum = 0;
@@ -13,12 +12,16 @@ export function drawBarLines(bars: Bars, container: PIXI.Container, width: numbe
         barGraphic.beginFill(barLineGrey);
         barGraphic.drawRect(0, (1-(sum / zoom)) * height, width, 1)
         sum += bar
-        
     })
 }
 
-export function drawNotes(tracks: Map<string, TimedNotes>, container: PIXI.Container, keys, keyWidth: number, height: number, zoom: number, colourer){
+export function drawNotes(tracks: Map<string, TimedNotes>, container: PIXI.Container, keys, keyWidth: number, height: number, zoom: number, colourer, selectTrack: (i: number) => void){
     let ts = Array.from(tracks.values())
+
+    let renderables = {
+        starts: [],
+        ends: []
+    }
 
     ts.forEach((notes, i) => {
         notes.notes.forEach((note) => {
@@ -27,8 +30,17 @@ export function drawNotes(tracks: Map<string, TimedNotes>, container: PIXI.Conta
             noteGraphic.beginFill(colourer.trackColour(i))
             let noteLen = note.end - note.start
             noteGraphic.drawRoundedRect(keyWidth * keyIndex(keys, note.note), (1-(note.end / zoom)) * height, keyWidth, noteLen * height / zoom, keyWidth / 5)
+            noteGraphic.interactive = true
+            noteGraphic.hitArea = new PIXI.RoundedRectangle(keyWidth * keyIndex(keys, note.note), (1-(note.end / zoom)) * height, keyWidth, noteLen * height / zoom, keyWidth / 5)
+            noteGraphic.click = () => {
+                selectTrack(i)
+            }
+
+            renderables.starts.push({start: note.start, pixi: noteGraphic})
+            renderables.ends.push({end: note.end, pixi: noteGraphic})
         })
     })
+    return renderables
 }
 
 export function drawKeys(keys: Array<Note>, container: PIXI.Container, keyWidth: number, height: number) {

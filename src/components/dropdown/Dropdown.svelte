@@ -2,26 +2,26 @@
     import { createEventDispatcher } from 'svelte';
 
     export let list: Map<string, any> = new Map();
+    export let outsideSelector;
 
     let dispatch = createEventDispatcher();
 
-    function getAll(iterator) {
-        let values = []
-        let next = iterator.next()
-        while (!next.done) {
-            values.push(next.value)
-            next = iterator.next()
-        }
-        return values
-    }
-
-    $: keys = getAll(list.keys())
+    let keys = Array.from(list.keys())
+    $: keys = Array.from(list.keys())
 
     let selected;
     $: {
         if (selected !== undefined) {
             dispatch("select", {key: selected, value: list.get(selected), index: keys.indexOf(selected)})
         }
+    }
+
+    if (outsideSelector != undefined) {
+        outsideSelector((i)=>{
+            if (keys !== undefined) {
+                selected = keys[i]
+            }
+        })
     }
 </script>
 

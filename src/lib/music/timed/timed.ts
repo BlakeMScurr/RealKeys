@@ -114,7 +114,8 @@ export class TimedNote {
     start: any;
     end: any;
     note: Note;
-    constructor(start: any, end: any, note: Note) {
+    velocity: number;
+    constructor(start: any, end: any, note: Note, velocity: number=1) {
         if (start >= end) {
             // TODO: change all calls to new TimedNote to NewTimedNote so they optionally return no new note
             console.warn("start must be before end: " + start + " " + end)
@@ -126,6 +127,7 @@ export class TimedNote {
                 this.end += 0.001
             }
         } 
+        this.velocity = velocity
         this.start = start;
         this.end = end;
         this.note = note;
