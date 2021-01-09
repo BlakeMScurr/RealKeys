@@ -28,7 +28,7 @@ export class GameMaster {
         this.repeats = createRepeats();
         this.playingStore = createPlay();
         this.songDuration = createSongDuration();
-        this.audioReady = createAudioReady();
+        this.audioReady = createAudioReady(); // TODO: is audioready even needed anymore now that we're fully on midi?
         this.speedStore = createSpeed(this.playingStore);
         this.seek = createSeek(this.setPosition, this.playingStore, this.position, this.songDuration, this.speedStore);
         this.tracks = new tracks(this.playingStore);
@@ -38,7 +38,6 @@ export class GameMaster {
         // TODO: simplify
         this.playingStore.setStores(this.waitMode, this.audioReady, this.position, this.songDuration, this.speedStore, this.setPosition)
         this.tracks.setWaitModeStore(this.waitMode)
-        console.log("finished making gm")
     }
 }
 
@@ -261,6 +260,8 @@ class tracks {
         this.update = update
     }
 
+    // TODO: don't require a gm to be passed in, as it should only be the game master on which this tracks object is found
+    // This can be done by requiring specific parts of the gm api i nthe tracks rather than the whole thing
     newPlaybackTrack (name: string, notes: TimedNotes, playbackInstrument: VirtualInstrument, gm: GameMaster) {
         let t = new midiTrack(notes, playbackInstrument, gm)
         t.link()
