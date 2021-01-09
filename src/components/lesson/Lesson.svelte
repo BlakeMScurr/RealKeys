@@ -69,7 +69,7 @@
 
     function handleTrackSelection(e) {
         if (e.detail.key === allTracks) {
-            currentTracks = trackList
+            currentTracks = trackList.slice(1)
         } else {
             currentTracks = [e.detail.key]
         }
