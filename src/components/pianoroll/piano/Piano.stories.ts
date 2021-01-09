@@ -1,15 +1,18 @@
 import Piano from './Piano.svelte';
-import { NewNote, notesBetween, Line } from "../../../lib/music/theory/notes";
-import { label } from "./piano"
+import { NewNote, notesBetween } from "../../../lib/music/theory/notes";
+import { GameMaster } from '../../../stores/stores';
 
 export default {
   title: 'Piano',
 };
 
+let gm = new GameMaster();
 const Template = ({...args }) => ({
   Component: Piano,
   props: {
     ...args,
+    playing: gm.playingStore,
+    waitMode: gm.waitMode,
   },
 });
 

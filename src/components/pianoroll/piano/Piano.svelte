@@ -10,7 +10,7 @@
     export let usedNotes:Map<String, boolean> = new Map();
     export let lessonNotes: Map<string, string>;
     export let playing; // TODO: type playing store
-    export let waitMode; // TODO: type playing stor
+    export let waitMode; // TODO: type wait mode
 
     let midiConnected = false
     let mobile = false // TODO: figure out how to know this before we get any events
