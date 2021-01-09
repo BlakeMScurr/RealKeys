@@ -59,7 +59,7 @@
     
     let currentTracks = trackList.slice(1)
     gm.tracks.enable(addClick(currentTracks));
-    let unsubscribe = gm.tracks.subscribeToNotesOfTracks([currentTracks[0]], onNoteStateChange)
+    let unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
     let selectedNotes = gm.tracks.notes(currentTracks);
 
     const outsideTrackSelector = writable(0);
@@ -69,13 +69,13 @@
 
     function handleTrackSelection(e) {
         if (e.detail.key === allTracks) {
-            currentTracks = trackList.slice(1)
+            currentTracks = trackList
         } else {
             currentTracks = [e.detail.key]
         }
         gm.tracks.enable(addClick(currentTracks));
         unsub()
-        unsubscribe = gm.tracks.subscribeToNotesOfTracks([currentTracks[0]], onNoteStateChange)
+        unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
         selectedNotes = gm.tracks.notes(currentTracks);
         if (get(gm.waitMode)) {
             state = new Map<string, string>();
@@ -100,7 +100,7 @@
     function clickTrackChange() {
         gm.tracks.enable(addClick(currentTracks));
         unsub()
-        unsubscribe = gm.tracks.subscribeToNotesOfTracks([currentTracks[0]], onNoteStateChange)
+        unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
         selectedNotes = gm.tracks.notes(currentTracks);
     }
 
@@ -113,7 +113,7 @@
             })
             state = state
         } else {
-            unsubscribe = gm.tracks.subscribeToNotesOfTracks([currentTracks[0]], onNoteStateChange)
+            unsubscribe = gm.tracks.subscribeToNotesOfTracks(currentTracks, onNoteStateChange)
         }
     })
 
