@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { disableGlobalKeys, enableGlobalKeys, separator } from '../../lib/util'
+    import { disableGlobalKeys, enableGlobalKeys } from '../../lib/util'
     import { onMount } from 'svelte';
 
     export let loadNew;
@@ -40,7 +40,7 @@
 
     function handleClick (path){
         searchResults = []
-        loadNew(path.replace(/\//g, separator))
+        loadNew(path)
     }
 
     

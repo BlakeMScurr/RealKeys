@@ -15,6 +15,7 @@
     let midiConnected = false
     let mobile = false // TODO: figure out how to know this before we get any events
     usedNotes = new Map(); // TODO: use this when a setting enables it
+    let un = new Map();
     $: labelsOn = !midiConnected && !mobile && false // TODO: use this when a setting enables it
     $: labels = labelsOn ? label(new Line(keys)) : new Map();
 
@@ -141,7 +142,7 @@
 <div on:touchstart={()=>{mobile = true}}>
     <div class="rapper" id="LilPeep">
         {#each whiteWidths(notes.white()) as {note, width}}
-            <Key {note} width={width} active={activeMap.get(note.string())} state={getState(note, activeMap, lessonNotes)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={usedNotes.has(note.string())}></Key>
+            <Key {note} width={width} active={activeMap.get(note.string())} state={getState(note, activeMap, lessonNotes)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
         {/each}
     </div>
     <div style="--blackMargin: {regularWhiteWidth(notes.white())*100/4}%;" class="rapper" id="JuiceWrld">
@@ -149,7 +150,7 @@
             {#if note instanceof Ghost}
                 <Key ghost={true} width={regularWhiteWidth(notes.white())*100 * (2/4)}></Key>
             {:else}
-                <Key {note} width={regularWhiteWidth(notes.white())*100} active={activeMap.get(note.string())} state={getState(note, activeMap, lessonNotes)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={usedNotes.has(note.string())}></Key>
+                <Key {note} width={regularWhiteWidth(notes.white())*100} active={activeMap.get(note.string())} state={getState(note, activeMap, lessonNotes)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
             {/if}
         {/each}
     </div>

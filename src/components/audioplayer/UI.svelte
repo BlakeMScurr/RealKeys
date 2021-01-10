@@ -156,6 +156,7 @@
     .sliderHolder {
         position: relative;
         top: -6px; // hack to make it a little nicer and more compact
+        pointer-events: none;
     }
 </style>
 

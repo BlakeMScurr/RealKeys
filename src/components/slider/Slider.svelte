@@ -63,6 +63,7 @@
         outline: none;
         transition: background 450ms ease-in;
         -webkit-appearance: none;
+        pointer-events: all;
     }
 
     @mixin track {
