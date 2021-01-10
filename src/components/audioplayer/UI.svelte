@@ -168,10 +168,10 @@
         </div
         ><div class="player" on:click={togglePlay}>
             {#if !playing}
-                <div class="arrow-right"></div>
+                <div class="arrow-right playbutton"></div>
             {:else}
-                <div class="playblock startplay"></div>
-                <div class="playblock"></div>
+                <div class="playblock startplay pausebutton"></div>
+                <div class="playblock pausebutton"></div>
             {/if}
         </div
         ><div class="ff" on:click={fastForward}>

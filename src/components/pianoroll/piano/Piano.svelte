@@ -11,10 +11,11 @@
     export let lessonNotes: Map<string, string>;
     export let playing; // TODO: type playing store
     export let waitMode; // TODO: type wait mode
-
+    
     let midiConnected = false
     let mobile = false // TODO: figure out how to know this before we get any events
-    $: labelsOn = !midiConnected && !mobile
+    usedNotes = new Map(); // TODO: use this when a setting enables it
+    $: labelsOn = !midiConnected && !mobile && false // TODO: use this when a setting enables it
     $: labels = labelsOn ? label(new Line(keys)) : new Map();
 
     const dispatch = createEventDispatcher();

@@ -13,12 +13,12 @@ export interface Player {
     Volume(volume: number);
 }
 
-export function NewInstrument(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean, notes?: Array<Note>):SoundFont {
-    return new SoundFont(GeneralMidiInstrumentNumber, name, percusive, notes)
+export function NewInstrument(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean, onload: (succeeded: boolean) => void, notes?: Array<Note>):SoundFont {
+    return new SoundFont(GeneralMidiInstrumentNumber, name, percusive, onload, notes)
 }
 
-export function newPiano(name: string){
-    return NewInstrument(0, name, false)
+export function newPiano(name: string, onload: (succeeded: boolean) => void){
+    return NewInstrument(0, name, false, onload)
 }
 
 export class InertTrack {

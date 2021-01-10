@@ -14,11 +14,9 @@
     export let gm: GameMaster;
     export let colourer: Colourer;
     export let notes = new TimedNotes([]);
+    export let piano;
 
     let dispatch = createEventDispatcher();
-
-    // TODO: allow one to use the same MIDI instrument as the track being played against
-    let piano = newPiano("Player Piano")
 
     let pos = 0;
     gm.position.subscribe((value) => {

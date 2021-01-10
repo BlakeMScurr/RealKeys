@@ -118,7 +118,7 @@ export class TimedNote {
     constructor(start: any, end: any, note: Note, velocity: number=1) {
         if (start >= end) {
             // TODO: change all calls to new TimedNote to NewTimedNote so they optionally return no new note
-            console.warn("start must be before end: " + start + " " + end)
+            // console.warn("start must be before end: " + start + " " + end)
             if (start > end) {
                 let temp = this.start
                 this.start = this.end
@@ -157,7 +157,7 @@ export class TimedNotes {
                 }
                 
                 if (earlierNote.end > notes[j].start && notes[j].note.equals(earlierNote.note)){
-                    console.warn("note overlap")
+                    // console.warn("note overlap")
                     if (earlierNote.start === notes[j].start) {
                         // This removes any doubled up notes in a given track
                         // Some midi files appear to have doubled notes, that is, you are supposed to play a C4, for example, then play another C4
@@ -198,7 +198,7 @@ export class TimedNotes {
 
     notesFrom(start: number, end: number):Array<TimedNote>{
         if (start >= end) {
-            console.warn("Start must be before end")
+            // console.warn("Start must be before end")
             return []
         }
 
