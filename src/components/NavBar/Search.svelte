@@ -68,7 +68,7 @@
 
 <!-- TODO: add a magnifying glass that one can search to get to a full results page -->
 <div class="dropdown">
-    <input type="text" placeholder="Search library ..." bind:value={searchQuery} on:focus={disableGlobalKeys} on:focusout={enableGlobalKeys}>
+    <input type="text" placeholder="Search library ..." bind:value={searchQuery} on:focus={disableGlobalKeys} on:focusout={enableGlobalKeys} data-hj-allow>
     <div class="dropdown-content">
         {#each searchResults as result}
             <p on:click={ () => {handleClick(result.path)}}>{result.name}</p>

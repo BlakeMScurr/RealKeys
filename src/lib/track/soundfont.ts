@@ -8,7 +8,7 @@ export class SoundFont {
     private instrumentName: string;
     private ac: AudioContext;
     private playingNotes: Map<string, Player>;
-    constructor(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean, notes?: Array<Note>) {
+    constructor(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean, notes?: Array<Note>, onload: (succeeded: boolean) => void) {
         this.volume = 1
         this.instrumentName = name
         this.ac = new AudioContext()
@@ -19,16 +19,21 @@ export class SoundFont {
             opts = { notes:  Array.from(new Set(notes.map((note)=>{return note.enharmonicEquivalent()}))) }
         }
 
-
         // GeneralMidiInstrumentNumber refers to https://en.wikipedia.org/wiki/General_MIDI#Program_change_events
         if (percusive) {
             let fontOpts = { soundfont: "FluidR3_GM" }
             instrument(this.ac, <InstrumentName>"percussion", { ...opts, ...fontOpts}).then((i)=>{
                 this.internalInstrument = i
+                onload(true)
+            }).catch(() => {
+                onload(false)
             })
         } else {
             instrument(this.ac, instrumentName(GeneralMidiInstrumentNumber), opts).then((i)=>{
                 this.internalInstrument = i
+                onload(true)
+            }).catch(()=> {
+                onload(true)
             })
         }
     }
