@@ -8,7 +8,7 @@ export class SoundFont {
     private instrumentName: string;
     private ac: AudioContext;
     private playingNotes: Map<string, Player>;
-    constructor(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean, notes?: Array<Note>, onload: (succeeded: boolean) => void) {
+    constructor(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean, onload: (succeeded: boolean) => void, notes?: Array<Note>) {
         this.volume = 1
         this.instrumentName = name
         this.ac = new AudioContext()

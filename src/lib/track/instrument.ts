@@ -14,7 +14,7 @@ export interface Player {
 }
 
 export function NewInstrument(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean, onload: (succeeded: boolean) => void, notes?: Array<Note>):SoundFont {
-    return new SoundFont(GeneralMidiInstrumentNumber, name, percusive, notes, onload)
+    return new SoundFont(GeneralMidiInstrumentNumber, name, percusive, onload, notes)
 }
 
 export function newPiano(name: string, onload: (succeeded: boolean) => void){
