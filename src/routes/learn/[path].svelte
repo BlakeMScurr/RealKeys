@@ -11,7 +11,7 @@
     import { Midi } from '@tonejs/midi'
     import { NoteFromMidiNumber } from '../../lib/music/theory/notes';
     import { TimedNote, TimedNotes } from '../../lib/music/timed/timed';
-    import { uniqueKey, midiPathToName } from '../../lib/util'
+    import { uniqueKey, midiPathToName, separator } from '../../lib/util'
     import { Bars } from '../../components/pianoroll/pianoRollHelpers';
     import Lesson from '../../components/lesson/Lesson.svelte'
     import { GameMaster } from '../../stores/stores'
@@ -52,7 +52,6 @@
         let numLoaded = 0
         let instrumentLoaded = (message) => {
             return (loaded) => {
-                // console.log(message, loaded)
                 numLoaded++
                 if (numLoaded >= toLoad) {
                     loading = false
@@ -114,7 +113,7 @@
         gm.seek.set(0)
         gm.tracks.clearAll()
         path = newpath
-        goto("learn/" + newpath)
+        goto("learn/" + path.replace(/\//g, separator))
         midiPromise = processMidiFile(getMidi("api/midi?path=" + path), midiPathToName(path))
     }
     

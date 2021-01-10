@@ -25,10 +25,6 @@
     export let loadLocal;
     export let piano;
 
-    $: {
-        console.log("new lessonID", lessonID)
-    }
-
     // Handle note state subscription
     let state = new Map<string, string>();
     function onNoteStateChange(notes: Map<string, string>) {
