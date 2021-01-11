@@ -8,4 +8,6 @@ yarn-error.log
 # this is where we store actual production audiofiles
 /src/backend/db/audioFiles
 /static/bundle.css
-/assets/midi
+/assets/midi/filelist.json
+/assets/midi/files/*
+!/assets/midi/files/Tutorials

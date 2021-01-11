@@ -41,6 +41,7 @@
 
     // setup midi keyboard input
     // TODO: continusously try to connect
+    // TODO: fix webmidi disabling on refresh, we shouldn't rebuild every component, but rather, the pianoroll etc should stay the same while we're on the same page
     let enableWebMidi;
     enableWebMidi = () => {
         WebMidi.enable(function (err) {

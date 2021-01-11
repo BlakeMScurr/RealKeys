@@ -90,7 +90,7 @@ function uniqueKeyPriv(m, k, n) {
     return uniqueKeyPriv(m, k, n + 1)
 }
 
-export const midiLocation = "./assets/midi/130000_Pop_Rock_Classical_Videogame_EDM_MIDI_Archive[6_19_15]/"
+export const midiLocation = "./assets/midi/files/"
 
 export function midiPathToName(path: string):string {
     path = path.substring(path.lastIndexOf("/") + 1)
