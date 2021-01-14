@@ -359,6 +359,10 @@ function createSpeed(playingStore) {
 
     return {
         subscribe,
+        // TODO: don't make it writable, but rather make it depend on how well the user has been going
+        // we should multiply the speed by min(1.05^streak, 1), where streak is the number of times
+        // he has passed previous speed levels, and it can go negative for failure.
+        // TODO: consider having the above work across stages.
 		set: (val: number) => {
             playingStore.pause()
             if (val < 0 || val > 1) {
