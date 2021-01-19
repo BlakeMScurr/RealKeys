@@ -8,6 +8,14 @@
     })
 </script>
 
+<style lang="scss">
+    div {
+        padding: 0px 30px 30px 30px;
+    }
+</style>
+
 <Nav></Nav>
 
-<slot></slot>
+<div>
+    <slot></slot>
+</div>

@@ -146,3 +146,9 @@ export function arraysEqual(a, b) {
     }
     return true;
   }
+
+export function OneTo100(num: number) {
+    if (num < 0) num = 0
+    if (num > 100) num = 100
+    return Math.floor(num)
+}

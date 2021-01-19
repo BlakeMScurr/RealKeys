@@ -45,3 +45,9 @@ Large75Show.args = {
     size: "large",
     showValue: true,
 }
+export const CompleteLargeShow = Template.bind({});
+Large75Show.args = {
+    value: 100,
+    size: "large",
+    showValue: true,
+}
