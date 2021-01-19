@@ -1,8 +1,38 @@
 /* font-family: Alegreya, Arial, serif; */
 /* color: green; */
-h1, h2, h3, h4, h5, h6, p {
+h1, h2, h3 {
+  font-family: Playfair Display;
+  font-style: normal;
+  font-weight: normal;
+}
+
+h4, h5, h6, p {
   font-family: Alegreya;
   font-weight: normal;
+}
+
+.robotic {
+  font-family: Roboto Slab;
+}
+
+h1 {
+  font-size: 22px;
+}
+
+h2 {
+  font-size: 20px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 14px;
+}
+
+p {
+  font-size: 12px;
 }
 
 body {

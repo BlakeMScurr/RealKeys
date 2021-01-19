@@ -10,7 +10,7 @@
     import type { Colourer } from "../colours";
     import { writable } from 'svelte/store';
     import Slider from "../slider/Slider.svelte";
-    import Search from "../NavBar/Search.svelte";
+    // import Search from "../generic/Search.svelte";
 
     export let owner;
     export let lessonID;
@@ -316,7 +316,7 @@
             <h1>{lessonID}</h1>
         </div>
         <div class="line2">
-            <Search loadNew={loadNew}></Search>
+            <!-- <Search loadNew={loadNew}></Search> -->
 
             <!-- TODO: put the upload and settings components in the same flex box but justify them left or right using https://stackoverflow.com/a/34063808 -->
             <div class="upload">
