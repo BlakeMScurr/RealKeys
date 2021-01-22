@@ -1,4 +1,4 @@
-import { lesson, difficulty, hand, speed, state } from "./lesson"
+import { lesson, difficulty, hand, speed, state, taskSpec } from "./lesson"
 
 test('nothing', () => {
     expect(mockLesson()).toEqual(MHALL())
@@ -6,8 +6,8 @@ test('nothing', () => {
 
 test('RH/B1/OP-pass', () => {
     let l = mockLesson()
-    l.recordScore(100, 1, 3, hand.Right, speed.OwnPace)
-    l.recordScore(0, 1, 3, hand.Right, speed.OwnPace)
+    l.recordScore(new taskSpec(100, 1, 3, hand.Right, speed.OwnPace))
+    l.recordScore(new taskSpec(0, 1, 3, hand.Right, speed.OwnPace))
     expect(l).not.toEqual(MHALL())
 
     let m = MHALL()
@@ -19,7 +19,7 @@ test('RH/B1/OP-pass', () => {
 
 test('RH/B1/OP-fail', () => {
     let l = mockLesson()
-    l.recordScore(90, 1, 3, hand.Right, speed.OwnPace)
+    l.recordScore(new taskSpec(90, 1, 3, hand.Right, speed.OwnPace))
     expect(l).not.toEqual(MHALL())
 
     let m = MHALL()
@@ -29,7 +29,7 @@ test('RH/B1/OP-fail', () => {
 
 test('LH/B1/OP-pass', () => {
     let l = mockLesson()
-    l.recordScore(100, 1, 3, hand.Left, speed.OwnPace)
+    l.recordScore(new taskSpec(100, 1, 3, hand.Left, speed.OwnPace))
     expect(l).not.toEqual(MHALL())
 
     let m = MHALL()
@@ -41,7 +41,7 @@ test('LH/B1/OP-pass', () => {
 
 test('LH/B1/OP-fail', () => {
     let l = mockLesson()
-    l.recordScore(90, 1, 3, hand.Left, speed.OwnPace)
+    l.recordScore(new taskSpec(90, 1, 3, hand.Left, speed.OwnPace))
     expect(l).not.toEqual(MHALL())
 
     let m = MHALL()
@@ -51,7 +51,7 @@ test('LH/B1/OP-fail', () => {
 
 test('RH/B2/OP-pass', () => {
     let l = mockLesson()
-    l.recordScore(100, 3, 5, hand.Right, speed.OwnPace)
+    l.recordScore(new taskSpec(100, 3, 5, hand.Right, speed.OwnPace))
     expect(l).not.toEqual(MHALL())
 
     let m = MHALL()
@@ -63,7 +63,7 @@ test('RH/B2/OP-pass', () => {
 
 test('RH/B2/OP-fail', () => {
     let l = mockLesson()
-    l.recordScore(90, 3, 5, hand.Right, speed.OwnPace)
+    l.recordScore(new taskSpec(90, 3, 5, hand.Right, speed.OwnPace))
     expect(l).not.toEqual(MHALL())
 
     let m = MHALL()
@@ -73,34 +73,34 @@ test('RH/B2/OP-fail', () => {
 
 test('RH/B1/50-lock', () => {
     let l = mockLesson()
-    expect(() => {l.recordScore(100, 1, 3, hand.Right, speed.Fifty)}).toThrow()
+    expect(() => {l.recordScore(new taskSpec(100, 1, 3, hand.Right, speed.Fifty))}).toThrow()
 })
 
 test('LH/B1/50-lock', () => {
     let l = mockLesson()
     expect(() => {
-        l.recordScore(100, 1, 3, hand.Left, speed.Fifty)
+        l.recordScore(new taskSpec(100, 1, 3, hand.Left, speed.Fifty))
     }).toThrow()
 })
 
 test('RH/B1/75-lock', () => {
     let l = mockLesson()
     expect(() => {
-        l.recordScore(100, 1, 3, hand.Right, speed.SeventyFive)
+        l.recordScore(new taskSpec(100, 1, 3, hand.Right, speed.SeventyFive))
     }).toThrow()
 })
 
 test('BH/B1/OP-lock', () => {
     let l = mockLesson()
     expect(() => {
-        l.recordScore(100, 1, 3, hand.Both, speed.OwnPace)
+        l.recordScore(new taskSpec(100, 1, 3, hand.Both, speed.OwnPace))
     }).toThrow()
 })
 
 test('RH/B1/50-unlock', () => {
     let l = mockLesson()
-    l.recordScore(100, 1, 3, hand.Right, speed.OwnPace)
-    l.recordScore(50, 1, 3, hand.Right, speed.Fifty)
+    l.recordScore(new taskSpec(100, 1, 3, hand.Right, speed.OwnPace))
+    l.recordScore(new taskSpec(50, 1, 3, hand.Right, speed.Fifty))
     expect(l).not.toEqual(MHALL())
 
     let m = MHALL()
@@ -113,8 +113,8 @@ test('RH/B1/50-unlock', () => {
 
 test('LH/B1/50-unlock', () => {
     let l = mockLesson()
-    l.recordScore(100, 1, 3, hand.Left, speed.OwnPace)
-    l.recordScore(50, 1, 3, hand.Left, speed.Fifty)
+    l.recordScore(new taskSpec(100, 1, 3, hand.Left, speed.OwnPace))
+    l.recordScore(new taskSpec(50, 1, 3, hand.Left, speed.Fifty))
     expect(l).not.toEqual(MHALL())
 
     let m = MHALL()
@@ -127,9 +127,9 @@ test('LH/B1/50-unlock', () => {
 
 test('RH/B1/75-unlock', () => {
     let l = mockLesson()
-    l.recordScore(100, 1, 3, hand.Right, speed.OwnPace)
-    l.recordScore(100, 1, 3, hand.Right, speed.Fifty)
-    l.recordScore(50, 1, 3, hand.Right, speed.SeventyFive)
+    l.recordScore(new taskSpec(100, 1, 3, hand.Right, speed.OwnPace))
+    l.recordScore(new taskSpec(100, 1, 3, hand.Right, speed.Fifty))
+    l.recordScore(new taskSpec(50, 1, 3, hand.Right, speed.SeventyFive))
     expect(l).not.toEqual(MHALL())
 
     let m = MHALL()
@@ -144,22 +144,22 @@ test('RH/B1/75-unlock', () => {
 
 test('BH/B1/OP-unlock', () => {
     let l = mockLesson()
-    l.recordScore(100, 1, 3, hand.Left, speed.OwnPace)
-    l.recordScore(100, 1, 3, hand.Left, speed.Fifty)
-    l.recordScore(100, 1, 3, hand.Left, speed.SeventyFive)
-    l.recordScore(100, 1, 3, hand.Left, speed.OneHundred)
+    l.recordScore(new taskSpec(100, 1, 3, hand.Left, speed.OwnPace))
+    l.recordScore(new taskSpec(100, 1, 3, hand.Left, speed.Fifty))
+    l.recordScore(new taskSpec(100, 1, 3, hand.Left, speed.SeventyFive))
+    l.recordScore(new taskSpec(100, 1, 3, hand.Left, speed.OneHundred))
     
-    expect(()=>{l.recordScore(100, 1, 3, hand.Both, speed.OwnPace)}).toThrow()
-    l.recordScore(100, 1, 3, hand.Right, speed.OwnPace)
-    l.recordScore(100, 1, 3, hand.Right, speed.Fifty)
-    l.recordScore(100, 1, 3, hand.Right, speed.SeventyFive)
+    expect(()=>{l.recordScore(new taskSpec(100, 1, 3, hand.Both, speed.OwnPace))}).toThrow()
+    l.recordScore(new taskSpec(100, 1, 3, hand.Right, speed.OwnPace))
+    l.recordScore(new taskSpec(100, 1, 3, hand.Right, speed.Fifty))
+    l.recordScore(new taskSpec(100, 1, 3, hand.Right, speed.SeventyFive))
     
-    expect(()=>{l.recordScore(100, 1, 3, hand.Both, speed.OwnPace)}).toThrow()
-    l.recordScore(100, 1, 3, hand.Right, speed.OneHundred)
+    expect(()=>{l.recordScore(new taskSpec(100, 1, 3, hand.Both, speed.OwnPace))}).toThrow()
+    l.recordScore(new taskSpec(100, 1, 3, hand.Right, speed.OneHundred))
 
     expect(l.sections[0].hands[0].allDone()).toBe(true)
     expect(l.sections[0].hands[1].allDone()).toBe(true)
-    l.recordScore(100, 1, 3, hand.Both, speed.OwnPace)
+    l.recordScore(new taskSpec(100, 1, 3, hand.Both, speed.OwnPace))
     expect(l).not.toEqual(MHALL())
 
     let m = MHALL()
@@ -187,23 +187,23 @@ test('BH/B1/OP-unlock', () => {
     expect(JSON.parse(JSON.stringify(l))).toEqual(m)
     
     // Unblock the remainder of section 1
-    l.recordScore(100, 1, 3, hand.Both, speed.Fifty)
-    l.recordScore(100, 1, 3, hand.Both, speed.SeventyFive)
-    l.recordScore(100, 1, 3, hand.Both, speed.OneHundred)
+    l.recordScore(new taskSpec(100, 1, 3, hand.Both, speed.Fifty))
+    l.recordScore(new taskSpec(100, 1, 3, hand.Both, speed.SeventyFive))
+    l.recordScore(new taskSpec(100, 1, 3, hand.Both, speed.OneHundred))
 
     // Unblock section 2
-    l.recordScore(100, 3, 5, hand.Left, speed.OwnPace)
-    l.recordScore(100, 3, 5, hand.Left, speed.Fifty)
-    l.recordScore(100, 3, 5, hand.Left, speed.SeventyFive)
-    l.recordScore(100, 3, 5, hand.Left, speed.OneHundred)
-    l.recordScore(100, 3, 5, hand.Right, speed.OwnPace)
-    l.recordScore(100, 3, 5, hand.Right, speed.Fifty)
-    l.recordScore(100, 3, 5, hand.Right, speed.SeventyFive)
-    l.recordScore(100, 3, 5, hand.Right, speed.OneHundred)
-    l.recordScore(100, 3, 5, hand.Both, speed.OwnPace)
-    l.recordScore(100, 3, 5, hand.Both, speed.Fifty)
-    l.recordScore(100, 3, 5, hand.Both, speed.SeventyFive)
-    l.recordScore(100, 3, 5, hand.Both, speed.OneHundred)
+    l.recordScore(new taskSpec(100, 3, 5, hand.Left, speed.OwnPace))
+    l.recordScore(new taskSpec(100, 3, 5, hand.Left, speed.Fifty))
+    l.recordScore(new taskSpec(100, 3, 5, hand.Left, speed.SeventyFive))
+    l.recordScore(new taskSpec(100, 3, 5, hand.Left, speed.OneHundred))
+    l.recordScore(new taskSpec(100, 3, 5, hand.Right, speed.OwnPace))
+    l.recordScore(new taskSpec(100, 3, 5, hand.Right, speed.Fifty))
+    l.recordScore(new taskSpec(100, 3, 5, hand.Right, speed.SeventyFive))
+    l.recordScore(new taskSpec(100, 3, 5, hand.Right, speed.OneHundred))
+    l.recordScore(new taskSpec(100, 3, 5, hand.Both, speed.OwnPace))
+    l.recordScore(new taskSpec(100, 3, 5, hand.Both, speed.Fifty))
+    l.recordScore(new taskSpec(100, 3, 5, hand.Both, speed.SeventyFive))
+    l.recordScore(new taskSpec(100, 3, 5, hand.Both, speed.OneHundred))
 
     // expect allowed both hands
     m.sections[0].hands[2].speeds[0].progress = 100

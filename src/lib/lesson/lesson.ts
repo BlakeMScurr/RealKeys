@@ -1,10 +1,24 @@
-import { start } from "tone";
 import { OneTo100 } from "../util";
 
 export enum difficulty {
     Beginner = "Beginner",
     Intermediate = "Intermediate",
     Advanced = "Advanced",
+}
+
+export class taskSpec {
+    score: number;
+    startBar: number;
+    endBar: number;
+    hand: hand;
+    speed: speed;
+    constructor (score: number, startBar: number, endBar: number, hand: hand, speed: speed) {
+        this.score = score
+        this.startBar = startBar
+        this.endBar = endBar
+        this.hand = hand
+        this.speed = speed
+    }
 }
 
 export class lesson {
@@ -43,19 +57,19 @@ export class lesson {
         }
     }
 
-    recordScore(score: number, startBar: number, endBar: number, hand: hand, s: speed) {
+    recordScore(task: taskSpec) {
         let foundSection = false
         for (let i = 0; i < this.sections.length; i++) {
             const sec = this.sections[i];
-            if (sec.startBar === startBar && sec.endBar === endBar) {
-                sec.recordScore(score, hand, s)
+            if (sec.startBar === task.startBar && sec.endBar === task.endBar) {
+                sec.recordScore(task)
                 foundSection = true
                 break
             }
         }
 
         if (!foundSection) {
-            throw new Error(`Couldn't find section from bar ${start} to ${endBar}`)
+            throw new Error(`Couldn't find section from bar ${task.startBar} to ${task.endBar}`)
         }
 
         // unlock if dependencies are done
@@ -108,18 +122,18 @@ class section {
         this.endBar = endBar
     }
 
-    recordScore(score: number, hand: hand, speed: speed) {
+    recordScore(task: taskSpec) {
         let foundHand = false
         for (let i = 0; i < this.hands.length; i++) {
             const h = this.hands[i];
-            if (h.hand === hand) {
-                h.recordScore(score, speed)
+            if (h.hand === task.hand) {
+                h.recordScore(task)
                 foundHand = true
                 break
             }
         }
         if (!foundHand) {
-            throw new Error(`Couldn't find section for hand ${hand}`)
+            throw new Error(`Couldn't find section for hand ${task.hand}`)
         }
 
         if (this.hands[0].allDone() && this.hands[1].allDone() && this.hands[2].speeds[0].state === state.locked) {
@@ -148,16 +162,16 @@ export class handSection {
         this.hand = hand
     }
 
-    recordScore(score: number, speed: speed) {
+    recordScore(task: taskSpec) {
         for (let i = 0; i < this.speeds.length; i++) {
             const s = this.speeds[i];
-            if (s.speed === speed) {
+            if (s.speed === task.speed) {
                 if (s.state === state.locked) {
                     throw new Error("Can't attempt locked lesson")
                 }
 
-                if (score > s.progress) s.progress = score
-                if (score === 100) {
+                if (task.score > s.progress) s.progress = task.score
+                if (task.score === 100) {
                     s.state = state.allowed
                     if (i + 1 < this.speeds.length) {
                         this.speeds[i + 1].state = state.reccomended
