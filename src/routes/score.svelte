@@ -3,7 +3,7 @@
     import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
     import ScoreBar from "../components/Generic/ScoreBar.svelte";
-import { handDesc, makeHand } from "../lib/lesson/lesson";
+    import { handDesc, makeHand } from "../lib/lesson/lesson";
 
     const { page } = stores();
     const query = $page.query;
