@@ -21,34 +21,56 @@
         background-color: #ffaa0040;
     }
 
-    .lesson {
+    .lessonholder {
         display: flex;
-        justify-content: space-between;
-        padding-bottom: 15px;
-        .description {
-            display: inline-block;
-        }
+        justify-content: space-around;
+        flex-wrap: wrap;
+        // max-width: 
+        .lesson {
+            min-width: 250px;
+            max-width: 250px;
+            margin: 0 15px 0 15px;
 
-        .button {
-            align-self: center;
+            display: flex;
+            justify-content: space-between;
+            padding-bottom: 15px;
+            .description {
+                display: inline-block;
+            }
+
+            .button {
+                align-self: center;
+            }
         }
+    }
+
+// this sets the ghost heights to 0 so that they don't add extra screen
+    .ghost {
+        padding: 0 !important;
     }
 </style>
 
 <h2>Lessons</h2>
 
-{#each lessons as lesson, i}
-    <div class="lesson">
-        <div class="description">
-            <h4>{lesson.name}</h4>
-            <p class={lesson.level}>{lesson.level}</p>
-        </div>
-        <div class="button">
-            {#if i === 0}
+<div class="lessonholder">
+    {#each lessons as lesson, i}
+        <div class="lesson">
+            <div class="description">
+                <h4>{lesson.name}</h4>
+                <p class={lesson.level}>{lesson.level}</p>
+            </div>
+            <div class="button">
+                {#if i === 0}
                 <ReccomendedButton text="Learn"></ReccomendedButton>
-            {:else}
+                {:else}
                 <OptionButton text="Learn"></OptionButton>
-            {/if}
+                {/if}
+            </div>
         </div>
-    </div>
-{/each}
+    {/each}
+
+    <!-- hack to allow us to space evenly while retaining a grid -->
+    {#each new Array(20) as _} 
+        <div class="lesson ghost"></div>
+    {/each}
+</div>

@@ -180,6 +180,34 @@ export enum hand {
     Both = "Both",
 }
 
+// TODO: is there a more concise way to force the type?
+export function makeHand(name: string) {
+    switch (name) {
+        case "Left":
+        case "left":
+            return hand.Left
+        case "Right":
+        case "right":
+            return hand.Right
+        case "Both":
+        case "both":
+            return hand.Both
+        default:
+            throw new Error(`invalid hand ${name}`)
+    }
+}
+
+export function handDesc(h: hand) {
+    switch(h) {
+        case hand.Left:
+            return "the left hand"
+        case hand.Right:
+            return "the right hand"
+        case hand.Both:
+            return "both hands"
+    }
+}
+
 function allSpeeds(locked: boolean):Array<task> {
     return [
         new task(speed.OwnPace, 0, locked ? state.locked : state.reccomended),
