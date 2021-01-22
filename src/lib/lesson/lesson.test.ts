@@ -7,6 +7,7 @@ test('nothing', () => {
 test('RH/B1/OP-pass', () => {
     let l = mockLesson()
     l.recordScore(100, 1, 3, hand.Right, speed.OwnPace)
+    l.recordScore(0, 1, 3, hand.Right, speed.OwnPace)
     expect(l).not.toEqual(MHALL())
 
     let m = MHALL()

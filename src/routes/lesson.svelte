@@ -1,8 +1,10 @@
 <script lang="ts">
-    import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
-    import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
-import ScoreBar from "../components/Generic/ScoreBar.svelte";
+    import LockButton from "../components/Generic/Buttons/LockButton.svelte";
+import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
+import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
+    import ScoreBar from "../components/Generic/ScoreBar.svelte";
     import { lessons } from "../lib/lesson/data"
+    import { speed, state } from "../lib/lesson/lesson"
 </script>
 
 <style lang="scss">
@@ -26,6 +28,18 @@ import ScoreBar from "../components/Generic/ScoreBar.svelte";
             align-self: center;
         }
     }
+
+    .handholder {
+        display:flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        .hand {
+            flex-grow: 1;
+            max-width: 250px;
+            min-width: 250px;
+            margin-right: 15px;
+        }
+    }
 </style>
 
 <h2>{lessons[0].name}</h2>
@@ -34,23 +48,31 @@ import ScoreBar from "../components/Generic/ScoreBar.svelte";
     <div class="section">
         <div class="description">
             <h3>Bars {section.startBar}-{section.endBar}</h3>
-            {#each section.hands as hand}
-                <div>
-                    <h4>{hand.hand}</h4>
+            <div class="handholder">
+                {#each section.hands as hand}
+                    <div class="hand">
+                        <h4>{hand.hand}</h4>
 
-                    {#each hand.speeds as speed}
-                        <div class="task">
-                            <div>
-                                <p>{speed.speed}</p>
-                                <ScoreBar value={speed.progress}></ScoreBar>
+                        {#each hand.speeds as speed}
+                            <div class="task">
+                                <div>
+                                    <p>{speed.speed}</p>
+                                    <ScoreBar value={speed.progress}></ScoreBar>
+                                </div>
+                                <div class="button">
+                                    {#if speed.state === state.locked}
+                                        <LockButton></LockButton>
+                                    {:else if speed.state === state.allowed}
+                                        <OptionButton text="Learn"></OptionButton>
+                                    {:else if speed.state === state.reccomended}
+                                        <ReccomendedButton text="Learn"></ReccomendedButton>
+                                    {/if}
+                                </div>
                             </div>
-                            <div class="button">
-                                <OptionButton text="Learn"></OptionButton>
-                            </div>
-                        </div>
-                    {/each}
-                </div>
-            {/each}
+                        {/each}
+                    </div>
+                {/each}
+            </div>
         </div>
     </div>
 {/each}

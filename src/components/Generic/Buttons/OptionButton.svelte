@@ -5,6 +5,7 @@
 <style lang="scss">
     div {
         height: 21px;
+        min-width: 70px;
         box-sizing: border-box;
         border-radius: 10px;
         border: 1px solid black;

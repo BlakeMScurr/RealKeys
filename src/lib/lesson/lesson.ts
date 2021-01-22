@@ -156,7 +156,7 @@ export class handSection {
                     throw new Error("Can't attempt locked lesson")
                 }
 
-                s.progress = score
+                if (score > s.progress) s.progress = score
                 if (score === 100) {
                     s.state = state.allowed
                     if (i + 1 < this.speeds.length) {
