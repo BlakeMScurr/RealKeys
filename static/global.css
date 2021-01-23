@@ -39,3 +39,9 @@ p {
 body {
   margin: 0;
 }
+
+html,
+#sapper,
+body {
+  height: 100%
+}

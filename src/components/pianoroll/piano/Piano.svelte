@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { createEventDispatcher } from "svelte";
+    import { createEventDispatcher, onMount } from "svelte";
     import { NewNote, Note, notesBetween, Line } from "../../../lib/music/theory/notes.ts";
     import { blackAndGhostBetween, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote, label } from "./piano.ts";
     import WebMidi, { InputEventNoteon, InputEventNoteoff } from "webmidi";
@@ -8,7 +8,7 @@
 
     export let keys:Array<Note>;
     export let usedNotes:Map<String, boolean> = new Map();
-    export let lessonNotes: Map<string, string>;
+    export let lessonNotes: Map<string, string> = new Map();
     export let playing; // TODO: type playing store
     export let waitMode; // TODO: type wait mode
     
@@ -69,8 +69,19 @@
             }
         });
     }
+    onMount(() => {
+        enableWebMidi()
 
-    enableWebMidi()
+        addGlobalKeyListener(true, (event) => {
+            mobile = false
+            setActive(event.keyCode, true)
+        });
+        
+        addGlobalKeyListener(false, (event) => {
+            mobile = false
+            setActive(event.keyCode, false)
+        });
+    })
 
     // setup computer keyboard input
     function setActive(charCode: number, isActive: Boolean) {
@@ -81,15 +92,7 @@
         }
     }
 
-    addGlobalKeyListener(true, (event) => {
-        mobile = false
-        setActive(event.keyCode, true)
-    });
-    
-    addGlobalKeyListener(false, (event) => {
-        mobile = false
-        setActive(event.keyCode, false)
-    });
+   
 
     function getLabel(labels, note) {
         if (usedNotes.size == 0) {
@@ -123,16 +126,17 @@
     }
 </script>
 
-<style>
+<style lang="scss">
     div {
         height: 100%;
+
+        .rapper {
+            position: absolute;
+            pointer-events: none;
+            width: 100%;
+        }
     }
     
-    .rapper {
-        position: absolute;
-        pointer-events: none;
-        width: 100%;
-    }
 
     #JuiceWrld {
         margin-left: var(--blackMargin);

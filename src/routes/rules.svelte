@@ -1,36 +1,103 @@
 <script lang="ts">
     import { stores } from "@sapper/app";
-    import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
-    import ScoreBar from "../components/Generic/ScoreBar.svelte";
-    import { handDesc, makeHand } from "../lib/lesson/lesson";
+    import Piano from "../components/pianoroll/piano/Piano.svelte";
+    import { lessons } from "../lib/lesson/data";
+    import { urlToTask, speed } from "../lib/lesson/lesson";
+    import { NewNote, notesBetween } from "../lib/music/theory/notes";
 
     const { page } = stores();
     const query = $page.query;
+    let task = urlToTask(query)
 
-    const score = parseInt(query.score)
-    console.log(query.hand)
-    console.log(makeHand(query.hand))
-    console.log(handDesc(makeHand(query.hand)))
+    if (!lessons.has(task.lesson)) {
+        throw new Error(`No lesson called ${task.lesson}`)
+    }
 
-    const heading = score === 100 ? "Congratulations!" : "Almost there!"
-    const paragraph = score === 100 ? `You learned ${handDesc(makeHand(query.hand))} of bars ${query.startBar}-${query.endBar}` : undefined
+    // TODO: remove hack
+    class hack {
+        subscribe
+        constructor(){
+            this.subscribe = (f) => {
+                f(false)
+                return ()=>{}
+            }
+        }
+    }
 </script>
 
 <style lang="scss">
+    .taskDesc {
+        display: flex;
+        justify-content: center;
+
+        p {
+            margin: 0 15px 0 15px;
+        }
+    }
+
+    mark {
+        background-color: #FFA800;
+    }
+
+    .centerer {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        div {
+            align-self: center;
+            height: 100%;
+            flex: 0 1 auto;
+        }
+        
+        .shawty {
+            flex-basis: 15%;
+            flex-grow: 1;
+        }
+
+        .textCenterer {
+            display: flex;
+            h3 {
+                align-self: center;
+                text-align: center;
+                padding: 0 30px 0 30px;
+            }
+        }
+
+        .button {
+            margin: 0 0 15px 0;
+        }
+        .piano {
+            position: relative;
+            flex: 1 1 auto;
+            flex-grow: 5;
+            width: 100%;
+        }
+    }
+
 </style>
 
-<h2>{heading}</h2>
+<h2>{task.lesson}</h2>
 
-<div class="holder">
-    {#if paragraph}
-        <h4>{paragraph}</h4>
-    {/if}
-    <div>
-        <ScoreBar value={score} showValue={true} size={"medium"}></ScoreBar>
+<div class="taskDesc">
+    <p>Bars {task.startBar}-{task.endBar}</p>
+    <p>{task.hand}</p>
+    <p>{task.speed}</p>
+</div>
+
+<div class="centerer">
+    <div class="shawty textCenterer">
+        {#if task.speed === speed.OwnPace}
+            <h3>Play the <mark>orange highlighted</mark> keys as the notes reach the keys</h3>
+        {:else}
+            <h3>Play the <mark>orange highlighted</mark> keys at your own pace</h3>
+        {/if}
     </div>
-    <div>
-        <OptionButton text="Select Level"></OptionButton>
-        <ReccomendedButton text="Next Level"></ReccomendedButton>
+    <div class="button shawty">
+        <ReccomendedButton text="Start"></ReccomendedButton>
+    </div>
+    <div class="piano">
+        <Piano keys={ notesBetween(NewNote("C", 4), NewNote("C", 5)) } playing={ new hack() } waitMode={ new hack() }></Piano>
     </div>
 </div>

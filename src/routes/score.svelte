@@ -3,18 +3,14 @@
     import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
     import ScoreBar from "../components/Generic/ScoreBar.svelte";
-    import { handDesc, makeHand } from "../lib/lesson/lesson";
+    import { handDesc, makeHand, makeSpeed, taskSpec, urlToTask } from "../lib/lesson/lesson";
 
     const { page } = stores();
     const query = $page.query;
+    let task = urlToTask(query)
 
-    const score = parseInt(query.score)
-    console.log(query.hand)
-    console.log(makeHand(query.hand))
-    console.log(handDesc(makeHand(query.hand)))
-
-    const heading = score === 100 ? "Congratulations!" : "Almost there!"
-    const paragraph = score === 100 ? `You learned ${handDesc(makeHand(query.hand))} of bars ${query.startBar}-${query.endBar}` : undefined
+    const heading = task.score === 100 ? "Congratulations!" : "Almost there!"
+    const paragraph = task.score === 100 ? `You learned ${handDesc(task.hand)} of bars ${task.startBar}-${task.endBar}` : undefined
 </script>
 
 <style lang="scss">
@@ -24,6 +20,7 @@
     }
 
     .holder {
+        padding: 0px 30px 30px 30px;
         display: flex;
         flex-direction: column;
 
@@ -49,7 +46,7 @@
         <h4>{paragraph}</h4>
     {/if}
     <div>
-        <ScoreBar value={score} showValue={true} size={"medium"}></ScoreBar>
+        <ScoreBar value={task.score} showValue={true} size={"medium"}></ScoreBar>
     </div>
     <div>
         <OptionButton text="Select Level"></OptionButton>

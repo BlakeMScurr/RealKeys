@@ -7,17 +7,20 @@ export enum difficulty {
 }
 
 export class taskSpec {
+    // TODO: remove score, as it doesn't actually specify the task
     score: number;
     startBar: number;
     endBar: number;
     hand: hand;
     speed: speed;
-    constructor (score: number, startBar: number, endBar: number, hand: hand, speed: speed) {
+    lesson: string;
+    constructor (score: number, startBar: number, endBar: number, hand: hand, speed: speed, lesson: string) {
         this.score = score
         this.startBar = startBar
         this.endBar = endBar
         this.hand = hand
         this.speed = speed
+        this.lesson = lesson
     }
 }
 
@@ -254,4 +257,23 @@ export enum speed {
     Fifty = "50% speed",
     SeventyFive = "75% speed",
     OneHundred = "100% speed",
+}
+
+export function makeSpeed(speedString: string) {
+    switch (speedString) {
+        case "At your own pace":
+            return speed.OwnPace
+        case  "50% speed":
+            return speed.Fifty
+        case  "75% speed":
+            return speed.SeventyFive
+        case  "100% speed":
+            return speed.OneHundred
+        default:
+            throw new Error(`invalid speed ${speedString}`)
+    }
+}
+
+export function urlToTask(query) {
+    return new taskSpec(parseInt(query.score), parseInt(query.startBar), parseInt(query.endBar), makeHand(query.hand), makeSpeed(query.speed), query.lesson)
 }

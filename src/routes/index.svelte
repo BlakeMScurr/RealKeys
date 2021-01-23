@@ -22,6 +22,8 @@
     }
 
     .lessonholder {
+        padding: 0px 30px 30px 30px;
+
         display: flex;
         justify-content: space-around;
         flex-wrap: wrap;
@@ -53,7 +55,7 @@
 <h2>Lessons</h2>
 
 <div class="lessonholder">
-    {#each lessons as lesson, i}
+    {#each lessons.lessons as lesson, i}
         <div class="lesson">
             <div class="description">
                 <h4>{lesson.name}</h4>

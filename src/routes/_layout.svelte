@@ -9,13 +9,7 @@
 </script>
 
 <style lang="scss">
-    div {
-        padding: 0px 30px 30px 30px;
-    }
 </style>
 
 <Nav></Nav>
-
-<div>
-    <slot></slot>
-</div>
+<slot></slot>
