@@ -16,7 +16,7 @@
         // making sure that this uses the correct value when the props are updated
         // TODO: decrease height so it's not taking the whole track, giving the user more space to click
         let thumbPosition = (value-inputElement.min)/(inputElement.max-inputElement.min)*100
-        inputElement.style.background = 'linear-gradient(to right, #667ED4 0%, #667ED4 ' + thumbPosition + '%, #000 ' + thumbPosition + '%, #000 100%)'
+        inputElement.style.background = 'linear-gradient(to right, #38A3FA 0%, #38A3FA ' + thumbPosition + '%, #000 ' + thumbPosition + '%, #000 100%)'
     }
     
     let mounted;
@@ -41,7 +41,7 @@
     // Base from https://github.com/darlanrod/input-range-scss/blob/master/_inputrange.scss
     // TODO: remove cruft that's now extraneous - and make sure it works on all browsers!
     $track-color: #000000 !default;
-    $thumb-color: #667ED4 !default; // TODO: import from module
+    $thumb-color: #38A3FA !default; // TODO: import from module
 
     $thumb-radius: 7px !default;
     $thumb-height: 14px !default;

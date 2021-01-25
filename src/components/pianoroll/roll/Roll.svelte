@@ -5,6 +5,7 @@
     import type { TimedNotes } from "../../../lib/music/timed/timed";
     import type { Bars } from "../pianoRollHelpers";
     import type { Colourer } from "../../colours";
+import RollBackground from "./RollBackground.svelte";
 
     export let keys:Array<Note>;
     export let height:number;
@@ -70,7 +71,7 @@
         })
 
         // TODO: handle dpr so it's crisp on retina displays
-        app = new PIXI.Application({width:  mountPoint.clientWidth, height: mountPoint.clientHeight, autoStart: false});
+        app = new PIXI.Application({width:  mountPoint.clientWidth, height: mountPoint.clientHeight, autoStart: false, transparent: true});
         mountPoint.appendChild(app.view);
         // TODO: why is the canvas 4 pixels smaller than the mount point?
 
@@ -99,9 +100,9 @@
             foreground.removeChildren()
                     
             let keyWidth = mountPoint.clientWidth / keys.length
-            drawKeys(keys, background, keyWidth, mountPoint.clientHeight)
+            // drawKeys(keys, background, keyWidth, mountPoint.clientHeight)
             translate(foreground)
-            drawBarLines(bars, foreground, mountPoint.clientWidth, mountPoint.clientHeight, zw)
+            // drawBarLines(bars, foreground, mountPoint.clientWidth, mountPoint.clientHeight, zw)
             renderables = drawNotes(tracks, foreground, keys, keyWidth, mountPoint.clientHeight, zw, colourer, selectTrack)
             setRenderables();
             ticker.update();
@@ -147,15 +148,36 @@
     }
 </script>
 
-<style>
+<style lang="scss">
     div {
         width: 100%;
         height: 100%;
-        background-color: grey;
+        background-color: rgba(0, 0, 0, 0);
+
+        .foreground {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0);
+        }
+
+        .bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
     }
 </style>
 
-<div bind:this={mountPoint}></div>
+<div>
+    <div class="foreground" bind:this={mountPoint}></div>
+    <div class="bg">
+        <RollBackground keys={keys}></RollBackground>
+    </div>
+</div>
+
+   
 
 {#if debugSliders}
     <input type="range" on:input={()=>{translate(foreground)}} bind:value={position} min="0" max="1" step="0.0001">

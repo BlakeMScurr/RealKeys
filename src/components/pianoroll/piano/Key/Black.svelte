@@ -40,7 +40,7 @@
     }
 
     .used {
-        border-color: #667ED4;
+        border-color: #38A3FA;
         border-width: 3px;
         border-style: solid;
         width: calc(50% - 6px);

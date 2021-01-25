@@ -5,13 +5,14 @@
     import WebMidi, { InputEventNoteon, InputEventNoteoff } from "webmidi";
     import Key from "./Key/Key.svelte";
     import { addGlobalKeyListener, get } from "../../../lib/util";
+    import type { SoundFont } from "../../../lib/track/soundfont";
 
     export let keys:Array<Note>;
     export let usedNotes:Map<String, boolean> = new Map();
     export let lessonNotes: Map<string, string> = new Map();
-    export let playing; // TODO: type playing store
-    export let waitMode; // TODO: type wait mode
-    
+    export let sandbox: boolean = false; // sandbox pianos are just for playing, and aren't used to test one on a task
+    export let instrument: SoundFont;
+
     let midiConnected = false
     let mobile = false // TODO: figure out how to know this before we get any events
     usedNotes = new Map(); // TODO: use this when a setting enables it
@@ -30,6 +31,13 @@
                 playingNotes.push(v)
             }
         })
+
+        if (e.type === "noteOn") {
+            instrument.play(e.detail)
+        } else {
+            instrument.stop(e.detail)
+        }
+    
         dispatch("playingNotes", playingNotes)
         dispatch(e.type, e.detail);
     }
@@ -106,7 +114,7 @@
     // TODO: surely make it more concise
     function getState(note: Note, activeMap, lessonNotes) {
         let str = note.string()
-        if (!get(playing) && !get(waitMode)) {
+        if (sandbox) {
             return activeMap.get(str) ? "active" : ""
         } else {
             if (lessonNotes.has(str)) {

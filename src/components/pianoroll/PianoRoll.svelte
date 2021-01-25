@@ -3,7 +3,6 @@
     import { TimedNotes } from "../../lib/music/timed/timed"
     import type { GameMaster } from "../../stores/stores"
     import Piano from "./piano/Piano.svelte";
-    import { newPiano } from "../../lib/track/instrument";
     import Roll from "./roll/Roll.svelte";
     import { createEventDispatcher } from 'svelte';
     import type { Colourer } from "../colours";
