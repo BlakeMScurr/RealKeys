@@ -29,12 +29,12 @@
             }
 
             .white {
-                width: calc(100% - 2px);
+                width: 97%;
             }
 
             .separator {
                 background: white;
-                width: 2px;
+                width: 3%;
             }
         }
 

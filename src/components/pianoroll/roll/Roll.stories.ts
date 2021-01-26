@@ -16,7 +16,7 @@ export const Pixi = () => {
     props: {
       debugSliders: true,
       position: 0,
-      zoomWidth: 0.5,
+      zoomWidth: 1,
       keys: notesBetween(NewNote("C", 4), NewNote("C", 5)),
       songDuraion: { subscribe: (cb)=>{
         cb(10000)
@@ -66,7 +66,7 @@ export const DOM = () => {
     props: {
       debugSliders: true,
       position: 0,
-      zoomWidth: 0.5,
+      zoomWidth: 1,
       keys: notesBetween(NewNote("C", 4), NewNote("C", 5)),
       songDuraion: { subscribe: (cb)=>{
         cb(10000)
@@ -93,6 +93,31 @@ export const DOM = () => {
           new TimedNote(0.8, 1, NewNote("C", 4)),
           new TimedNote(0.8, 1, NewNote("E", 4)),
         ])]
+      ]),
+      overlayNotes: new TimedNotes([]),
+      recording: true,
+    },
+  }
+}
+export const SparseDOM = () => {
+  return {
+    Component: domstoryholder,
+    props: {
+      debugSliders: true,
+      position: 0,
+      zoomWidth: 1,
+      keys: notesBetween(NewNote("C", 4), NewNote("C", 5)),
+      songDuraion: { subscribe: (cb)=>{
+        cb(10000)
+      }},
+      colourer: new Colourer(3),
+      height: 500,
+      unit: "px",
+      bars: new Bars([0.2, 0.2, 0.2, 0.2, 0.2]),
+      tracks: new Map<string, TimedNotes>([
+        ["t1", new TimedNotes([
+          new TimedNote(0.6, 1, NewNote("C", 4)),
+        ])],
       ]),
       overlayNotes: new TimedNotes([]),
       recording: true,

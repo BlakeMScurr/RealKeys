@@ -48,5 +48,9 @@ export class Colourer {
     
         return parseInt(this.extras[track - trackColours.length].hex().slice(1), 16) 
     }
+
+    hex(track: number) {
+        return "#" + this.trackColour(track).toString(16)
+    }
 }
 
