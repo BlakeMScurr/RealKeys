@@ -8,6 +8,7 @@
         height: 50px;
         width: 100%;
         box-shadow: 0px 12px 12px rgba(208, 208, 208, 0.25);
+        z-index: 3;
 
         display: flex;
         justify-content: space-between;
