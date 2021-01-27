@@ -59,5 +59,5 @@ export async function getMIDI(url) {
         )
     })
 
-    return {tracks: trackMap, instruments: instrumentMap}
+    return {tracks: trackMap, instruments: instrumentMap, duration: duration*1000}
 }

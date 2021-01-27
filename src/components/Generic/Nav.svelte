@@ -4,6 +4,7 @@
     div {
         $little-pad: 15px;
 
+        position: relative;
         background-color: white;
         height: 50px;
         width: 100%;

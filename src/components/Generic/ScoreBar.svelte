@@ -7,7 +7,7 @@
 
     value = OneTo100(value)
 
-    if (size !== "small" && size !== "medium" && size !== "large") size = "small"
+    if (size !== "small" && size !== "medium" && size !== "large" && size !== "flex") size = "small"
     if (size === "small") showValue = false
 </script>
 
@@ -41,6 +41,11 @@
     .large {
         height: 19px;
         width: 150px; 
+    }
+
+    .flex {
+        height: 100%;
+        width: 100%;
     }
 </style>
 

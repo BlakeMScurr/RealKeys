@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { handleClick } from "./button";
+
     export let text: string;
 </script>
 
@@ -11,6 +13,10 @@
         background-color: #38A3FA;
         border: none;
         display: inline-block;
+
+        &:hover {
+            filter: brightness(85%);
+        }
         
         div {
             display: flex;
@@ -29,7 +35,7 @@
 
 </style>
 
-<div>
+<div on:click={handleClick}>
     <div>
         <h4 class="robotic">{text}</h4>
     </div>

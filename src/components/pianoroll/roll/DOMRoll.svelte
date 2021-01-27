@@ -9,11 +9,14 @@
     export let position: number = 0
     export let zoomWidth: number = 1
     export let keys: Array<Note>;
-    export let songDuraion: number = 10000;
+    export let duration: number = 5000;
     export let colourer: Colourer;
     export let bars: Bars;
     export let tracks:  Map<string, TimedNotes>;
     export let overlayNotes: TimedNotes;
+
+    // show 5 seconds
+    zoomWidth = 5000/duration
 </script>
 
 <style lang="scss">
@@ -26,7 +29,7 @@
 
     .fader {
         position: absolute;
-        height: 20%;
+        height: 30%;
         top: 0;
         width: 100%;
         background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0) 100%);

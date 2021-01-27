@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { handleClick } from "./button";
+
     export let text: string;
 </script>
 
@@ -12,6 +14,11 @@
         color: black;
         display: inline-block;
         
+        &:hover {
+            color: white;
+            background-color: black;
+        }
+
         div {
             display: flex;
             justify-content: center;
@@ -29,7 +36,7 @@
 
 </style>
 
-<div>
+<div on:click={handleClick}>
     <div>
         <h4>{text}</h4>
     </div>

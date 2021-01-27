@@ -1,17 +1,17 @@
 <script lang="ts">
     import { stores } from "@sapper/app";
     import { onMount } from "svelte";
-    import Piano from "../components/pianoroll/piano/Piano.svelte";
     import { lessons } from "../lib/lesson/data";
     import { urlToTask } from "../lib/lesson/lesson";
     import { NewNote, notesBetween } from "../lib/music/theory/notes";
     import { newPiano } from "../lib/track/instrument";
-    import Loader from "../components/loader/Loader.svelte"
-    import DOMRoll from "../components/pianoroll/roll/DOMRoll.svelte";
+    import { Colourer } from "../components/colours";
+    import { getMIDI } from "../lib/midi";
     import type { TimedNotes } from "../lib/music/timed/timed";
-    import ScoreBar from "../components/Generic/ScoreBar.svelte";
-    import { getMIDI } from "../lib/midi"
-    import { Colourer } from '../components/colours';
+    import Piano from "../components/pianoroll/piano/Piano.svelte";
+    import Loader from "../components/loader/Loader.svelte";
+    import Rules from "../components/Rules.svelte";
+    import Game from "../components/Game.svelte";
 
     const { page } = stores();
     const query = $page.query;
@@ -28,45 +28,33 @@
         piano = newPiano("User Piano", ()=>{loading = false})
     })
 
-    let keys = notesBetween(NewNote("C", 4), NewNote("C", 5))
+    let started = false
+    function handleNext() {
+        started = true
+    }
+
     let tracks = new Map<string, TimedNotes>();
     let colourer = new Colourer(3)
-    let value = 56
-
+    let duration = 10000
     getMIDI("api/midi?path=%2FClassical_mfiles.co.uk_MIDIRip%2Ftwinkle-twinkle-little-star.mid").then((midi)=>{
         tracks = midi.tracks
+        duration = midi.duration
         colourer = new Colourer(tracks.size)
     })
 </script>
 
 <style lang="scss">
-
-    .parent {
+    .centerer {
         height: calc(100% - 50px); // whole page - nav
-        display: flex;
-        flex-direction: column;
 
-        div {
-            align-self: center;
-            width: 100%;
-            flex: 1 1 auto;
-            position: relative;
+        .nonpiano {
+            height: 67%;
         }
-
-        .score {
-            margin: 30px 0 15px 0;
-            z-index: 3;
-            display: flex;
-            justify-content: center;
-            flex-grow: 0;
-        }
-
-        .roll {
-            flex-grow: 2;
-        }
-
         .piano {
+            position: relative;
             flex-grow: 1;
+            width: 100%;
+            height: 33%
         }
     }
 
@@ -80,15 +68,17 @@
 
 </style>
 
-<div class="parent">
-    <div class="score">
-        <ScoreBar size={"large"} showValue={false} value={value}></ScoreBar>
+<div class="centerer">
+    <div class="nonpiano">
+        {#if !started}
+            <Rules {task} on:next={handleNext}></Rules>
+        {:else}
+            <Game {task} {tracks} {colourer} {duration}></Game>
+        {/if}
     </div>
-    <div class="roll">
-        <DOMRoll {keys} {tracks} {colourer}></DOMRoll>
-    </div>
+
     <div class="piano">
-        <Piano {keys} sandbox={true} instrument={piano}></Piano>
+        <Piano keys={ notesBetween(NewNote("C", 4), NewNote("C", 5)) } sandbox={true} instrument={piano}></Piano>
         {#if loading}
             <div class="loading">
                 <Loader></Loader>

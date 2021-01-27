@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { handleClick } from "./button";
+
     export let text: string;
 </script>
 
@@ -28,7 +30,7 @@
 
 </style>
 
-<div>
+<div on:click={handleClick}>
     <div>
         <h2 class="robotic">{text}</h2>
     </div>

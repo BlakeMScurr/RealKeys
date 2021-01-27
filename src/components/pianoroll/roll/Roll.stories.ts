@@ -68,9 +68,7 @@ export const DOM = () => {
       position: 0,
       zoomWidth: 1,
       keys: notesBetween(NewNote("C", 4), NewNote("C", 5)),
-      songDuraion: { subscribe: (cb)=>{
-        cb(10000)
-      }},
+      duration: 10000,
       colourer: new Colourer(3),
       height: 500,
       unit: "px",
@@ -107,9 +105,7 @@ export const SparseDOM = () => {
       position: 0,
       zoomWidth: 1,
       keys: notesBetween(NewNote("C", 4), NewNote("C", 5)),
-      songDuraion: { subscribe: (cb)=>{
-        cb(10000)
-      }},
+      songDuraion: 10000,
       colourer: new Colourer(3),
       height: 500,
       unit: "px",
