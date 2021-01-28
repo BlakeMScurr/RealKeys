@@ -49,7 +49,7 @@ export class midiTrack {
             }
         })
     
-        this.gm.playingStore.subscribe((play) => {
+        this.gm.play.subscribe((play) => {
             if (this.linked) {
                 if (play) {
                     this.play()
@@ -80,7 +80,7 @@ export class midiTrack {
     }
 
     play() {
-        let dur = get(this.gm.songDuration)
+        let dur = get(this.gm.duration)
         const windowWidth = 10000 / dur // 10 seconds
         this.runWindow(this.currentPosition, windowWidth, dur)
     }
@@ -90,7 +90,7 @@ export class midiTrack {
         if (width + start <= 1) {
             this.windowTimeouts.push(setTimeout(() => {
                 this.runWindow(start + width, width, dur)
-            }, width * dur / get(this.gm.speedStore)))
+            }, width * dur / get(this.gm.speed)))
         }
 
         let notes = this.notes.notesFrom(start, start + width)
@@ -101,7 +101,7 @@ export class midiTrack {
 
     triggerNote(note: TimedNote, pos: number) {
         let noteNumbers = new Map<string, number>();
-        let length = (note.end - note.start) * get(this.gm.songDuration) / get(this.gm.speedStore)
+        let length = (note.end - note.start) * get(this.gm.duration) / get(this.gm.speed)
         if (!noteNumbers.has(note.note.string())) {
             noteNumbers.set(note.note.string(), -1)
         }
@@ -150,7 +150,7 @@ export class midiTrack {
         // Take actions
         // TODO: handle cases where note is less than or near noteLeeway
         const noteLeeway = 100
-        let firstNote = (note.start - pos) * get(this.gm.songDuration) / get(this.gm.speedStore)
+        let firstNote = (note.start - pos) * get(this.gm.duration) / get(this.gm.speed)
         this.pushTimeout(key, startPlayable,    firstNote - noteLeeway)
         this.pushTimeout(key, playNote,         firstNote)
         this.pushTimeout(key, set("strict"),    firstNote + noteLeeway)
@@ -181,7 +181,7 @@ export class midiTrack {
 
     seek(d: number) {
         this.currentPosition = d
-        if (get(this.gm.playingStore)) {
+        if (get(this.gm.play)) {
             this.play()
         }
     }

@@ -152,7 +152,7 @@ class play {
             
             this.playInterval = setInterval(()=>{
                 let timeNow = Date.now()
-                let newPosition = get(this.position) + ((timeNow - timeAtPlayStart)/get(duration)) * get(this.speedStore)
+                let newPosition = get(this.position) + ((timeNow - timeAtPlayStart)/get(this.duration)) * get(this.speedStore)
                 if (newPosition < 1) {
                     this.setPosition(newPosition)
                     timeAtPlayStart = timeNow // have to update this as pos will vary as it's set

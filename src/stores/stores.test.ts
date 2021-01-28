@@ -18,7 +18,7 @@ import { MockInstrument } from "../lib/track/instrument";
 
 test("seek", ()=>{
     let gm = new GameMaster();
-    expect(get(gm.songDuration)).toBe(100000)
+    expect(get(gm.duration)).toBe(100000)
     expect(get(gm.seek)).toBe(0)
     gm.seek.set(1)
     expect(get(gm.seek)).toBe(1)
@@ -27,7 +27,7 @@ test("seek", ()=>{
 
 test("noteSubscription", (done) => {
     let gm = new GameMaster();
-    gm.songDuration.set(1000) // one second song
+    gm.duration.set(1000) // one second song
     gm.tracks.newPlaybackTrack("1", new TimedNotes([
         new TimedNote(0, 0.5, NewNote("C", 4)),
     ]), new MockInstrument(), gm)
@@ -36,10 +36,9 @@ test("noteSubscription", (done) => {
         states.push(JSON.stringify([...notes]))
     })
 
-    gm.audioReady.ready()
-    gm.playingStore.play()
+    gm.play.play()
     setTimeout(() => {
-        gm.playingStore.pause()
+        gm.play.pause()
         // TODO: expect proper thing
         expect(states).toEqual([
             "[]",
@@ -55,7 +54,7 @@ test("noteSubscription", (done) => {
 
 test("twoTrackNoteSubscription", (done) => {
     let gm = new GameMaster();
-    gm.songDuration.set(1000) // one second song
+    gm.duration.set(1000) // one second song
     gm.tracks.newPlaybackTrack("1", new TimedNotes([
         new TimedNote(0, 0.25, NewNote("C", 4)),
     ]), new MockInstrument(), gm)
@@ -70,10 +69,9 @@ test("twoTrackNoteSubscription", (done) => {
         states.push(JSON.stringify([...notes]))
     })
 
-    gm.audioReady.ready()
-    gm.playingStore.play()
+    gm.play.play()
     setTimeout(() => {
-        gm.playingStore.pause()
+        gm.play.pause()
         // TODO: expect proper thing
         expect(states).toEqual([
             "[]",

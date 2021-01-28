@@ -4,7 +4,7 @@
     import { lessons } from "../lib/lesson/data";
     import { urlToTask } from "../lib/lesson/lesson";
     import { NewNote, notesBetween } from "../lib/music/theory/notes";
-    import { newPiano } from "../lib/track/instrument";
+    import { MockInstrument, newPiano } from "../lib/track/instrument";
     import { Colourer } from "../components/colours";
     import { getMIDI } from "../lib/midi";
     import type { TimedNotes } from "../lib/music/timed/timed";
@@ -34,25 +34,34 @@
     let duration = 10000
     let position
     let nextable = false
+    let sandbox = true
 
     let onNext = () => {}
     let started = false
     function handleNext() {
         started = true
         onNext()
+        sandbox = false
     }
 
+    let lessonNotes
     getMIDI("api/midi?path=%2FClassical_mfiles.co.uk_MIDIRip%2Ftwinkle-twinkle-little-star.mid").then((midi)=>{
         tracks = midi.tracks
         duration = midi.duration
         colourer = new Colourer(tracks.size)
         let gm = new GameMaster()
-        gm.songDuration.set(duration)
+        gm.duration.set(duration)
         gm.position.subscribe((pos)=>{
             position = pos
         })
-        onNext = () => {gm.playingStore.play()}
+        onNext = () => {gm.play.play()}
         nextable = true
+        tracks.forEach((notes, name) => {
+            gm.tracks.newPlaybackTrack(name, notes, new MockInstrument(), gm)
+        })
+        gm.tracks.subscribeToNotesOfTracks(Array.from(tracks.keys()), (notes) => {
+            lessonNotes = notes
+        })
     })
 
   
@@ -94,7 +103,7 @@
     </div>
 
     <div class="piano">
-        <Piano keys={ notesBetween(NewNote("C", 4), NewNote("C", 5)) } sandbox={true} instrument={piano}></Piano>
+        <Piano keys={ notesBetween(NewNote("C", 4), NewNote("C", 5)) } {sandbox} instrument={piano} {lessonNotes}></Piano>
         {#if loading}
             <div class="loading">
                 <Loader></Loader>
