@@ -3,7 +3,6 @@
     import { TimedNotes } from "../../lib/music/timed/timed"
     import type { GameMaster } from "../../stores/stores"
     import Piano from "./piano/Piano.svelte";
-    import Roll from "./roll/Roll.svelte";
     import { createEventDispatcher } from 'svelte';
     import type { Colourer } from "../colours";
 
@@ -150,12 +149,3 @@
         height: $pianoHeight;
     }
 </style>
-
-<div id="pianoroll">
-    <div class="container roll" on:wheel={handleRollWheel} on:touchmove={handleTouchMove}>
-        <Roll {keys} {bars} {tracks} position={pos} songDuration={gm.songDuration} {colourer} on:selectTrack={forward}></Roll>
-    </div>
-    <div class="container piano" on:wheel={handlePianoWheel} on:mousedown={handlemousedown} on:mouseup={handlemouseup} on:mousemove={handlemousemove} on:mouseleave={handlemouseleave}>
-    <Piano {keys} lessonNotes={state} playing={gm.playingStore} waitMode={gm.waitMode} on:noteOff={noteOff} on:noteOn={noteOn} on:playingNotes={forward} usedNotes={notes.untimeRemoveDupes()}></Piano>
-    </div>
-</div>

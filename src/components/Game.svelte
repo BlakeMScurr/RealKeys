@@ -1,6 +1,6 @@
 <script lang="ts">
     import { lessons } from "../lib/lesson/data";
-    import { taskSpec } from "../lib/lesson/lesson";
+    import type { taskSpec } from "../lib/lesson/lesson";
     import { NewNote, notesBetween } from "../lib/music/theory/notes";
     import DOMRoll from "../components/pianoroll/roll/DOMRoll.svelte";
     import type { TimedNotes } from "../lib/music/timed/timed";
@@ -11,6 +11,7 @@
     export let tracks: Map<string, TimedNotes>;
     export let colourer: Colourer;
     export let duration: number;
+    export let position: number;
 
     if (!lessons.has(task.lesson)) {
         throw new Error(`No lesson called ${task.lesson}`)
@@ -58,6 +59,6 @@
         </div>
     </div>
     <div class="roll">
-        <DOMRoll {keys} {tracks} {colourer} {duration}></DOMRoll>
+        <DOMRoll {keys} {tracks} {colourer} {duration} {position}></DOMRoll>
     </div>
 </div>

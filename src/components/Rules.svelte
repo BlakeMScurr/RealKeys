@@ -4,6 +4,7 @@
     import { speed } from "../lib/lesson/lesson";
 
     export let task;
+    export let nextable;
 
     let dispatch = createEventDispatcher()
 
@@ -66,7 +67,9 @@
         <h3>Play the <mark>orange highlighted</mark> keys at your own pace</h3>
         {/if}
     </div>
-    <div class="button" on:click={handleNext}>
-        <ReccomendedButton text="Start" ></ReccomendedButton>
-    </div>
+    {#if nextable}
+        <div class="button" on:click={handleNext}>
+            <ReccomendedButton text="Start" ></ReccomendedButton>
+        </div>
+    {/if}
 </div>

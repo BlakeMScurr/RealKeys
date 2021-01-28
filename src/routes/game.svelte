@@ -12,6 +12,7 @@
     import Loader from "../components/loader/Loader.svelte";
     import Rules from "../components/Rules.svelte";
     import Game from "../components/Game.svelte";
+    import { GameMaster } from "../stores/stores";
 
     const { page } = stores();
     const query = $page.query;
@@ -28,19 +29,34 @@
         piano = newPiano("User Piano", ()=>{loading = false})
     })
 
-    let started = false
-    function handleNext() {
-        started = true
-    }
-
     let tracks = new Map<string, TimedNotes>();
     let colourer = new Colourer(3)
     let duration = 10000
+    let position
+    let nextable = false
+
+    let onNext = () => {}
+    let started = false
+    function handleNext() {
+        started = true
+        onNext()
+    }
+
     getMIDI("api/midi?path=%2FClassical_mfiles.co.uk_MIDIRip%2Ftwinkle-twinkle-little-star.mid").then((midi)=>{
         tracks = midi.tracks
         duration = midi.duration
         colourer = new Colourer(tracks.size)
+        let gm = new GameMaster()
+        gm.songDuration.set(duration)
+        gm.position.subscribe((pos)=>{
+            position = pos
+        })
+        onNext = () => {gm.playingStore.play()}
+        nextable = true
     })
+
+  
+    
 </script>
 
 <style lang="scss">
@@ -71,9 +87,9 @@
 <div class="centerer">
     <div class="nonpiano">
         {#if !started}
-            <Rules {task} on:next={handleNext}></Rules>
+            <Rules {task} on:next={handleNext} {nextable}></Rules>
         {:else}
-            <Game {task} {tracks} {colourer} {duration}></Game>
+            <Game {task} {tracks} {colourer} {duration} {position}></Game>
         {/if}
     </div>
 
