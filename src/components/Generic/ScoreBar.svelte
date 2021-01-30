@@ -5,7 +5,7 @@
     export let value: number = 0;
     export let showValue: boolean = false;
 
-    value = OneTo100(value)
+    $: v = OneTo100(value)
 
     if (size !== "small" && size !== "medium" && size !== "large" && size !== "flex") size = "small"
     if (size === "small") showValue = false
@@ -49,8 +49,8 @@
     }
 </style>
 
-<div class={size} style="--width: {value}%; --color: {value === 100 ? "#1CBE02" : "#FFA800"}">
+<div class={size} style="--width: {v}%; --color: {v === 100 ? "#1CBE02" : "#FFA800"}">
     {#if showValue}
-        <p class="robotic">{value}</p>
+        <p class="robotic">{v}</p>
     {/if}
 </div>
