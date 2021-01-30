@@ -6,19 +6,26 @@
     import type { TimedNotes } from "../lib/music/timed/timed";
     import ScoreBar from "../components/Generic/ScoreBar.svelte";
     import type { Colourer } from '../components/colours';
+    import type { timedScoreKeeper } from "../lib/lesson/score";
 
     export let task: taskSpec;
     export let tracks: Map<string, TimedNotes>;
     export let colourer: Colourer;
     export let duration: number;
     export let position: number;
+    export let scorer: timedScoreKeeper;
 
     if (!lessons.has(task.lesson)) {
         throw new Error(`No lesson called ${task.lesson}`)
     }
 
     let keys = notesBetween(NewNote("C", 4), NewNote("C", 5))
-    let value = 56
+    let score = 0
+    scorer.subscribe((s)=>{
+        score = s
+    })
+
+    let successScore = 0.85
 </script>
 
 <style lang="scss">
@@ -55,7 +62,7 @@
 <div class="parent">
     <div class="score">
         <div>
-            <ScoreBar size={"flex"} showValue={false} value={value}></ScoreBar>
+            <ScoreBar size={"flex"} showValue={false} value={ score*100 / successScore }></ScoreBar>
         </div>
     </div>
     <div class="roll">

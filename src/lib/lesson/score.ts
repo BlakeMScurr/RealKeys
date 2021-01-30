@@ -12,6 +12,7 @@ export class timedScoreKeeper {
     private invalidSum: number;
     private lastNotePositions: Map<string, number>;
     private lastNoteStates: Map<string, state>;
+    private subscribers;
 
     constructor() {
         this.lastPosition = 0
@@ -19,6 +20,7 @@ export class timedScoreKeeper {
         this.invalidSum = 0
         this.lastNotePositions = new Map<string, number>();
         this.lastNoteStates = new Map<string, state>();
+        this.subscribers = []
     }
 
     validRatio () {
@@ -59,6 +61,15 @@ export class timedScoreKeeper {
         this.lastNotePositions.set(ns, position)
         this.lastNoteStates.set(ns, s)
         this.lastPosition = position
+
+        const score = this.score()
+        this.subscribers.forEach(f => {
+            f(score)
+        });
+    }
+
+    subscribe(f) {
+        this.subscribers.push(f)
     }
 
     validTime () {

@@ -18,6 +18,8 @@ export class midiTrack {
     playbackInstrument: VirtualInstrument;
     currentNotes;
     gm: GameMaster;
+    private noteNumbers: Map<string, number>;
+
     private linked: Boolean;
 
     constructor(notes: TimedNotes, playbackInstrument: VirtualInstrument, gm: GameMaster) {
@@ -32,6 +34,7 @@ export class midiTrack {
         this.linked = false
         // TODO: don't add the full game master. Just passing in relevant stores or functions will reduce scope creep and coupling.
         this.gm = gm
+        this.noteNumbers = new Map<string, number>();
     }
 
     // links the track to stores
@@ -100,17 +103,21 @@ export class midiTrack {
     }
 
     triggerNote(note: TimedNote, pos: number) {
-        let noteNumbers = new Map<string, number>();
         let length = (note.end - note.start) * get(this.gm.duration) / get(this.gm.speed)
-        if (!noteNumbers.has(note.note.string())) {
-            noteNumbers.set(note.note.string(), -1)
+        let ns = note.note.string()
+        if (!this.noteNumbers.has(ns)) {
+            this.noteNumbers.set(ns, -1)
+        } else {
+            this.noteNumbers.set(ns, this.noteNumbers.get(ns) + 1)
         }
         // how many of the current notes have been seen
-        let noteNumber = noteNumbers.get(note.note.string()) + 1
-        noteNumbers.set(note.note.string(), noteNumber)
+        let noteNumber = this.noteNumbers.get(ns)
+        this.noteNumbers.set(ns, noteNumber)
         // Key to find all timeouts of this note
-        const key = note.note.string() + noteNumber
-        const lastKey = note.note.string() + (noteNumber - 1)
+        const key = ns + noteNumber
+        const lastKey = ns + (noteNumber - 1)
+
+
         if (!this.noteTimeouts.has(key)) {
             this.noteTimeouts.set(key, [])
         }
@@ -118,10 +125,11 @@ export class midiTrack {
         // Define actions
         const startPlayable = () => {
             if (this.noteTimeouts.has(lastKey)) {
-                this.noteTimeouts.get(lastKey).forEach((_, previousTimeout) => {
+                this.noteTimeouts.get(lastKey).forEach((previousTimeout) => {
                     clearTimeout(previousTimeout)
                 });
             }
+            // TODO: make the names of set soft and playable the same
             set("soft")()
         }
 

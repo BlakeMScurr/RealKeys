@@ -6,12 +6,15 @@
     import Key from "./Key/Key.svelte";
     import { addGlobalKeyListener, get } from "../../../lib/util";
     import type { SoundFont } from "../../../lib/track/soundfont";
+    import { state } from "../../../lib/lesson/score";
 
     export let keys:Array<Note>;
     export let usedNotes:Map<String, boolean> = new Map();
     export let lessonNotes: Map<string, string> = new Map();
     export let sandbox: boolean = false; // sandbox pianos are just for playing, and aren't used to test one on a task
     export let instrument: SoundFont;
+    export let position;
+    export let scorer;
 
     let midiConnected = false
     let mobile = false // TODO: figure out how to know this before we get any events
@@ -113,24 +116,45 @@
 
     // TODO: surely make it more concise
     function getState(note: Note, activeMap, lessonNotes) {
-        let str = note.string()
-        if (sandbox) {
-            return activeMap.get(str) ? "active" : ""
-        } else {
-            if (lessonNotes.has(str)) {
-                let val = lessonNotes.get(str)
-                if (val == "strict") {
-                    return activeMap.get(str) ? "right" : "wrong"
-                } else if (val == "soft") {
-                    return activeMap.get(str) ? "right" : ""
-                } else if (val == "expecting") {
-                    return activeMap.get(str) ? "right" : "expecting"
-                }
-                throw new Error("unexpected note state value " + val)
+        let stateString = () => {
+            let str = note.string()
+            if (sandbox) {
+                return activeMap.get(str) ? "active" : ""
             } else {
-                return activeMap.get(str) ? "wrong" : ""
+                if (lessonNotes.has(str)) {
+                    let val = lessonNotes.get(str)
+                    if (val == "strict") {
+                        return activeMap.get(str) ? "right" : "wrong"
+                    } else if (val == "soft") {
+                        return activeMap.get(str) ? "right" : ""
+                    } else if (val == "expecting") {
+                        return activeMap.get(str) ? "right" : "expecting"
+                    }
+                    throw new Error("unexpected note state value " + val)
+                } else {
+                    return activeMap.get(str) ? "wrong" : ""
+                }
+             }
+        }
+
+        let ss = stateString()
+
+        try {
+            switch (ss) {
+                case "right":
+                    scorer.recordNoteState(note, state.valid, position)
+                    break
+                case "wrong":
+                    scorer.recordNoteState(note, state.invalid, position)
+                    break
+                default:
+                    scorer.recordNoteState(note, state.indifferent, position)
             }
-         }
+        } catch(e) {
+
+        }
+
+        return ss
     }
 </script>
 

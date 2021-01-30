@@ -53,3 +53,18 @@ test("double record" , () => {
     sk.recordNoteState(NewNote("C", 4), state.invalid, 0)
     expect(()=>{sk.recordNoteState(NewNote("C", 4), state.valid, 0)}).toThrow("State already recorded for note c4 at position 0")
 })
+
+test("MultiNote", () => {
+    let sk = new timedScoreKeeper()
+
+    expect(sk.validRatio()).toBeCloseTo(1, 5)
+    sk.recordNoteState(NewNote("C", 4), state.valid, 0)
+    sk.recordNoteState(NewNote("D", 4), state.invalid, 0)
+    sk.recordNoteState(NewNote("C", 4), state.indifferent, 0.1)
+    sk.recordNoteState(NewNote("D", 4), state.indifferent, 0.1)
+
+    expect(sk.invalidTime()).toBeCloseTo(0.1, 5)
+    expect(sk.validTime()).toBeCloseTo(0.1, 5)
+    expect(sk.validRatio()).toBeCloseTo(0.5, 5)
+    expect(sk.score()).toBeCloseTo(0.05, 5)
+})

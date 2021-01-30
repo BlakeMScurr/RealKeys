@@ -13,6 +13,7 @@
     import Rules from "../components/Rules.svelte";
     import Game from "../components/Game.svelte";
     import { GameMaster } from "../stores/stores";
+    import { timedScoreKeeper } from "../lib/lesson/score";
 
     const { page } = stores();
     const query = $page.query;
@@ -35,6 +36,7 @@
     let position
     let nextable = false
     let sandbox = true
+    let scorer = new timedScoreKeeper()
 
     let onNext = () => {}
     let started = false
@@ -45,7 +47,7 @@
     }
 
     let lessonNotes
-    getMIDI("api/midi?path=%2FClassical_mfiles.co.uk_MIDIRip%2Ftwinkle-twinkle-little-star.mid").then((midi)=>{
+    getMIDI("api/midi?path=%2FTutorials/Mary Had A Little Lamb.mid").then((midi)=>{
         tracks = midi.tracks
         duration = midi.duration
         colourer = new Colourer(tracks.size)
@@ -63,9 +65,6 @@
             lessonNotes = notes
         })
     })
-
-  
-    
 </script>
 
 <style lang="scss">
@@ -98,12 +97,12 @@
         {#if !started}
             <Rules {task} on:next={handleNext} {nextable}></Rules>
         {:else}
-            <Game {task} {tracks} {colourer} {duration} {position}></Game>
+            <Game {task} {tracks} {colourer} {duration} {position} {scorer}></Game>
         {/if}
     </div>
 
     <div class="piano">
-        <Piano keys={ notesBetween(NewNote("C", 4), NewNote("C", 5)) } {sandbox} instrument={piano} {lessonNotes}></Piano>
+        <Piano keys={ notesBetween(NewNote("C", 4), NewNote("C", 5)) } {sandbox} instrument={piano} {lessonNotes} {position} {scorer}></Piano>
         {#if loading}
             <div class="loading">
                 <Loader></Loader>

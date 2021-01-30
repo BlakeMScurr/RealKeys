@@ -21,7 +21,7 @@ export class GameMaster {
         this.setPosition = set
         this.position = { subscribe }
         this.play = new play();
-        this.duration = new duration();
+        this.duration = new duration(set);
         this.speed = new speed(this.play);
         this.seek = new seek(this.setPosition, this.play, this.position, this.duration, this.speed);
         this.tracks = new tracks(this.play);
@@ -45,8 +45,8 @@ function createPosition() {
     return {
         subscribe,
 		set: (val: number) => {
-            if (val < 0 || val > 1) {
-                throw new Error("positions must be between 0 and 1, got: " + val)
+            if (val > 1) {
+                throw new Error("positions must be below 1, got: " + val)
             } else {
                 set(val)
             }
@@ -56,20 +56,26 @@ function createPosition() {
 
 class duration {
     private internalSet;
+    private setPosition;
     subscribe;
 
-    constructor() {
+    constructor(setPosition) {
         const { subscribe, set } = writable(100000);
         this.subscribe = subscribe
         this.internalSet = set
+        this.setPosition = setPosition
     }
 
+
     set (dur: Promise<number>|number) {
+        const initialPosition = -2000
         if (dur instanceof Promise) {
             dur.then((d) => {
+                this.setPosition(initialPosition/d)
                 this.internalSet(d)
             })
         } else {
+            this.setPosition(initialPosition/dur)
             this.internalSet(dur)
         }
     }
