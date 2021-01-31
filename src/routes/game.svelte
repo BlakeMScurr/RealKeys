@@ -36,7 +36,7 @@
     let position
     let nextable = false
     let sandbox = true
-    let scorer = new timedScoreKeeper()
+    let scorer = new timedScoreKeeper(new GameMaster().position)
 
     let onNext = () => {}
     let started = false
@@ -56,8 +56,9 @@
         gm.position.subscribe((pos)=>{
             position = pos
         })
-        onNext = () => {gm.play.play()}
+        onNext = () => { gm.play.play() }
         nextable = true
+        scorer = new timedScoreKeeper(gm.position)
         tracks.forEach((notes, name) => {
             gm.tracks.newPlaybackTrack(name, notes, new MockInstrument(), gm)
         })

@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { Readable, writable } from 'svelte/store';
 import type { VirtualInstrument } from '../lib/track/instrument'
 import { TimedNotes } from '../lib/music/timed/timed';
 import { get } from '../lib/util'
@@ -8,7 +8,7 @@ import { midiTrack } from "./track";
 // TODO: consider using a state machine, as it will have stricter guarantees about the possible states the game can be in
 export class GameMaster {
     private setPosition: any;
-    position: any;
+    position: Readable<number>;
     seek: seek;
     play: play;
     duration: duration;

@@ -1,4 +1,6 @@
 import type { Note } from "../music/theory/notes";
+import { get } from "../util";
+import type { Readable } from "svelte/types/runtime/store"
 
 export enum state {
     valid = "valid",
@@ -7,20 +9,24 @@ export enum state {
 }
 
 export class timedScoreKeeper {
-    private lastPosition: number;
+    private position: Readable<number>;
     private validSum: number;
     private invalidSum: number;
     private lastNotePositions: Map<string, number>;
     private lastNoteStates: Map<string, state>;
     private subscribers;
 
-    constructor() {
-        this.lastPosition = 0
+    constructor(position: Readable<number>) {
         this.validSum = 0
         this.invalidSum = 0
         this.lastNotePositions = new Map<string, number>();
         this.lastNoteStates = new Map<string, state>();
         this.subscribers = []
+        
+        position.subscribe((pos) => {
+            this.triggerScoreUpdate(pos)
+        })
+        this.position = position
     }
 
     validRatio () {
@@ -33,15 +39,7 @@ export class timedScoreKeeper {
         return 1 // we consider an attempt to be totally valid until proven otherwise
     }
 
-    score () {
-        return this.validRatio() * this.lastPosition
-    }
-
     recordNoteState(note: Note, s: state, position: number) {
-        if (position < this.lastPosition) {
-            throw new Error("Can't record note state out of order")
-        }
-
         let ns = note.string()
         let first = !this.lastNoteStates.has(ns) && !this.lastNotePositions.has(ns)
         
@@ -60,16 +58,21 @@ export class timedScoreKeeper {
 
         this.lastNotePositions.set(ns, position)
         this.lastNoteStates.set(ns, s)
-        this.lastPosition = position
 
-        const score = this.score()
+        this.triggerScoreUpdate(get(this.position))
+    }
+
+    triggerScoreUpdate(pos: number) {
+        const score = this.validRatio() * pos
+        console.log("updating with score", score, "given valid ratio", this.validRatio(), "and position", pos)
         this.subscribers.forEach(f => {
             f(score)
-        });
+        }); 
     }
 
     subscribe(f) {
         this.subscribers.push(f)
+        this.triggerScoreUpdate(get(this.position))
     }
 
     validTime () {
