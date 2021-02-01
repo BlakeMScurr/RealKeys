@@ -317,7 +317,7 @@ class tracks {
         tracks.forEach(track => {
             this.subscribe((currentPlayers: Map<string, midiTrack>) => {
                 if (!currentPlayers.has(track)) {
-                    throw new Error(`player has no track ${track}`)
+                    throw new Error(`player has no track ${track}, has ${Array.from(currentPlayers.keys())}`)
                 }
 
                 unsubscribers.push(currentPlayers.get(track).interface().subscribeToNotes(onStateChange))

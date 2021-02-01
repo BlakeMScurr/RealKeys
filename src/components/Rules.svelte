@@ -62,9 +62,9 @@
     </div>
     <div class="textCenterer">
         {#if task.speed === speed.OwnPace}
-        <h3>Play the <mark>orange highlighted</mark> keys as the notes reach the keys</h3>
+            <h3>Play the <mark>orange highlighted</mark> keys at your own pace</h3>
         {:else}
-        <h3>Play the <mark>orange highlighted</mark> keys at your own pace</h3>
+            <h3>Play the <mark>orange highlighted</mark> keys as the notes reach the keys</h3>
         {/if}
     </div>
     {#if nextable}

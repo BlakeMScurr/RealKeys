@@ -261,13 +261,13 @@ export enum speed {
 
 export function makeSpeed(speedString: string) {
     switch (speedString) {
-        case "At your own pace":
+        case "own":
             return speed.OwnPace
-        case  "50% speed":
+        case  "50":
             return speed.Fifty
-        case  "75% speed":
+        case  "75":
             return speed.SeventyFive
-        case  "100% speed":
+        case  "100":
             return speed.OneHundred
         default:
             throw new Error(`invalid speed ${speedString}`)

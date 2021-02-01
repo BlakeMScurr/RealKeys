@@ -2,7 +2,7 @@
     import { stores } from "@sapper/app";
     import { onMount } from "svelte";
     import { lessons } from "../lib/lesson/data";
-    import { urlToTask } from "../lib/lesson/lesson";
+    import { speed, urlToTask } from "../lib/lesson/lesson";
     import { NewNote, notesBetween } from "../lib/music/theory/notes";
     import { MockInstrument, newPiano } from "../lib/track/instrument";
     import { Colourer } from "../components/colours";
@@ -13,11 +13,16 @@
     import Rules from "../components/Rules.svelte";
     import Game from "../components/Game.svelte";
     import { GameMaster } from "../stores/stores";
-    import { timedScoreKeeper } from "../lib/lesson/score";
+    import { timedScoreKeeper, untimedScoreKeeper } from "../lib/lesson/score";
+    import { handleNotes, nextWaitModeNote } from "../stores/waitMode";
+    import { writable } from "svelte/store";
+    import { get } from "../lib/util";
 
     const { page } = stores();
     const query = $page.query;
     let task = urlToTask(query)
+    console.log("task", task)
+    console.log(task.speed === speed.OwnPace)
 
     if (!lessons.has(task.lesson)) {
         throw new Error(`No lesson called ${task.lesson}`)
@@ -36,7 +41,8 @@
     let position
     let nextable = false
     let sandbox = true
-    let scorer = new timedScoreKeeper(new GameMaster().position)
+    let scorer
+    scorer = new timedScoreKeeper(new GameMaster().position)
 
     let onNext = () => {}
     let started = false
@@ -45,6 +51,7 @@
         onNext()
         sandbox = false
     }
+    let handlePlayingNotes = (e: Event) => {}
 
     let lessonNotes
     getMIDI("api/midi?path=%2FTutorials/Mary Had A Little Lamb.mid").then((midi)=>{
@@ -56,15 +63,62 @@
         gm.position.subscribe((pos)=>{
             position = pos
         })
+        tracks.forEach((notes, name) => {
+            gm.tracks.newPlaybackTrack(name, notes, newPiano(name, ()=>{console.log(`piano ${name} loaded`)}), gm)
+        })
         onNext = () => { gm.play.play() }
         nextable = true
         scorer = new timedScoreKeeper(gm.position)
-        tracks.forEach((notes, name) => {
-            gm.tracks.newPlaybackTrack(name, notes, new MockInstrument(), gm)
-        })
-        gm.tracks.subscribeToNotesOfTracks(Array.from(tracks.keys()), (notes) => {
-            lessonNotes = notes
-        })
+
+        switch (task.speed) {
+            case speed.OwnPace:
+                gm.waitMode.set(true)
+                onNext = () => {
+                    //subscribe to the notes needed to progress
+                    let stateSetter = writable(new Map<string, string>());
+                    function onNoteStateChange(notes: Map<string, string>) {
+                        let state = get(stateSetter)
+                        notes.forEach((noteState, noteName: string)=>{
+                            state.set(noteName, noteState)
+                        })
+                        stateSetter.set(state)
+                    }
+
+                    gm.seek.subscribe(() => {
+                        let state = get(stateSetter)
+                        nextWaitModeNote(gm, tracks).sameStart.forEach(note => {
+                            state.set(note.note.string(), "expecting")
+                        })
+                        stateSetter.set(state)
+                    })
+
+                    gm.tracks.subscribeToNotesOfTracks(Array.from(tracks.keys()), onNoteStateChange)
+
+                    stateSetter.subscribe((notes) => {
+                        lessonNotes = notes
+                    })
+
+                    // hook up the notes played
+                    handlePlayingNotes = handleNotes(gm, stateSetter, tracks)
+                }
+                gm.tracks.enable(Array.from(tracks.keys()))
+                gm.seek.set(0)
+                scorer = new untimedScoreKeeper()
+
+                break;
+            case speed.Fifty:
+                gm.speed.set(0.5)
+                gm.tracks.subscribeToNotesOfTracks(Array.from(tracks.keys()), (notes) => {lessonNotes = notes})
+                break;
+            case speed.SeventyFive:
+                gm.speed.set(0.75)
+                gm.tracks.subscribeToNotesOfTracks(Array.from(tracks.keys()), (notes) => {lessonNotes = notes})
+                break;
+            case speed.OneHundred:
+                gm.speed.set(1)
+                gm.tracks.subscribeToNotesOfTracks(Array.from(tracks.keys()), (notes) => {lessonNotes = notes})
+                break;
+        }
     })
 </script>
 
@@ -103,7 +157,7 @@
     </div>
 
     <div class="piano">
-        <Piano keys={ notesBetween(NewNote("C", 4), NewNote("C", 5)) } {sandbox} instrument={piano} {lessonNotes} {position} {scorer}></Piano>
+        <Piano keys={ notesBetween(NewNote("C", 4), NewNote("C", 5)) } {sandbox} instrument={piano} {lessonNotes} {position} {scorer} on:playingNotes={handlePlayingNotes}></Piano>
         {#if loading}
             <div class="loading">
                 <Loader></Loader>

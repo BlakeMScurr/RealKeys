@@ -1,3 +1,5 @@
+import type { Readable } from "svelte/store"
+
 export function strip(number) { // fixing some floating point arithmetic problems
     const bigNum = 1000000
     return Math.round(number*bigNum)/bigNum
@@ -127,7 +129,7 @@ export const separator = "%2F" // this is an alternative to / that doesn't exist
 // TODO: use this everywhere the boilerplate is used to make sure we don't waste memory
 // TODO: make sure store has subscribe function
 // gets the value of a store and calls the unsubscriber to prevent memory leaks
-export function get(store) {
+export function get(store: Readable<any>) {
     let val
     store.subscribe((innerVal) => {
         val = innerVal

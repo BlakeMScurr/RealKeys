@@ -42,8 +42,12 @@ export class timedScoreKeeper {
     recordNoteState(note: Note, s: state, position: number) {
         let ns = note.string()
         let first = !this.lastNoteStates.has(ns) && !this.lastNotePositions.has(ns)
-        
+
         if (!first) {
+            if (this.lastNoteStates.get(ns) == s) {
+                return
+            }
+
             if (position <= this.lastNotePositions.get(ns)) {
                 throw new Error(`State already recorded for note ${ns} at position ${position}`)
             }
@@ -64,7 +68,6 @@ export class timedScoreKeeper {
 
     triggerScoreUpdate(pos: number) {
         const score = this.validRatio() * pos
-        console.log("updating with score", score, "given valid ratio", this.validRatio(), "and position", pos)
         this.subscribers.forEach(f => {
             f(score)
         }); 
@@ -73,6 +76,62 @@ export class timedScoreKeeper {
     subscribe(f) {
         this.subscribers.push(f)
         this.triggerScoreUpdate(get(this.position))
+    }
+
+    validTime () {
+        return this.validSum
+    }
+
+    invalidTime () {
+        return this.invalidSum
+    }
+}
+
+export class untimedScoreKeeper {
+    private validSum: number;
+    private invalidSum: number;
+    private subscribers;
+
+    constructor() {
+        this.validSum = 0
+        this.invalidSum = 0
+        this.subscribers = []
+    }
+
+    validRatio () {
+        let total = this.validTime() + this.invalidTime()
+        if (total > 0) {
+            return this.validTime() / total
+        } else if (total < 0) {
+            throw new Error("Can't have negative time")
+        }
+        return 1 // we consider an attempt to be totally valid until proven otherwise
+    }
+
+    recordNoteState(note: Note, s: state, position: number) {
+        if (s === state.valid) {
+            this.validSum++
+        } else if (s === state.invalid) {
+            this.invalidSum++
+        }
+
+        if (s === state.invalid || s === state.valid) {
+            console.log(note.string(), s, "total", this.validRatio())
+        }
+
+        this.triggerScoreUpdate(0)
+    }
+
+    triggerScoreUpdate(pos: number) {
+        const score = this.validRatio()
+        this.subscribers.forEach(f => {
+            f(score)
+        }); 
+    }
+
+    subscribe(f) {
+        this.subscribers.push(f)
+        this.triggerScoreUpdate(0)
     }
 
     validTime () {
