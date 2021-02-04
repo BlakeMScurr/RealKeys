@@ -130,7 +130,7 @@ export class midiTrack {
                 });
             }
             // TODO: make the names of set soft and playable the same
-            set("soft")()
+            set("softstart")()
         }
 
         const set = (noteState: string) => {
@@ -162,7 +162,7 @@ export class midiTrack {
         this.pushTimeout(key, startPlayable,    firstNote - noteLeeway)
         this.pushTimeout(key, playNote,         firstNote)
         this.pushTimeout(key, set("strict"),    firstNote + noteLeeway)
-        this.pushTimeout(key, set("soft"),      firstNote + length - noteLeeway)
+        this.pushTimeout(key, set("softend"),      firstNote + length - noteLeeway)
         this.pushTimeout(key, requireNoteOff,   firstNote + length + noteLeeway)
     }
 

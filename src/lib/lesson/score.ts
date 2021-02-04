@@ -8,6 +8,10 @@ export enum state {
     indifferent = "indifferent",
 }
 
+
+export interface scorer {
+    validRatio():number
+}
 export class timedScoreKeeper {
     private position: Readable<number>;
     private validSum: number;
@@ -29,7 +33,7 @@ export class timedScoreKeeper {
         this.position = position
     }
 
-    validRatio () {
+    validRatio():number {
         let total = this.validTime() + this.invalidTime()
         if (total > 0) {
             return this.validTime() / total
@@ -91,14 +95,16 @@ export class untimedScoreKeeper {
     private validSum: number;
     private invalidSum: number;
     private subscribers;
+    private lastNoteStates: Map<string, state>;
 
     constructor() {
         this.validSum = 0
         this.invalidSum = 0
         this.subscribers = []
+        this.lastNoteStates = new Map();
     }
 
-    validRatio () {
+    validRatio():number {
         let total = this.validTime() + this.invalidTime()
         if (total > 0) {
             return this.validTime() / total
@@ -109,14 +115,15 @@ export class untimedScoreKeeper {
     }
 
     recordNoteState(note: Note, s: state, position: number) {
+        if (this.lastNoteStates.has(note.string()) && this.lastNoteStates.get(note.string()) === s) {
+            return
+        }
+        this.lastNoteStates.set(note.string(), s)
+
         if (s === state.valid) {
             this.validSum++
         } else if (s === state.invalid) {
             this.invalidSum++
-        }
-
-        if (s === state.invalid || s === state.valid) {
-            console.log(note.string(), s, "total", this.validRatio())
         }
 
         this.triggerScoreUpdate(0)

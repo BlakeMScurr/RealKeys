@@ -4,7 +4,7 @@
     import { lessons } from "../lib/lesson/data";
     import { speed, urlToTask } from "../lib/lesson/lesson";
     import { NewNote, notesBetween } from "../lib/music/theory/notes";
-    import { MockInstrument, newPiano } from "../lib/track/instrument";
+    import { newPiano } from "../lib/track/instrument";
     import { Colourer } from "../components/colours";
     import { getMIDI } from "../lib/midi";
     import type { TimedNotes } from "../lib/music/timed/timed";
@@ -17,12 +17,11 @@
     import { handleNotes, nextWaitModeNote } from "../stores/waitMode";
     import { writable } from "svelte/store";
     import { get } from "../lib/util";
+    import { goto } from '@sapper/app'
 
     const { page } = stores();
     const query = $page.query;
     let task = urlToTask(query)
-    console.log("task", task)
-    console.log(task.speed === speed.OwnPace)
 
     if (!lessons.has(task.lesson)) {
         throw new Error(`No lesson called ${task.lesson}`)
@@ -54,7 +53,7 @@
     let handlePlayingNotes = (e: Event) => {}
 
     let lessonNotes
-    getMIDI("api/midi?path=%2FTutorials/Mary Had A Little Lamb.mid").then((midi)=>{
+    getMIDI("api/midi?path=%2FTutorials/" + task.lesson + ".mid").then((midi)=>{
         tracks = midi.tracks
         duration = midi.duration
         colourer = new Colourer(tracks.size)
@@ -62,6 +61,10 @@
         gm.duration.set(duration)
         gm.position.subscribe((pos)=>{
             position = pos
+            if (pos >= 1) {
+                task.score = scorer.validRatio() * 100
+                goto("score?" + task.queryString())
+            }
         })
         tracks.forEach((notes, name) => {
             gm.tracks.newPlaybackTrack(name, notes, newPiano(name, ()=>{console.log(`piano ${name} loaded`)}), gm)
@@ -119,6 +122,8 @@
                 gm.tracks.subscribeToNotesOfTracks(Array.from(tracks.keys()), (notes) => {lessonNotes = notes})
                 break;
         }
+    }).catch((e)=>{
+        throw new Error(e)
     })
 </script>
 

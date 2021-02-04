@@ -22,6 +22,10 @@ export class taskSpec {
         this.speed = speed
         this.lesson = lesson
     }
+
+    queryString() {
+        return Object.entries(this).map((a)=>{return a[0] + "=" + a[1]}).join("&")
+    }
 }
 
 export class lesson {
@@ -253,10 +257,10 @@ export enum state {
 }
 
 export enum speed {
-    OwnPace = "At your own pace",
-    Fifty = "50% speed",
-    SeventyFive = "75% speed",
-    OneHundred = "100% speed",
+    OwnPace = "own",
+    Fifty = "50",
+    SeventyFive = "75",
+    OneHundred = "100",
 }
 
 export function makeSpeed(speedString: string) {

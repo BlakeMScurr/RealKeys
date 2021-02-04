@@ -145,3 +145,70 @@ export function label(notes: Line):Map<String, String> {
     });
     return m
 }
+
+// occupationTracker keeps a track of whether the current depression of a key is occupied by a note that has already been played
+// since such a key ought to be played again if it is expected
+// The initial (and obvious) naive algorithm simply considered a note to be being played correctly if it was being played at the same time that it was expected in the song
+// TODO: simplify into a composition of state machines on each note
+export class occupationTracker {
+    private states: Map<Note, occupationStatus>;
+    constructor() {
+        this.states = new Map<Note, occupationStatus>();
+    }
+
+    private apply(note: Note, map: Map<occupationStatus, occupationStatus>) {
+        let state = this.stateOf(note)
+        if (map.has(state)) {
+            this.states.set(note, map.get(state))
+        }
+    }
+
+    play(note) {
+        this.apply(note, new Map([
+            [ occupationStatus.nothing, occupationStatus.played ],
+            [ occupationStatus.expected, occupationStatus.occupiedCurrent ],
+            [ occupationStatus.occupiedPreviousExpected, occupationStatus.occupiedCurrent ],
+        ]))
+    }
+
+    stop(note) {
+        this.apply(note, new Map([
+            [ occupationStatus.played, occupationStatus.nothing ],
+            [ occupationStatus.occupiedCurrent, occupationStatus.nothing ],
+            [ occupationStatus.occupiedPrevious, occupationStatus.nothing ],
+            [ occupationStatus.occupiedPreviousExpected, occupationStatus.expected ],
+        ]))
+    }
+
+    expect(note) {
+        this.apply(note, new Map([
+            [ occupationStatus.nothing, occupationStatus.expected ],
+            [ occupationStatus.played, occupationStatus.occupiedCurrent ],
+            [ occupationStatus.occupiedPrevious, occupationStatus.occupiedPreviousExpected ],
+        ]))
+    }
+
+    unexpect(note) {
+        this.apply(note, new Map([
+            [ occupationStatus.expected, occupationStatus.nothing ],
+            [ occupationStatus.occupiedCurrent, occupationStatus.occupiedPrevious ],
+            [ occupationStatus.occupiedPreviousExpected, occupationStatus.occupiedPrevious ],
+        ]))
+    }
+
+    stateOf(note: Note):occupationStatus {
+        if (this.states.has(note)) {
+            return this.states.get(note)
+        }
+        return occupationStatus.nothing
+    }
+}
+
+export enum occupationStatus {
+    nothing = "neither played or expected",
+    expected = "expecting to be occupied", 
+    played = "played but unexpected", 
+    occupiedCurrent = "occupied by current note",
+    occupiedPrevious = "occupied by previous note",
+    occupiedPreviousExpected = "occupied by previous note while the next note is expected",
+}

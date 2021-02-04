@@ -30,6 +30,7 @@ class lessonSet {
 }
 
 export const lessons = new lessonSet([
+    new lesson(difficulty.Beginner, "Test", [[1]]),
     new lesson(difficulty.Beginner, "Mary Had a Little Lamb", [[1, 3, 5], [1, 5]]),
     new lesson(difficulty.Beginner, "Twinkle Twinkle Little star", [[1, 3, 5, 7, 9, 11, 13]]),
     new lesson(difficulty.Beginner, "Silent Night", [[1,5,9,13,17,21,25]]),

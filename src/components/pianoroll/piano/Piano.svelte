@@ -23,6 +23,21 @@
     $: labelsOn = !midiConnected && !mobile && false // TODO: use this when a setting enables it
     $: labels = labelsOn ? label(new Line(keys)) : new Map();
 
+    // If a new note arrives, and the current depression of its key was due to a previous note, then the note should be invalid
+    // Played map records whether a given note has been played yet
+    let playedMap = new Map<string, boolean>()
+    $: {
+        let newPlayedMap = new Map<string, boolean>()
+        lessonNotes.forEach((value, note) => {
+            // if (value == "strict") {
+            console.log("current note", note, "previous value played", playedMap.get(note), "value coming in", value)
+            newPlayedMap.set(note, playedMap.get(note) === true && value !== "softstart") // TODO: actually change start on initial soft
+            // }
+        })
+        playedMap = newPlayedMap
+        console.log("setting new played map", playedMap)
+    }
+
     const dispatch = createEventDispatcher();
     function forward(e) {
         activeMap.set(e.detail.string(), e.type === "noteOn")
@@ -37,6 +52,10 @@
 
         if (e.type === "noteOn") {
             instrument.play(e.detail)
+            if (lessonNotes.has(e.detail.string())) {
+                console.log("setting", e.detail.string(), "to true")
+                playedMap.set(e.detail.string(), true)
+            }
         } else {
             instrument.stop(e.detail)
         }
@@ -115,7 +134,8 @@
     }
 
     // TODO: surely make it more concise
-    function getState(note: Note, activeMap, lessonNotes) {
+    // TODO: use an enum for possible expectations of a note, and another for state of a key
+    function getState(note: Note, activeMap, lessonNotes, playedMap) {
         let stateString = () => {
             let str = note.string()
             if (sandbox) {
@@ -124,9 +144,9 @@
                 if (lessonNotes.has(str)) {
                     let val = lessonNotes.get(str)
                     if (val == "strict") {
-                        return activeMap.get(str) ? "right" : "wrong"
-                    } else if (val == "soft") {
-                        return activeMap.get(str) ? "right" : ""
+                        return activeMap.get(str) && playedMap.get(str) ? "right" : "wrong"
+                    } else if (val.includes("soft")) {
+                        return activeMap.get(str) && playedMap.get(str) ? "right" : ""
                     } else if (val == "expecting") {
                         return activeMap.get(str) ? "right" : "expecting"
                     }
@@ -179,7 +199,7 @@
 <div on:touchstart={()=>{mobile = true}}>
     <div class="rapper" id="LilPeep">
         {#each whiteWidths(notes.white()) as {note, width}}
-            <Key {note} width={width} active={activeMap.get(note.string())} state={getState(note, activeMap, lessonNotes)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
+            <Key {note} width={width} active={activeMap.get(note.string())} state={getState(note, activeMap, lessonNotes, playedMap)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
         {/each}
     </div>
     <div style="--blackMargin: {regularWhiteWidth(notes.white())*100/4}%;" class="rapper" id="JuiceWrld">
@@ -187,7 +207,7 @@
             {#if note instanceof Ghost}
                 <Key ghost={true} width={regularWhiteWidth(notes.white())*100 * (2/4)}></Key>
             {:else}
-                <Key {note} width={regularWhiteWidth(notes.white())*100} active={activeMap.get(note.string())} state={getState(note, activeMap, lessonNotes)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
+                <Key {note} width={regularWhiteWidth(notes.white())*100} active={activeMap.get(note.string())} state={getState(note, activeMap, lessonNotes, playedMap)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
             {/if}
         {/each}
     </div>
