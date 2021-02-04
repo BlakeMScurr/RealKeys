@@ -202,13 +202,19 @@ export class occupationTracker {
         }
         return occupationStatus.nothing
     }
+
+    occupiedPrevious(note):boolean {
+        // TODO: do we need `!== occupationStatus.occupiedPrevious` also?
+        // console.log("state of", note, "is", this.stateOf(note))
+        return this.stateOf(note) === occupationStatus.occupiedPreviousExpected
+    }
 }
 
 export enum occupationStatus {
-    nothing = "neither played or expected",
-    expected = "expecting to be occupied", 
-    played = "played but unexpected", 
-    occupiedCurrent = "occupied by current note",
-    occupiedPrevious = "occupied by previous note",
-    occupiedPreviousExpected = "occupied by previous note while the next note is expected",
+    nothing = "nothing", // neither played or expected
+    expected = "expected",  // expecting to be occupied"
+    played = "played",  // played but unexpected"
+    occupiedCurrent = "occupiedCurrent", // occupied by current note
+    occupiedPrevious = "occupiedPrevious", // occupied by previous note
+    occupiedPreviousExpected = "occupiedPreviousExpected", // occupied by previous note while the next note is expected
 }

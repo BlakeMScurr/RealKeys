@@ -1,25 +1,26 @@
-import type { Writable } from 'svelte/store';
+import type { Readable, Writable } from 'svelte/store';
 import { TimedNote, TimedNotes } from '../lib/music/timed/timed';
+import type { Note } from '../lib/music/theory/notes';
 import { arraysEqual, get } from '../lib/util';
 import type { GameMaster } from './stores';
 
 // TODO: make everything in this file a method off GameMaster
 
-export function handleNotes(gm: GameMaster, stateSetter: Writable<Map<string, string>>, availableTracks: Map<string, TimedNotes>) {
+export function handleNotes(gm: GameMaster, stateSetter: Writable<Map<Note, string>>, availableTracks: Map<string, TimedNotes>) {
     return function(event) {
         let nextNotes = nextWaitModeNote(gm, availableTracks)
         if (nextNotes.sameStart.length >= 1) {
             let currentlyPlaying = event.detail.sort()
-            let shouldPlay = nextNotes.sameStart.map((note) => { return note.note.string() }).sort()
+            let shouldPlay = nextNotes.sameStart.map((note) => { return note.note }).sort()
 
             if (arraysEqual(currentlyPlaying, shouldPlay) && !get(gm.play)) { // don't proceed if we're currently playing
                 let dest = nextNotes.next ? nextNotes.next.start : 1
                 nextNotes.sameStart.forEach((note) => {
                     setTimeout(()=> {
                         let state = get(stateSetter)
-                        state.delete(note.note.string())
+                        state.delete(note.note)
                         stateSetter.set(state)
-                    }, (note.end - get(gm.position)) * get(gm.duration))
+                    }, (note.end - get(gm.position)) * get(<Readable<number>>gm.duration))
                 })
 
                 // we have to set the deletion timeouts before seeking, as when there are two directly adjacent notes of the same pitch, there is

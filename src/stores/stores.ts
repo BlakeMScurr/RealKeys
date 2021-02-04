@@ -1,6 +1,7 @@
 import { Readable, writable } from 'svelte/store';
 import type { VirtualInstrument } from '../lib/track/instrument'
 import { TimedNotes } from '../lib/music/timed/timed';
+import type { Note } from '../lib/music/theory/notes';
 import { get } from '../lib/util'
 import { midiTrack } from "./track";
 
@@ -119,7 +120,7 @@ class seek {
             this.playingStore.pause()
             this.setPosition(val)
             this.set(val)
-         }, (val - get(this.position)) * get(this.duration) * (1/get(this.speed)))
+         }, (val - get(<Readable<number>>this.position)) * get(<Readable<number>>this.duration) * (1/get(<Readable<number>>this.speed)))
      }
 }
 
@@ -158,7 +159,7 @@ class play {
             
             this.playInterval = setInterval(()=>{
                 let timeNow = Date.now()
-                let newPosition = get(this.position) + ((timeNow - timeAtPlayStart)/get(this.duration)) * get(this.speedStore)
+                let newPosition = get(<Readable<number>>this.position) + ((timeNow - timeAtPlayStart)/get(<Readable<number>>this.duration)) * get(<Readable<number>>this.speedStore)
                 if (newPosition < 1) {
                     this.setPosition(newPosition)
                     timeAtPlayStart = timeNow // have to update this as pos will vary as it's set
@@ -312,7 +313,7 @@ class tracks {
         return noteMap
     }
 
-    subscribeToNotesOfTracks(tracks: string[], onStateChange: (notes: Map<string, string>) => void) {
+    subscribeToNotesOfTracks(tracks: string[], onStateChange: (notes: Map<Note, string>) => void) {
         let unsubscribers = []
         tracks.forEach(track => {
             this.subscribe((currentPlayers: Map<string, midiTrack>) => {

@@ -25,7 +25,7 @@ test("seek", ()=>{
     expect(get(gm.position)).toBe(1)
 })
 
-test("noteSubscription", (done) => {
+test("basicNoteSubscription", (done) => {
     let gm = new GameMaster();
     gm.duration.set(1000) // one second song
     gm.tracks.newPlaybackTrack("1", new TimedNotes([
@@ -33,6 +33,7 @@ test("noteSubscription", (done) => {
     ]), new MockInstrument(), gm)
     let states = []
     gm.tracks.subscribeToNotesOfTracks(["1"], (notes) => {
+        console.log("top level subscribe with parameter", notes)
         states.push(JSON.stringify([...notes]))
     })
 

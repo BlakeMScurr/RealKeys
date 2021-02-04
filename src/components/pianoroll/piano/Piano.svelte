@@ -1,10 +1,10 @@
 <script lang="ts">
     import { createEventDispatcher, onMount } from "svelte";
-    import { NewNote, Note, notesBetween, Line } from "../../../lib/music/theory/notes.ts";
-    import { blackAndGhostBetween, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote, label } from "./piano.ts";
+    import { NewNote, Note, Line } from "../../../lib/music/theory/notes";
+    import { blackAndGhostBetween, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote, label, occupationTracker } from "./piano.ts";
     import WebMidi, { InputEventNoteon, InputEventNoteoff } from "webmidi";
     import Key from "./Key/Key.svelte";
-    import { addGlobalKeyListener, get } from "../../../lib/util";
+    import { addGlobalKeyListener } from "../../../lib/util";
     import type { SoundFont } from "../../../lib/track/soundfont";
     import { state } from "../../../lib/lesson/score";
 
@@ -25,22 +25,32 @@
 
     // If a new note arrives, and the current depression of its key was due to a previous note, then the note should be invalid
     // Played map records whether a given note has been played yet
-    let playedMap = new Map<string, boolean>()
+    let occupation: occupationTracker = new occupationTracker();
+    let previousStates = new Map<Note, string>();
     $: {
-        let newPlayedMap = new Map<string, boolean>()
+        let newPreviousStates = new Map<Note, string>();
         lessonNotes.forEach((value, note) => {
-            // if (value == "strict") {
-            console.log("current note", note, "previous value played", playedMap.get(note), "value coming in", value)
-            newPlayedMap.set(note, playedMap.get(note) === true && value !== "softstart") // TODO: actually change start on initial soft
-            // }
+            if (value === "softstart") {
+                occupation.expect(note)
+                console.log("expecting", note, "now state", occupation.stateOf(note))
+            }
+            newPreviousStates.set(note, value)
         })
-        playedMap = newPlayedMap
-        console.log("setting new played map", playedMap)
+
+        previousStates.forEach((value, note) => {
+            if (!newPreviousStates.has(note)) {
+                occupation.unexpect(note)
+                console.log("unexpecting", note, "now state", occupation.stateOf(note))
+            }
+        })
+
+        previousStates = newPreviousStates
     }
 
     const dispatch = createEventDispatcher();
     function forward(e) {
-        activeMap.set(e.detail.string(), e.type === "noteOn")
+        let note: Note = e.detail
+        activeMap.set(note.string(), e.type === "noteOn")
         activeMap = activeMap
 
         let playingNotes = new Array<string>();
@@ -51,17 +61,17 @@
         })
 
         if (e.type === "noteOn") {
-            instrument.play(e.detail)
-            if (lessonNotes.has(e.detail.string())) {
-                console.log("setting", e.detail.string(), "to true")
-                playedMap.set(e.detail.string(), true)
-            }
+            console.log("playing", note, "now state", occupation.stateOf(note))
+            instrument.play(note)
+            occupation.play(note)
+            console.log("playing", note, "now state", occupation.stateOf(note))
         } else {
-            instrument.stop(e.detail)
+            instrument.stop(note)
+            occupation.stop(note)
         }
     
         dispatch("playingNotes", playingNotes)
-        dispatch(e.type, e.detail);
+        dispatch(e.type, note);
     }
 
     let notes = new Line(keys)
@@ -135,7 +145,7 @@
 
     // TODO: surely make it more concise
     // TODO: use an enum for possible expectations of a note, and another for state of a key
-    function getState(note: Note, activeMap, lessonNotes, playedMap) {
+    function getState(note: Note, activeMap, lessonNotes, occupation: occupationTracker) {
         let stateString = () => {
             let str = note.string()
             if (sandbox) {
@@ -144,9 +154,9 @@
                 if (lessonNotes.has(str)) {
                     let val = lessonNotes.get(str)
                     if (val == "strict") {
-                        return activeMap.get(str) && playedMap.get(str) ? "right" : "wrong"
+                        return activeMap.get(str) && !occupation.occupiedPrevious(note) ? "right" : "wrong"
                     } else if (val.includes("soft")) {
-                        return activeMap.get(str) && playedMap.get(str) ? "right" : ""
+                        return activeMap.get(str) && !occupation.occupiedPrevious(note) ? "right" : ""
                     } else if (val == "expecting") {
                         return activeMap.get(str) ? "right" : "expecting"
                     }
@@ -199,7 +209,7 @@
 <div on:touchstart={()=>{mobile = true}}>
     <div class="rapper" id="LilPeep">
         {#each whiteWidths(notes.white()) as {note, width}}
-            <Key {note} width={width} active={activeMap.get(note.string())} state={getState(note, activeMap, lessonNotes, playedMap)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
+            <Key {note} width={width} active={activeMap.get(note.string())} state={getState(note, activeMap, lessonNotes, occupation)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
         {/each}
     </div>
     <div style="--blackMargin: {regularWhiteWidth(notes.white())*100/4}%;" class="rapper" id="JuiceWrld">
@@ -207,7 +217,7 @@
             {#if note instanceof Ghost}
                 <Key ghost={true} width={regularWhiteWidth(notes.white())*100 * (2/4)}></Key>
             {:else}
-                <Key {note} width={regularWhiteWidth(notes.white())*100} active={activeMap.get(note.string())} state={getState(note, activeMap, lessonNotes, playedMap)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
+                <Key {note} width={regularWhiteWidth(notes.white())*100} active={activeMap.get(note.string())} state={getState(note, activeMap, lessonNotes, occupation)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
             {/if}
         {/each}
     </div>

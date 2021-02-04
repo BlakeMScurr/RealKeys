@@ -8,6 +8,7 @@
     import { Colourer } from "../components/colours";
     import { getMIDI } from "../lib/midi";
     import type { TimedNotes } from "../lib/music/timed/timed";
+    import type { Note } from "../lib/music/theory/notes";
     import Piano from "../components/pianoroll/piano/Piano.svelte";
     import Loader from "../components/loader/Loader.svelte";
     import Rules from "../components/Rules.svelte";
@@ -52,7 +53,7 @@
     }
     let handlePlayingNotes = (e: Event) => {}
 
-    let lessonNotes
+    let lessonNotes: Map<Note, string>;
     getMIDI("api/midi?path=%2FTutorials/" + task.lesson + ".mid").then((midi)=>{
         tracks = midi.tracks
         duration = midi.duration
@@ -78,11 +79,11 @@
                 gm.waitMode.set(true)
                 onNext = () => {
                     //subscribe to the notes needed to progress
-                    let stateSetter = writable(new Map<string, string>());
-                    function onNoteStateChange(notes: Map<string, string>) {
+                    let stateSetter = writable(new Map<Note, string>());
+                    function onNoteStateChange(notes: Map<Note, string>) {
                         let state = get(stateSetter)
-                        notes.forEach((noteState, noteName: string)=>{
-                            state.set(noteName, noteState)
+                        notes.forEach((noteState: string, note: Note)=>{
+                            state.set(note, noteState)
                         })
                         stateSetter.set(state)
                     }
@@ -90,7 +91,7 @@
                     gm.seek.subscribe(() => {
                         let state = get(stateSetter)
                         nextWaitModeNote(gm, tracks).sameStart.forEach(note => {
-                            state.set(note.note.string(), "expecting")
+                            state.set(note.note, "expecting")
                         })
                         stateSetter.set(state)
                     })

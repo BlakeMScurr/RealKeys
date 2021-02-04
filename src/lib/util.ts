@@ -129,7 +129,7 @@ export const separator = "%2F" // this is an alternative to / that doesn't exist
 // TODO: use this everywhere the boilerplate is used to make sure we don't waste memory
 // TODO: make sure store has subscribe function
 // gets the value of a store and calls the unsubscriber to prevent memory leaks
-export function get(store: Readable<any>) {
+export function get<T>(store: Readable<T>):T {
     let val
     store.subscribe((innerVal) => {
         val = innerVal

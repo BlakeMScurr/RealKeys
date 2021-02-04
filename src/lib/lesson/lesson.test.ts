@@ -289,22 +289,22 @@ function MHALL(){
                 "speeds": [
                   {
                     "progress": 0,
-                    "speed": "At your own pace",
+                    "speed": "own",
                     "state": "reccomended"
                   },
                   {
                     "progress": 0,
-                    "speed": "50% speed",
+                    "speed": "50",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "75% speed",
+                    "speed": "75",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "100% speed",
+                    "speed": "100",
                     "state": "locked"
                   }
                 ]
@@ -314,22 +314,22 @@ function MHALL(){
                 "speeds": [
                   {
                     "progress": 0,
-                    "speed": "At your own pace",
+                    "speed": "own",
                     "state": "reccomended"
                   },
                   {
                     "progress": 0,
-                    "speed": "50% speed",
+                    "speed": "50",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "75% speed",
+                    "speed": "75",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "100% speed",
+                    "speed": "100",
                     "state": "locked"
                   }
                 ]
@@ -339,22 +339,22 @@ function MHALL(){
                 "speeds": [
                   {
                     "progress": 0,
-                    "speed": "At your own pace",
+                    "speed": "own",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "50% speed",
+                    "speed": "50",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "75% speed",
+                    "speed": "75",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "100% speed",
+                    "speed": "100",
                     "state": "locked"
                   }
                 ]
@@ -370,22 +370,22 @@ function MHALL(){
                 "speeds": [
                   {
                     "progress": 0,
-                    "speed": "At your own pace",
+                    "speed": "own",
                     "state": "reccomended"
                   },
                   {
                     "progress": 0,
-                    "speed": "50% speed",
+                    "speed": "50",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "75% speed",
+                    "speed": "75",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "100% speed",
+                    "speed": "100",
                     "state": "locked"
                   }
                 ]
@@ -395,22 +395,22 @@ function MHALL(){
                 "speeds": [
                   {
                     "progress": 0,
-                    "speed": "At your own pace",
+                    "speed": "own",
                     "state": "reccomended"
                   },
                   {
                     "progress": 0,
-                    "speed": "50% speed",
+                    "speed": "50",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "75% speed",
+                    "speed": "75",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "100% speed",
+                    "speed": "100",
                     "state": "locked"
                   }
                 ]
@@ -420,22 +420,22 @@ function MHALL(){
                 "speeds": [
                   {
                     "progress": 0,
-                    "speed": "At your own pace",
+                    "speed": "own",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "50% speed",
+                    "speed": "50",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "75% speed",
+                    "speed": "75",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "100% speed",
+                    "speed": "100",
                     "state": "locked"
                   }
                 ]
@@ -451,22 +451,22 @@ function MHALL(){
                 "speeds": [
                   {
                     "progress": 0,
-                    "speed": "At your own pace",
+                    "speed": "own",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "50% speed",
+                    "speed": "50",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "75% speed",
+                    "speed": "75",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "100% speed",
+                    "speed": "100",
                     "state": "locked"
                   }
                 ]
@@ -476,22 +476,22 @@ function MHALL(){
                 "speeds": [
                   {
                     "progress": 0,
-                    "speed": "At your own pace",
+                    "speed": "own",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "50% speed",
+                    "speed": "50",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "75% speed",
+                    "speed": "75",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "100% speed",
+                    "speed": "100",
                     "state": "locked"
                   }
                 ]
@@ -501,22 +501,22 @@ function MHALL(){
                 "speeds": [
                   {
                     "progress": 0,
-                    "speed": "At your own pace",
+                    "speed": "own",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "50% speed",
+                    "speed": "50",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "75% speed",
+                    "speed": "75",
                     "state": "locked"
                   },
                   {
                     "progress": 0,
-                    "speed": "100% speed",
+                    "speed": "100",
                     "state": "locked"
                   }
                 ]

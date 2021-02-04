@@ -1,8 +1,8 @@
 import type { VirtualInstrument } from '../lib/track/instrument'
-import type { TimedNote } from '../lib/music/timed/timed';
-import type { TimedNotes } from '../lib/music/timed/timed';
+import type { TimedNote, TimedNotes } from '../lib/music/timed/timed';
+import type { Note } from '../lib/music/theory/notes';
 import { get } from '../lib/util';
-import { writable } from 'svelte/store';
+import { Readable, Writable, writable } from 'svelte/store';
 import type { GameMaster } from './stores';
 export class midiTrack {
     notes: TimedNotes;
@@ -16,7 +16,7 @@ export class midiTrack {
     noteTimeouts: Map<string, Array<ReturnType<typeof setTimeout>>>;
     windowTimeouts: Array<ReturnType<typeof setTimeout>>;
     playbackInstrument: VirtualInstrument;
-    currentNotes;
+    currentNotes: Writable<Map<Note, string>>;
     gm: GameMaster;
     private noteNumbers: Map<string, number>;
 
@@ -29,7 +29,7 @@ export class midiTrack {
         this.windowTimeouts = [];
         this.lastNoteWindow = -1;
         this.playbackInstrument = playbackInstrument
-        this.currentNotes = writable(new Map<string, string>())
+        this.currentNotes = writable(new Map<Note, string>())
         this.playing = false
         this.linked = false
         // TODO: don't add the full game master. Just passing in relevant stores or functions will reduce scope creep and coupling.
@@ -83,7 +83,7 @@ export class midiTrack {
     }
 
     play() {
-        let dur = get(this.gm.duration)
+        let dur = get(<Readable<number>>this.gm.duration)
         const windowWidth = 10000 / dur // 10 seconds
         this.runWindow(this.currentPosition, windowWidth, dur)
     }
@@ -93,7 +93,7 @@ export class midiTrack {
         if (width + start <= 1) {
             this.windowTimeouts.push(setTimeout(() => {
                 this.runWindow(start + width, width, dur)
-            }, width * dur / get(this.gm.speed)))
+            }, width * dur / get(<Readable<number>>this.gm.speed)))
         }
 
         let notes = this.notes.notesFrom(start, start + width)
@@ -103,7 +103,7 @@ export class midiTrack {
     }
 
     triggerNote(note: TimedNote, pos: number) {
-        let length = (note.end - note.start) * get(this.gm.duration) / get(this.gm.speed)
+        let length = (note.end - note.start) * get(<Readable<number>>this.gm.duration) / get(<Readable<number>>this.gm.speed)
         let ns = note.note.string()
         if (!this.noteNumbers.has(ns)) {
             this.noteNumbers.set(ns, -1)
@@ -135,9 +135,10 @@ export class midiTrack {
 
         const set = (noteState: string) => {
             return () => {
+                console.log("setting note state to", noteState)
                 // Set the note as being allowed to be played
-                this.currentNotes.update((notes: Map<string, string>)=> {
-                    notes.set(note.note.string(), noteState)
+                this.currentNotes.update((notes: Map<Note, string>)=> {
+                    notes.set(note.note, noteState)
                     return notes
                 })
             }
@@ -149,16 +150,20 @@ export class midiTrack {
         }
 
         const requireNoteOff = () => {
-            this.currentNotes.update((notes: Map<string, string>)=> {
-                notes.delete(note.note.string())
+            console.log("requiring note off")
+            this.currentNotes.update((notes: Map<Note, string>)=> {
+                notes.delete(note.note)
                 return notes
             })
         }
+
+        console.log("taking actions")
         
         // Take actions
         // TODO: handle cases where note is less than or near noteLeeway
         const noteLeeway = 100
-        let firstNote = (note.start - pos) * get(this.gm.duration) / get(this.gm.speed)
+        let firstNote = (note.start - pos) * get(<Readable<number>>this.gm.duration) / get(<Readable<number>>this.gm.speed)
+        console.log("starting playable in", firstNote = noteLeeway)
         this.pushTimeout(key, startPlayable,    firstNote - noteLeeway)
         this.pushTimeout(key, playNote,         firstNote)
         this.pushTimeout(key, set("strict"),    firstNote + noteLeeway)
@@ -183,7 +188,7 @@ export class midiTrack {
         })
 
         this.noteTimeouts = new Map();
-        this.currentNotes.set(new Map<string, string>())
+        this.currentNotes.set(new Map<Note, string>())
 
     }
 
@@ -205,8 +210,9 @@ class playbackInterface {
         this.track = track
     }
 
-    subscribeToNotes(callback: (notes: Map<string, string>)=> void) {
+    subscribeToNotes(callback: (notes: Map<Note, string>)=> void) {
         return this.track.currentNotes.subscribe((notes)=>{
+            console.log("inner subscribe with parameter", notes)
             callback(notes)
         })
     }
