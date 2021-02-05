@@ -156,14 +156,12 @@ export class midiTrack {
                 return notes
             })
         }
-
-        console.log("taking actions")
         
         // Take actions
         // TODO: handle cases where note is less than or near noteLeeway
         const noteLeeway = 100
         let firstNote = (note.start - pos) * get(<Readable<number>>this.gm.duration) / get(<Readable<number>>this.gm.speed)
-        console.log("starting playable in", firstNote = noteLeeway)
+        console.log("starting playable in", firstNote - noteLeeway, "from", pos)
         this.pushTimeout(key, startPlayable,    firstNote - noteLeeway)
         this.pushTimeout(key, playNote,         firstNote)
         this.pushTimeout(key, set("strict"),    firstNote + noteLeeway)
@@ -212,7 +210,7 @@ class playbackInterface {
 
     subscribeToNotes(callback: (notes: Map<Note, string>)=> void) {
         return this.track.currentNotes.subscribe((notes)=>{
-            console.log("inner subscribe with parameter", notes)
+            console.log("inner subscribe with parameter", notes, "at time", get(<Readable<number>>this.track.gm.position))
             callback(notes)
         })
     }

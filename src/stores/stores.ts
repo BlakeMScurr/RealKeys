@@ -57,26 +57,21 @@ function createPosition() {
 
 class duration {
     private internalSet;
-    private setPosition;
     subscribe;
 
     constructor(setPosition) {
         const { subscribe, set } = writable(100000);
         this.subscribe = subscribe
         this.internalSet = set
-        this.setPosition = setPosition
     }
 
 
     set (dur: Promise<number>|number) {
-        const initialPosition = -2000
         if (dur instanceof Promise) {
             dur.then((d) => {
-                this.setPosition(initialPosition/d)
                 this.internalSet(d)
             })
         } else {
-            this.setPosition(initialPosition/dur)
             this.internalSet(dur)
         }
     }

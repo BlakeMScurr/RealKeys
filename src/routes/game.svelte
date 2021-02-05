@@ -17,6 +17,7 @@
     import { timedScoreKeeper, untimedScoreKeeper } from "../lib/lesson/score";
     import { handleNotes, nextWaitModeNote } from "../stores/waitMode";
     import { writable } from "svelte/store";
+    import type { Readable } from "svelte/types/runtime/store"; // TODO: import this from "svelte/store", which works in .ts files not .svelte files
     import { get } from "../lib/util";
     import { goto } from '@sapper/app'
 
@@ -73,9 +74,11 @@
         onNext = () => { gm.play.play() }
         nextable = true
         scorer = new timedScoreKeeper(gm.position)
+        gm.seek.set(-2000/get(<Readable<number>>gm.duration)) // give space before the first note
 
         switch (task.speed) {
             case speed.OwnPace:
+                gm.seek.set(0) // TODO: go to the first note
                 gm.waitMode.set(true)
                 onNext = () => {
                     //subscribe to the notes needed to progress

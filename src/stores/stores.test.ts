@@ -43,9 +43,9 @@ test("basicNoteSubscription", (done) => {
         // TODO: expect proper thing
         expect(states).toEqual([
             "[]",
-            "[[\"c4\",\"soft\"]]",
-            "[[\"c4\",\"strict\"]]",
-            "[[\"c4\",\"soft\"]]",
+            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"softstart\"]]",
+            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"strict\"]]",
+            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"softend\"]]",
             "[]",
             "[]",
         ])
@@ -53,6 +53,39 @@ test("basicNoteSubscription", (done) => {
     }, 1050);
 })
 
+test("twoNoteOneTrackSubscription", (done) => {
+    let gm = new GameMaster();
+    gm.duration.set(1000) // one second song
+    gm.tracks.newPlaybackTrack("1", new TimedNotes([
+        new TimedNote(0, 0.25, NewNote("C", 4)),
+        new TimedNote(0.5, 0.75, NewNote("B", 4)),
+    ]), new MockInstrument(), gm)
+
+
+    let states = []
+    gm.tracks.subscribeToNotesOfTracks(["1"], (notes) => {
+        states.push(JSON.stringify([...notes]))
+    })
+
+    gm.play.play()
+    setTimeout(() => {
+        gm.play.pause()
+        // TODO: expect proper thing
+        expect(states).toEqual([
+            "[]",
+            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"softstart\"]]",
+            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"strict\"]]",
+            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"softend\"]]",
+            "[]",
+            "[[{\"abstract\":{\"letter\":\"b\",\"accidental\":false},\"octave\":4},\"softstart\"]]",
+            "[[{\"abstract\":{\"letter\":\"b\",\"accidental\":false},\"octave\":4},\"strict\"]]",
+            "[[{\"abstract\":{\"letter\":\"b\",\"accidental\":false},\"octave\":4},\"softend\"]]",
+            "[]",
+            "[]",
+        ])
+        done()
+    }, 1050);
+})
 test("twoTrackNoteSubscription", (done) => {
     let gm = new GameMaster();
     gm.duration.set(1000) // one second song
@@ -77,13 +110,13 @@ test("twoTrackNoteSubscription", (done) => {
         expect(states).toEqual([
             "[]",
             "[]",
-            "[[\"c4\",\"soft\"]]",
-            "[[\"c4\",\"strict\"]]",
-            "[[\"c4\",\"soft\"]]",
+            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"softstart\"]]",
+            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"strict\"]]",
+            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"softend\"]]",
             "[]",
-            "[[\"b4\",\"soft\"]]",
-            "[[\"b4\",\"strict\"]]",
-            "[[\"b4\",\"soft\"]]",
+            "[[{\"abstract\":{\"letter\":\"b\",\"accidental\":false},\"octave\":4},\"softstart\"]]",
+            "[[{\"abstract\":{\"letter\":\"b\",\"accidental\":false},\"octave\":4},\"strict\"]]",
+            "[[{\"abstract\":{\"letter\":\"b\",\"accidental\":false},\"octave\":4},\"softend\"]]",
             "[]",
             "[]",
             "[]",
