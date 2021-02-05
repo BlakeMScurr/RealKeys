@@ -25,6 +25,7 @@ test("seek", ()=>{
     expect(get(gm.position)).toBe(1)
 })
 
+// TODO: abstract testing infrastructure as it's a little complex
 test("basicNoteSubscription", (done) => {
     let gm = new GameMaster();
     gm.duration.set(1000) // one second song

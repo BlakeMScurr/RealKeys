@@ -1,7 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher, onMount } from "svelte";
-    import { NewNote, Note, Line } from "../../../lib/music/theory/notes";
-    import { blackAndGhostBetween, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote, label, occupationTracker } from "./piano.ts";
+    import { NewNote, Note, Line, parseNoteString } from "../../../lib/music/theory/notes";
+    import { blackAndGhostBetween, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote, label, occupationTracker } from "./pianoHelpers";
     import WebMidi, { InputEventNoteon, InputEventNoteoff } from "webmidi";
     import Key from "./Key/Key.svelte";
     import { addGlobalKeyListener } from "../../../lib/util";
@@ -10,11 +10,24 @@
 
     export let keys:Array<Note>;
     export let usedNotes:Map<String, boolean> = new Map();
-    export let lessonNotes: Map<string, string> = new Map();
+    export let lessonNotes: Map<Note, string>;
     export let sandbox: boolean = false; // sandbox pianos are just for playing, and aren't used to test one on a task
     export let instrument: SoundFont;
     export let position;
     export let scorer;
+    export let gm;
+    
+    export let expectedNotes = new Map<string, string>(); // TODO: remove expectedNotes and just use lessonNotes instead, as it's better to have notes typed
+    $: {
+        if (lessonNotes) {
+            let newExpectedNotes = new Map<string, string>();
+            lessonNotes.forEach((state, note) => {
+                newExpectedNotes.set(note.string(), state)
+            })
+            expectedNotes = newExpectedNotes
+        }
+    }
+
 
     let midiConnected = false
     let mobile = false // TODO: figure out how to know this before we get any events
@@ -25,22 +38,31 @@
 
     // If a new note arrives, and the current depression of its key was due to a previous note, then the note should be invalid
     // Played map records whether a given note has been played yet
-    let occupation: occupationTracker = new occupationTracker();
-    let previousStates = new Map<Note, string>();
-    $: {
-        let newPreviousStates = new Map<Note, string>();
-        lessonNotes.forEach((value, note) => {
-            if (value === "softstart") {
-                occupation.expect(note)
-                console.log("expecting", note, "now state", occupation.stateOf(note))
-            }
-            newPreviousStates.set(note, value)
-        })
+    let occupation: occupationTracker = new occupationTracker(gm);
+    $: occupation = new occupationTracker(gm);
 
-        previousStates.forEach((value, note) => {
-            if (!newPreviousStates.has(note)) {
-                occupation.unexpect(note)
-                console.log("unexpecting", note, "now state", occupation.stateOf(note))
+    let previousStates = new Map<string, string>();
+    $: {
+        let newPreviousStates = new Map<string, string>();
+        if (lessonNotes) {
+            lessonNotes.forEach((value, note) => {
+                if (value === "softstart") {
+                    if (!previousStates.has(note.string())) {
+                        occupation.expect(note)
+                    } else {
+                        if (previousStates.get(note.string()) !== "softstart") {
+                            occupation.unexpect(note)
+                            occupation.expect(note)
+                        }
+                    }
+                }
+                newPreviousStates.set(note.string(), value)
+            })
+        }
+
+        previousStates.forEach((value, noteStr) => {
+            if (!newPreviousStates.has(noteStr)) {
+                occupation.unexpect(parseNoteString(noteStr))
             }
         })
 
@@ -50,10 +72,10 @@
     const dispatch = createEventDispatcher();
     function forward(e) {
         let note: Note = e.detail
-        activeMap.set(note.string(), e.type === "noteOn")
+        activeMap.set(note, e.type === "noteOn")
         activeMap = activeMap
 
-        let playingNotes = new Array<string>();
+        let playingNotes = new Array<Note>();
         activeMap.forEach((k, v) => {
             if (k) {
                 playingNotes.push(v)
@@ -61,10 +83,8 @@
         })
 
         if (e.type === "noteOn") {
-            console.log("playing", note, "now state", occupation.stateOf(note))
             instrument.play(note)
             occupation.play(note)
-            console.log("playing", note, "now state", occupation.stateOf(note))
         } else {
             instrument.stop(note)
             occupation.stop(note)
@@ -86,17 +106,16 @@
     enableWebMidi = () => {
         WebMidi.enable(function (err) {
             if (err) {
-                console.warn("WebMidi could not be enabled.", err);
             } else {
                 let addListeners;
                 addListeners = () => {
                     try {
                         WebMidi.inputs[0].addListener('noteon', "all", (e: InputEventNoteon) => {
-                            activeMap.set(NewNote(e.note.name, e.note.octave).string(), true)
+                            activeMap.set(NewNote(e.note.name, e.note.octave), true)
                             activeMap = activeMap // trigger svelte update
                         });
                         WebMidi.inputs[0].addListener('noteoff', "all", (e: InputEventNoteoff) => {
-                            activeMap.set(NewNote(e.note.name, e.note.octave).string(), false)
+                            activeMap.set(NewNote(e.note.name, e.note.octave), false)
                             activeMap = activeMap // trigger svelte update
                         });
                         midiConnected = true
@@ -124,10 +143,10 @@
     })
 
     // setup computer keyboard input
-    function setActive(charCode: number, isActive: Boolean) {
+    function setActive(charCode: number, isActive: boolean) {
         let changedNote = keyboardInputNote(charCode, notes)
         if (changedNote != undefined) {
-            activeMap.set(changedNote.string(), isActive)
+            activeMap.set(changedNote, isActive)
             activeMap = activeMap // trigger svelte update
         }
     }
@@ -145,14 +164,19 @@
 
     // TODO: surely make it more concise
     // TODO: use an enum for possible expectations of a note, and another for state of a key
-    function getState(note: Note, activeMap, lessonNotes, occupation: occupationTracker) {
+    function getState(note: Note, am: Map<Note, boolean>, expectedNotes, occupation: occupationTracker) {
         let stateString = () => {
             let str = note.string()
+            let activeMap = new Map<string, boolean>();
+            am.forEach((bool, n) => {
+                activeMap.set(n.string(), bool)
+            })
+
             if (sandbox) {
                 return activeMap.get(str) ? "active" : ""
             } else {
-                if (lessonNotes.has(str)) {
-                    let val = lessonNotes.get(str)
+                if (expectedNotes.has(str)) {
+                    let val = expectedNotes.get(str)
                     if (val == "strict") {
                         return activeMap.get(str) && !occupation.occupiedPrevious(note) ? "right" : "wrong"
                     } else if (val.includes("soft")) {
@@ -209,7 +233,7 @@
 <div on:touchstart={()=>{mobile = true}}>
     <div class="rapper" id="LilPeep">
         {#each whiteWidths(notes.white()) as {note, width}}
-            <Key {note} width={width} active={activeMap.get(note.string())} state={getState(note, activeMap, lessonNotes, occupation)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
+            <Key {note} width={width} active={activeMap.get(note)} state={getState(note, activeMap, expectedNotes, occupation)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
         {/each}
     </div>
     <div style="--blackMargin: {regularWhiteWidth(notes.white())*100/4}%;" class="rapper" id="JuiceWrld">
@@ -217,7 +241,7 @@
             {#if note instanceof Ghost}
                 <Key ghost={true} width={regularWhiteWidth(notes.white())*100 * (2/4)}></Key>
             {:else}
-                <Key {note} width={regularWhiteWidth(notes.white())*100} active={activeMap.get(note.string())} state={getState(note, activeMap, lessonNotes, occupation)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
+                <Key {note} width={regularWhiteWidth(notes.white())*100} active={activeMap.get(note)} state={getState(note, activeMap, expectedNotes, occupation)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
             {/if}
         {/each}
     </div>

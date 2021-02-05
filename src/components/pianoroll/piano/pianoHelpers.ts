@@ -1,4 +1,6 @@
 import { Note, Line } from "../../../lib/music/theory/notes";
+import { get } from "../../../lib/util";
+import type { GameMaster } from "../../../stores/stores";
 
 export class Ghost {}
 
@@ -151,15 +153,18 @@ export function label(notes: Line):Map<String, String> {
 // The initial (and obvious) naive algorithm simply considered a note to be being played correctly if it was being played at the same time that it was expected in the song
 // TODO: simplify into a composition of state machines on each note
 export class occupationTracker {
-    private states: Map<Note, occupationStatus>;
-    constructor() {
-        this.states = new Map<Note, occupationStatus>();
+    private states: Map<string, occupationStatus>; // TODO: make this a Map<Note, occupationStatus> once note reference equality works
+    gm: GameMaster;
+    // constructor() {
+    constructor(gm: GameMaster) {
+        this.states = new Map<string, occupationStatus>();
+        this.gm = gm
     }
 
     private apply(note: Note, map: Map<occupationStatus, occupationStatus>) {
         let state = this.stateOf(note)
         if (map.has(state)) {
-            this.states.set(note, map.get(state))
+            this.states.set(note.string(), map.get(state))
         }
     }
 
@@ -171,7 +176,7 @@ export class occupationTracker {
         ]))
     }
 
-    stop(note) {
+    stop(note: Note) {
         this.apply(note, new Map([
             [ occupationStatus.played, occupationStatus.nothing ],
             [ occupationStatus.occupiedCurrent, occupationStatus.nothing ],
@@ -180,7 +185,7 @@ export class occupationTracker {
         ]))
     }
 
-    expect(note) {
+    expect(note: Note) {
         this.apply(note, new Map([
             [ occupationStatus.nothing, occupationStatus.expected ],
             [ occupationStatus.played, occupationStatus.occupiedCurrent ],
@@ -188,7 +193,7 @@ export class occupationTracker {
         ]))
     }
 
-    unexpect(note) {
+    unexpect(note: Note) {
         this.apply(note, new Map([
             [ occupationStatus.expected, occupationStatus.nothing ],
             [ occupationStatus.occupiedCurrent, occupationStatus.occupiedPrevious ],
@@ -197,15 +202,14 @@ export class occupationTracker {
     }
 
     stateOf(note: Note):occupationStatus {
-        if (this.states.has(note)) {
-            return this.states.get(note)
+        if (this.states.has(note.string())) {
+            return this.states.get(note.string())
         }
         return occupationStatus.nothing
     }
 
     occupiedPrevious(note):boolean {
         // TODO: do we need `!== occupationStatus.occupiedPrevious` also?
-        // console.log("state of", note, "is", this.stateOf(note))
         return this.stateOf(note) === occupationStatus.occupiedPreviousExpected
     }
 }

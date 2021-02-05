@@ -54,12 +54,13 @@
     }
     let handlePlayingNotes = (e: Event) => {}
 
+    let gm
     let lessonNotes: Map<Note, string>;
     getMIDI("api/midi?path=%2FTutorials/" + task.lesson + ".mid").then((midi)=>{
         tracks = midi.tracks
         duration = midi.duration
         colourer = new Colourer(tracks.size)
-        let gm = new GameMaster()
+        gm = new GameMaster()
         gm.duration.set(duration)
         gm.position.subscribe((pos)=>{
             position = pos
@@ -166,7 +167,7 @@
     </div>
 
     <div class="piano">
-        <Piano keys={ notesBetween(NewNote("C", 4), NewNote("C", 5)) } {sandbox} instrument={piano} {lessonNotes} {position} {scorer} on:playingNotes={handlePlayingNotes}></Piano>
+        <Piano {gm} keys={ notesBetween(NewNote("C", 4), NewNote("C", 5)) } {sandbox} instrument={piano} {lessonNotes} {position} {scorer} on:playingNotes={handlePlayingNotes}></Piano>
         {#if loading}
             <div class="loading">
                 <Loader></Loader>

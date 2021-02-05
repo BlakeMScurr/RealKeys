@@ -1,5 +1,5 @@
 import { NewNote, notesBetween } from "../../../lib/music/theory/notes"
-import { blackAndGhostBetween, Ghost, occupationStatus, occupationTracker } from "./piano"
+import { blackAndGhostBetween, Ghost, occupationStatus, occupationTracker } from "./pianoHelpers"
 
 // TODO: shift all my flats to sharps, as that's the internal representation
 
@@ -95,114 +95,114 @@ test("BlackAndGhostBetween", ()=>{
 })
 
 
-const c4 = NewNote("C", 4)
+const c4 = () => { return NewNote("C", 4) }
 test("occInitial", () => {
     let ot = new occupationTracker();
 
-    expect(ot.stateOf(c4)).toBe(occupationStatus.nothing)
+    expect(ot.stateOf(c4())).toBe(occupationStatus.nothing)
 })
 
 test("occPlay", () => {
     let ot = new occupationTracker();
 
-    ot.play(c4)
-    expect(ot.stateOf(c4)).toBe(occupationStatus.played)
+    ot.play(c4())
+    expect(ot.stateOf(c4())).toBe(occupationStatus.played)
 })
 
 test("occPlayStop", () => {
     let ot = new occupationTracker();
 
-    ot.play(c4)
-    ot.stop(c4)
-    expect(ot.stateOf(c4)).toBe(occupationStatus.nothing)
+    ot.play(c4())
+    ot.stop(c4())
+    expect(ot.stateOf(c4())).toBe(occupationStatus.nothing)
 })
 
 test("occExpect", () => {
     let ot = new occupationTracker();
 
-    ot.expect(c4)
-    expect(ot.stateOf(c4)).toBe(occupationStatus.expected)
+    ot.expect(c4())
+    expect(ot.stateOf(c4())).toBe(occupationStatus.expected)
 })
 
 test("occExpectUnexpect", () => {
     let ot = new occupationTracker();
 
-    ot.expect(c4)
-    ot.unexpect(c4)
-    expect(ot.stateOf(c4)).toBe(occupationStatus.nothing)
+    ot.expect(c4())
+    ot.unexpect(c4())
+    expect(ot.stateOf(c4())).toBe(occupationStatus.nothing)
 })
 
 test("occCurr", () => {
     let ot = new occupationTracker();
 
-    ot.expect(c4)
-    ot.play(c4)
-    expect(ot.stateOf(c4)).toBe(occupationStatus.occupiedCurrent)
+    ot.expect(c4())
+    ot.play(c4())
+    expect(ot.stateOf(c4())).toBe(occupationStatus.occupiedCurrent)
 })
 
 test("occCurrDual", () => {
     let ot = new occupationTracker();
 
-    ot.play(c4)
-    ot.expect(c4)
-    expect(ot.stateOf(c4)).toBe(occupationStatus.occupiedCurrent)
+    ot.play(c4())
+    ot.expect(c4())
+    expect(ot.stateOf(c4())).toBe(occupationStatus.occupiedCurrent)
 })
 
 
 test("occCurrStop", () => {
     let ot = new occupationTracker();
 
-    ot.play(c4)
-    ot.expect(c4)
-    ot.stop(c4)
-    expect(ot.stateOf(c4)).toBe(occupationStatus.nothing) // The alternative is to move to state expected, but then a subsequent play would move to occupiedCurrent, not occupiedPrevious
+    ot.play(c4())
+    ot.expect(c4())
+    ot.stop(c4())
+    expect(ot.stateOf(c4())).toBe(occupationStatus.nothing) // The alternative is to move to state expected, but then a subsequent play would move to occupiedCurrent, not occupiedPrevious
 })
 
 // equivalent to occCurrUnexpect
 test("occPrev", () => {
     let ot = new occupationTracker();
 
-    ot.play(c4)
-    ot.expect(c4)
-    ot.unexpect(c4)
-    expect(ot.stateOf(c4)).toBe(occupationStatus.occupiedPrevious) 
+    ot.play(c4())
+    ot.expect(c4())
+    ot.unexpect(c4())
+    expect(ot.stateOf(c4())).toBe(occupationStatus.occupiedPrevious) 
 })
 
 test("occPrevContinued", () => {
     let ot = new occupationTracker();
 
-    ot.play(c4)
-    ot.expect(c4)
-    ot.unexpect(c4)
-    ot.play(c4)
-    expect(ot.stateOf(c4)).toBe(occupationStatus.occupiedPrevious) 
-    ot.unexpect(c4)
-    expect(ot.stateOf(c4)).toBe(occupationStatus.occupiedPrevious) 
-    ot.play(c4)
-    expect(ot.stateOf(c4)).toBe(occupationStatus.occupiedPrevious) 
+    ot.play(c4())
+    ot.expect(c4())
+    ot.unexpect(c4())
+    ot.play(c4())
+    expect(ot.stateOf(c4())).toBe(occupationStatus.occupiedPrevious) 
+    ot.unexpect(c4())
+    expect(ot.stateOf(c4())).toBe(occupationStatus.occupiedPrevious) 
+    ot.play(c4())
+    expect(ot.stateOf(c4())).toBe(occupationStatus.occupiedPrevious) 
 })
 
 test("occPrevStop", () => {
     let ot = new occupationTracker();
 
-    ot.play(c4)
-    ot.expect(c4)
-    ot.unexpect(c4)
-    expect(ot.stateOf(c4)).toBe(occupationStatus.occupiedPrevious) 
-    ot.stop(c4)
-    expect(ot.stateOf(c4)).toBe(occupationStatus.nothing) 
+    ot.play(c4())
+    ot.expect(c4())
+    ot.unexpect(c4())
+    expect(ot.stateOf(c4())).toBe(occupationStatus.occupiedPrevious) 
+    ot.stop(c4())
+    expect(ot.stateOf(c4())).toBe(occupationStatus.nothing) 
 })
 
 test("occPrevStop", () => {
     let ot = new occupationTracker();
 
-    ot.play(c4)
-    ot.expect(c4)
-    ot.unexpect(c4)
-    expect(ot.stateOf(c4)).toBe(occupationStatus.occupiedPrevious)
-    ot.expect(c4)
-    expect(ot.stateOf(c4)).toBe(occupationStatus.occupiedPreviousExpected)
-    ot.stop(c4)
-    expect(ot.stateOf(c4)).toBe(occupationStatus.expected) 
+    ot.play(c4())
+    ot.expect(c4())
+    ot.unexpect(c4())
+    expect(ot.stateOf(c4())).toBe(occupationStatus.occupiedPrevious)
+    ot.expect(c4())
+    expect(ot.stateOf(c4())).toBe(occupationStatus.occupiedPreviousExpected)
+    ot.stop(c4())
+    expect(ot.stateOf(c4())).toBe(occupationStatus.expected) 
 })
 

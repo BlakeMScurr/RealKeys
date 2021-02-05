@@ -10,10 +10,10 @@ export function handleNotes(gm: GameMaster, stateSetter: Writable<Map<Note, stri
     return function(event) {
         let nextNotes = nextWaitModeNote(gm, availableTracks)
         if (nextNotes.sameStart.length >= 1) {
-            let currentlyPlaying = event.detail.sort()
+            let currentlyPlaying:Array<Note> = event.detail.sort()
             let shouldPlay = nextNotes.sameStart.map((note) => { return note.note }).sort()
 
-            if (arraysEqual(currentlyPlaying, shouldPlay) && !get(gm.play)) { // don't proceed if we're currently playing
+            if (arraysEqual(currentlyPlaying.map((n)=>{return n.string()}), shouldPlay.map((n)=>{return n.string()})) && !get(gm.play)) { // don't proceed if we're currently playing
                 let dest = nextNotes.next ? nextNotes.next.start : 1
                 nextNotes.sameStart.forEach((note) => {
                     setTimeout(()=> {

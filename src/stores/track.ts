@@ -135,7 +135,6 @@ export class midiTrack {
 
         const set = (noteState: string) => {
             return () => {
-                console.log("setting note state to", noteState)
                 // Set the note as being allowed to be played
                 this.currentNotes.update((notes: Map<Note, string>)=> {
                     notes.set(note.note, noteState)
@@ -150,7 +149,6 @@ export class midiTrack {
         }
 
         const requireNoteOff = () => {
-            console.log("requiring note off")
             this.currentNotes.update((notes: Map<Note, string>)=> {
                 notes.delete(note.note)
                 return notes
@@ -161,7 +159,6 @@ export class midiTrack {
         // TODO: handle cases where note is less than or near noteLeeway
         const noteLeeway = 100
         let firstNote = (note.start - pos) * get(<Readable<number>>this.gm.duration) / get(<Readable<number>>this.gm.speed)
-        console.log("starting playable in", firstNote - noteLeeway, "from", pos)
         this.pushTimeout(key, startPlayable,    firstNote - noteLeeway)
         this.pushTimeout(key, playNote,         firstNote)
         this.pushTimeout(key, set("strict"),    firstNote + noteLeeway)
@@ -210,7 +207,6 @@ class playbackInterface {
 
     subscribeToNotes(callback: (notes: Map<Note, string>)=> void) {
         return this.track.currentNotes.subscribe((notes)=>{
-            console.log("inner subscribe with parameter", notes, "at time", get(<Readable<number>>this.track.gm.position))
             callback(notes)
         })
     }

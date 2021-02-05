@@ -83,6 +83,7 @@ export function NewAbstractNote(name: string):AbstractNote {
     throw new Error("note " + name + " is not a valid note")
 }
 
+// TODO: make any two equal notes identical references so that they can be used in maps
 export class Note {
     abstract: AbstractNote;
     octave: number;
@@ -234,10 +235,11 @@ export class Line {
     }
 
     // gives a new map from all the notes in this line to a boolean representing whether they're active or note
-    activeMap():Map<String, Boolean> {
-        let m: Map<String, Boolean> = new Map()
+    // TODO: change to Map<Note, boolean> once references for the same note are always equal
+    activeMap():Map<Note, boolean> {
+        let m: Map<Note, boolean> = new Map()
         pianoNotes().forEach(note => {
-            m.set(note.string(), false)
+            m.set(note, false)
         });
         return m
     }
@@ -264,4 +266,9 @@ export function noteRange(a: Note, b: Note):Array<Note> {
     }
     notes.push(a)
     return notes
+}
+
+export function parseNoteString(s: string):Note {
+    let matches = s.match(/(.*)(\d+)/)
+    return NewNote(matches[1], parseInt(matches[2]))
 }
