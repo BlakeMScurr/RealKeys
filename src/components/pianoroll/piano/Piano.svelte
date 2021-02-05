@@ -15,8 +15,7 @@
     export let instrument: SoundFont;
     export let position;
     export let scorer;
-    export let gm;
-    
+
     export let expectedNotes = new Map<string, string>(); // TODO: remove expectedNotes and just use lessonNotes instead, as it's better to have notes typed
     $: {
         if (lessonNotes) {
@@ -38,8 +37,7 @@
 
     // If a new note arrives, and the current depression of its key was due to a previous note, then the note should be invalid
     // Played map records whether a given note has been played yet
-    let occupation: occupationTracker = new occupationTracker(gm);
-    $: occupation = new occupationTracker(gm);
+    let occupation: occupationTracker = new occupationTracker();
 
     let previousStates = new Map<string, string>();
     $: {

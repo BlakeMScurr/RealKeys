@@ -154,11 +154,8 @@ export function label(notes: Line):Map<String, String> {
 // TODO: simplify into a composition of state machines on each note
 export class occupationTracker {
     private states: Map<string, occupationStatus>; // TODO: make this a Map<Note, occupationStatus> once note reference equality works
-    gm: GameMaster;
-    // constructor() {
-    constructor(gm: GameMaster) {
+    constructor() {
         this.states = new Map<string, occupationStatus>();
-        this.gm = gm
     }
 
     private apply(note: Note, map: Map<occupationStatus, occupationStatus>) {
