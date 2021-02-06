@@ -1,6 +1,7 @@
 <script lang="ts">
     import { createEventDispatcher, onMount } from "svelte";
-    import { NewNote, Note, Line, parseNoteString } from "../../../lib/music/theory/notes";
+    import { NewNote, Line, parseNoteString } from "../../../lib/music/theory/notes";
+    import type { Note} from "../../../lib/music/theory/notes";
     import { blackAndGhostBetween, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote, label, occupationTracker } from "./pianoHelpers";
     import WebMidi, { InputEventNoteon, InputEventNoteoff } from "webmidi";
     import Key from "./Key/Key.svelte";
