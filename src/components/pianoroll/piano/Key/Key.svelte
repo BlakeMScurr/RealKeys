@@ -13,8 +13,6 @@
     export let label:String = "";
     export let used:Boolean = false;
 
-    $: console.log("key", note, active)
-
     let dispatch = createEventDispatcher();
     function forward(event) {
         dispatch(event.type, event.detail)

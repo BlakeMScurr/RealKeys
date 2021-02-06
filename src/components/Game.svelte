@@ -24,8 +24,6 @@
     scorer.subscribe((s)=>{
         score = s
     })
-
-    let successScore = 0.85
 </script>
 
 <style lang="scss">
@@ -62,7 +60,7 @@
 <div class="parent">
     <div class="score">
         <div>
-            <ScoreBar size={"flex"} showValue={false} value={ score*100 / successScore }></ScoreBar>
+            <ScoreBar size={"flex"} showValue={false} value={ score*100 }></ScoreBar>
         </div>
     </div>
     <div class="roll">

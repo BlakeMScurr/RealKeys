@@ -84,15 +84,15 @@ export function NewAbstractNote(name: string):AbstractNote {
 }
 
 export interface Note {
-    lowerThan(note: Note)
-    next()
-    nextLowest()
-    string()
-    enharmonicEquivalent()
-    equals(note: Note)
+    lowerThan(note: Note):boolean
+    next():Note
+    nextLowest():Note
+    string():string
+    enharmonicEquivalent():string
+    equals(note: Note):boolean
     deepCopy():Note
     color():string
-    intervalTo(note: Note)
+    intervalTo(note: Note):number
     jump(semitones: number):Note
     midiNumber():number
     getOctave():number
@@ -105,7 +105,6 @@ export function InstanceOfNote(noteCandidate: any):boolean {
     return noteCandidate.discriminator && noteCandidate.discriminator() === noteTypeDiscriminator
 }
 
-// TODO: make any two equal notes identical references so that they can be used in maps
 class NoteImplementation {
     abstract: AbstractNote;
     octave: number;
@@ -117,7 +116,7 @@ class NoteImplementation {
     }
 
     // TODO: this seems like a horrible hack, has typescript introduced interface assertion yet? This is supposedly the way to do it. From https://stackoverflow.com/a/14426274
-    discriminator() {
+    discriminator():string {
         return noteTypeDiscriminator
     }
 
@@ -129,7 +128,7 @@ class NoteImplementation {
         return this.abstract
     }
     
-    lowerThan(note: Note) {
+    lowerThan(note: Note):boolean {
         if (this.getOctave() < note.getOctave()) {
             return true
         } else if (this.getOctave() > note.getOctave()) {
@@ -146,7 +145,7 @@ class NoteImplementation {
         return NoteOrder.indexOf(this.getAbstract()) < NoteOrder.indexOf(note.getAbstract())
     }
 
-    next() {
+    next():Note {
         var octave = this.getOctave()
         if (NoteOrder.indexOf(this.getAbstract()) == 11) {
             octave++
@@ -166,7 +165,7 @@ class NoteImplementation {
         return this.getAbstract().string() + this.getOctave()
     }
 
-    enharmonicEquivalent() {
+    enharmonicEquivalent():string {
         return this.getAbstract().enharmonicEquivalent() + this.getOctave()
     }
 
@@ -184,7 +183,7 @@ class NoteImplementation {
         return this.getAbstract().color()
     }
 
-    intervalTo(note: Note) {
+    intervalTo(note: Note):number {
         let octaveDiff = note.getOctave() - this.getOctave()
         let noteDiff = notelist.indexOf(note.getAbstract().string()) - notelist.indexOf(this.getAbstract().string())
 
@@ -215,7 +214,7 @@ class NoteImplementation {
 // This forces all references to the same note to be equal, which means they behave well in maps etc
 const noteHolder = new Map<string, Note>();
 export function NewNote(pitchStr: string, octave: number):Note {
-    const uniqueDef = pitchStr + octave
+    const uniqueDef = pitchStr.toLocaleLowerCase() + octave
 
     if (!noteHolder.has(uniqueDef)) {
         noteHolder.set(uniqueDef, new NoteImplementation(NewAbstractNote(pitchStr), octave))
@@ -276,7 +275,6 @@ export class Line {
     }
 
     // gives a new map from all the notes in this line to a boolean representing whether they're active or note
-    // TODO: change to Map<Note, boolean> once references for the same note are always equal
     activeMap():Map<Note, boolean> {
         let m: Map<Note, boolean> = new Map()
         pianoNotes().forEach(note => {
@@ -309,6 +307,7 @@ export function noteRange(a: Note, b: Note):Array<Note> {
     return notes
 }
 
+// TODO: consider whether this is necessary or desirable
 export function parseNoteString(s: string):Note {
     let matches = s.match(/(.*)(\d+)/)
     return NewNote(matches[1], parseInt(matches[2]))

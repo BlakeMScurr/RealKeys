@@ -12,20 +12,24 @@ export enum state {
 export interface scorer {
     validRatio():number
 }
+
+const defaultLeniency = 0.85
 export class timedScoreKeeper {
     private position: Readable<number>;
     private validSum: number;
     private invalidSum: number;
     private lastNotePositions: Map<string, number>;
     private lastNoteStates: Map<string, state>;
+    private leniency: number;
     private subscribers;
 
-    constructor(position: Readable<number>) {
+    constructor(position: Readable<number>, leniency?: number) {
         this.validSum = 0
         this.invalidSum = 0
         this.lastNotePositions = new Map<string, number>();
         this.lastNoteStates = new Map<string, state>();
         this.subscribers = []
+        this.leniency = leniency !== undefined ? leniency : defaultLeniency
         
         position.subscribe((pos) => {
             this.triggerScoreUpdate(pos)
@@ -36,7 +40,7 @@ export class timedScoreKeeper {
     validRatio():number {
         let total = this.validTime() + this.invalidTime()
         if (total > 0) {
-            return this.validTime() / total
+            return this.validTime() / total / this.leniency
         } else if (total < 0) {
             throw new Error("Can't have negative time")
         }
@@ -91,23 +95,27 @@ export class timedScoreKeeper {
     }
 }
 
+
 export class untimedScoreKeeper {
     private validSum: number;
     private invalidSum: number;
     private subscribers;
     private lastNoteStates: Map<string, state>;
+    private leniency: number;
 
-    constructor() {
+    constructor(leniency?: number) {
         this.validSum = 0
         this.invalidSum = 0
         this.subscribers = []
         this.lastNoteStates = new Map();
+        this.leniency = leniency !== undefined ? leniency : defaultLeniency
+
     }
 
     validRatio():number {
         let total = this.validTime() + this.invalidTime()
         if (total > 0) {
-            return this.validTime() / total
+            return this.validTime() / total / this.leniency
         } else if (total < 0) {
             throw new Error("Can't have negative time")
         }

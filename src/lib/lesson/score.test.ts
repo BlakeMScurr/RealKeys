@@ -5,7 +5,7 @@ import { timedScoreKeeper, state } from "./score"
 
 test("Invalid", () => {
     let gm = new GameMaster()
-    let sk = new timedScoreKeeper(gm.position)
+    let sk = new timedScoreKeeper(gm.position, 1)
     let score;
     sk.subscribe((s) => { score = s })
 
@@ -25,7 +25,7 @@ test("Invalid", () => {
 
 test("ValidAttempt", () => {
     let gm = new GameMaster()
-    let sk = new timedScoreKeeper(gm.position)
+    let sk = new timedScoreKeeper(gm.position, 1)
     let score;
     sk.subscribe((s) => { score = s })
 
@@ -41,7 +41,7 @@ test("ValidAttempt", () => {
 
 test("Mix", () => {
     let gm = new GameMaster()
-    let sk = new timedScoreKeeper(gm.position)
+    let sk = new timedScoreKeeper(gm.position, 1)
     let score;
     sk.subscribe((s) => { score = s })
 
@@ -60,7 +60,7 @@ test("Mix", () => {
 
 test("double record" , () => {
     let gm = new GameMaster()
-    let sk = new timedScoreKeeper(gm.position)
+    let sk = new timedScoreKeeper(gm.position, 1)
     let score;
     sk.subscribe((s) => { score = s })
     sk.recordNoteState(NewNote("C", 4), state.invalid, 0)
@@ -69,7 +69,7 @@ test("double record" , () => {
 
 test("MultiNote", () => {
     let gm = new GameMaster()
-    let sk = new timedScoreKeeper(gm.position)
+    let sk = new timedScoreKeeper(gm.position, 1)
     let score;
     sk.subscribe((s) => { score = s })
 
@@ -85,4 +85,21 @@ test("MultiNote", () => {
     expect(sk.validTime()).toBeCloseTo(0.1, 5)
     expect(sk.validRatio()).toBeCloseTo(0.5, 5)
     expect(score).toBeCloseTo(0.05, 5)
+})
+
+test("Leniency", () => {
+    let gm = new GameMaster()
+    let sk = new timedScoreKeeper(gm.position, 0.75)
+    let score;
+    sk.subscribe((s) => { score = s })
+
+    sk.recordNoteState(NewNote("C", 4), state.valid, 0.1)
+    sk.recordNoteState(NewNote("C", 4), state.invalid, 0.2)
+    sk.recordNoteState(NewNote("C", 4), state.indifferent, 0.3)
+    gm.seek.set(0.3)
+
+    expect(sk.invalidTime()).toBeCloseTo(0.1, 5)
+    expect(sk.validTime()).toBeCloseTo(0.1, 5)
+    expect(sk.validRatio()).toBeCloseTo(2/3, 5)
+    expect(score).toBeCloseTo(0.2, 5)
 })

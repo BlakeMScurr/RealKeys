@@ -152,15 +152,15 @@ export function label(notes: Line):Map<String, String> {
 // The initial (and obvious) naive algorithm simply considered a note to be being played correctly if it was being played at the same time that it was expected in the song
 // TODO: simplify into a composition of state machines on each note
 export class occupationTracker {
-    private states: Map<string, occupationStatus>; // TODO: make this a Map<Note, occupationStatus> once note reference equality works
+    private states: Map<Note, occupationStatus>; // TODO: make this a Map<Note, occupationStatus> once note reference equality works
     constructor() {
-        this.states = new Map<string, occupationStatus>();
+        this.states = new Map<Note, occupationStatus>();
     }
 
     private apply(note: Note, map: Map<occupationStatus, occupationStatus>) {
         let state = this.stateOf(note)
         if (map.has(state)) {
-            this.states.set(note.string(), map.get(state))
+            this.states.set(note, map.get(state))
         }
     }
 
@@ -198,8 +198,8 @@ export class occupationTracker {
     }
 
     stateOf(note: Note):occupationStatus {
-        if (this.states.has(note.string())) {
-            return this.states.get(note.string())
+        if (this.states.has(note)) {
+            return this.states.get(note)
         }
         return occupationStatus.nothing
     }

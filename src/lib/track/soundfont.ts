@@ -63,7 +63,6 @@ export class SoundFont {
                 let v = this.getVolume()
                 if (volume) v = volume * v
                 let opts = { gain: v }
-                console.log("playing note with opts", opts)
                 if (duration != undefined) {
                     opts["duration"] = duration / 1000 // duration is in milliseconds, but soundfont accepts seconds
                 }

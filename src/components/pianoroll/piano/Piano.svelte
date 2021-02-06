@@ -17,18 +17,6 @@
     export let position;
     export let scorer;
 
-    export let expectedNotes = new Map<string, string>(); // TODO: remove expectedNotes and just use lessonNotes instead, as it's better to have notes typed
-    $: {
-        if (lessonNotes) {
-            let newExpectedNotes = new Map<string, string>();
-            lessonNotes.forEach((state, note) => {
-                newExpectedNotes.set(note.string(), state)
-            })
-            expectedNotes = newExpectedNotes
-        }
-    }
-
-
     let midiConnected = false
     let mobile = false // TODO: figure out how to know this before we get any events
     usedNotes = new Map(); // TODO: use this when a setting enables it
@@ -40,28 +28,28 @@
     // Played map records whether a given note has been played yet
     let occupation: occupationTracker = new occupationTracker();
 
-    let previousStates = new Map<string, string>();
+    let previousStates = new Map<Note, string>();
     $: {
-        let newPreviousStates = new Map<string, string>();
+        let newPreviousStates = new Map<Note, string>();
         if (lessonNotes) {
             lessonNotes.forEach((value, note) => {
                 if (value === "softstart") {
-                    if (!previousStates.has(note.string())) {
+                    if (!previousStates.has(note)) {
                         occupation.expect(note)
                     } else {
-                        if (previousStates.get(note.string()) !== "softstart") {
+                        if (previousStates.get(note) !== "softstart") {
                             occupation.unexpect(note)
                             occupation.expect(note)
                         }
                     }
                 }
-                newPreviousStates.set(note.string(), value)
+                newPreviousStates.set(note, value)
             })
         }
 
-        previousStates.forEach((value, noteStr) => {
-            if (!newPreviousStates.has(noteStr)) {
-                occupation.unexpect(parseNoteString(noteStr))
+        previousStates.forEach((_, note) => {
+            if (!newPreviousStates.has(note)) {
+                occupation.unexpect(note)
             }
         })
 
@@ -81,7 +69,6 @@
             }
         })
 
-        console.log("getting note event")
         if (e.type === "noteOn") {
             instrument.play(note)
             occupation.play(note)
@@ -111,11 +98,11 @@
                 addListeners = () => {
                     try {
                         WebMidi.inputs[0].addListener('noteon', "all", (e: InputEventNoteon) => {
-                            activeMap.set(NewNote(e.note.name, e.note.getOctave()), true)
+                            activeMap.set(NewNote(e.note.name, e.note.octave), true)
                             activeMap = activeMap // trigger svelte update
                         });
                         WebMidi.inputs[0].addListener('noteoff', "all", (e: InputEventNoteoff) => {
-                            activeMap.set(NewNote(e.note.name, e.note.getOctave()), false)
+                            activeMap.set(NewNote(e.note.name, e.note.octave), false)
                             activeMap = activeMap // trigger svelte update
                         });
                         midiConnected = true
@@ -146,11 +133,8 @@
     function setActive(charCode: number, isActive: boolean) {
         let changedNote = keyboardInputNote(charCode, notes)
         if (changedNote != undefined) {
-            console.log("changing note due to keyboard input", changedNote, isActive)
             activeMap.set(changedNote, isActive)
             activeMap = activeMap // trigger svelte update
-        } else {
-            console.log("undefined keyboard input")
         }
     }
 
@@ -167,29 +151,23 @@
 
     // TODO: surely make it more concise
     // TODO: use an enum for possible expectations of a note, and another for state of a key
-    function getState(note: Note, am: Map<Note, boolean>, expectedNotes, occupation: occupationTracker) {
+    function getState(note: Note, activeMap: Map<Note, boolean>, lessonNotes: Map<Note, string>, occupation: occupationTracker) {
         let stateString = () => {
-            let str = note.string()
-            let activeMap = new Map<string, boolean>();
-            am.forEach((bool, n) => {
-                activeMap.set(n.string(), bool)
-            })
-
             if (sandbox) {
-                return activeMap.get(str) ? "active" : ""
+                return activeMap.get(note) ? "active" : ""
             } else {
-                if (expectedNotes.has(str)) {
-                    let val = expectedNotes.get(str)
+                if (lessonNotes.has(note)) {
+                    let val = lessonNotes.get(note)
                     if (val == "strict") {
-                        return activeMap.get(str) && !occupation.occupiedPrevious(note) ? "right" : "wrong"
+                        return activeMap.get(note) && !occupation.occupiedPrevious(note) ? "right" : "wrong"
                     } else if (val.includes("soft")) {
-                        return activeMap.get(str) && !occupation.occupiedPrevious(note) ? "right" : ""
+                        return activeMap.get(note) && !occupation.occupiedPrevious(note) ? "right" : ""
                     } else if (val == "expecting") {
-                        return activeMap.get(str) ? "right" : "expecting"
+                        return activeMap.get(note) ? "right" : "expecting"
                     }
                     throw new Error("unexpected note state value " + val)
                 } else {
-                    return activeMap.get(str) ? "wrong" : ""
+                    return activeMap.get(note) ? "wrong" : ""
                 }
              }
         }
@@ -236,7 +214,7 @@
 <div on:touchstart={()=>{mobile = true}}>
     <div class="rapper" id="LilPeep">
         {#each whiteWidths(notes.white()) as {note, width}}
-            <Key width={width} {note} active={activeMap.get(note)} state={getState(note, activeMap, expectedNotes, occupation)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
+            <Key width={width} {note} active={activeMap.get(note)} state={getState(note, activeMap, lessonNotes, occupation)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
         {/each}
     </div>
     <div style="--blackMargin: {regularWhiteWidth(notes.white())*100/4}%;" class="rapper" id="JuiceWrld">
@@ -244,7 +222,7 @@
             {#if note instanceof Ghost}
                 <Key ghost={true} width={regularWhiteWidth(notes.white())*100 * (2/4)}></Key>
             {:else}
-                <Key width={regularWhiteWidth(notes.white())*100} {note} active={activeMap.get(note)} state={getState(note, activeMap, expectedNotes, occupation)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
+                <Key width={regularWhiteWidth(notes.white())*100} {note} active={activeMap.get(note)} state={getState(note, activeMap, lessonNotes, occupation)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
             {/if}
         {/each}
     </div>
