@@ -70,6 +70,7 @@
         })
         tracks.forEach((notes, name) => {
             let piano = newPiano(name, ()=>{console.log(`piano ${name} loaded`)})
+            piano.setVolume(0)
             gm.tracks.newPlaybackTrack(name, notes, piano, gm)
         })
         onNext = () => { gm.play.play() }

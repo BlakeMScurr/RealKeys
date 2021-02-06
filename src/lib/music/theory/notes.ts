@@ -83,8 +83,30 @@ export function NewAbstractNote(name: string):AbstractNote {
     throw new Error("note " + name + " is not a valid note")
 }
 
+export interface Note {
+    lowerThan(note: Note)
+    next()
+    nextLowest()
+    string()
+    enharmonicEquivalent()
+    equals(note: Note)
+    deepCopy():Note
+    color():string
+    intervalTo(note: Note)
+    jump(semitones: number):Note
+    midiNumber():number
+    getOctave():number
+    getAbstract():AbstractNote
+    discriminator():string
+}
+
+const noteTypeDiscriminator = "I'm a real Note!"
+export function InstanceOfNote(noteCandidate: any):boolean {
+    return noteCandidate.discriminator && noteCandidate.discriminator() === noteTypeDiscriminator
+}
+
 // TODO: make any two equal notes identical references so that they can be used in maps
-export class Note {
+class NoteImplementation {
     abstract: AbstractNote;
     octave: number;
 
@@ -93,65 +115,78 @@ export class Note {
         this.abstract = note
         this.octave = octave
     }
+
+    // TODO: this seems like a horrible hack, has typescript introduced interface assertion yet? This is supposedly the way to do it. From https://stackoverflow.com/a/14426274
+    discriminator() {
+        return noteTypeDiscriminator
+    }
+
+    getOctave():number {
+        return this.octave
+    }
+
+    getAbstract():AbstractNote {
+        return this.abstract
+    }
     
     lowerThan(note: Note) {
-        if (this.octave < note.octave) {
+        if (this.getOctave() < note.getOctave()) {
             return true
-        } else if (this.octave > note.octave) {
+        } else if (this.getOctave() > note.getOctave()) {
             return false
         }
 
-        if (NoteOrder.indexOf(this.abstract) == -1){
-            throw "can't find this abstract note " + this.abstract.string()
+        if (NoteOrder.indexOf(this.getAbstract()) == -1){
+            throw "can't find this abstract note " + this.getAbstract().string()
         }
 
-        if(NoteOrder.indexOf(note.abstract) == -1) {
-            throw "can't find that abstract note " + note.abstract.string()
+        if(NoteOrder.indexOf(note.getAbstract()) == -1) {
+            throw "can't find that abstract note " + note.getAbstract().string()
         }
-        return NoteOrder.indexOf(this.abstract) < NoteOrder.indexOf(note.abstract)
+        return NoteOrder.indexOf(this.getAbstract()) < NoteOrder.indexOf(note.getAbstract())
     }
 
     next() {
-        var octave = this.octave
-        if (NoteOrder.indexOf(this.abstract) == 11) {
+        var octave = this.getOctave()
+        if (NoteOrder.indexOf(this.getAbstract()) == 11) {
             octave++
         }
-        return new Note(this.abstract.next(), octave)
+        return NewNote(this.getAbstract().next().string(), octave)
     }
 
     nextLowest() {
-        var octave = this.octave
-        if (NoteOrder.indexOf(this.abstract) == 0) {
+        var octave = this.getOctave()
+        if (NoteOrder.indexOf(this.getAbstract()) == 0) {
             octave--
         }
-        return new Note(this.abstract.nextLowest(), octave)
+        return NewNote(this.getAbstract().nextLowest().string(), octave)
     }
 
     string() {
-        return this.abstract.string() + this.octave
+        return this.getAbstract().string() + this.getOctave()
     }
 
     enharmonicEquivalent() {
-        return this.abstract.enharmonicEquivalent() + this.octave
+        return this.getAbstract().enharmonicEquivalent() + this.getOctave()
     }
 
     equals(note: Note) {
-        return this.octave == note.octave && this.abstract.equals(note.abstract)
+        return this.getOctave() == note.getOctave() && this.getAbstract().equals(note.getAbstract())
     }
 
     deepCopy():Note {
         // Deep copy is not full, since there should only be a single representation of each abstract note
         // TODO: change that
-        return new Note(this.abstract, this.octave)
+        return NewNote(this.getAbstract().string(), this.getOctave())
     }
 
     color():string {
-        return this.abstract.color()
+        return this.getAbstract().color()
     }
 
     intervalTo(note: Note) {
-        let octaveDiff = note.octave - this.octave
-        let noteDiff = notelist.indexOf(note.abstract.string()) - notelist.indexOf(this.abstract.string())
+        let octaveDiff = note.getOctave() - this.getOctave()
+        let noteDiff = notelist.indexOf(note.getAbstract().string()) - notelist.indexOf(this.getAbstract().string())
 
         return octaveDiff * 12 + noteDiff
     }
@@ -159,7 +194,7 @@ export class Note {
     jump(semitones: number):Note {
         let octaveDiff = Math.trunc(semitones / 12)
         let noteDiff = semitones % 12
-        let index = notelist.indexOf(this.abstract.string()) + noteDiff
+        let index = notelist.indexOf(this.getAbstract().string()) + noteDiff
         if (index < 0) {
             octaveDiff--
             index += 12
@@ -168,18 +203,24 @@ export class Note {
             octaveDiff++
             index -= 12
         }
-        return new Note(NoteOrder[index], this.octave + octaveDiff)
+        return NewNote(NoteOrder[index].string(), this.getOctave() + octaveDiff)
     }
 
     // Opposite of NoteFromMidiNumber
     midiNumber():number{
-        return (this.octave + 1) * 12 + notelist.indexOf(this.abstract.string())
+        return (this.getOctave() + 1) * 12 + notelist.indexOf(this.getAbstract().string())
     }
 }
 
-export function NewNote(note: string, octave: number) {
-    var an = NewAbstractNote(note);
-    return new Note((an), octave)
+// This forces all references to the same note to be equal, which means they behave well in maps etc
+const noteHolder = new Map<string, Note>();
+export function NewNote(pitchStr: string, octave: number):Note {
+    const uniqueDef = pitchStr + octave
+
+    if (!noteHolder.has(uniqueDef)) {
+        noteHolder.set(uniqueDef, new NoteImplementation(NewAbstractNote(pitchStr), octave))
+    }
+    return noteHolder.get(uniqueDef)
 }
 
 // TODO: unexport
@@ -248,7 +289,7 @@ export class Line {
 export function NoteFromMidiNumber(num: number):Note {
     let octave = Math.trunc(num / 12) - 1;
     let noteIndex = (num % 12);
-    return new Note(NoteOrder[noteIndex], octave)
+    return NewNote(NoteOrder[noteIndex].string(), octave)
 }
 
 export const lowestPianoNote = NewNote("A", 0)

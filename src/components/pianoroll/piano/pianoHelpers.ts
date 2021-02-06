@@ -1,6 +1,4 @@
-import { Note, Line } from "../../../lib/music/theory/notes";
-import { get } from "../../../lib/util";
-import type { GameMaster } from "../../../stores/stores";
+import { Note, Line, InstanceOfNote } from "../../../lib/music/theory/notes";
 
 export class Ghost {}
 
@@ -14,10 +12,10 @@ export function blackAndGhostBetween(low: Note, high: Note):Array<Note|Ghost> {
     
     high = high.next() // runs loop up to highest note, TODO: be more elegant
     while (low.lowerThan(high)) { 
-        if (low.abstract.accidental) {
+        if (low.getAbstract().accidental) {
             newNotes.push(low)
         } else {
-            if (!low.next().abstract.accidental && low.next().lowerThan(high)) {
+            if (!low.next().getAbstract().accidental && low.next().lowerThan(high)) {
                 newNotes.push(new Ghost())
             }
         }
@@ -63,7 +61,7 @@ export function whiteWidths(notes: Array<Note>):Array<NoteWidth> {
 
 // gives the proper width to match up with the constant width of the roll section
 function width(note: Note, bottomEdge: boolean, topEdge: boolean) {
-    switch (note.abstract.letter) {
+    switch (note.getAbstract().letter) {
         case "c":
         case "f":
             return topEdge ? 2 : 3;
@@ -126,7 +124,7 @@ export function keyboardInputNote(keyCode: number, notes: Line):Note|undefined {
     index = accidentals.get(keyCode)
     if (index !== undefined) {
         let ng = blackAndGhostBetween(notes.notes[0], notes.notes[notes.notes.length-1])[index]
-        if (ng instanceof Note) {
+        if (InstanceOfNote(ng)) {
             return <Note>ng
         }
     }
@@ -141,8 +139,9 @@ export function label(notes: Line):Map<String, String> {
     });
 
     blackAndGhostBetween(notes.notes[0], notes.notes[notes.notes.length-1]).forEach((note, i) => {
-        if (i < accidentalKeys.length && note instanceof Note) {
-            m.set(note.string(), accidentalKeys[i])
+        if (i < accidentalKeys.length && InstanceOfNote(note)) {
+            let realNote = <Note>note
+            m.set(realNote.string(), accidentalKeys[i])
         }
     });
     return m

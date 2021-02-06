@@ -144,8 +144,7 @@ export class midiTrack {
         }
 
         const playNote = () => {
-            this.playbackInstrument.setVolume(note.velocity)
-            this.playbackInstrument.play(note.note, length)
+            this.playbackInstrument.play(note.note, length, note.velocity)
         }
 
         const requireNoteOff = () => {

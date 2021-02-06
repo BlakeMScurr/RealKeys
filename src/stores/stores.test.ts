@@ -34,7 +34,6 @@ test("basicNoteSubscription", (done) => {
     ]), new MockInstrument(), gm)
     let states = []
     gm.tracks.subscribeToNotesOfTracks(["1"], (notes) => {
-        console.log("top level subscribe with parameter", notes)
         states.push(JSON.stringify([...notes]))
     })
 

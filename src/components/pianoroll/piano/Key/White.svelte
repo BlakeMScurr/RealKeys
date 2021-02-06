@@ -1,5 +1,4 @@
 <script lang="ts">
-    import type { log } from "console";
     import { createEventDispatcher } from "svelte"
     import type { Note } from "../../../../lib/music/theory/notes";
     import { colour } from "./helper"

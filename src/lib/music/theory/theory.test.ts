@@ -35,8 +35,8 @@ test('stack', () => {
 })
 
 test('newabstractnote', () => {
-    expect(NoteOrder.indexOf(nn("c", 4).abstract)).toBe(0)
-    expect(NoteOrder.indexOf(nn("a", 4).abstract)).toBe(9)
+    expect(NoteOrder.indexOf(nn("c", 4).getAbstract())).toBe(0)
+    expect(NoteOrder.indexOf(nn("a", 4).getAbstract())).toBe(9)
 })
 
 test('lower', () => {

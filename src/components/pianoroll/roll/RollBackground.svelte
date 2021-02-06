@@ -43,9 +43,9 @@
 
 <div class="holder">
     {#each keys as key, i}
-        {#if key.abstract.accidental}
+        {#if key.getAbstract().accidental}
             <div class="black"></div>
-        {:else if i > 0 && !keys[i-1].abstract.accidental}
+        {:else if i > 0 && !keys[i-1].getAbstract().accidental}
             <div class="sepholder">
                 <div class="separator"></div>
                 <div class="white"></div>

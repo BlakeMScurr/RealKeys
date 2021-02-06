@@ -35,7 +35,7 @@ export interface VirtualInstrument {
     getVolume():number
     setVolume(volume: number)
     name():string
-    play(note: Note, duration: number)
+    play(note: Note, duration: number, volume: number)
     stop(note: Note)
     highest():Note
     lowest():Note
@@ -81,7 +81,7 @@ export class Synth {
         return this.instrumentName
     }
 
-    play(note: Note, duration: number=undefined) { 
+    play(note: Note, duration: number=undefined, velocity: number) { 
         if (note.lowerThan(this.lowest()) || this.highest().lowerThan(note)) {
             console.warn("note", note.string(), "not in range", this.lowest().string(), "to", this.highest().string())
         } else {

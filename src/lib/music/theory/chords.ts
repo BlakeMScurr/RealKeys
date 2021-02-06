@@ -1,4 +1,4 @@
-import { Note, NewAbstractNote, NoteOrder } from "./notes";
+import { Note, NewAbstractNote, NoteOrder, NewNote } from "./notes";
 
 // TODO: replace with enum, fix weird "cannot find name" error
 const semitonesIn: Map<string, number> = new Map([
@@ -94,12 +94,12 @@ export class ChordBook {
             }
 
             // start in fourth octave with middle c
-            var newChord = this.make(new Note(NewAbstractNote(root), 4), flavour.substring(root.length), true, true)
+            var newChord = this.make(NewNote(NewAbstractNote(root).string(), 4), flavour.substring(root.length), true, true)
 
             if (bassNote != "") {
                 var inversion = -1;
                 newChord.notes.forEach((note, index)=>{
-                    if (note.abstract.string() == bassNote.toLocaleLowerCase() || note.abstract.enharmonicEquivalent() == bassNote) {
+                    if (note.getAbstract().string() == bassNote.toLocaleLowerCase() || note.getAbstract().enharmonicEquivalent() == bassNote) {
                         inversion = index
                     }
                 })
@@ -200,9 +200,9 @@ export function squashNotes(notes: Array<Note>):Array<Note>{
     var has: Map<String, boolean> = new Map();
     var uniqueNotes: Array<Note> = [];
     sortedNotes.forEach(note => {
-        if (!has.has(note.abstract.string())) {
+        if (!has.has(note.getAbstract().string())) {
             uniqueNotes.push(note.deepCopy())
-            has.set(note.abstract.string(), true)
+            has.set(note.getAbstract().string(), true)
         }
     })
 
@@ -211,9 +211,9 @@ export function squashNotes(notes: Array<Note>):Array<Note>{
     var squashedNotes: Array<Note> = [lowest];
     for (var i = 1; i < uniqueNotes.length; i++) {
         var note = uniqueNotes[i]
-        note.octave = lowest.octave
+        note = NewNote(note.getAbstract().string(), lowest.getOctave()) 
         if (note.lowerThan(lowest)) {
-            note.octave++
+            note = NewNote(note.getAbstract().string(), note.getOctave() + 1)
         }
         squashedNotes.push(note)
     }
@@ -243,9 +243,9 @@ export class Chord {
         if (semitones == undefined) {
             throw "undefined interval " + interval
         }
-        var index = NoteOrder.indexOf(this.highest().abstract) + <number>semitones
+        var index = NoteOrder.indexOf(this.highest().getAbstract()) + <number>semitones
         var nextAbstractNote = NoteOrder[index % 12]
-        var newNote = new Note(nextAbstractNote, this.highest().octave + Math.floor(index/12));
+        var newNote = NewNote(nextAbstractNote.string(), this.highest().getOctave() + Math.floor(index/12));
         this.notes.push(newNote)
         return this
     }
@@ -269,7 +269,7 @@ export class Chord {
             return false
         }
         for (var i = 0; i < this.notes.length; i++) {
-            if (notes[i] != undefined && this.notes[i].abstract.string() != notes[i].abstract.string()) {
+            if (notes[i] != undefined && this.notes[i].getAbstract().string() != notes[i].getAbstract().string()) {
                 return false
             }
         }
@@ -292,7 +292,7 @@ export class Chord {
         for (var i = 0; i < delta; i++) {
             newChord.inversion = (newChord.inversion + 1) % newChord.notes.length
             var nn = <Note>newChord.notes.shift()
-            nn.octave++
+            nn = NewNote(nn.getAbstract().string(), nn.getOctave() + 1)
             newChord.notes.push(nn)
         }
 
@@ -321,23 +321,23 @@ export class Chord {
 
     string() {
         // Stuff to figure out whether to render as flat or not
-        var sharpsImpliedByChord = <number>sharps.get(this.root.abstract.string())+ this.sharpsInC
+        var sharpsImpliedByChord = <number>sharps.get(this.root.getAbstract().string())+ this.sharpsInC
         var isFlat = sharpsImpliedByChord < 0 && sharpsImpliedByChord >= -5
         var enharmRender = (note: Note) => {
             if (isFlat) {
-                var x = note.abstract.enharmonicEquivalent()
+                var x = note.getAbstract().enharmonicEquivalent()
                 if (x.length == 1) {
                     return x.toLocaleUpperCase()
                 }
                 return x[0].toLocaleUpperCase() + x[1]
             } else {
-                return note.abstract.string().toLocaleUpperCase()
+                return note.getAbstract().string().toLocaleUpperCase()
             }
         }
 
         // Stuff to handle the slash root note
         var inversionSymbol = ""
-        if (this.lowest().abstract.string() != this.root.abstract.string()) {
+        if (this.lowest().getAbstract().string() != this.root.getAbstract().string()) {
             inversionSymbol = "/"+ enharmRender(this.lowest())
         }
 
