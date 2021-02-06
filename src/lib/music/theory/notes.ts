@@ -175,7 +175,7 @@ class NoteImplementation {
 
     deepCopy():Note {
         // Deep copy is not full, since there should only be a single representation of each abstract note
-        // TODO: change that
+        // TODO: change that, or consider whether we even want a deepCopy available, since reference equality seems important to notes
         return NewNote(this.getAbstract().string(), this.getOctave())
     }
 

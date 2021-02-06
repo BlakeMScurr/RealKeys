@@ -1,5 +1,6 @@
 <script lang="ts">
     import { createEventDispatcher } from "svelte";
+    import { fade } from 'svelte/transition';
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
     import { speed } from "../lib/lesson/lesson";
 
@@ -64,12 +65,14 @@
         {#if task.speed === speed.OwnPace}
             <h3>Play the <mark>orange highlighted</mark> keys at your own pace</h3>
         {:else}
-            <h3>Play the <mark>orange highlighted</mark> keys as the notes reach the keys</h3>
+            <h3>As the notes reach the keys, play the keys</h3>
         {/if}
     </div>
-    {#if nextable}
-        <div class="button" on:click={handleNext}>
-            <ReccomendedButton text="Start" ></ReccomendedButton>
-        </div>
-    {/if}
+    <div class="button" on:click={handleNext}>
+        {#if nextable}
+            <div in:fade>   
+                <ReccomendedButton text="Start" ></ReccomendedButton>
+            </div>
+        {/if}
+    </div>
 </div>

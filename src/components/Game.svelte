@@ -14,12 +14,12 @@
     export let duration: number;
     export let position: number;
     export let scorer: timedScoreKeeper;
+    export let keys;
 
     if (!lessons.has(task.lesson)) {
         throw new Error(`No lesson called ${task.lesson}`)
     }
 
-    let keys = notesBetween(NewNote("C", 4), NewNote("C", 5))
     let score = 0
     scorer.subscribe((s)=>{
         score = s

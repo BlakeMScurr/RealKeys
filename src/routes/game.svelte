@@ -3,7 +3,7 @@
     import { onMount } from "svelte";
     import { lessons } from "../lib/lesson/data";
     import { speed, urlToTask } from "../lib/lesson/lesson";
-    import { NewNote, notesBetween } from "../lib/music/theory/notes";
+    import { highestPianoNote, lowestPianoNote, NewNote, noteRange, notesBetween } from "../lib/music/theory/notes";
     import { newPiano } from "../lib/track/instrument";
     import { Colourer } from "../components/colours";
     import { getMIDI } from "../lib/midi";
@@ -20,6 +20,7 @@
     import type { Readable } from "svelte/types/runtime/store"; // TODO: import this from "svelte/store", which works in .ts files not .svelte files
     import { get } from "../lib/util";
     import { goto } from '@sapper/app'
+    import { range } from "../components/pianoroll/pianoRollHelpers";
 
     const { page } = stores();
     const query = $page.query;
@@ -131,6 +132,14 @@
     }).catch((e)=>{
         throw new Error(e)
     })
+
+    function getNotes(tracks):Note[] {
+        let track1 = tracks.get(Array.from(tracks.keys())[0])
+        if (track1) {
+            return range(track1.untime(), highestPianoNote, lowestPianoNote)
+        }
+        return notesBetween(NewNote("C", 4), NewNote("C", 5))
+    }
 </script>
 
 <style lang="scss">
@@ -163,12 +172,12 @@
         {#if !started}
             <Rules {task} on:next={handleNext} {nextable}></Rules>
         {:else}
-            <Game {task} {tracks} {colourer} {duration} {position} {scorer}></Game>
+            <Game keys={ getNotes(tracks) } {task} {tracks} {colourer} {duration} {position} {scorer}></Game>
         {/if}
     </div>
 
     <div class="piano">
-        <Piano keys={ notesBetween(NewNote("C", 4), NewNote("C", 5)) } {sandbox} instrument={piano} {lessonNotes} {position} {scorer} on:playingNotes={handlePlayingNotes}></Piano>
+        <Piano keys={ getNotes(tracks) } {sandbox} instrument={piano} {lessonNotes} {position} {scorer} on:playingNotes={handlePlayingNotes}></Piano>
         {#if loading}
             <div class="loading">
                 <Loader></Loader>
