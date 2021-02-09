@@ -81,10 +81,10 @@ class duration {
 
 class seek {
     private setPosition: any;
-    private playingStore: any;
+    private playingStore: play;
     private position: any;
-    private duration: any;
-    private speed: any;
+    private duration: duration;
+    private speed: speed;
 
     private internalSet;
     subscribe;
@@ -109,7 +109,7 @@ class seek {
     }
 
     setSlow (val: number) {
-        this.playingStore.play(true)
+        this.playingStore.play()
         clearTimeout(this.slto)
         this.slto = setTimeout(()=> {
             this.playingStore.pause()
@@ -138,11 +138,7 @@ class play {
         this.set = set
     }
 
-    play(inwait: boolean = false) {
-        if (!inwait) {
-            this.waitMode.set(false)
-        }
-
+    play() {
         let alreadyPlaying;
         this.subscribe((val) => {
             alreadyPlaying = val
@@ -222,11 +218,11 @@ class waitMode {
 }
 
 class tracks {
-    playingStore
+    playingStore: play;
     subscribe
     private update
     // TODO: add type
-    waitMode: any;
+    waitMode: waitMode;
     constructor(playingStore) {
         this.playingStore = playingStore
         const { subscribe, update } = writable(new Map<string, midiTrack>());
@@ -310,13 +306,22 @@ class tracks {
 
     subscribeToNotesOfTracks(tracks: string[], onStateChange: (notes: Map<Note, string>) => void) {
         let unsubscribers = []
+        let sq = new squasher()
         tracks.forEach(track => {
             this.subscribe((currentPlayers: Map<string, midiTrack>) => {
                 if (!currentPlayers.has(track)) {
                     throw new Error(`player has no track ${track}, has ${Array.from(currentPlayers.keys())}`)
                 }
+                
+                // This thing here squashes the notes of the various tracks together
+                let subber = (channel: string) => {
+                    return (notes: Map<Note, string>) => {
+                        sq.updateState(channel, notes)
+                        onStateChange(sq.state())
+                    }
+                }
 
-                unsubscribers.push(currentPlayers.get(track).interface().subscribeToNotes(onStateChange))
+                unsubscribers.push(currentPlayers.get(track).interface().subscribeToNotes(subber(track)))
             })()
         })
 
@@ -328,6 +333,28 @@ class tracks {
     }
 }
 
+// squasher is specifically for combining note states of multiple MIDI channels
+export class squasher {
+    states: Map<string, Map<Note, string>>;
+    constructor() {
+        this.states = new Map<string, Map<Note, string>>();
+    }
+
+    state():Map<Note, string> {
+        let s = new Map<Note, string>();
+        // TODO: implement state precedence, i.e., if one channel says a note is soft, and another says it's strict, make it strict
+        this.states.forEach((stateChannel) => {
+            stateChannel.forEach((value, note) => {
+                s.set(note, value)
+            })
+        })
+        return s
+    }
+
+    updateState(channel: string, state: Map<Note, string>) {
+        this.states.set(channel, state)
+    }
+}
 class speed {
     private playingStore;
     private internalSet;

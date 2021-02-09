@@ -15,6 +15,7 @@
     export let tracks:  Map<string, TimedNotes>;
     export let overlayNotes: TimedNotes;
 
+
     // show 5 seconds
     zoomWidth = 5000/duration
 </script>

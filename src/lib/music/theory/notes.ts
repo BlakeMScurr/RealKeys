@@ -212,6 +212,7 @@ class NoteImplementation {
 }
 
 // This forces all references to the same note to be equal, which means they behave well in maps etc
+// TODO: make noteHolder more private, so only NewNote can possibly affect it
 const noteHolder = new Map<string, Note>();
 export function NewNote(pitchStr: string, octave: number):Note {
     const uniqueDef = pitchStr.toLocaleLowerCase() + octave

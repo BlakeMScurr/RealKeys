@@ -6,14 +6,15 @@ import type { GameMaster } from './stores';
 
 // TODO: make everything in this file a method off GameMaster
 
-export function handleNotes(gm: GameMaster, stateSetter: Writable<Map<Note, string>>, availableTracks: Map<string, TimedNotes>) {
+export function handleNotes(gm: GameMaster, stateSetter: Writable<Map<Note, string>>, activeTrack: TimedNotes) {
     return function(event) {
-        let nextNotes = nextWaitModeNote(gm, availableTracks)
+        let nextNotes = nextWaitModeNote(gm, activeTrack)
         if (nextNotes.sameStart.length >= 1) {
-            let currentlyPlaying:Array<Note> = event.detail.sort()
-            let shouldPlay = nextNotes.sameStart.map((note) => { return note.note }).sort()
+            let comp = (a: Note, b: Note):number => { return a.lowerThan(b) ? -1 : 1 }
+            let currentlyPlaying:Array<Note> = event.detail.sort(comp)
+            let shouldPlay = nextNotes.sameStart.map((note) => { return note.note }).sort(comp)
 
-            if (arraysEqual(currentlyPlaying.map((n)=>{return n.string()}), shouldPlay.map((n)=>{return n.string()})) && !get(gm.play)) { // don't proceed if we're currently playing
+            if (arraysEqual(currentlyPlaying, shouldPlay) && !get(gm.play)) { // don't proceed if we're currently playing
                 let dest = nextNotes.next ? nextNotes.next.start : 1
                 nextNotes.sameStart.forEach((note) => {
                     setTimeout(()=> {
@@ -39,8 +40,8 @@ export function handleNotes(gm: GameMaster, stateSetter: Writable<Map<Note, stri
     }
 }
 
-export function nextWaitModeNote(gm: GameMaster, availableTracks: Map<string, TimedNotes>) {
-    let nextNotes = activeTrack(availableTracks).notesFrom(get(gm.position), 1)
+export function nextWaitModeNote(gm: GameMaster, activeTrack: TimedNotes) {
+    let nextNotes = activeTrack.notesFrom(get(gm.position), 1)
     let i = 0
     let sameStart: Array<TimedNote> = []
     while (i < nextNotes.length && nextNotes[i].start == nextNotes[0].start) {
@@ -54,16 +55,4 @@ export function nextWaitModeNote(gm: GameMaster, availableTracks: Map<string, Ti
     }
 
     return { sameStart: sameStart, next: next }
-}
-
-// TODO: simplify simplify simplify
-// I don't think this is likely to be necessary if we have carefully curated MIDI files
-function activeTrack(sn: Map<string, TimedNotes>):TimedNotes  {
-    let t;
-    Array.from(sn.values()).forEach((track)=>{
-        if (track.notes.length !== 0) {
-            t = track
-        }
-    })
-    return t || new TimedNotes([])
 }

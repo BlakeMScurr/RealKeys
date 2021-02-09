@@ -1,13 +1,14 @@
 <script lang="ts">
     import { stores } from "@sapper/app";
     import { onMount } from "svelte";
+    import { fade } from 'svelte/transition';
     import { lessons } from "../lib/lesson/data";
-    import { speed, urlToTask } from "../lib/lesson/lesson";
+    import { hand, speed, taskSpec, urlToTask } from "../lib/lesson/lesson";
     import { highestPianoNote, lowestPianoNote, NewNote, noteRange, notesBetween } from "../lib/music/theory/notes";
     import { newPiano } from "../lib/track/instrument";
     import { Colourer } from "../components/colours";
     import { getMIDI } from "../lib/midi";
-    import type { TimedNotes } from "../lib/music/timed/timed";
+    import type { TimedNotes, TimedNote } from "../lib/music/timed/timed";
     import type { Note } from "../lib/music/theory/notes";
     import Piano from "../components/pianoroll/piano/Piano.svelte";
     import Loader from "../components/loader/Loader.svelte";
@@ -18,13 +19,15 @@
     import { handleNotes, nextWaitModeNote } from "../stores/waitMode";
     import { writable } from "svelte/store";
     import type { Readable } from "svelte/types/runtime/store"; // TODO: import this from "svelte/store", which works in .ts files not .svelte files
-    import { get } from "../lib/util";
+    import { get, OneTo100 } from "../lib/util";
     import { goto } from '@sapper/app'
     import { range } from "../components/pianoroll/pianoRollHelpers";
+import { stringify } from "querystring";
+import Bgstoryholder from "../components/pianoroll/roll/bgstoryholder.svelte";
 
     const { page } = stores();
     const query = $page.query;
-    let task = urlToTask(query)
+    let task: taskSpec = urlToTask(query)
 
     if (!lessons.has(task.lesson)) {
         throw new Error(`No lesson called ${task.lesson}`)
@@ -33,8 +36,12 @@
     // required as trying to creating instruments requires window.AudioContext, and errors in preprocessing on the server
     let piano
     let loading = true
+    let resizeTrigger = 0
     onMount(() => {
         piano = newPiano("User Piano", ()=>{loading = false})
+        window.onresize = () => {
+            resizeTrigger++
+        }
     })
 
     let tracks = new Map<string, TimedNotes>();
@@ -65,14 +72,18 @@
         gm.position.subscribe((pos)=>{
             position = pos
             if (pos >= 1) {
-                task.score = scorer.validRatio() * 100
+                task.score = OneTo100(scorer.validRatio() * 100)
                 goto("score?" + task.queryString())
             }
         })
+        let rt = relevantTrack(tracks, task)
+
         tracks.forEach((notes, name) => {
-            let piano = newPiano(name, ()=>{console.log(`piano ${name} loaded`)})
-            piano.setVolume(0)
-            gm.tracks.newPlaybackTrack(name, notes, piano, gm)
+            let trackPiano = newPiano(name, ()=>{console.log(`piano ${name} loaded`)})
+            if (rt.includes(name)) {
+                trackPiano.setVolume(0)
+            }
+            gm.tracks.newPlaybackTrack(name, notes, trackPiano, gm)
         })
         onNext = () => { gm.play.play() }
         nextable = true
@@ -94,51 +105,98 @@
                         stateSetter.set(state)
                     }
 
+                    let activeTrack = mergeTracks(relevantTrack(tracks, task), tracks)
                     gm.seek.subscribe(() => {
                         let state = get(stateSetter)
-                        nextWaitModeNote(gm, tracks).sameStart.forEach(note => {
+                        nextWaitModeNote(gm, activeTrack).sameStart.forEach(note => {
                             state.set(note.note, "expecting")
                         })
                         stateSetter.set(state)
                     })
 
-                    gm.tracks.subscribeToNotesOfTracks(Array.from(tracks.keys()), onNoteStateChange)
+                    gm.tracks.subscribeToNotesOfTracks(rt, onNoteStateChange)
 
                     stateSetter.subscribe((notes) => {
                         lessonNotes = notes
                     })
 
                     // hook up the notes played
-                    handlePlayingNotes = handleNotes(gm, stateSetter, tracks)
+                    handlePlayingNotes = handleNotes(gm, stateSetter, activeTrack)
                 }
-                gm.tracks.enable(Array.from(tracks.keys()))
+                gm.tracks.enable(rt)
                 gm.seek.set(0)
                 scorer = new untimedScoreKeeper()
 
                 break;
             case speed.Fifty:
                 gm.speed.set(0.5)
-                gm.tracks.subscribeToNotesOfTracks(Array.from(tracks.keys()), (notes) => {lessonNotes = notes})
+                gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
+                    lessonNotes = notes
+                })
                 break;
             case speed.SeventyFive:
                 gm.speed.set(0.75)
-                gm.tracks.subscribeToNotesOfTracks(Array.from(tracks.keys()), (notes) => {lessonNotes = notes})
+                gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
+                    lessonNotes = notes
+                })
                 break;
             case speed.OneHundred:
                 gm.speed.set(1)
-                gm.tracks.subscribeToNotesOfTracks(Array.from(tracks.keys()), (notes) => {lessonNotes = notes})
+                gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
+                    lessonNotes = notes
+                })
                 break;
         }
     }).catch((e)=>{
         throw new Error(e)
     })
 
-    function getNotes(tracks):Note[] {
-        let track1 = tracks.get(Array.from(tracks.keys())[0])
-        if (track1) {
-            return range(track1.untime(), highestPianoNote, lowestPianoNote)
+    function relevantTrack(tracks: Map<string, TimedNotes>, task: taskSpec):string[] {
+        // assumes we have exactly 2 tracks, the first being the left hand, and the second being the right
+        let arr = Array.from(tracks.keys())
+        switch (task.hand) {
+            case hand.Right:
+                return [arr[0]]
+            case hand.Left:
+                return [arr[1]]
+            case hand.Both:
+                return arr
         }
-        return notesBetween(NewNote("C", 4), NewNote("C", 5))
+    }
+
+    function mergeTracks(relevant: Array<string>, all: Map<string, TimedNotes>):TimedNotes {
+        if (relevant.length === 0) {
+            throw new Error("There must be at least one active track")
+        } else if (relevant.length === 1) {
+            console.log("returning", all.get(relevant[0]))
+            return all.get(relevant[0])
+        } else if (relevant.length === 2) {
+            let left = all.get(relevant[0]) // TODO: see if left and right apply correctly
+            let right = all.get(relevant[1])
+
+            // TODO: avoid side effects by deep copying
+            left.notes.push(...right.notes)
+
+            left.notes.sort((a: TimedNote, b: TimedNote)=>{
+                return a.start - b.start
+            })
+            console.log("returning", left)
+            return left
+        }
+        throw new Error("Couldn't merge tracks")
+    }
+
+    // TODO: get rid of this, it's gross
+    function rellietracks() {
+        return new Map<string, TimedNotes>(relevantTrack(tracks, task).map((track) => { return [track, tracks.get(track)] as [string, TimedNotes]}))
+    }
+
+    function getNotes(tracks: Map<string, TimedNotes>, resizeTrigger):Note[] {
+        let untimed = new Array<Note>();
+        tracks.forEach((track) => {
+            untimed.push(...track.untime())
+        })
+        return range(untimed, highestPianoNote, lowestPianoNote, window.innerWidth, (window.innerHeight - 50) / 3)
     }
 </script>
 
@@ -148,6 +206,9 @@
 
         .nonpiano {
             height: 67%;
+            div {
+                height: 100%;
+            }
         }
         .piano {
             position: relative;
@@ -164,22 +225,29 @@
         top: calc(50% - 75px); // centred, given ~150 width loading icon
         left: calc(50% - 75px);
     }
-
 </style>
 
 <div class="centerer">
     <div class="nonpiano">
         {#if !started}
-            <Rules {task} on:next={handleNext} {nextable}></Rules>
+            <div>
+                <Rules {task} on:next={handleNext} {nextable}></Rules>
+            </div>
         {:else}
-            <Game keys={ getNotes(tracks) } {task} {tracks} {colourer} {duration} {position} {scorer}></Game>
+            <div in:fade>
+                <Game keys={ getNotes(tracks, resizeTrigger) } {task} tracks={ rellietracks() } {colourer} {duration} {position} {scorer}></Game>
+            </div>
         {/if}
     </div>
 
     <div class="piano">
-        <Piano keys={ getNotes(tracks) } {sandbox} instrument={piano} {lessonNotes} {position} {scorer} on:playingNotes={handlePlayingNotes}></Piano>
+        {#if tracks.size > 0}
+            <div in:fade>
+                <Piano keys={ getNotes(tracks, resizeTrigger) } {sandbox} instrument={piano} {lessonNotes} {position} {scorer} on:playingNotes={handlePlayingNotes}></Piano>
+            </div>
+        {/if}
         {#if loading}
-            <div class="loading">
+            <div class="loading" out:fade>
                 <Loader></Loader>
             </div>
         {/if}

@@ -8,9 +8,9 @@ import { Note, NewNote, notesBetween } from "../../lib/music/theory/notes";
 // - should work with a single note
 // - should not be smaller than the absolute minimum size required to keep it pretty
 // - must have white notes at top and bottom
-const minimumNotes = 7 // approximately a 5th
+const minimumKeyWidth = 80
 const defaultStartingNote = NewNote("C", 4) // middle C
-export function range(notes: Array<Note>, upperBound: Note, lowerBound: Note):Array<Note> {
+export function range(notes: Array<Note>, upperBound: Note, lowerBound: Note, wholeKeyboardWidth: number, keyHeight: number):Array<Note> {
     if (upperBound.lowerThan(lowerBound)) {
         throw new Error("lower bound higher than upper bound")
     }
@@ -19,12 +19,14 @@ export function range(notes: Array<Note>, upperBound: Note, lowerBound: Note):Ar
         notes = [defaultStartingNote]
     }
 
+    // Cull notes outside the bounds
     for (let i = notes.length - 1; i >= 0; i--) {
         if (notes[i].lowerThan(lowerBound) || upperBound.lowerThan(notes[i])) {
             notes.splice(i, 1)
         }
     }
 
+    // Find the lowest and highest notes
     let lowest:Note = notes[0]
     let highest:Note = notes[0]
 
@@ -38,9 +40,14 @@ export function range(notes: Array<Note>, upperBound: Note, lowerBound: Note):Ar
         }
     }
 
+    // Make sure each end of the piano is a white note and extend
     if (lowest.getAbstract().accidental) {
         lowest = lowest.nextLowest()
     }
+
+    // ensure the keys aren't too fat
+    let width = Math.max(keyHeight / 2.5, minimumKeyWidth)
+    let minimumNotes = Math.round(wholeKeyboardWidth / width)
 
     if (lowest.intervalTo(highest) < minimumNotes) {
         highest = lowest.jump(minimumNotes)

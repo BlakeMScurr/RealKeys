@@ -1,5 +1,5 @@
 import type { Note } from "../music/theory/notes";
-import { get } from "../util";
+import { get, OneTo100 } from "../util";
 import type { Readable } from "svelte/types/runtime/store"
 
 export enum state {

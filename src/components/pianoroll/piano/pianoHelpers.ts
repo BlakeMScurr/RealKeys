@@ -87,8 +87,9 @@ const naturals = makeNaturals()
 const accidentals = makeAccidentals()
 naturalKeys.push(";")
 naturalKeys.push("'")
+naturalKeys.push("enter")
 accidentalKeys.push("[")
-accidentalKeys.push("]")
+accidentalKeys.push("⏎")
 
 function makeNaturals() {
     let m = naturalKeys.reduce((m, str, i)=>{
@@ -98,6 +99,7 @@ function makeNaturals() {
 
     m.set(186, 9)
     m.set(222, 10)
+    m.set(13, 11)
     return m
 }
 

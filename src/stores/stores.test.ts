@@ -1,6 +1,6 @@
 // This file defines the core of the reactive part of the application
 
-import { GameMaster } from "./stores"
+import { GameMaster, squasher } from "./stores"
 import { get } from "../lib/util"
 import { TimedNote, TimedNotes } from "../lib/music/timed/timed";
 import { NewNote, Note } from "../lib/music/theory/notes";
@@ -86,6 +86,7 @@ test("twoNoteOneTrackSubscription", (done) => {
         done()
     }, 1050);
 })
+
 test("twoTrackNoteSubscription", (done) => {
     let gm = new GameMaster();
     gm.duration.set(1000) // one second song
@@ -123,4 +124,41 @@ test("twoTrackNoteSubscription", (done) => {
         ])
         done()
     }, 1050);
+})
+
+// TODO: handle cases where there is clashing
+test("StateSquash", () => {
+    let sq = new squasher();
+
+    expect(sq.state()).toEqual(new Map<Note, string>())
+
+    sq.updateState("chan1", new Map<Note, string>([[NewNote("C", 4), "soft"]]))
+    expect(sq.state()).toEqual(new Map<Note, string>(new Map<Note, string>([[NewNote("C", 4), "soft"]])))
+    
+    sq.updateState("chan2", new Map<Note, string>([[NewNote("D", 4), "soft"]]))
+    expect(sq.state()).toEqual(new Map<Note, string>(new Map<Note, string>([
+        [NewNote("C", 4), "soft"],
+        [NewNote("D", 4), "soft"],
+    ])))
+
+    sq.updateState("chan3", new Map<Note, string>([[NewNote("D", 4), "soft"]]))
+    expect(sq.state()).toEqual(new Map<Note, string>(new Map<Note, string>([
+        [NewNote("C", 4), "soft"],
+        [NewNote("D", 4), "soft"],
+    ])))
+
+    sq.updateState("chan2", new Map<Note, string>())
+    expect(sq.state()).toEqual(new Map<Note, string>(new Map<Note, string>([
+        [NewNote("C", 4), "soft"],
+        [NewNote("D", 4), "soft"],
+    ])))
+
+    sq.updateState("chan1", new Map<Note, string>())
+    expect(sq.state()).toEqual(new Map<Note, string>(new Map<Note, string>([
+        [NewNote("D", 4), "soft"],
+    ])))
+
+    sq.updateState("chan3", new Map<Note, string>())
+    expect(sq.state()).toEqual(new Map<Note, string>(new Map<Note, string>()))
+
 })
