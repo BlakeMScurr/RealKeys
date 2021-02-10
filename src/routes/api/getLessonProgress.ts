@@ -9,7 +9,8 @@ export function get(request, response) {
     pool.query(query(params), (err, res) => {
         if (err !== undefined) {
             console.warn(err)
+        } else {
+            response.json({progress: res.rows[0]})
         }
-        response.json({progress: res.rows[0]})
     })
 }
