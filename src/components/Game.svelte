@@ -7,6 +7,7 @@
     import ScoreBar from "../components/Generic/ScoreBar.svelte";
     import type { Colourer } from '../components/colours';
     import type { timedScoreKeeper } from "../lib/lesson/score";
+    import { get } from "../lib/util";
 
     export let task: taskSpec;
     export let tracks: Map<string, TimedNotes>;
@@ -16,7 +17,7 @@
     export let scorer: timedScoreKeeper;
     export let keys;
 
-    if (!getLessons().has(task.lesson)) {
+    if (!get(getLessons()).has(task.lesson)) {
         throw new Error(`No lesson called ${task.lesson}`)
     }
 

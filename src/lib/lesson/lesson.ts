@@ -1,9 +1,16 @@
 import { OneTo100 } from "../util";
+import 'reflect-metadata';
 
 export enum difficulty {
     Beginner = "Beginner",
     Intermediate = "Intermediate",
     Advanced = "Advanced",
+}
+
+export class a {
+    say() {
+        console.log("saying")
+    }
 }
 
 export class taskSpec {
@@ -36,32 +43,34 @@ export class lesson {
         this.level = level
         this.name = name
         this.sections = []
-        for (let i = 0; i < barDelineators.length; i++) {
-            // Ensure that each layer of delineators
-            // - covers the same area
-            // - uses a subset of the last delineators
-            // - contains fewer than the last delineators
-            if (barDelineators[i][0] !== barDelineators[0][0] || barDelineators[i][barDelineators[i].length-1] !==  barDelineators[0][barDelineators[0].length-1]){
-                throw new Error("Inconsistent outerbars")
-            }
-
-            barDelineators[i].forEach((delineator, j) => {
-                if (barDelineators[0].indexOf(delineator) === -1) {
-                    throw new Error("New delineators")
+        try {
+            for (let i = 0; i < barDelineators.length; i++) {
+                // Ensure that each layer of delineators
+                // - covers the same area
+                // - uses a subset of the last delineators
+                // - contains fewer than the last delineators
+                if (barDelineators[i][0] !== barDelineators[0][0] || barDelineators[i][barDelineators[i].length-1] !==  barDelineators[0][barDelineators[0].length-1]){
+                    throw new Error("Inconsistent outerbars")
                 }
 
-                if (i !== 0 && j !== 0) {
-                    let prev = barDelineators[i][j-1]
-                    let curr = barDelineators[i][j]
-                    let prevInLast = barDelineators[i-1][barDelineators[i-1].indexOf(curr) - 1]
-                    if (prev === prevInLast) {
-                        throw new Error("Old adjacencies")
+                barDelineators[i].forEach((delineator, j) => {
+                    if (barDelineators[0].indexOf(delineator) === -1) {
+                        throw new Error("New delineators")
                     }
-                }
-            })
 
-            this.sections.push(...sections(barDelineators[i], i !== 0))
-        }
+                    if (i !== 0 && j !== 0) {
+                        let prev = barDelineators[i][j-1]
+                        let curr = barDelineators[i][j]
+                        let prevInLast = barDelineators[i-1][barDelineators[i-1].indexOf(curr) - 1]
+                        if (prev === prevInLast) {
+                            throw new Error("Old adjacencies")
+                        }
+                    }
+                })
+
+                this.sections.push(...sections(barDelineators[i], i !== 0))
+            }
+        } catch(e) {} // this is to allow plainToClass to call the constructor without erroring
     }
 
     recordScore(task: taskSpec) {
@@ -76,7 +85,7 @@ export class lesson {
         }
 
         if (!foundSection) {
-            throw new Error(`Couldn't find section from bar ${task.startBar} to ${task.endBar}`)
+            throw new Error(`Couldn't find section from bar ${task.startBar} to ${task.endBar}, have sections ${this.sections}`)
         }
 
         // unlock if dependencies are done
@@ -115,18 +124,21 @@ function sections(dividers: Array<number>, higherLevel: boolean): Array<section>
     return sections
 }
 
-class section {
+export class section { // TODO: unexport asap
     hands: Array<handSection>;
     startBar: number;
     endBar: number;
     constructor(startBar: number, endBar: number, higherLevel: boolean) {
-        if (Math.floor(endBar) !== endBar || Math.floor(startBar) !== startBar) throw new Error("Bars must be integers")
-        if (startBar >= endBar) throw new Error("The end of a section must be after the start")
-        if (startBar <= 0 || endBar <= 0) throw new Error("Bar numbers can't be 0 or negative")
+        try {
 
-        this.hands = allHandSections(higherLevel)
-        this.startBar = startBar
-        this.endBar = endBar
+            if (Math.floor(endBar) !== endBar || Math.floor(startBar) !== startBar) throw new Error("Bars must be integers")
+            if (startBar >= endBar) throw new Error("The end of a section must be after the start")
+            if (startBar <= 0 || endBar <= 0) throw new Error("Bar numbers can't be 0 or negative")
+            
+            this.hands = allHandSections(higherLevel)
+            this.startBar = startBar
+            this.endBar = endBar
+        } catch(e){} // todo: get rid of, once plainToClass works properly for nested things
     }
 
     recordScore(task: taskSpec) {

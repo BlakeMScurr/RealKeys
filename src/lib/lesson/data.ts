@@ -1,7 +1,11 @@
 import { Readable, writable } from "svelte/store"
 import { getUserID } from "../util";
-import { lesson, difficulty, taskSpec } from "./lesson";
-
+import { lesson, difficulty, taskSpec, section, handSection } from "./lesson";
+import { plainToClass } from 'class-transformer';
+import 'reflect-metadata';
+export interface LessonSet {
+    recordScore(taskSpec)
+}
 class lessonSet {
     lessons: Array<lesson>;
     constructor(lessons: Array<lesson>) {
@@ -42,15 +46,51 @@ export function defaultLessons():lessonSet {
     ])
 }
 
+// TODO: move this backend facing stuff into a separate file
+
 export function getLessons():Readable<lessonSet> {
     let store = writable(defaultLessons())
 
     getUserID((userID: string) => {
-        // getLessonProgress(userID, (lessonProgress: lessonSet) => {
-        //     store.set(lessonProgress)
-        // })
-        console.log("got userID", userID)
+        getLessonProgress(userID, (lessonProgress: lessonSet) => {
+            store.set(lessonProgress)
+        })
     })
 
     return store
+}
+
+export async function getLessonProgress(userID: string, cb: (lessonProgress: lessonSet)=>void) {
+    let resp = await fetch("api/getLessonProgress?userID=" + userID)
+    let json = await resp.json()
+    cb(p2k(json.progress.progress)) // TODO: why do we need so many accesses of the progress proptery? Why do we need any, really?
+}
+
+export function saveLessonProgress(userID: string, progress: LessonSet) {
+    fetch("api/saveLessonProgress?userID=" + userID, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(<lessonSet>progress)
+      })
+}
+
+// This is ridiculous that we have to do this, but apparently we do
+// TODO: Make an issue about the fact that if you have a nested constructor that may error, then the parent will not get the appropriate class of the child
+function p2k(jsonTing: lessonSet):lessonSet {
+    let ls = plainToClass(lessonSet, jsonTing)
+    ls.lessons.forEach((l, i) => {
+        ls.lessons[i] = plainToClass(lesson, l)
+        let less = ls.lessons[i]
+        less.sections.forEach((s, j) => {
+            less.sections[j] = plainToClass(section, s)
+            let sec = less.sections[j]
+            sec.hands.forEach((hnd, k) => {
+                sec.hands[k] = plainToClass(handSection, hnd)
+            })
+        })
+    })
+
+    return ls
 }

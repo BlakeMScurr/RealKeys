@@ -2,7 +2,8 @@
     import { stores } from "@sapper/app";
     import { onMount } from "svelte";
     import { fade } from 'svelte/transition';
-    import { getLessons } from "../lib/lesson/data";
+    import { getLessons, saveLessonProgress } from "../lib/lesson/data";
+    import type { LessonSet } from "../lib/lesson/data";
     import { hand, speed, taskSpec, urlToTask } from "../lib/lesson/lesson";
     import { highestPianoNote, lowestPianoNote, NewNote, noteRange, notesBetween } from "../lib/music/theory/notes";
     import { newPiano } from "../lib/track/instrument";
@@ -19,7 +20,7 @@
     import { handleNotes, nextWaitModeNote } from "../stores/waitMode";
     import { writable } from "svelte/store";
     import type { Readable } from "svelte/types/runtime/store"; // TODO: import this from "svelte/store", which works in .ts files not .svelte files
-    import { get, OneTo100 } from "../lib/util";
+    import { get, getUserID, OneTo100 } from "../lib/util";
     import { goto } from '@sapper/app'
     import { range } from "../components/pianoroll/pianoRollHelpers";
 
@@ -27,7 +28,7 @@
     const query = $page.query;
     let task: taskSpec = urlToTask(query)
 
-    if (!getLessons().has(task.lesson)) {
+    if (!get(getLessons()).has(task.lesson)) {
         throw new Error(`No lesson called ${task.lesson}`)
     }
 
@@ -60,6 +61,16 @@
     }
     let handlePlayingNotes = (e: Event) => {}
 
+    let progress: LessonSet;
+    getLessons().subscribe((p) => {
+        progress = p
+    })
+
+    let userID
+    getUserID((id) => {
+        userID = id
+    })
+
     let lessonNotes: Map<Note, string>;
     getMIDI("api/midi?path=%2FTutorials/" + task.lesson + ".mid", task.startBar, task.endBar).then((midi)=>{
         tracks = midi.tracks
@@ -71,6 +82,8 @@
             position = pos
             if (pos >= 1) {
                 task.score = OneTo100(scorer.validRatio() * 100)
+                progress.recordScore(task)
+                saveLessonProgress(userID, progress)
                 goto("score?" + task.queryString())
             }
         })
@@ -166,7 +179,6 @@
         if (relevant.length === 0) {
             throw new Error("There must be at least one active track")
         } else if (relevant.length === 1) {
-            console.log("returning", all.get(relevant[0]))
             return all.get(relevant[0])
         } else if (relevant.length === 2) {
             let left = all.get(relevant[0]) // TODO: see if left and right apply correctly
@@ -178,7 +190,6 @@
             left.notes.sort((a: TimedNote, b: TimedNote)=>{
                 return a.start - b.start
             })
-            console.log("returning", left)
             return left
         }
         throw new Error("Couldn't merge tracks")

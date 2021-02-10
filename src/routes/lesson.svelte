@@ -8,6 +8,7 @@
     import { hand, longNameSpeed, speed, taskSpec, urlToTask } from "../lib/lesson/lesson";
     import { state } from "../lib/lesson/lesson"
     import { goto } from '@sapper/app'
+    import { get } from "../lib/util";
 
     const { page } = stores();
     const query = $page.query;
@@ -19,6 +20,12 @@
             goto("game?" + t.queryString())
         }
     }
+
+    let lessons;
+    getLessons().subscribe((l) => {
+        lessons = l
+    })
+
 </script>
 
 <style lang="scss">
@@ -62,9 +69,9 @@
 </style>
 
 <div class="layout">
-    <h2>{getLessons().lessons[0].name}</h2>
+    <h2>{lessons.lessons[0].name}</h2>
     
-    {#each getLessons().lessons[0].sections as section}
+    {#each lessons.lessons[0].sections as section}
         <div class="section">
             <div class="description">
                 <h3>Bars {section.startBar}-{section.endBar}</h3>
