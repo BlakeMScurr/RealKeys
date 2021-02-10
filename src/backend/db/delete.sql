@@ -1,3 +1,2 @@
-DROP TABLE roll;
-DROP TABLE lesson;
-DROP SEQUENCE roll_id_seq;
+DROP TABLE users;
+DROP SEQUENCE userid_seq;
