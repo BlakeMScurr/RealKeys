@@ -6,6 +6,17 @@ import 'reflect-metadata';
 export interface LessonSet {
     recordScore(taskSpec)
 }
+
+// TODO: rewrite lessonSet and lessons from the ground up
+// This will be to make the lesson definiton more flexible.
+// - More speed options, 1%-150% (with the option of easily increasing the cap if the user asks for it)
+// - Declarative way to define the dependencies between tasks
+// - Easy way to alter dependencies (i.e., easily make a new lesson that allows 100% speed after own pace, and another that requires 50% between, while both have a 50% option)
+// - Different kinds of section subdivisions, so that we can practice "glue" sections. I.e., if you learn bars 1-4, and 5-8, you can learn 3-6 to learn the transition.
+// - OR vs AND dependencies, i.e., bars 1-3 BH 100% will be allow if you have ((bars 1-3 BH own pace) OR ((bars 1-3 LH 100%) AND (bars 1-3 RH 100%)))
+// - Lesson progress should be serialisable to prevent the need to reparse on the client
+// - Constructors should be simple and contain no real logic, to aid in serialisability
+// - Lesson progress should be decouple from the set of available lessons, such that lesson progress should be empty if nothing has been done, and only a little data is added as progress is made
 class lessonSet {
     lessons: Array<lesson>;
     constructor(lessons: Array<lesson>) {

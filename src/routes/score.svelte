@@ -27,12 +27,6 @@
         div {
             margin: 60px 0 0 0;
             align-self: center;
-            p {
-                display: inline-block;
-                width: 50px; // keeps the two types of score 
-                text-align: right;
-            }
-
             div {
                 display: inline-block;
             }

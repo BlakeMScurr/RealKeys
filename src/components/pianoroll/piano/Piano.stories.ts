@@ -11,7 +11,6 @@ const Template = ({...args }) => ({
   Component: Piano,
   props: {
     ...args,
-    playing: gm.playingStore,
     waitMode: gm.waitMode,
   },
 });

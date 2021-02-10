@@ -1,6 +1,6 @@
 {
-  "name": "TODO",
-  "description": "TODO",
+  "name": "RealKeys",
+  "description": "RealKeys",
   "version": "0.0.1",
   "scripts": {
     "dev": "sapper dev",

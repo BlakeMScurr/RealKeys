@@ -28,6 +28,6 @@
 </style>
 
 <div>
-    <h1>RealKeys</h1>
-    <h4>Lessons</h4>
+    <h1><a href="/">RealKeys</a></h1>
+    <h4><a href="/">Home</a></h4>
 </div>

@@ -2,7 +2,6 @@
     import type { Note } from "../../../lib/music/theory/notes";
     import type { TimedNotes } from "../../../lib/music/timed/timed";
     import type { Colourer } from "../../colours";
-    import type { Bars } from "../pianoRollHelpers";
     import RollBackground from "./RollBackground.svelte";
 
     export let debugSliders: boolean = false
@@ -11,10 +10,7 @@
     export let keys: Array<Note>;
     export let duration: number = 5000;
     export let colourer: Colourer;
-    export let bars: Bars;
     export let tracks:  Map<string, TimedNotes>;
-    export let overlayNotes: TimedNotes;
-
 
     // show 5 seconds
     zoomWidth = 5000/duration

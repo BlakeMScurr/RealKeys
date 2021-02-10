@@ -5,7 +5,7 @@ import { uniqueKey } from './util'
 import { NewInstrument } from './track/instrument';
 
 export async function getMIDI(url, startbar: number, endbar: number) {
-    window.AudioContext = window.AudioContext || window.webkitAudioContext;
+    window.AudioContext = window.AudioContext || window["webkitAudioContext"]
 
     let midi
     try {

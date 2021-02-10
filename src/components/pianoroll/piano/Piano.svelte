@@ -3,7 +3,8 @@
     import { NewNote, Line, parseNoteString } from "../../../lib/music/theory/notes";
     import type { Note} from "../../../lib/music/theory/notes";
     import { blackAndGhostBetween, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote, label, occupationTracker } from "./pianoHelpers";
-    import WebMidi, { InputEventNoteon, InputEventNoteoff } from "webmidi";
+    import type { InputEventNoteon, InputEventNoteoff } from "webmidi";
+    import WebMidi from "webmidi";
     import Key from "./Key/Key.svelte";
     import { addGlobalKeyListener } from "../../../lib/util";
     import type { SoundFont } from "../../../lib/track/soundfont";

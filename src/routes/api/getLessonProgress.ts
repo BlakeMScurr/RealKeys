@@ -10,7 +10,6 @@ export function get(request, response) {
         if (err !== undefined) {
             console.warn(err)
         }
-        console.log("got", res.rows[0])
         response.json({progress: res.rows[0]})
     })
 }

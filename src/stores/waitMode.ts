@@ -1,5 +1,5 @@
 import type { Readable, Writable } from 'svelte/store';
-import { TimedNote, TimedNotes } from '../lib/music/timed/timed';
+import type { TimedNote, TimedNotes } from '../lib/music/timed/timed';
 import type { Note } from '../lib/music/theory/notes';
 import { arraysEqual, get } from '../lib/util';
 import type { GameMaster } from './stores';

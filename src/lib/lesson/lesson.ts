@@ -7,12 +7,6 @@ export enum difficulty {
     Advanced = "Advanced",
 }
 
-export class a {
-    say() {
-        console.log("saying")
-    }
-}
-
 export class taskSpec {
     // TODO: remove score, as it doesn't actually specify the task
     score: number;

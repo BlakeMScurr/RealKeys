@@ -36,12 +36,8 @@
     let piano
     let loading = true
     let resizeTrigger = 0
-    onMount(() => {
-        piano = newPiano("User Piano", ()=>{loading = false})
-        window.onresize = () => {
-            resizeTrigger++
-        }
-    })
+    let screenWidth = 500
+    let keyHeight = 120
 
     let tracks = new Map<string, TimedNotes>();
     let colourer = new Colourer(3)
@@ -72,94 +68,104 @@
     })
 
     let lessonNotes: Map<Note, string>;
-    getMIDI("api/midi?path=%2FTutorials/" + task.lesson + ".mid", task.startBar, task.endBar).then((midi)=>{
-        tracks = midi.tracks
-        duration = midi.duration
-        colourer = new Colourer(tracks.size)
-        let gm = new GameMaster()
-        gm.duration.set(duration)
-        gm.position.subscribe((pos)=>{
-            position = pos
-            if (pos >= 1) {
-                task.score = OneTo100(scorer.validRatio() * 100)
-                progress.recordScore(task)
-                saveLessonProgress(userID, progress)
-                goto("score?" + task.queryString())
-            }
-        })
-        let rt = relevantTrack(tracks, task)
 
-        tracks.forEach((notes, name) => {
-            let trackPiano = newPiano(name, ()=>{console.log(`piano ${name} loaded`)})
-            if (rt.includes(name)) {
-                trackPiano.setVolume(0)
-            }
-            gm.tracks.newPlaybackTrack(name, notes, trackPiano, gm)
-        })
-        onNext = () => { gm.play.play() }
-        nextable = true
-        scorer = new timedScoreKeeper(gm.position)
-        gm.seek.set(-2000/get(<Readable<number>>gm.duration)) // give space before the first note
+    onMount(() => {
+        piano = newPiano("User Piano", ()=>{loading = false})
+        window.onresize = () => {
+            resizeTrigger++
+        }
+        screenWidth = window.innerWidth
+        keyHeight = (window.innerHeight - 50) / 3
 
-        switch (task.speed) {
-            case speed.OwnPace:
-                gm.seek.set(0) // TODO: go to the first note
-                gm.waitMode.set(true)
-                onNext = () => {
-                    //subscribe to the notes needed to progress
-                    let stateSetter = writable(new Map<Note, string>());
-                    function onNoteStateChange(notes: Map<Note, string>) {
-                        let state = get(stateSetter)
-                        notes.forEach((noteState: string, note: Note)=>{
-                            state.set(note, noteState)
+        getMIDI("api/midi?path=%2FTutorials/" + task.lesson + ".mid", task.startBar, task.endBar).then((midi)=>{
+            tracks = midi.tracks
+            duration = midi.duration
+            colourer = new Colourer(tracks.size)
+            let gm = new GameMaster()
+            gm.duration.set(duration)
+            gm.position.subscribe((pos)=>{
+                position = pos
+                if (pos >= 1) {
+                    task.score = OneTo100(scorer.validRatio() * 100)
+                    progress.recordScore(task)
+                    saveLessonProgress(userID, progress)
+                    goto("score?" + task.queryString())
+                }
+            })
+            let rt = relevantTrack(tracks, task)
+    
+            tracks.forEach((notes, name) => {
+                let trackPiano = newPiano(name, ()=>{console.log(`piano ${name} loaded`)})
+                if (rt.includes(name)) {
+                    trackPiano.setVolume(0)
+                }
+                gm.tracks.newPlaybackTrack(name, notes, trackPiano, gm)
+            })
+            onNext = () => { gm.play.play() }
+            nextable = true
+            scorer = new timedScoreKeeper(gm.position)
+            gm.seek.set(-2000/get(<Readable<number>>gm.duration)) // give space before the first note
+    
+            switch (task.speed) {
+                case speed.OwnPace:
+                    gm.seek.set(0) // TODO: go to the first note
+                    gm.waitMode.set(true)
+                    onNext = () => {
+                        //subscribe to the notes needed to progress
+                        let stateSetter = writable(new Map<Note, string>());
+                        function onNoteStateChange(notes: Map<Note, string>) {
+                            let state = get(stateSetter)
+                            notes.forEach((noteState: string, note: Note)=>{
+                                state.set(note, noteState)
+                            })
+                            stateSetter.set(state)
+                        }
+    
+                        let activeTrack = mergeTracks(relevantTrack(tracks, task), tracks)
+                        gm.seek.subscribe(() => {
+                            let state = get(stateSetter)
+                            nextWaitModeNote(gm, activeTrack).sameStart.forEach(note => {
+                                state.set(note.note, "expecting")
+                            })
+                            stateSetter.set(state)
                         })
-                        stateSetter.set(state)
+    
+                        gm.tracks.subscribeToNotesOfTracks(rt, onNoteStateChange)
+    
+                        stateSetter.subscribe((notes) => {
+                            lessonNotes = notes
+                        })
+    
+                        // hook up the notes played
+                        handlePlayingNotes = handleNotes(gm, stateSetter, activeTrack)
                     }
-
-                    let activeTrack = mergeTracks(relevantTrack(tracks, task), tracks)
-                    gm.seek.subscribe(() => {
-                        let state = get(stateSetter)
-                        nextWaitModeNote(gm, activeTrack).sameStart.forEach(note => {
-                            state.set(note.note, "expecting")
-                        })
-                        stateSetter.set(state)
-                    })
-
-                    gm.tracks.subscribeToNotesOfTracks(rt, onNoteStateChange)
-
-                    stateSetter.subscribe((notes) => {
+                    gm.tracks.enable(rt)
+                    gm.seek.set(0)
+                    scorer = new untimedScoreKeeper()
+    
+                    break;
+                case speed.Fifty:
+                    gm.speed.set(0.5)
+                    gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
                         lessonNotes = notes
                     })
-
-                    // hook up the notes played
-                    handlePlayingNotes = handleNotes(gm, stateSetter, activeTrack)
-                }
-                gm.tracks.enable(rt)
-                gm.seek.set(0)
-                scorer = new untimedScoreKeeper()
-
-                break;
-            case speed.Fifty:
-                gm.speed.set(0.5)
-                gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
-                    lessonNotes = notes
-                })
-                break;
-            case speed.SeventyFive:
-                gm.speed.set(0.75)
-                gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
-                    lessonNotes = notes
-                })
-                break;
-            case speed.OneHundred:
-                gm.speed.set(1)
-                gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
-                    lessonNotes = notes
-                })
-                break;
-        }
-    }).catch((e)=>{
-        throw new Error(e)
+                    break;
+                case speed.SeventyFive:
+                    gm.speed.set(0.75)
+                    gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
+                        lessonNotes = notes
+                    })
+                    break;
+                case speed.OneHundred:
+                    gm.speed.set(1)
+                    gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
+                        lessonNotes = notes
+                    })
+                    break;
+            }
+        }).catch((e)=>{
+            throw new Error(e)
+        })
     })
 
     function relevantTrack(tracks: Map<string, TimedNotes>, task: taskSpec):string[] {
@@ -205,7 +211,7 @@
         tracks.forEach((track) => {
             untimed.push(...track.untime())
         })
-        return range(untimed, highestPianoNote, lowestPianoNote, window.innerWidth, (window.innerHeight - 50) / 3)
+        return range(untimed, highestPianoNote, lowestPianoNote, screenWidth, keyHeight)
     }
 </script>
 

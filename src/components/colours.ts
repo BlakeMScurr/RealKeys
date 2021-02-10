@@ -32,7 +32,7 @@ export class Colourer {
     constructor(n) {
         if (n > trackColours.length) {
             // TODO: figure out why distinctColours is imported as a library as opposed to a function in the dev server, whereas it's a function in storybook
-            let dcf = distinctColors.hasOwnProperty("default") ? distinctColors.default : distinctColors
+            let dcf = distinctColors.hasOwnProperty("default") ? distinctColors["default"] : distinctColors
             this.extras = dcf({ count: n - trackColours.length, hueMin: 100 })
         }
     }

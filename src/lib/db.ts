@@ -5,8 +5,8 @@ export function NewPool() {
         database: "melody"
     }
     if (process.env.NODE_ENV !== 'development') {
-        config.user = "postgres"
-        config.password = "newPassword"
+        config["user"] = "postgres"
+        config["password"] = "newPassword"
     }
     return new Pool(config)
 }

@@ -46,3 +46,9 @@ body {
   height: 100%;
   overflow-x: hidden;
 }
+
+a {
+  text-decoration: inherit;
+  color: inherit;
+  cursor: auto;
+}
