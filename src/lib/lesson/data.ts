@@ -1,4 +1,6 @@
-import { lesson, difficulty, speed, hand, taskSpec } from "./lesson";
+import { Readable, writable } from "svelte/store"
+import { getUserID } from "../util";
+import { lesson, difficulty, taskSpec } from "./lesson";
 
 class lessonSet {
     lessons: Array<lesson>;
@@ -29,14 +31,26 @@ class lessonSet {
     }
 }
 
-export const lessons = new lessonSet([
-    new lesson(difficulty.Beginner, "Test", [[1]]),
-    new lesson(difficulty.Beginner, "Mary Had a Little Lamb", [[1, 3, 5], [1, 5]]),
-    new lesson(difficulty.Beginner, "Twinkle Twinkle Little star", [[1, 3, 5, 7, 9, 11, 13]]),
-    new lesson(difficulty.Beginner, "Silent Night", [[1,5,9,13,17,21,25]]),
-    new lesson(difficulty.Intermediate, "Fur Elise", [Array(8).fill(0).map((_, index) => index * 4 + 1)]),
-    new lesson(difficulty.Intermediate, "Piano Man", [Array(8).fill(0).map((_, index) => index * 4 + 1)]),
-])
+export function defaultLessons():lessonSet {
+    return new lessonSet([
+        new lesson(difficulty.Beginner, "Mary Had a Little Lamb", [[1, 3, 5, 7, 9], [1, 5, 9], [1, 9]]),
+        new lesson(difficulty.Beginner, "Twinkle Twinkle Little star", [[1, 3, 5, 7, 9, 11, 13]]),
+        new lesson(difficulty.Beginner, "Silent Night", [[1,5,9,13,17,21,25]]),
+        new lesson(difficulty.Beginner, "Test", [[1]]),
+        new lesson(difficulty.Intermediate, "Fur Elise", [Array(8).fill(0).map((_, index) => index * 4 + 1)]),
+        new lesson(difficulty.Intermediate, "Piano Man", [Array(8).fill(0).map((_, index) => index * 4 + 1)]),
+    ])
+}
 
-lessons.recordScore(new taskSpec(100, 1, 3, hand.Right, speed.OwnPace, "Mary Had a Little Lamb"))
-lessons.recordScore(new taskSpec(70, 1, 3, hand.Right, speed.Fifty, "Mary Had a Little Lamb"))
+export function getLessons():Readable<lessonSet> {
+    let store = writable(defaultLessons())
+
+    getUserID((userID: string) => {
+        // getLessonProgress(userID, (lessonProgress: lessonSet) => {
+        //     store.set(lessonProgress)
+        // })
+        console.log("got userID", userID)
+    })
+
+    return store
+}

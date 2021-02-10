@@ -2,7 +2,7 @@
     import { stores } from "@sapper/app";
     import { onMount } from "svelte";
     import { fade } from 'svelte/transition';
-    import { lessons } from "../lib/lesson/data";
+    import { getLessons } from "../lib/lesson/data";
     import { hand, speed, taskSpec, urlToTask } from "../lib/lesson/lesson";
     import { highestPianoNote, lowestPianoNote, NewNote, noteRange, notesBetween } from "../lib/music/theory/notes";
     import { newPiano } from "../lib/track/instrument";
@@ -22,14 +22,12 @@
     import { get, OneTo100 } from "../lib/util";
     import { goto } from '@sapper/app'
     import { range } from "../components/pianoroll/pianoRollHelpers";
-import { stringify } from "querystring";
-import Bgstoryholder from "../components/pianoroll/roll/bgstoryholder.svelte";
 
     const { page } = stores();
     const query = $page.query;
     let task: taskSpec = urlToTask(query)
 
-    if (!lessons.has(task.lesson)) {
+    if (!getLessons().has(task.lesson)) {
         throw new Error(`No lesson called ${task.lesson}`)
     }
 
@@ -63,7 +61,7 @@ import Bgstoryholder from "../components/pianoroll/roll/bgstoryholder.svelte";
     let handlePlayingNotes = (e: Event) => {}
 
     let lessonNotes: Map<Note, string>;
-    getMIDI("api/midi?path=%2FTutorials/" + task.lesson + ".mid").then((midi)=>{
+    getMIDI("api/midi?path=%2FTutorials/" + task.lesson + ".mid", task.startBar, task.endBar).then((midi)=>{
         tracks = midi.tracks
         duration = midi.duration
         colourer = new Colourer(tracks.size)

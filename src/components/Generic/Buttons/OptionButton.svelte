@@ -1,5 +1,10 @@
 <script lang="ts">
-    import { handleClick } from "./button";
+    import { createEventDispatcher } from "svelte";
+
+    let dispatch = createEventDispatcher()
+    function handleClick() {
+        dispatch("click")
+    }
 
     export let text: string;
 </script>

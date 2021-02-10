@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { lessons } from "../lib/lesson/data";
+    import { getLessons } from "../lib/lesson/data";
     import type { taskSpec } from "../lib/lesson/lesson";
     import { NewNote, notesBetween } from "../lib/music/theory/notes";
     import DOMRoll from "../components/pianoroll/roll/DOMRoll.svelte";
@@ -16,7 +16,7 @@
     export let scorer: timedScoreKeeper;
     export let keys;
 
-    if (!lessons.has(task.lesson)) {
+    if (!getLessons().has(task.lesson)) {
         throw new Error(`No lesson called ${task.lesson}`)
     }
 

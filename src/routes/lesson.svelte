@@ -3,8 +3,22 @@
     import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
     import ScoreBar from "../components/Generic/ScoreBar.svelte";
-    import { lessons } from "../lib/lesson/data"
+    import { getLessons } from "../lib/lesson/data"
+    import { stores } from "@sapper/app";
+    import { hand, longNameSpeed, speed, taskSpec, urlToTask } from "../lib/lesson/lesson";
     import { state } from "../lib/lesson/lesson"
+    import { goto } from '@sapper/app'
+
+    const { page } = stores();
+    const query = $page.query;
+    let task: taskSpec = urlToTask(query)
+
+    function gotoGame(s: speed, h: hand, start: number, end: number) {
+        return () => {
+            let t = new taskSpec(0, start, end, h, s, task.lesson)
+            goto("game?" + t.queryString())
+        }
+    }
 </script>
 
 <style lang="scss">
@@ -48,9 +62,9 @@
 </style>
 
 <div class="layout">
-    <h2>{lessons.lessons[0].name}</h2>
+    <h2>{getLessons().lessons[0].name}</h2>
     
-    {#each lessons.lessons[0].sections as section}
+    {#each getLessons().lessons[0].sections as section}
         <div class="section">
             <div class="description">
                 <h3>Bars {section.startBar}-{section.endBar}</h3>
@@ -62,16 +76,16 @@
                             {#each hand.speeds as speed}
                                 <div class="task">
                                     <div>
-                                        <p>{speed.speed}</p>
+                                        <p>{longNameSpeed(speed.speed)}</p>
                                         <ScoreBar value={speed.progress}></ScoreBar>
                                     </div>
                                     <div class="button">
                                         {#if speed.state === state.locked}
                                             <LockButton></LockButton>
                                         {:else if speed.state === state.allowed}
-                                            <OptionButton text="Learn"></OptionButton>
+                                            <OptionButton text="Learn" on:click={gotoGame(speed.speed, hand.hand, section.startBar, section.endBar)}></OptionButton>
                                         {:else if speed.state === state.reccomended}
-                                            <ReccomendedButton text="Learn"></ReccomendedButton>
+                                            <ReccomendedButton text="Learn" on:click={gotoGame(speed.speed, hand.hand, section.startBar, section.endBar)}></ReccomendedButton>
                                         {/if}
                                     </div>
                                 </div>

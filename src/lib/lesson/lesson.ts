@@ -263,6 +263,19 @@ export enum speed {
     OneHundred = "100",
 }
 
+export function longNameSpeed(s: speed):string {
+    switch(s) {
+        case speed.OwnPace:
+            return "At your own pace"
+        case speed.Fifty:
+            return "50% speed"
+            case speed.SeventyFive:
+            return "75% speed"
+            case speed.OneHundred:
+            return "100% speed"
+    }
+}
+
 export function makeSpeed(speedString: string) {
     switch (speedString) {
         case "own":

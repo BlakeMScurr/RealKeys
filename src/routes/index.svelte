@@ -1,7 +1,8 @@
 <script lang="ts">
     import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
-    import { lessons } from "../lib/lesson/data"
+    import { getLessons } from "../lib/lesson/data"
+import { get } from "../lib/util";
 
 </script>
 
@@ -55,7 +56,7 @@
 <h2>Lessons</h2>
 
 <div class="lessonholder">
-    {#each lessons.lessons as lesson, i}
+    {#each get(getLessons()).lessons as lesson, i}
         <div class="lesson">
             <div class="description">
                 <h4>{lesson.name}</h4>
