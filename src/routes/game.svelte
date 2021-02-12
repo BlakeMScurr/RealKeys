@@ -217,7 +217,6 @@
                 notes.set(n.string(), true)
             });
         });
-        console.log("used notes", notes)
         return notes
     }
 
@@ -228,7 +227,6 @@
         })
         return range(untimed, highestPianoNote, lowestPianoNote, screenWidth, keyHeight)
     }
-
 </script>
 
 <style lang="scss">
