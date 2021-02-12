@@ -1,4 +1,4 @@
-import { Note, Line } from "../../../lib/music/theory/notes";
+import { Note, Line, InstanceOfNote } from "../../../lib/music/theory/notes";
 
 export class Ghost {}
 
@@ -12,10 +12,10 @@ export function blackAndGhostBetween(low: Note, high: Note):Array<Note|Ghost> {
     
     high = high.next() // runs loop up to highest note, TODO: be more elegant
     while (low.lowerThan(high)) { 
-        if (low.abstract.accidental) {
+        if (low.getAbstract().accidental) {
             newNotes.push(low)
         } else {
-            if (!low.next().abstract.accidental && low.next().lowerThan(high)) {
+            if (!low.next().getAbstract().accidental && low.next().lowerThan(high)) {
                 newNotes.push(new Ghost())
             }
         }
@@ -61,7 +61,7 @@ export function whiteWidths(notes: Array<Note>):Array<NoteWidth> {
 
 // gives the proper width to match up with the constant width of the roll section
 function width(note: Note, bottomEdge: boolean, topEdge: boolean) {
-    switch (note.abstract.letter) {
+    switch (note.getAbstract().letter) {
         case "c":
         case "f":
             return topEdge ? 2 : 3;
@@ -87,8 +87,9 @@ const naturals = makeNaturals()
 const accidentals = makeAccidentals()
 naturalKeys.push(";")
 naturalKeys.push("'")
+naturalKeys.push("enter")
 accidentalKeys.push("[")
-accidentalKeys.push("]")
+accidentalKeys.push("⏎")
 
 function makeNaturals() {
     let m = naturalKeys.reduce((m, str, i)=>{
@@ -98,6 +99,7 @@ function makeNaturals() {
 
     m.set(186, 9)
     m.set(222, 10)
+    m.set(13, 11)
     return m
 }
 
@@ -124,7 +126,7 @@ export function keyboardInputNote(keyCode: number, notes: Line):Note|undefined {
     index = accidentals.get(keyCode)
     if (index !== undefined) {
         let ng = blackAndGhostBetween(notes.notes[0], notes.notes[notes.notes.length-1])[index]
-        if (ng instanceof Note) {
+        if (InstanceOfNote(ng)) {
             return <Note>ng
         }
     }
@@ -139,9 +141,82 @@ export function label(notes: Line):Map<String, String> {
     });
 
     blackAndGhostBetween(notes.notes[0], notes.notes[notes.notes.length-1]).forEach((note, i) => {
-        if (i < accidentalKeys.length && note instanceof Note) {
-            m.set(note.string(), accidentalKeys[i])
+        if (i < accidentalKeys.length && InstanceOfNote(note)) {
+            let realNote = <Note>note
+            m.set(realNote.string(), accidentalKeys[i])
         }
     });
     return m
+}
+
+// occupationTracker keeps a track of whether the current depression of a key is occupied by a note that has already been played
+// since such a key ought to be played again if it is expected
+// The initial (and obvious) naive algorithm simply considered a note to be being played correctly if it was being played at the same time that it was expected in the song
+// TODO: simplify into a composition of state machines on each note
+export class occupationTracker {
+    private states: Map<Note, occupationStatus>; // TODO: make this a Map<Note, occupationStatus> once note reference equality works
+    constructor() {
+        this.states = new Map<Note, occupationStatus>();
+    }
+
+    private apply(note: Note, map: Map<occupationStatus, occupationStatus>) {
+        let state = this.stateOf(note)
+        if (map.has(state)) {
+            this.states.set(note, map.get(state))
+        }
+    }
+
+    play(note) {
+        this.apply(note, new Map([
+            [ occupationStatus.nothing, occupationStatus.played ],
+            [ occupationStatus.expected, occupationStatus.occupiedCurrent ],
+            [ occupationStatus.occupiedPreviousExpected, occupationStatus.occupiedCurrent ],
+        ]))
+    }
+
+    stop(note: Note) {
+        this.apply(note, new Map([
+            [ occupationStatus.played, occupationStatus.nothing ],
+            [ occupationStatus.occupiedCurrent, occupationStatus.nothing ],
+            [ occupationStatus.occupiedPrevious, occupationStatus.nothing ],
+            [ occupationStatus.occupiedPreviousExpected, occupationStatus.expected ],
+        ]))
+    }
+
+    expect(note: Note) {
+        this.apply(note, new Map([
+            [ occupationStatus.nothing, occupationStatus.expected ],
+            [ occupationStatus.played, occupationStatus.occupiedCurrent ],
+            [ occupationStatus.occupiedPrevious, occupationStatus.occupiedPreviousExpected ],
+        ]))
+    }
+
+    unexpect(note: Note) {
+        this.apply(note, new Map([
+            [ occupationStatus.expected, occupationStatus.nothing ],
+            [ occupationStatus.occupiedCurrent, occupationStatus.occupiedPrevious ],
+            [ occupationStatus.occupiedPreviousExpected, occupationStatus.occupiedPrevious ],
+        ]))
+    }
+
+    stateOf(note: Note):occupationStatus {
+        if (this.states.has(note)) {
+            return this.states.get(note)
+        }
+        return occupationStatus.nothing
+    }
+
+    occupiedPrevious(note):boolean {
+        // TODO: do we need `!== occupationStatus.occupiedPrevious` also?
+        return this.stateOf(note) === occupationStatus.occupiedPreviousExpected
+    }
+}
+
+export enum occupationStatus {
+    nothing = "nothing", // neither played or expected
+    expected = "expected",  // expecting to be occupied"
+    played = "played",  // played but unexpected"
+    occupiedCurrent = "occupiedCurrent", // occupied by current note
+    occupiedPrevious = "occupiedPrevious", // occupied by previous note
+    occupiedPreviousExpected = "occupiedPreviousExpected", // occupied by previous note while the next note is expected
 }

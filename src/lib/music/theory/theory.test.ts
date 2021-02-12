@@ -1,5 +1,5 @@
 import { Chord, ChordBook, sortNotes, squashNotes } from "./chords";
-import { Note, NewAbstractNote, NoteOrder, NewNote, NoteFromMidiNumber } from "./notes";
+import { Note, NewAbstractNote, NoteOrder, NewNote, NoteFromMidiNumber, notesBetween, lowestPianoNote, highestPianoNote, parseNoteString } from "./notes";
 
 test('inferInversions', () => {
     var b = new ChordBook()
@@ -35,8 +35,8 @@ test('stack', () => {
 })
 
 test('newabstractnote', () => {
-    expect(NoteOrder.indexOf(nn("c", 4).abstract)).toBe(0)
-    expect(NoteOrder.indexOf(nn("a", 4).abstract)).toBe(9)
+    expect(NoteOrder.indexOf(nn("c", 4).getAbstract())).toBe(0)
+    expect(NoteOrder.indexOf(nn("a", 4).getAbstract())).toBe(9)
 })
 
 test('lower', () => {
@@ -220,3 +220,9 @@ test("MidiNumberFromNote", ()=>{
 function nn(note: string, octave: number) {
     return NewNote(note, octave)
 }
+
+test("NoteParse", ()=> {
+    notesBetween(lowestPianoNote, highestPianoNote).forEach((note)=>{
+        expect(parseNoteString(note.string())).toEqual(note)
+    })
+})

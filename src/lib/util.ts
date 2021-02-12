@@ -1,3 +1,5 @@
+import type { Readable } from "svelte/store"
+
 export function strip(number) { // fixing some floating point arithmetic problems
     const bigNum = 1000000
     return Math.round(number*bigNum)/bigNum
@@ -61,6 +63,7 @@ export function spotifyRedirectURI() {
     return 'https://realkeys.co/callback'
 }
 
+export const QWERTYCookie = "QWERTYCookie"
 export function getCookie(name, jar) {
     const value = `; ${jar}`;
     const parts = value.split(`; ${name}=`);
@@ -127,7 +130,7 @@ export const separator = "%2F" // this is an alternative to / that doesn't exist
 // TODO: use this everywhere the boilerplate is used to make sure we don't waste memory
 // TODO: make sure store has subscribe function
 // gets the value of a store and calls the unsubscriber to prevent memory leaks
-export function get(store) {
+export function get<T>(store: Readable<T>):T {
     let val
     store.subscribe((innerVal) => {
         val = innerVal
@@ -146,3 +149,28 @@ export function arraysEqual(a, b) {
     }
     return true;
   }
+
+export function OneTo100(num: number) {
+    if (num < 0) num = 0
+    if (num > 100) num = 100
+    return Math.floor(num)
+}
+
+const userIDCookie = "userID"
+export async function getUserID(cb: (userID: string)=>void) {
+    if (typeof document !== 'undefined' && document.cookie !== undefined) {
+        let userID = getCookie(userIDCookie, document.cookie)
+        if (userID) {
+            cb(userID)
+        } else {
+            let resp = await fetch("api/newUserID")
+            let json = await resp.json()
+            document.cookie = userIDCookie + "=" + json.userID
+            userID = getCookie(userIDCookie, document.cookie)
+            if (!userID) {
+                throw new Error("couldn't generate or store cookie")
+            }
+            cb(userID)
+        }
+    }
+}

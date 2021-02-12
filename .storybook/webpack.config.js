@@ -6,8 +6,8 @@ module.exports = ({ config, mode }) => {
         r => r.loader && r.loader.includes('svelte-loader'),
     );
     svelteLoader.options.preprocess = autoPreprocess({
-        less: { includePaths: ['src', 'node_modules'] },
-        css: { includePaths: ['src', 'node_modules'] },
+        less: { includePaths: ['src', 'static', 'node_modules'] },
+        css: { includePaths: ['src', 'static', 'node_modules'] },
         typescript: {
             tsconfigFile: './tsconfig.json',
             transpileOnly: true,

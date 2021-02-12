@@ -206,6 +206,10 @@ export class TimedNotes {
             return []
         }
 
+        if (this.notes[this.notes.length-1].start < start) {
+            return []
+        }
+
         // binary search to find the first note in the section
         // TODO: add `nextNoteWindow` method that remembers where we last looked so we don't have to do the binary search
         let startIndex = 0

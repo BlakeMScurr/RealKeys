@@ -47,6 +47,7 @@ export class SoundFont {
     }
 
     setVolume(volume: number) {
+        console.log("setting volume in soundfont instrument to", volume)
         this.volume = volume
     }
 
@@ -54,12 +55,14 @@ export class SoundFont {
         return this.instrumentName
     }
 
-    play(note: Note, duration?: number) {
+    play(note: Note, duration?: number, volume?: number) {
         if (this.loaded()) {
             if (this.highest().lowerThan(note) || note.lowerThan(this.lowest())) {
                 console.warn("trying to play", note.string(), "which is out of the instrument's range", this.lowest().string(), "-", this.highest().string())
             } else {
-                let opts = { gain: this.getVolume() }
+                let v = this.getVolume()
+                if (volume) v = volume * v
+                let opts = { gain: v }
                 if (duration != undefined) {
                     opts["duration"] = duration / 1000 // duration is in milliseconds, but soundfont accepts seconds
                 }

@@ -1,7 +1,7 @@
-import { writable } from 'svelte/store';
+import { Readable, writable } from 'svelte/store';
 import type { VirtualInstrument } from '../lib/track/instrument'
-import { NewNote } from '../lib/music/theory/notes';
-import { TimedNote, TimedNotes } from '../lib/music/timed/timed';
+import { TimedNotes } from '../lib/music/timed/timed';
+import type { Note } from '../lib/music/theory/notes';
 import { get } from '../lib/util'
 import { midiTrack } from "./track";
 
@@ -9,34 +9,28 @@ import { midiTrack } from "./track";
 // TODO: consider using a state machine, as it will have stricter guarantees about the possible states the game can be in
 export class GameMaster {
     private setPosition: any;
-    position: any;
-    seek: any;
-    currentSong: any;
-    repeats: any;
-    playingStore: any;
-    songDuration: any;
-    audioReady: any;
+    position: Readable<number>;
+    seek: seek;
+    play: play;
+    duration: duration;
     tracks: tracks;
-    speedStore: any;
+    speed: speed;
     waitMode: waitMode;
     constructor() {
         // TODO: make all of these classes so we have well defined types
         const { subscribe, set } = createPosition();
         this.setPosition = set
         this.position = { subscribe }
-        this.currentSong = createCurrentSong();
-        this.repeats = createRepeats();
-        this.playingStore = createPlay();
-        this.songDuration = createSongDuration();
-        this.audioReady = createAudioReady(); // TODO: is audioready even needed anymore now that we're fully on midi?
-        this.speedStore = createSpeed(this.playingStore);
-        this.seek = createSeek(this.setPosition, this.playingStore, this.position, this.songDuration, this.speedStore);
-        this.tracks = new tracks(this.playingStore);
-        this.waitMode = new waitMode(this.tracks, this.playingStore);
+        this.play = new play();
+        this.duration = new duration(set);
+        this.speed = new speed(this.play);
+        this.seek = new seek(this.setPosition, this.play, this.position, this.duration, this.speed);
+        this.tracks = new tracks(this.play);
+        this.waitMode = new waitMode(this.tracks, this.play);
 
         // Resolve cyclic store dependencies
         // TODO: simplify
-        this.playingStore.setStores(this.waitMode, this.audioReady, this.position, this.songDuration, this.speedStore, this.setPosition)
+        this.play.setStores(this.waitMode, this.position, this.duration, this.speed, this.setPosition)
         this.tracks.setWaitModeStore(this.waitMode)
     }
 }
@@ -44,6 +38,7 @@ export class GameMaster {
 // stores that don't depend on others
 
 // Position refers to how far through the audio we are
+// TODO: make this a proper type
 // TODO: replace position binding, prop passing, and event firing with this
 function createPosition() {
     const { subscribe, set } = writable(0);
@@ -51,8 +46,8 @@ function createPosition() {
     return {
         subscribe,
 		set: (val: number) => {
-            if (val < 0 || val > 1) {
-                throw new Error("positions must be between 0 and 1, got: " + val)
+            if (val > 1) {
+                throw new Error("positions must be below 1, got: " + val)
             } else {
                 set(val)
             }
@@ -60,152 +55,127 @@ function createPosition() {
     }
 }
 
-// TODO: only expose subscribe
-function createAudioReady() {
-    const { subscribe, set } = writable({reason: "Loading Audio", ready: false});
+class duration {
+    private internalSet;
+    subscribe;
 
-    return {
-        subscribe,
-        notReady: (reason: string) => {
-            set({reason: reason, ready: false})
-        },
-        ready: () => {
-            set({reason: "", ready: true})
-        }
+    constructor(setPosition) {
+        const { subscribe, set } = writable(100000);
+        this.subscribe = subscribe
+        this.internalSet = set
     }
-}
 
-function createRepeats() {
-    const { subscribe, set } = writable({start: 0, end: 1});
-    return {
-        subscribe,
-        set: (start: number, end: number) => {
-            if (start > end) {
-                throw new Error("start > end " + start + " > " + end)
-            }
-            else if (start < 0 || start > 1 || end < 0 || end > 1) {
-                throw new Error("repeats out of bounds, must be between 0 and 1. Start: " + start + ", End: " + end)
-            }
 
-            set({start: start, end: end})
-        }
-    }
-}
-
-function createCurrentSong() {
-    const { subscribe, set } = writable(new TimedNotes([new TimedNote(0, 1, NewNote("C#", 4))]));
-
-    return {
-        subscribe,
-        set: (notes: TimedNotes)=>{
-            set(notes)
-        }
-        // TODO: does this work instead?
-        // set,
-    }
-}
-
-function createSongDuration() {
-    const { subscribe, set } = writable(100000);
-
-    return {
-        subscribe,
-        set: (dur: Promise<number>|number) => {
-            if (dur instanceof Promise) {
-                dur.then((d) => {
-                    set(d)
-                })
-            } else {
-                set(dur)
-            }
+    set (dur: Promise<number>|number) {
+        if (dur instanceof Promise) {
+            dur.then((d) => {
+                this.internalSet(d)
+            })
+        } else {
+            this.internalSet(dur)
         }
     }
 }
 
 // stores that depend on others
 
-function createSeek(setPosition, playingStore, position, songDuration, speed) {
-    let slto;
-    const { subscribe, set } = writable(0);
+class seek {
+    private setPosition: any;
+    private playingStore: play;
+    private position: any;
+    private duration: duration;
+    private speed: speed;
 
-    return {
-        subscribe,
-        set: (val: number) => {
-            setPosition(val)
-            set(val)
-        },
-        setSlow: (val: number) => {
-           playingStore.play(true)
-           clearTimeout(slto)
-           slto = setTimeout(()=> {
-                playingStore.pause()
-                setPosition(val)
-                set(val)
-            }, (val - get(position)) * get(songDuration) * (1/get(speed)))
-        }
+    private internalSet;
+    subscribe;
+
+    slto: ReturnType<typeof setTimeout>;
+    constructor(setPosition, playingStore, position, duration, speed) {
+        this.setPosition = setPosition
+        this.playingStore = playingStore
+        this.position = position
+        this.duration = duration
+        this.speed = speed
+        this.slto = null
+
+        const { subscribe, set } = writable(0);
+        this.subscribe = subscribe
+        this.internalSet = set
     }
+
+    set(val: number) {
+        this.setPosition(val)
+        this.internalSet(val)
+    }
+
+    setSlow (val: number) {
+        this.playingStore.play()
+        clearTimeout(this.slto)
+        this.slto = setTimeout(()=> {
+            this.playingStore.pause()
+            this.setPosition(val)
+            this.set(val)
+         }, (val - get(<Readable<number>>this.position)) * get(<Readable<number>>this.duration) * (1/get(<Readable<number>>this.speed)))
+     }
 }
 
-function createPlay() {
-    // TODO: does this work in the function's scope too? That would be better and more encapsulated
-    let playInterval;
-    const frameRate = 40;
-    const frameLength = 1000 / frameRate // length of a frame in milliseconds
-    const { subscribe, set } = writable(false);
-    
-    // TODO: add types
-    let waitMode;
-    let audioReady;
-    let position;
-    let songDuration;
-    let speedStore;
-    let setPosition;
-    
-    return {
-        subscribe,
-        play: (inwait: boolean = false) => {
-            if (!inwait) {
-                waitMode.set(false)
-            }
+class play {
+    frameLength;
+    playInterval;
 
-            let alreadyPlaying;
-            subscribe((val) => {
-                alreadyPlaying = val
-            })
+    private waitMode;
+    private position;
+    private duration;
+    private speedStore;
+    private setPosition;
+    private set;
+    subscribe;
 
-            if (get(audioReady).ready && !alreadyPlaying) {
-                set(true)
-                let timeAtPlayStart = Date.now()
-                
-                playInterval = setInterval(()=>{
-                    let timeNow = Date.now()
-                    let newPosition = get(position) + ((timeNow - timeAtPlayStart)/get(songDuration)) * get(speedStore)
-                    if (newPosition < 1) {
-                        setPosition(newPosition)
-                        timeAtPlayStart = timeNow // have to update this as pos will vary as it's set
-                    } else {
-                        // Pause at the end
-                        set(false)
-                        clearInterval(playInterval)
-                        setPosition(1)
-                    }
-                }, frameLength)
-            }
-        },
-        pause: () => {
-            set(false)
-            clearInterval(playInterval)
-        },
-        // This enables cyclic store dependencies
-        // TODO: eliminate this hack
-        setStores: (waitModeArg, audioReadyArg, positionArg, songDurationArg, speedStoreArg, setPositionArg) => {
-            waitMode = waitModeArg
-            audioReady = audioReadyArg
-            position = positionArg
-            songDuration = songDurationArg
-            speedStore = speedStoreArg
-            setPosition = setPositionArg
+    constructor() {
+        this.frameLength = 1000 / 40 // length of a frame in milliseconds
+        const { subscribe, set } = writable(false);
+        this.subscribe = subscribe
+        this.set = set
+    }
+
+    play() {
+        let alreadyPlaying;
+        this.subscribe((val) => {
+            alreadyPlaying = val
+        })
+
+        if (!alreadyPlaying) {
+            this.set(true)
+            let timeAtPlayStart = Date.now()
+            
+            this.playInterval = setInterval(()=>{
+                let timeNow = Date.now()
+                let newPosition = get(<Readable<number>>this.position) + ((timeNow - timeAtPlayStart)/get(<Readable<number>>this.duration)) * get(<Readable<number>>this.speedStore)
+                if (newPosition < 1) {
+                    this.setPosition(newPosition)
+                    timeAtPlayStart = timeNow // have to update this as pos will vary as it's set
+                } else {
+                    // Pause at the end
+                    this.set(false)
+                    clearInterval(this.playInterval)
+                    this.setPosition(1)
+                }
+            }, this.frameLength)
         }
+    }
+    pause() {
+        this.set(false)
+        clearInterval(this.playInterval)
+    }
+
+    // This enables cyclic store dependencies
+    // TODO: eliminate this hack
+    setStores (waitModeArg, positionArg, durationArg, speedStoreArg, setPositionArg) {
+        this.waitMode = waitModeArg
+        this.position = positionArg
+        this.duration = durationArg
+        this.speedStore = speedStoreArg
+        this.setPosition = setPositionArg
     }
 }
 
@@ -248,11 +218,11 @@ class waitMode {
 }
 
 class tracks {
-    playingStore
+    playingStore: play;
     subscribe
     private update
     // TODO: add type
-    waitMode: any;
+    waitMode: waitMode;
     constructor(playingStore) {
         this.playingStore = playingStore
         const { subscribe, update } = writable(new Map<string, midiTrack>());
@@ -334,15 +304,24 @@ class tracks {
         return noteMap
     }
 
-    subscribeToNotesOfTracks(tracks: string[], onStateChange: (notes: Map<string, string>) => void) {
+    subscribeToNotesOfTracks(tracks: string[], onStateChange: (notes: Map<Note, string>) => void) {
         let unsubscribers = []
+        let sq = new squasher()
         tracks.forEach(track => {
             this.subscribe((currentPlayers: Map<string, midiTrack>) => {
                 if (!currentPlayers.has(track)) {
-                    throw new Error(`player has no track ${track}`)
+                    throw new Error(`player has no track ${track}, has ${Array.from(currentPlayers.keys())}`)
+                }
+                
+                // This thing here squashes the notes of the various tracks together
+                let subber = (channel: string) => {
+                    return (notes: Map<Note, string>) => {
+                        sq.updateState(channel, notes)
+                        onStateChange(sq.state())
+                    }
                 }
 
-                unsubscribers.push(currentPlayers.get(track).interface().subscribeToNotes(onStateChange))
+                unsubscribers.push(currentPlayers.get(track).interface().subscribeToNotes(subber(track)))
             })()
         })
 
@@ -354,18 +333,46 @@ class tracks {
     }
 }
 
-function createSpeed(playingStore) {
-    const { subscribe, set } = writable(0);
+// squasher is specifically for combining note states of multiple MIDI channels
+export class squasher {
+    states: Map<string, Map<Note, string>>;
+    constructor() {
+        this.states = new Map<string, Map<Note, string>>();
+    }
 
-    return {
-        subscribe,
-		set: (val: number) => {
-            playingStore.pause()
-            if (val < 0 || val > 1) {
-                throw new Error("speeds must be between 0 and 1, got: " + val)
-            } else {
-                set(val)
-            }
-        },
+    state():Map<Note, string> {
+        let s = new Map<Note, string>();
+        // TODO: implement state precedence, i.e., if one channel says a note is soft, and another says it's strict, make it strict
+        this.states.forEach((stateChannel) => {
+            stateChannel.forEach((value, note) => {
+                s.set(note, value)
+            })
+        })
+        return s
+    }
+
+    updateState(channel: string, state: Map<Note, string>) {
+        this.states.set(channel, state)
+    }
+}
+class speed {
+    private playingStore;
+    private internalSet;
+    subscribe;
+
+    constructor(playingStore) {
+        const { subscribe, set } = writable(1);
+        this.subscribe = subscribe
+        this.internalSet = set
+        this.playingStore = playingStore
+    }
+
+    set(val: number) {
+        this.playingStore.pause()
+        if (val <= 0 || val > 1) {
+            throw new Error("speeds must be between 0 and 1, got: " + val)
+        } else {
+            this.internalSet(val)
+        }
     }
 }

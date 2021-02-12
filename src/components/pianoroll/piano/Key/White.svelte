@@ -1,5 +1,4 @@
 <script lang="ts">
-    import type { log } from "console";
     import { createEventDispatcher } from "svelte"
     import type { Note } from "../../../../lib/music/theory/notes";
     import { colour } from "./helper"
@@ -41,7 +40,7 @@
     }
 
     .used {
-        border-color: #667ED4;
+        border-color: #38A3FA;
         border-width: 3px;
         width:  calc(100% - 6px);
         height:  calc(100% - 6px);
