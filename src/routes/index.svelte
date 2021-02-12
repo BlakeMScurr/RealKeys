@@ -1,8 +1,27 @@
 <script lang="ts">
+    import { goto } from "@sapper/app";
+    import { onMount } from "svelte";
     import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
     import { getLessons } from "../lib/lesson/data"
-import { get } from "../lib/util";
+    import { get, getCookie, QWERTYCookie } from "../lib/util";
+
+    function handleClick(name: string) {
+        return () => {
+            goto("lesson?lesson=" + name)
+        }
+    }
+
+    // Detects a touch event from the home page and disables the letters on the keyboard
+    onMount(()=>{
+
+        if (getCookie(QWERTYCookie, document.cookie) === undefined) {
+            document.cookie = QWERTYCookie + "=" + true
+            document.addEventListener("touchstart", ()=> {
+                document.cookie = QWERTYCookie + "=" + false
+            })
+        }
+    })
 
 </script>
 
@@ -25,7 +44,7 @@ import { get } from "../lib/util";
     .lessonholder {
         padding: 0px 30px 30px 30px;
 
-        display: flex;
+        display: flex; // TODO: display: grid;
         justify-content: space-around;
         flex-wrap: wrap;
         // max-width: 
@@ -53,7 +72,7 @@ import { get } from "../lib/util";
     }
 </style>
 
-<h2>Lessons</h2>
+<h2>Learn Piano without Sheet Music</h2>
 
 <div class="lessonholder">
     {#each get(getLessons()).lessons as lesson, i}
@@ -61,12 +80,14 @@ import { get } from "../lib/util";
             <div class="description">
                 <h4>{lesson.name}</h4>
                 <p class={lesson.level}>{lesson.level}</p>
+                <!-- TODO: show how far through a lesson you are -->
             </div>
             <div class="button">
                 {#if i === 0}
-                <ReccomendedButton text="Learn"></ReccomendedButton>
+                    <!-- TODO: reccomend the next one you haven't tried yet -->
+                    <ReccomendedButton text="Learn" on:click={handleClick(lesson.name)}></ReccomendedButton>
                 {:else}
-                <OptionButton text="Learn"></OptionButton>
+                    <OptionButton text="Learn" on:click={handleClick(lesson.name)}></OptionButton>
                 {/if}
             </div>
         </div>

@@ -1,16 +1,24 @@
 <script lang="ts">
-    import { stores } from "@sapper/app";
+    import { goto, stores } from "@sapper/app";
     import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
     import ScoreBar from "../components/Generic/ScoreBar.svelte";
-    import { handDesc, makeHand, makeSpeed, taskSpec, urlToTask } from "../lib/lesson/lesson";
+    import type { lessonSet } from "../lib/lesson/data";
+    import { handDesc, taskSpec, urlToTask } from "../lib/lesson/lesson";
+    import { levels, nextLevel, replay } from "../lib/lesson/navigate";
+    import { get } from "../lib/util";
 
-    const { page } = stores();
+    const { page, session } = stores();
     const query = $page.query;
-    let task = urlToTask(query)
+    let task: taskSpec = urlToTask(query)
+
+    // TODO: make sure this is valid regardless of how one gets to this page. Currently refresh kills the session and makes the next leve button unusable
+    let lessons = get(session)
 
     const heading = task.score === 100 ? "Congratulations!" : "Almost there!"
     const paragraph = task.score === 100 ? `You learned ${handDesc(task.hand)} of bars ${task.startBar}-${task.endBar}` : undefined
+
+
 </script>
 
 <style lang="scss">
@@ -43,7 +51,12 @@
         <ScoreBar value={task.score} showValue={true} size={"medium"}></ScoreBar>
     </div>
     <div>
-        <OptionButton text="Select Level"></OptionButton>
-        <ReccomendedButton text="Next Level"></ReccomendedButton>
+        {#if task.score < 100}
+            <OptionButton text="Select Level" on:click={()=>{goto(levels(task), {replaceState: true})}}></OptionButton>
+            <ReccomendedButton text="Retry" on:click={()=>{goto(replay(task), {replaceState: true})}}></ReccomendedButton>
+        {:else}
+            <OptionButton text="Select Level" on:click={()=>{goto(levels(task), {replaceState: true})}}></OptionButton>
+            <ReccomendedButton text="Next Level" on:click={()=>{goto(nextLevel(task, lessons), {replaceState: true})}}></ReccomendedButton>
+        {/if}
     </div>
 </div>

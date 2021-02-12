@@ -6,12 +6,13 @@
     import type { InputEventNoteon, InputEventNoteoff } from "webmidi";
     import WebMidi from "webmidi";
     import Key from "./Key/Key.svelte";
-    import { addGlobalKeyListener } from "../../../lib/util";
+    import { addGlobalKeyListener, getCookie, QWERTYCookie } from "../../../lib/util";
     import type { SoundFont } from "../../../lib/track/soundfont";
     import { state } from "../../../lib/lesson/score";
 
     export let keys:Array<Note>;
-    export let usedNotes:Map<String, boolean> = new Map();
+    // TODO: used Map<Note, boolean>
+    export let usedNotes:Map<string, boolean> = new Map();
     export let lessonNotes: Map<Note, string>;
     export let sandbox: boolean = false; // sandbox pianos are just for playing, and aren't used to test one on a task
     export let instrument: SoundFont;
@@ -20,9 +21,8 @@
 
     let midiConnected = false
     let mobile = false // TODO: figure out how to know this before we get any events
-    usedNotes = new Map(); // TODO: use this when a setting enables it
     let un = new Map();
-    $: labelsOn = !midiConnected && !mobile && false // TODO: use this when a setting enables it
+    let labelsOn = false
     $: labels = labelsOn ? label(new Line(keys)) : new Map();
 
     // If a new note arrives, and the current depression of its key was due to a previous note, then the note should be invalid
@@ -117,6 +117,8 @@
         });
     }
     onMount(() => {
+        labelsOn = getCookie(QWERTYCookie, document.cookie) === "true"
+
         enableWebMidi()
 
         addGlobalKeyListener(true, (event) => {

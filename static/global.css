@@ -28,7 +28,7 @@ h3 {
   font-size: 18px;
 }
 
-h4 {
+h4, label {
   font-size: 14px;
 }
 
@@ -51,4 +51,10 @@ a {
   text-decoration: inherit;
   color: inherit;
   cursor: auto;
+}
+
+a:hover {
+  color: white;
+  background-color: black;
+  cursor: pointer;
 }

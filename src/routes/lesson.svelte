@@ -3,28 +3,36 @@
     import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
     import ScoreBar from "../components/Generic/ScoreBar.svelte";
-    import { getLessons } from "../lib/lesson/data"
+    import { getLessons, lessonSet } from "../lib/lesson/data"
     import { stores } from "@sapper/app";
     import { hand, longNameSpeed, speed, taskSpec, urlToTask } from "../lib/lesson/lesson";
     import { state } from "../lib/lesson/lesson"
     import { goto } from '@sapper/app'
-    import { get } from "../lib/util";
 
     const { page } = stores();
     const query = $page.query;
-    let task: taskSpec = urlToTask(query)
 
     function gotoGame(s: speed, h: hand, start: number, end: number) {
         return () => {
-            let t = new taskSpec(0, start, end, h, s, task.lesson)
+            let t = new taskSpec(0, start, end, h, s, query.lesson)
             goto("game?" + t.queryString())
         }
     }
 
-    let lessons;
+    let lessons: lessonSet;
     getLessons().subscribe((l) => {
         lessons = l
     })
+
+    let lesson = lessons.lessons[0]
+    // TODO: constant time lookup
+    $: {
+        lessons.lessons.forEach(l => {
+            if (l.name === query.lesson) {
+                lesson = l
+            } 
+        });
+    }
 
 </script>
 
@@ -40,7 +48,7 @@
     }
 
     .task {
-        display: flex;
+        display: flex; // TODO: display: grid;
         justify-content: space-between;
         margin-bottom: 7px;
         padding-left: 15px;
@@ -69,9 +77,9 @@
 </style>
 
 <div class="layout">
-    <h2>{lessons.lessons[0].name}</h2>
+    <h2>{lesson.name}</h2>
     
-    {#each lessons.lessons[0].sections as section}
+    {#each lesson.sections as section}
         <div class="section">
             <div class="description">
                 <h3>Bars {section.startBar}-{section.endBar}</h3>

@@ -63,6 +63,7 @@ export function spotifyRedirectURI() {
     return 'https://realkeys.co/callback'
 }
 
+export const QWERTYCookie = "QWERTYCookie"
 export function getCookie(name, jar) {
     const value = `; ${jar}`;
     const parts = value.split(`; ${name}=`);

@@ -11,6 +11,11 @@
 <style lang="scss">
 </style>
 
+<!-- TODO: set title in each page -->
+<svelte:head> 
+	<title>RealKeys</title>
+</svelte:head>
+
 <Nav></Nav>
 <slot></slot>
 

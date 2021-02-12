@@ -18,16 +18,24 @@
         h1 {
             padding-left: $little-pad;
             margin: 0;
+            width: 0%;
         }
         
-        h4 {
+        .right {
             padding-right: $little-pad;
             margin: 0;
+            width: auto;
+            h4 {
+                padding-left: $little-pad;
+            }
         }
     }
 </style>
 
 <div>
     <h1><a href="/">RealKeys</a></h1>
-    <h4><a href="/">Home</a></h4>
+    <div class="right">
+        <h4><a href="/">Home</a></h4>
+        <h4><a href="/settings">Settings</a></h4>
+    </div>
 </div>

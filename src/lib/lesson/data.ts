@@ -17,7 +17,8 @@ export interface LessonSet {
 // - Lesson progress should be serialisable to prevent the need to reparse on the client
 // - Constructors should be simple and contain no real logic, to aid in serialisability
 // - Lesson progress should be decouple from the set of available lessons, such that lesson progress should be empty if nothing has been done, and only a little data is added as progress is made
-class lessonSet {
+// - Finding a lesson in a lesson set should be trivial and require no iteration, likewise for a fully defined task. See navigate.ts.nextLeve() for the current problem, likewise the iteration in lesson.svelte
+export class lessonSet {
     lessons: Array<lesson>;
     constructor(lessons: Array<lesson>) {
         this.lessons = lessons
@@ -48,12 +49,8 @@ class lessonSet {
 
 export function defaultLessons():lessonSet {
     return new lessonSet([
-        new lesson(difficulty.Beginner, "Mary Had a Little Lamb", [[1, 3, 5, 7, 9], [1, 5, 9], [1, 9]]),
-        new lesson(difficulty.Beginner, "Twinkle Twinkle Little star", [[1, 3, 5, 7, 9, 11, 13]]),
-        new lesson(difficulty.Beginner, "Silent Night", [[1,5,9,13,17,21,25]]),
-        new lesson(difficulty.Beginner, "Test", [[1]]),
-        new lesson(difficulty.Intermediate, "Fur Elise", [Array(8).fill(0).map((_, index) => index * 4 + 1)]),
-        new lesson(difficulty.Intermediate, "Piano Man", [Array(8).fill(0).map((_, index) => index * 4 + 1)]),
+        new lesson(difficulty.Beginner, "Mary Had a Little Lamb", [[1, 5, 9], [1, 9]]),
+        new lesson(difficulty.Intermediate, "Silent Night", [[1, 9, 17, 24], [1, 24]]),
     ])
 }
 

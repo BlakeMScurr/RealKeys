@@ -24,7 +24,7 @@
     import { goto } from '@sapper/app'
     import { range } from "../components/pianoroll/pianoRollHelpers";
 
-    const { page } = stores();
+    const { page, session } = stores();
     const query = $page.query;
     let task: taskSpec = urlToTask(query)
 
@@ -32,6 +32,7 @@
         throw new Error(`No lesson called ${task.lesson}`)
     }
 
+    // TODO: there's so much state here it's disgusting, we neeeeed to tidy this up!!!
     // required as trying to creating instruments requires window.AudioContext, and errors in preprocessing on the server
     let piano
     let loading = true
@@ -85,10 +86,12 @@
             gm.duration.set(duration)
             gm.position.subscribe((pos)=>{
                 position = pos
-                if (pos >= 1) {
+                if (pos >= 1) { // TODO: wait until the last note of the track is done instead
                     task.score = OneTo100(scorer.validRatio() * 100)
                     progress.recordScore(task)
                     saveLessonProgress(userID, progress)
+                    // TODO: have session be more consistent, such that it always has the right lessons etc
+                    session.set(progress) // lessons is set here so that we have the right value of lessons immediately in score, so that we can calculate the correct next lesson etc
                     goto("score?" + task.queryString())
                 }
             })
@@ -202,17 +205,30 @@
     }
 
     // TODO: get rid of this, it's gross
-    function rellietracks() {
+    // TODO: make sure that we make the left hand coloured red when we're learning the left hand
+    function rellietracks():Map<string, TimedNotes> {
         return new Map<string, TimedNotes>(relevantTrack(tracks, task).map((track) => { return [track, tracks.get(track)] as [string, TimedNotes]}))
     }
 
-    function getNotes(tracks: Map<string, TimedNotes>, resizeTrigger):Note[] {
+    function getUsedNotes():Map<string, boolean> {
+        let notes = new Map<string, boolean>();
+        rellietracks().forEach((tn) => {
+            tn.untime().forEach(n => {
+                notes.set(n.string(), true)
+            });
+        });
+        console.log("used notes", notes)
+        return notes
+    }
+
+    function getKeys(tracks: Map<string, TimedNotes>, resizeTrigger):Note[] {
         let untimed = new Array<Note>();
         tracks.forEach((track) => {
             untimed.push(...track.untime())
         })
         return range(untimed, highestPianoNote, lowestPianoNote, screenWidth, keyHeight)
     }
+
 </script>
 
 <style lang="scss">
@@ -250,7 +266,7 @@
             </div>
         {:else}
             <div in:fade>
-                <Game keys={ getNotes(tracks, resizeTrigger) } {task} tracks={ rellietracks() } {colourer} {duration} {position} {scorer}></Game>
+                <Game keys={ getKeys(tracks, resizeTrigger) } {task} tracks={ rellietracks() } {colourer} {duration} {position} {scorer}></Game>
             </div>
         {/if}
     </div>
@@ -258,7 +274,7 @@
     <div class="piano">
         {#if tracks.size > 0}
             <div in:fade>
-                <Piano keys={ getNotes(tracks, resizeTrigger) } {sandbox} instrument={piano} {lessonNotes} {position} {scorer} on:playingNotes={handlePlayingNotes}></Piano>
+                <Piano keys={ getKeys(tracks, resizeTrigger) } {sandbox} instrument={piano} {lessonNotes} {position} {scorer} on:playingNotes={handlePlayingNotes} usedNotes={getUsedNotes()}></Piano>
             </div>
         {/if}
         {#if loading}

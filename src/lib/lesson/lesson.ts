@@ -155,7 +155,7 @@ export class section { // TODO: unexport asap
     }
 
     done() {
-        return this.hands[2].speeds[3].progress === 100
+        return this.hands[2].speeds[2].progress === 100
     }
 }
 
@@ -238,7 +238,7 @@ export function handDesc(h: hand) {
 function allSpeeds(locked: boolean):Array<task> {
     return [
         new task(speed.OwnPace, 0, locked ? state.locked : state.reccomended),
-        new task(speed.Fifty, 0, state.locked),
+        // new task(speed.Fifty, 0, state.locked), // TODO: find out if others agree that this is too slow, I find it way too easy, but I suppose I'm not my target market!
         new task(speed.SeventyFive, 0, state.locked),
         new task(speed.OneHundred, 0, state.locked),
     ]

@@ -15,7 +15,9 @@ app.use(express.json())
 app.use(
 	compression({ threshold: 0 }),
 	sirv('static', { dev }),
-	sapper.middleware()
+	sapper.middleware({
+		session: (req, res) => ({})
+	})
 )
 .listen(PORT, err => {
 	if (err) console.log('error', err);

@@ -4,8 +4,6 @@ import { defaultLessons } from "../../lib/lesson/data"
 var prep = require('pg-prepared')
 
 export function get(request, response) {
-    console.log("calling endpoint to make new user id")
-
     const pool = NewPool()
     let params = { progress: JSON.stringify(defaultLessons()) }
     let insertion = prep('INSERT INTO users(progress) VALUES (${progress}) RETURNING id;')
