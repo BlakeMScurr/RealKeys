@@ -56,13 +56,6 @@ export const OptSelectLevel = () => ({
     }
 });
 
-export const CTA = () => ({
-    Component: CTAButton,
-    props: {
-        text: "Get Started",
-    }
-});
-
 export const Lock = () => ({
     Component: LockButton,
     props: {
