@@ -13,7 +13,7 @@
     export let keys:Array<Note>;
     // TODO: used Map<Note, boolean>
     export let usedNotes:Map<string, boolean> = new Map();
-    export let lessonNotes: Map<Note, string>;
+    export let lessonNotes: Map<Note, string> = new Map();
     export let sandbox: boolean = false; // sandbox pianos are just for playing, and aren't used to test one on a task
     export let instrument: SoundFont;
     export let position;
