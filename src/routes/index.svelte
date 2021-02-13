@@ -4,7 +4,7 @@
     import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
     import { getLessons } from "../lib/lesson/data"
-    import { get, getCookie, QWERTYCookie } from "../lib/util";
+    import { get, getCookie, handleErrors, QWERTYCookie } from "../lib/util";
 
     function handleClick(name: string) {
         return () => {
@@ -14,6 +14,7 @@
 
     // Detects a touch event from the home page and disables the letters on the keyboard
     onMount(()=>{
+        handleErrors(window)
 
         if (getCookie(QWERTYCookie, document.cookie) === undefined) {
             document.cookie = QWERTYCookie + "=" + true

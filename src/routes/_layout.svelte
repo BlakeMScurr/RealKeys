@@ -2,8 +2,10 @@
     import { addFetchListener } from "../lib/thirdPartyCaching"
     import { onMount } from 'svelte';
     import Nav from "../components/Generic/Nav.svelte";
+    import { handleErrors } from "../lib/util";
 
     onMount(()=>{
+        handleErrors(window)
         addFetchListener()
     })
 </script>

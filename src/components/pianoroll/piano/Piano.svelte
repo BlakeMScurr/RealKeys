@@ -6,7 +6,7 @@
     import type { InputEventNoteon, InputEventNoteoff } from "webmidi";
     import WebMidi from "webmidi";
     import Key from "./Key/Key.svelte";
-    import { addGlobalKeyListener, getCookie, QWERTYCookie } from "../../../lib/util";
+    import { addGlobalKeyListener, getCookie, handleErrors, QWERTYCookie } from "../../../lib/util";
     import type { SoundFont } from "../../../lib/track/soundfont";
     import { state } from "../../../lib/lesson/score";
 
@@ -117,6 +117,8 @@
         });
     }
     onMount(() => {
+        handleErrors(window)
+
         labelsOn = getCookie(QWERTYCookie, document.cookie) === "true"
 
         enableWebMidi()

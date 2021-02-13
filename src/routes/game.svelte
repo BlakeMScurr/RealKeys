@@ -20,7 +20,7 @@
     import { handleNotes, nextWaitModeNote } from "../stores/waitMode";
     import { writable } from "svelte/store";
     import type { Readable } from "svelte/types/runtime/store"; // TODO: import this from "svelte/store", which works in .ts files not .svelte files
-    import { get, getUserID, OneTo100 } from "../lib/util";
+    import { get, getUserID, handleErrors, OneTo100 } from "../lib/util";
     import { goto } from '@sapper/app'
     import { range } from "../components/pianoroll/pianoRollHelpers";
 
@@ -71,6 +71,8 @@
     let lessonNotes: Map<Note, string>;
 
     onMount(() => {
+        handleErrors(window)
+
         piano = newPiano("User Piano", ()=>{loading = false})
         window.onresize = () => {
             resizeTrigger++
@@ -217,7 +219,6 @@
                 notes.set(n.string(), true)
             });
         });
-        console.log("used notes", notes)
         return notes
     }
 
@@ -228,7 +229,6 @@
         })
         return range(untimed, highestPianoNote, lowestPianoNote, screenWidth, keyHeight)
     }
-
 </script>
 
 <style lang="scss">
