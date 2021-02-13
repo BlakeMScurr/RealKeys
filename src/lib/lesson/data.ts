@@ -55,7 +55,7 @@ export function defaultLessons():lessonSet {
         new lesson(difficulty.Advanced, "Clair de Lune", [[1, 73]]),
         new lesson(difficulty.Advanced, "Prelude No. 1 BWV 846 in C Major", [[1, 35]]),
         new lesson(difficulty.Advanced, "Moonlight Sonata 1st Movement", [[1, 69]]),
-        new lesson(difficulty.Advanced, "Für Elise", [[1, 127]]),
+        new lesson(difficulty.Advanced, "Fur Elise", [[1, 127]]),
     ])
 }
 
