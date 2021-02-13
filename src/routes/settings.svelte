@@ -1,12 +1,14 @@
 <script lang="ts">
     import { onMount } from "svelte";
-    import { getCookie, QWERTYCookie } from "../lib/util";
+    import { getCookie, handleErrors, QWERTYCookie } from "../lib/util";
 
     // TODO: this seems like a lot of work just to set a checkbox
     let setQWERTYCookie = (on: boolean) => {};
     let showQWERTY;
 
     onMount(() => {
+        handleErrors(window)
+
         setQWERTYCookie = (on: boolean) => {
             document.cookie = QWERTYCookie + "=" + on
         }

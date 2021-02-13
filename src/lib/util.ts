@@ -174,3 +174,27 @@ export async function getUserID(cb: (userID: string)=>void) {
         }
     }
 }
+
+// This should be called in every onmount function
+export function handleErrors(window: Window & typeof globalThis) {
+
+    window.onerror = (e: PromiseRejectionEvent) => {
+        postError(e)
+    }
+
+    window.onunhandledrejection = (e: PromiseRejectionEvent) => {
+        console.log(typeof e)
+        postError(e)
+    }
+}
+
+function postError(e: PromiseRejectionEvent) {
+    console.log(e)
+    fetch("api/reportError", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({message: e.reason.message})
+    })
+}

@@ -22,6 +22,8 @@ All svelte components should be written in typescript.
 
 Svelte components should not contain much logic. They should only include svelte specific things like event dispatchers, accepting props, and calling external functions. Any further logic should be put in .ts files and be carefully tested.
 
+The handleErrors function should be called in every onmount function.
+
 ## TS
 
 All variables should be typed.

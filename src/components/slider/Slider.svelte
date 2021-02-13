@@ -1,5 +1,6 @@
 <script lang="ts">
     import { createEventDispatcher, onMount } from "svelte";
+import { handleErrors } from "../../lib/util";
 
     export let min: number = 0;
     export let max: number = 1;
@@ -21,6 +22,8 @@
     
     let mounted;
     onMount(()=>{
+        handleErrors(window)
+
         setbackground()
         mounted = true
         // Prevent the screen from being dragged around when we're moving a slider
