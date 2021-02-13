@@ -4,6 +4,7 @@
     import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
     import { getLessons } from "../lib/lesson/data"
+import { difficulty, lesson } from "../lib/lesson/lesson";
     import { get, getCookie, handleErrors, QWERTYCookie } from "../lib/util";
 
     function handleClick(name: string) {
@@ -40,6 +41,9 @@
     }
     .Intermediate {
         background-color: #ffaa0040;
+    }
+    .Advanced {
+        background-color: #eb423640;
     }
 
     .lessonholder {
@@ -80,7 +84,7 @@
         <div class="lesson">
             <div class="description">
                 <h4>{lesson.name}</h4>
-                <p class={lesson.level}>{lesson.level}</p>
+                <p class={lesson.level}>{(lesson.level !== difficulty.Advanced) ? lesson.level : " MIDI Keyboard required"}</p>
                 <!-- TODO: show how far through a lesson you are -->
             </div>
             <div class="button">
