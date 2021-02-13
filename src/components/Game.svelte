@@ -29,6 +29,7 @@
 
 <style lang="scss">
     .parent {
+        position: relative;
         height: 100%;
         display: flex;
         flex-direction: column;
@@ -41,7 +42,7 @@
             flex-grow: 0;
             position: absolute;
             width: 100%;
-            height: 3%;
+            height: 5%;
 
             div {
                 height: 100%;

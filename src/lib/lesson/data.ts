@@ -51,6 +51,11 @@ export function defaultLessons():lessonSet {
     return new lessonSet([
         new lesson(difficulty.Beginner, "Mary Had A Little Lamb", [[1, 5, 9], [1, 9]]),
         new lesson(difficulty.Intermediate, "Silent Night", [[1, 9, 17, 24], [1, 24]]),
+
+        new lesson(difficulty.Advanced, "Clair de Lune", [[1, 73]]),
+        new lesson(difficulty.Advanced, "Prelude No. 1 BWV 846 in C Major", [[1, 35]]),
+        new lesson(difficulty.Advanced, "Moonlight Sonata 1st Movement", [[1, 69]]),
+        new lesson(difficulty.Advanced, "Für Elise", [[1, 127]]),
     ])
 }
 
