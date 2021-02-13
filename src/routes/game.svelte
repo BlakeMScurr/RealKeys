@@ -71,6 +71,8 @@
     let lessonNotes: Map<Note, string>;
 
     onMount(() => {
+        window.AudioContext = window.AudioContext || window["webkitAudioContext"] // TODO: move to some polyfill location which is guaranteed to be called before application code.
+
         handleErrors(window)
 
         piano = newPiano("User Piano", ()=>{loading = false})
