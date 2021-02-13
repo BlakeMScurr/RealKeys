@@ -1,4 +1,6 @@
 <script lang="ts">
+import { onMount } from "svelte";
+
     import type { Note } from "../../../lib/music/theory/notes";
     import type { TimedNotes } from "../../../lib/music/timed/timed";
     import type { Colourer } from "../../colours";
@@ -12,8 +14,29 @@
     export let colourer: Colourer;
     export let tracks:  Map<string, TimedNotes>;
 
+    export let heightElement;
+
     // show 5 seconds
     zoomWidth = 5000/duration
+
+    // TODO: FUCKING GET RID OF THIS PIECE OF SHIT PILE OF TRASH
+    // bs hackery to get the height working on iPhone, the height of grandaddy, despite being 100%, is 0px, while the parent (also relatively positioned) has a non zero pixel height
+    let gd;
+    let mounted
+
+    onMount(() => {
+        mounted = true
+    })
+
+    let hacked = false
+    $: {
+        if (!hacked && heightElement && gd && heightElement.clientHeight) {
+            if (heightElement.clientHeight != gd.clientHeight) {
+                gd.style.height = heightElement.clientHeight + "px"
+            }
+        }
+    }
+
 </script>
 
 <style lang="scss">
@@ -61,7 +84,7 @@
     }
 </style>
 
-<div class="grandaddy">
+<div class="grandaddy" bind:this={gd}>
     <RollBackground {keys}></RollBackground>
     <div class="fader"></div>
     <div class="noteholder" style="--top: {position*100/zoomWidth}%">
