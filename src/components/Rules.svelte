@@ -23,43 +23,56 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: space-between;
         height: 100%;
 
-        .taskDesc {
+        .descParent {
             display: flex;
-
-            p {
-                margin: 0 15px 0 15px;
+            flex-direction: column;
+            align-items: center;
+            .taskDesc {
+                display: flex;
+    
+                p {
+                    margin: 0 15px 0 15px;
+                }
             }
         }
 
         div {
-            height: 100%;
             flex-grow: 0;
         }
         
 
         .textCenterer {
             display: flex;
+            flex-direction: column;
+            align-items: center;
             h3 {
                 align-self: center;
                 text-align: center;
                 padding: 0 30px 0 30px;
             }
+            .button {
+                padding: 0 0 15px 0;
+            }
         }
 
-        .button {
-            padding: 0 0 15px 0;
-        }
+    }
+
+    .teller {
+        position: fixed;
     }
 </style>
 
 <div class="centerer">
-    <h2>{task.lesson}</h2>
-    <div class="taskDesc">
-        <p>Bars {task.startBar}-{task.endBar}</p>
-        <p>{task.hand}</p>
-        <p>{task.speed}</p>
+    <div class="descParent">
+        <h2>{task.lesson}</h2>
+        <div class="taskDesc">
+            <p>Bars {task.startBar}-{task.endBar}</p>
+            <p>{task.hand}</p>
+            <p>{task.speed}</p>
+        </div>
     </div>
     <div class="textCenterer">
         {#if task.speed === speed.OwnPace}
@@ -67,12 +80,13 @@
         {:else}
             <h3>As the notes reach the keys, play the keys</h3>
         {/if}
+        <div class="button" on:click={handleNext}>
+            {#if nextable}
+                <div in:fade>   
+                    <ReccomendedButton text="Start" ></ReccomendedButton>
+                </div>
+            {/if}
+        </div>
     </div>
-    <div class="button" on:click={handleNext}>
-        {#if nextable}
-            <div in:fade>   
-                <ReccomendedButton text="Start" ></ReccomendedButton>
-            </div>
-        {/if}
-    </div>
+    <div></div> <!-- ghost :) -->
 </div>

@@ -25,6 +25,8 @@
     scorer.subscribe((s)=>{
         score = s
     })
+
+    let roll;
 </script>
 
 <style lang="scss">
@@ -53,9 +55,10 @@
 
         .roll {
             flex-grow: 1;
+            position: relative;
         }
-
     }
+
 </style>
 
 <!-- TODO: consider adding a loading icon here, if the midi doesn't load fully on the rules screen -->
@@ -65,7 +68,7 @@
             <ScoreBar size={"flex"} showValue={false} value={ score*100 }></ScoreBar>
         </div>
     </div>
-    <div class="roll">
-        <DOMRoll {keys} {tracks} {colourer} {duration} {position}></DOMRoll>
+    <div class="roll" bind:this={roll}>
+        <DOMRoll {keys} {tracks} {colourer} {duration} {position} heightElement={roll}></DOMRoll>
     </div>
 </div>

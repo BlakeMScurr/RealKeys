@@ -72,6 +72,7 @@
 
     onMount(() => {
         handleErrors(window)
+        // TODO: unlock iOS audio as per https://gist.github.com/laziel/7aefabe99ee57b16081c
         window.AudioContext = window.AudioContext || window["webkitAudioContext"] // TODO: move to some polyfill location which is guaranteed to be called before application code.
 
 
