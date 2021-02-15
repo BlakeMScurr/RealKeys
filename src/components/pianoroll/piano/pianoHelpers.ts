@@ -81,50 +81,19 @@ export function regularWhiteWidth(notes: Array<Note>) {
     return 4/totalLength
 }
 
-let naturalKeys = ["a","s","d","f","g","h","j","k","l"]
-let accidentalKeys = ["w","e","r","t","y","u","i","o","p"]
-const naturals = makeNaturals()
-const accidentals = makeAccidentals()
-naturalKeys.push(";")
-naturalKeys.push("'")
-naturalKeys.push("enter")
-accidentalKeys.push("[")
-accidentalKeys.push("⏎")
-
-function makeNaturals() {
-    let m = naturalKeys.reduce((m, str, i)=>{
-        m.set(str.toLocaleUpperCase().charCodeAt(0), i)
-        return m
-    }, new Map())
-
-    m.set(186, 9)
-    m.set(222, 10)
-    m.set(13, 11)
-    return m
-}
-
-function makeAccidentals () {
-    let m = accidentalKeys.reduce((m, str, i)=>{
-        m.set(str.toLocaleUpperCase().charCodeAt(0), i)
-        return m
-    }, new Map())
-
-    m.set(219, 9)
-    m.set(221, 10)
-    return m
-}
-
+let naturalKeys = ["a","s","d","f","g","h","j","k","l",";","'","Enter"]
+let accidentalKeys = ["w","e","r","t","y","u","i","o","p","[","]"]
 
 // Keys the note repsented by a key on the computer keyboard
-export function keyboardInputNote(keyCode: number, notes: Line):Note|undefined {
+export function keyboardInputNote(key: string, notes: Line):Note|undefined {
     // Change a bunch
-    var index = naturals.get(keyCode)
-    if (index !== undefined) {
+    var index = naturalKeys.indexOf(key)
+    if (index !== -1) {
         return notes.white()[index]
     }
 
-    index = accidentals.get(keyCode)
-    if (index !== undefined) {
+    index = accidentalKeys.indexOf(key)
+    if (index !== -1) {
         let ng = blackAndGhostBetween(notes.notes[0], notes.notes[notes.notes.length-1])[index]
         if (InstanceOfNote(ng)) {
             return <Note>ng

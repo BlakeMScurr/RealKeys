@@ -106,25 +106,6 @@ export function midiPathToName(path: string):string {
     return path
 }
 
-let globalKeysEnabled = true
-export function disableGlobalKeys() {
-    globalKeysEnabled = false
-}
-
-export function enableGlobalKeys() {
-    globalKeysEnabled = true
-}
-
-// TODO: find proper type for callback function
-export function addGlobalKeyListener(down: boolean, callback: any) { 
-    const listenFor = down ? "keydown" : "keyup"
-    document.addEventListener(listenFor, (event) => {
-        if (globalKeysEnabled) {
-            callback(event)
-        }
-    })
-}
-
 export const separator = "%2F" // this is an alternative to / that doesn't exist in any of the paths in the midi library and shows up in the url
 
 // TODO: use this everywhere the boilerplate is used to make sure we don't waste memory

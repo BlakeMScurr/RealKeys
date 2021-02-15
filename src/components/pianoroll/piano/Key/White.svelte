@@ -4,12 +4,12 @@
     import { colour } from "./helper"
     import EventHandler from "./EventHandler.svelte"
     
-    export let active:Boolean;
     export let state:string;
     export let note:Note;
     export let label: String = "";
     export let used: Boolean = false;
-
+    
+    let active:Boolean;
     const dispatch = createEventDispatcher()
     $: {
         dispatch(active ? "noteOn": "noteOff", note)

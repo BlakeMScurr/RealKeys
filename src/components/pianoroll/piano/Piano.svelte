@@ -6,21 +6,21 @@
     import type { InputEventNoteon, InputEventNoteoff } from "webmidi";
     import WebMidi from "webmidi";
     import Key from "./Key/Key.svelte";
-    import { addGlobalKeyListener, getCookie, handleErrors, QWERTYCookie } from "../../../lib/util";
+    import { getCookie, handleErrors, QWERTYCookie } from "../../../lib/util";
     import type { SoundFont } from "../../../lib/track/soundfont";
     import { state } from "../../../lib/lesson/score";
+    import type { scorer } from "../../../lib/lesson/score";
 
     export let keys:Array<Note>;
-    // TODO: used Map<Note, boolean>
+    // TODO: use Map<Note, boolean>
     export let usedNotes:Map<string, boolean> = new Map();
     export let lessonNotes: Map<Note, string> = new Map();
     export let sandbox: boolean = false; // sandbox pianos are just for playing, and aren't used to test one on a task
     export let instrument: SoundFont;
     export let position;
-    export let scorer;
+    export let scoreKeeper: scorer;
 
     let midiConnected = false
-    let mobile = false // TODO: figure out how to know this before we get any events
     let un = new Map();
     let labelsOn = false
     $: labels = labelsOn ? label(new Line(keys)) : new Map();
@@ -58,7 +58,9 @@
     }
 
     const dispatch = createEventDispatcher();
+    // TODO: this is a misnomer, this is actually the thing that plays all notes
     function forward(e) {
+        scoreKeeper.inputChange()
         let note: Note = e.detail
         activeMap.set(note, e.type === "noteOn")
         activeMap = activeMap
@@ -123,27 +125,25 @@
 
         enableWebMidi()
 
-        addGlobalKeyListener(true, (event) => {
-            mobile = false
-            setActive(event.keyCode, true)
-        });
-        
-        addGlobalKeyListener(false, (event) => {
-            mobile = false
-            setActive(event.keyCode, false)
+        // const listenFor = down ? "keypress" : "keyup"
+        document.addEventListener("keypress", (event) => {
+            if (!event.repeat) {
+                setActive(event.key, true)
+            }
+        })
+
+        document.addEventListener("keyup", (event) => {
+            setActive(event.key, false)
         });
     })
 
     // setup computer keyboard input
-    function setActive(charCode: number, isActive: boolean) {
-        let changedNote = keyboardInputNote(charCode, notes)
+    function setActive(key: string, isActive: boolean) {
+        let changedNote = keyboardInputNote(key, notes)
         if (changedNote != undefined) {
-            activeMap.set(changedNote, isActive)
-            activeMap = activeMap // trigger svelte update
+            forward({type: isActive ? "noteOn" : "noteOff", detail: changedNote})
         }
     }
-
-   
 
     function getLabel(labels, note) {
         if (usedNotes.size == 0) {
@@ -182,13 +182,13 @@
         try {
             switch (ss) {
                 case "right":
-                    scorer.recordNoteState(note, state.valid, position)
+                    scoreKeeper.recordNoteState(note, state.valid, position)
                     break
                 case "wrong":
-                    scorer.recordNoteState(note, state.invalid, position)
+                    scoreKeeper.recordNoteState(note, state.invalid, position)
                     break
                 default:
-                    scorer.recordNoteState(note, state.indifferent, position)
+                    scoreKeeper.recordNoteState(note, state.indifferent, position)
             }
         } catch(e) {
 
@@ -216,10 +216,10 @@
 
 </style>
 
-<div on:touchstart={()=>{mobile = true}}>
+<div> 
     <div class="rapper" id="LilPeep">
         {#each whiteWidths(notes.white()) as {note, width}}
-            <Key width={width} {note} active={activeMap.get(note)} state={getState(note, activeMap, lessonNotes, occupation)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
+            <Key width={width} {note} state={getState(note, activeMap, lessonNotes, occupation)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
         {/each}
     </div>
     <div style="--blackMargin: {regularWhiteWidth(notes.white())*100/4}%;" class="rapper" id="JuiceWrld">
@@ -227,7 +227,7 @@
             {#if note instanceof Ghost}
                 <Key ghost={true} width={regularWhiteWidth(notes.white())*100 * (2/4)}></Key>
             {:else}
-                <Key width={regularWhiteWidth(notes.white())*100} {note} active={activeMap.get(note)} state={getState(note, activeMap, lessonNotes, occupation)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
+                <Key width={regularWhiteWidth(notes.white())*100} {note} state={getState(note, activeMap, lessonNotes, occupation)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
             {/if}
         {/each}
     </div>

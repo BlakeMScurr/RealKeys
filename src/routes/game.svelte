@@ -277,7 +277,7 @@
     <div class="piano">
         {#if tracks.size > 0}
             <div in:fade>
-                <Piano keys={ getKeys(tracks, resizeTrigger) } {sandbox} instrument={piano} {lessonNotes} {position} {scorer} on:playingNotes={handlePlayingNotes} usedNotes={getUsedNotes()}></Piano>
+                <Piano keys={ getKeys(tracks, resizeTrigger) } {sandbox} instrument={piano} {lessonNotes} {position} scoreKeeper={scorer} on:playingNotes={handlePlayingNotes} usedNotes={getUsedNotes()}></Piano>
             </div>
         {/if}
         {#if loading}
