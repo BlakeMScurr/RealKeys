@@ -50,6 +50,7 @@ export class lessonSet {
 export function defaultLessons():lessonSet {
     return new lessonSet([
         new lesson(difficulty.Beginner, "Mary Had A Little Lamb", [[1, 5, 9], [1, 9]]),
+        new lesson(difficulty.Beginner, "Piano Man", [[1, 5, 9, 15], [1, 15]]),
         new lesson(difficulty.Intermediate, "Silent Night", [[1, 9, 17, 24], [1, 24]]),
 
         new lesson(difficulty.Advanced, "Clair de Lune", [[1, 73]]),

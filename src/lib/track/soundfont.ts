@@ -47,7 +47,6 @@ export class SoundFont {
     }
 
     setVolume(volume: number) {
-        console.log("setting volume in soundfont instrument to", volume)
         this.volume = volume
     }
 

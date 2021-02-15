@@ -25,13 +25,23 @@ export async function getMIDI(url, startbar: number, endbar: number) {
 
     let duration = endTime - startTime
 
+    let highest = NoteFromMidiNumber(tracks[0].notes[0].midi)
+    let lowest = highest
+
     let trackMap = new Map()
     let instrumentMap = new Map()
     tracks.forEach((track) => {
         let notes = new Array<TimedNote>();
         track.notes.forEach(note => {
+            let rkNote = NoteFromMidiNumber(note.midi)
             if (note.time >= startTime && note.time < endTime) {
-                notes.push(new TimedNote((note.time - startTime) / duration, ((note.time - startTime) + note.duration)/duration, NoteFromMidiNumber(note.midi), note.velocity))
+                notes.push(new TimedNote((note.time - startTime) / duration, ((note.time - startTime) + note.duration)/duration, rkNote, note.velocity))
+            }
+            if (rkNote.lowerThan(lowest)) {
+                lowest = rkNote
+            }
+            if (highest.lowerThan(rkNote)) {
+                highest = rkNote
             }
         })
 
@@ -49,5 +59,5 @@ export async function getMIDI(url, startbar: number, endbar: number) {
         )
     })
 
-    return {tracks: trackMap, instruments: instrumentMap, duration: duration*1000}
+    return {tracks: trackMap, instruments: instrumentMap, duration: duration*1000, highest: highest, lowest: lowest}
 }

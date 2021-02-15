@@ -48,6 +48,8 @@
     let sandbox = true
     let scorer
     scorer = new timedScoreKeeper(new GameMaster().position)
+    let lowest = NewNote("C", 4)
+    let highest = NewNote("C", 5)
 
     let onNext = () => {}
     let started = false
@@ -84,6 +86,8 @@
         keyHeight = (window.innerHeight - 50) / 3
 
         getMIDI("api/midi?path=%2FTutorials/" + task.lesson + ".mid", task.startBar, task.endBar).then((midi)=>{
+            highest = midi.highest
+            lowest = midi.lowest
             tracks = midi.tracks
             duration = midi.duration
             colourer = new Colourer(tracks.size)
@@ -225,12 +229,8 @@
         return notes
     }
 
-    function getKeys(tracks: Map<string, TimedNotes>, resizeTrigger):Note[] {
-        let untimed = new Array<Note>();
-        tracks.forEach((track) => {
-            untimed.push(...track.untime())
-        })
-        return range(untimed, highestPianoNote, lowestPianoNote, screenWidth, keyHeight)
+    function getKeys(resizeTrigger):Note[] {
+        return range(lowest, highest, highestPianoNote, lowestPianoNote, screenWidth, keyHeight)
     }
 </script>
 
@@ -269,7 +269,7 @@
             </div>
         {:else}
             <div in:fade>
-                <Game keys={ getKeys(tracks, resizeTrigger) } {task} tracks={ rellietracks() } {colourer} {duration} {position} {scorer}></Game>
+                <Game keys={ getKeys(resizeTrigger) } {task} tracks={ rellietracks() } {colourer} {duration} {position} {scorer}></Game>
             </div>
         {/if}
     </div>
@@ -277,7 +277,7 @@
     <div class="piano">
         {#if tracks.size > 0}
             <div in:fade>
-                <Piano keys={ getKeys(tracks, resizeTrigger) } {sandbox} instrument={piano} {lessonNotes} {position} scoreKeeper={scorer} on:playingNotes={handlePlayingNotes} usedNotes={getUsedNotes()}></Piano>
+                <Piano keys={ getKeys(resizeTrigger) } {sandbox} instrument={piano} {lessonNotes} {position} scoreKeeper={scorer} on:playingNotes={handlePlayingNotes} usedNotes={getUsedNotes()}></Piano>
             </div>
         {/if}
         {#if loading}
