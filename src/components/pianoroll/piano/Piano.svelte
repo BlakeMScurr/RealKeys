@@ -101,12 +101,10 @@
                 addListeners = () => {
                     try {
                         WebMidi.inputs[0].addListener('noteon', "all", (e: InputEventNoteon) => {
-                            activeMap.set(NewNote(e.note.name, e.note.octave), true)
-                            activeMap = activeMap // trigger svelte update
+                            forward({type: "noteOn", detail: NewNote(e.note.name, e.note.octave)})
                         });
                         WebMidi.inputs[0].addListener('noteoff', "all", (e: InputEventNoteoff) => {
-                            activeMap.set(NewNote(e.note.name, e.note.octave), false)
-                            activeMap = activeMap // trigger svelte update
+                            forward({type: "noteOff", detail: NewNote(e.note.name, e.note.octave)})
                         });
                         midiConnected = true
                     } catch (e) {
