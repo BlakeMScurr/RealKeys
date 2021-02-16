@@ -63,8 +63,6 @@ export function defaultLessons():lessonSet {
         new lesson(difficulty.Intermediate, "Baa Baa Black Sheep", [[1,5,9], [1,9]]), // 1 8ve RH range
         new lesson(difficulty.Intermediate, "Silent Night", [[1, 9, 17, 24], [1, 24]]),
     ])
-
-
 }
 
 // TODO: move this backend facing stuff into a separate file

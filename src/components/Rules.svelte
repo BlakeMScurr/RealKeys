@@ -76,7 +76,7 @@
     </div>
     <div class="textCenterer">
         {#if task.speed === speed.OwnPace}
-            <h3>Play the <mark>orange highlighted</mark> keys at your own pace</h3>
+            <h3>Tap the <mark>orange</mark> keys at your own pace</h3>
         {:else}
             <h3>As the notes reach the keys, play the keys</h3>
         {/if}
