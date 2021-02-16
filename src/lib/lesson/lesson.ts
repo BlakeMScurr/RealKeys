@@ -57,14 +57,16 @@ export class lesson {
                         let curr = barDelineators[i][j]
                         let prevInLast = barDelineators[i-1][barDelineators[i-1].indexOf(curr) - 1]
                         if (prev === prevInLast) {
-                            throw new Error("Old adjacencies")
+                            throw new Error(`Old adjacencies: prev ${prev}, prevInLast ${prevInLast}`)
                         }
                     }
                 })
 
                 this.sections.push(...sections(barDelineators[i], i !== 0))
             }
-        } catch(e) {} // this is to allow plainToClass to call the constructor without erroring
+        } catch(e) {
+            console.warn("Error making lesson:" + e)
+        } // this is to allow plainToClass to call the constructor without erroring
     }
 
     recordScore(task: taskSpec) {

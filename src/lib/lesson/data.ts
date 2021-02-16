@@ -49,15 +49,22 @@ export class lessonSet {
 
 export function defaultLessons():lessonSet {
     return new lessonSet([
+        // No hand movement required
         new lesson(difficulty.Beginner, "Mary Had A Little Lamb", [[1, 5, 9], [1, 9]]),
-        new lesson(difficulty.Beginner, "Piano Man", [[1, 5, 9, 15], [1, 15]]),
+        new lesson(difficulty.Beginner, "Alouette", [[1, 3, 5], [1, 5]]),
+        new lesson(difficulty.Beginner, "Chopsticks", [[1,5,9,13,17], [1,9,17], [1,17]]),
+        new lesson(difficulty.Beginner, "Twinkle Twinkle Little Star", [[1,5,9,13], [1,13]]),
+        new lesson(difficulty.Beginner, "Yankee Doodle", [[1,5,9],[1,9]]),
+        new lesson(difficulty.Beginner, "The Muffin Man", [[1,5,9],[1,9]]),
+        new lesson(difficulty.Beginner, "Jingle Bells", [[1,5,9,13,17], [1,9,17], [1,17]]),
+        new lesson(difficulty.Intermediate, "Row Row Row Your Boat", [[1,3,5], [1,5]]), // 8ve RH range, but otherwise easy
+        new lesson(difficulty.Intermediate, "Piano Man", [[1, 5, 9, 15], [1, 15]]), // Hard rhythm
+        new lesson(difficulty.Intermediate, "Ode to Joy", [[1,5,9,13,17], [1,9,17], [1,17]]), // 6th range LH, melody crossover
+        new lesson(difficulty.Intermediate, "Baa Baa Black Sheep", [[1,5,9], [1,9]]), // 1 8ve RH range
         new lesson(difficulty.Intermediate, "Silent Night", [[1, 9, 17, 24], [1, 24]]),
-
-        new lesson(difficulty.Advanced, "Clair de Lune", [[1, 73]]),
-        new lesson(difficulty.Advanced, "Prelude No. 1 BWV 846 in C Major", [[1, 35]]),
-        new lesson(difficulty.Advanced, "Moonlight Sonata 1st Movement", [[1, 69]]),
-        new lesson(difficulty.Advanced, "Fur Elise", [[1, 127]]),
     ])
+
+
 }
 
 // TODO: move this backend facing stuff into a separate file
