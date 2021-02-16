@@ -11,6 +11,8 @@ export enum state {
 
 export interface scorer {
     validRatio():number
+    inputChange()
+    recordNoteState(note: Note, s: state, position: number)
 }
 
 const defaultLeniency = 0.85
@@ -93,15 +95,19 @@ export class timedScoreKeeper {
     invalidTime () {
         return this.invalidSum
     }
+
+    // fulfills the interface for untimed scorer
+    inputChange(){}
 }
 
-
+// TODO: test
 export class untimedScoreKeeper {
     private validSum: number;
     private invalidSum: number;
     private subscribers;
     private lastNoteStates: Map<string, state>;
     private leniency: number;
+    private inputHasChanged: boolean;
 
     constructor(leniency?: number) {
         this.validSum = 0
@@ -109,7 +115,7 @@ export class untimedScoreKeeper {
         this.subscribers = []
         this.lastNoteStates = new Map();
         this.leniency = leniency !== undefined ? leniency : defaultLeniency
-
+        this.inputHasChanged = true
     }
 
     validRatio():number {
@@ -128,13 +134,23 @@ export class untimedScoreKeeper {
         }
         this.lastNoteStates.set(note.string(), s)
 
-        if (s === state.valid) {
-            this.validSum++
-        } else if (s === state.invalid) {
-            this.invalidSum++
+        if (this.inputHasChanged) {
+            if (s === state.valid) {
+                this.validSum++
+            } else if (s === state.invalid) {
+                this.invalidSum++
+            }
+            this.inputHasChanged = false
         }
 
         this.triggerScoreUpdate(0)
+    }
+
+    // In wait mode, you shoudln't get a note wrong for holding it after the note is expected to end.
+    // So we only record a score for a given note if the input has changed for that note since last time we called score.
+    // TODO: test (for that matter, test this whole class at least a bit)
+    inputChange() {
+        this.inputHasChanged = true
     }
 
     triggerScoreUpdate(pos: number) {

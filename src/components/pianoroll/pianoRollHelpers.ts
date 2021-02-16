@@ -10,34 +10,9 @@ import { Note, NewNote, notesBetween } from "../../lib/music/theory/notes";
 // - must have white notes at top and bottom
 const minimumKeyWidth = 80
 const defaultStartingNote = NewNote("C", 4) // middle C
-export function range(notes: Array<Note>, upperBound: Note, lowerBound: Note, wholeKeyboardWidth: number, keyHeight: number):Array<Note> {
+export function range(lowest: Note, highest: Note, upperBound: Note, lowerBound: Note, wholeKeyboardWidth: number, keyHeight: number):Array<Note> {
     if (upperBound.lowerThan(lowerBound)) {
         throw new Error("lower bound higher than upper bound")
-    }
-
-    if (notes.length == 0) {
-        notes = [defaultStartingNote]
-    }
-
-    // Cull notes outside the bounds
-    for (let i = notes.length - 1; i >= 0; i--) {
-        if (notes[i].lowerThan(lowerBound) || upperBound.lowerThan(notes[i])) {
-            notes.splice(i, 1)
-        }
-    }
-
-    // Find the lowest and highest notes
-    let lowest:Note = notes[0]
-    let highest:Note = notes[0]
-
-    for (let i = 0; i < notes.length; i++) {
-        const note = notes[i];
-        if (note.lowerThan(lowest)) {
-            lowest = note
-        }
-        if (highest.lowerThan(note)) {
-            highest = note
-        }
     }
 
     // Make sure each end of the piano is a white note and extend
