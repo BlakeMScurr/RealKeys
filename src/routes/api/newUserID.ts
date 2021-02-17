@@ -1,5 +1,5 @@
 import { NewPool } from "../../lib/db"
-import { defaultLessons } from "../../lib/lesson/data"
+import { defaultLessons } from "../../lib/gameplay/datata"
 
 var prep = require('pg-prepared')
 

@@ -2,7 +2,7 @@
     import { createEventDispatcher } from "svelte";
     import { fade } from 'svelte/transition';
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
-    import { speed } from "../lib/lesson/lesson";
+    import { speed } from "../lib/gameplay/lesson";
 
     export let task;
     export let nextable;

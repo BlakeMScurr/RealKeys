@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { getLessons } from "../lib/lesson/data";
-    import type { taskSpec } from "../lib/lesson/lesson";
+    import { getLessons } from "../lib/gameplay/curriculum/data";
+    import type { taskSpec } from "../lib/gameplay/lesson";
     import { NewNote, notesBetween } from "../lib/music/theory/notes";
     import DOMRoll from "../components/pianoroll/roll/DOMRoll.svelte";
     import type { TimedNotes } from "../lib/music/timed/timed";

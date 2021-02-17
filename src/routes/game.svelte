@@ -2,9 +2,9 @@
     import { stores } from "@sapper/app";
     import { onMount } from "svelte";
     import { fade } from 'svelte/transition';
-    import { getLessons, saveLessonProgress } from "../lib/lesson/data";
-    import type { LessonSet } from "../lib/lesson/data";
-    import { hand, speed, taskSpec, urlToTask } from "../lib/lesson/lesson";
+    import { getLessons, saveLessonProgress } from "../lib/gameplay/curriculum/data";
+    import type { LessonSet } from "../lib/gameplay/curriculum/data";
+    import { hand, speed, taskSpec, urlToTask } from "../lib/gameplay/lesson";
     import { highestPianoNote, lowestPianoNote, NewNote, noteRange, notesBetween } from "../lib/music/theory/notes";
     import { newPiano } from "../lib/track/instrument";
     import { Colourer } from "../components/colours";
