@@ -1,5 +1,5 @@
 import { modeFactory, modeName } from "../../mode/mode"
-import { curriculum, proceedStrictly } from "../curriculum"
+import { curriculum, unlockCheckerFactory, UnlockCheckerType } from "../curriculum"
 import { hand, task } from "../task"
 
 export function trivialTask(start: number=1, end: number=2):task {
@@ -10,7 +10,7 @@ export function twoPartCurriculum():curriculum {
     return new curriculum([
         trivialTask(),
         trivialTask(1,3),
-    ], proceedStrictly)
+    ], unlockCheckerFactory(UnlockCheckerType.Strict))
 }
 
 // not to be confused with https://en.wikipedia.org/wiki/Trivium teeheehee ;)

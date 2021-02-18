@@ -29,20 +29,33 @@ export class PieceBreakdown {
     // The final array represents the whole piece.
     breakdown: Array<Array<number>>;
 
+    // TODO: create a more lenient breakdown composer
     constructor(pieceName: string, breakdown: Array<Array<number>>) {
         // check that the piece is divided up appropriately, i.e., check that each breakdown is a set containing the union of sections from the previous breakdown etc
         breakdown.forEach((layer, i)=>{
             if (layer.length <= 1) {
                 throw new Error(`Breakdown layer has too few boundaries (${layer.length}) to delineate a section`)
             }
+
             if (i > 0) {
                 let previousLayer = breakdown[i-1]
-                layer.forEach((boundary)=> {
-                    if (previousLayer.indexOf(boundary) === -1) {
+                if (layer[0] !== previousLayer[0] || layer[layer.length-1] !== previousLayer[previousLayer.length-1]) {
+                    throw new Error(`Breakdown layers have different outer boundaries: (${previousLayer[0]},${previousLayer[previousLayer.length-1]}) vs (${layer[0]},${layer[layer.length-1]})`)
+                }
+
+                layer.forEach((boundary, boundaryIndex)=> {
+                    let previousBoundarIndex = previousLayer.indexOf(boundary)
+                    if (previousBoundarIndex === -1) {
                         throw new Error(`Boundary at bar ${boundary} does not exist in previous layer`)
                     }
+
+                    if (boundaryIndex > 0) {
+                        if (previousLayer[previousBoundarIndex-1] === layer[boundaryIndex-1]) {
+                            throw new Error(`Section (${layer[boundaryIndex-1]},${boundary}) is not updated between two layers`)
+                        }
+                    }
                 })
-            }
+            }  
         })
         
         this.pieceName = pieceName

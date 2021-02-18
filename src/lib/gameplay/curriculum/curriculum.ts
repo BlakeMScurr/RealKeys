@@ -80,17 +80,53 @@ export class progress {
 // A unlockChecker determines whether you can try some task given your current progress
 type unlockChecker = (t: task, p: progress[]) => boolean
 
-// unlockChecker functions
-// When we use the proceed strictly function, we only move onto a task once all tasks that are easier than it are done
-export function proceedStrictly(t: task, p: progress[]):boolean {
-    let valid = true
+export enum UnlockCheckerType {
+    Strict = 1,
+    Lenient,
+}
+
+export function unlockCheckerFactory(typ: UnlockCheckerType):unlockChecker {
+    switch (typ) {
+        case UnlockCheckerType.Strict:
+            return proceedStrictly
+        case UnlockCheckerType.Lenient:
+            return proceedLeniently
+    }
+}
+
+// When proceeding strictly, we only move onto a task once all tasks that are easier than it are done
+function proceedStrictly(t: task, p: progress[]):boolean {
     for (let i = 0; i < p.length; i++) {
         let comp = p[i]
         // a task is valid iff there is no other task that is strictly easier and is incomplete
         // thus we set valid to false if we find an easier incomplete task
-        if (t.equalOrHarder(comp.task) && !t.equals(comp.task) && comp.score < 100) {
-            valid = false
+        if (t.strictlyHarder(comp.task) && comp.score < 100) {
+            return false
         }
     }
-    return valid
+    return true
+}
+
+// When proceeding leniently, we move onto a task (C) if there is any easier task (A) where there is no middling task between them (B), or there is no easier task (A) at all.
+function proceedLeniently(c: task, p: progress[]):boolean {
+    // Proceed if there exists an A with no B between C and 
+    for (let i = 0; i < p.length; i++) {
+        let a = p[i].task
+        let aScore = p[i].score
+        if (c.strictlyHarder(a) && aScore >= 100) {
+            let bBetween = false
+            for (let j = 0; j < p.length; j++) {
+                let b = p[j].task
+                if (c.strictlyHarder(b) && b.strictlyHarder(a)) bBetween = true
+            }
+            
+            if (!bBetween) return true
+        }
+    }
+
+    // Proceed if there are no tasks easier than A
+    for (let i = 0; i < p.length; i++) {
+        if (c.strictlyHarder(p[i].task)) return false
+    }
+    return true
 }

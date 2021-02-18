@@ -27,6 +27,10 @@ export class task {
     equalOrHarder(t: task):boolean {
         return this.lessonURL === t.lessonURL && this.endBar >= t.endBar && this.startBar <= t.startBar && handEqualOrHarder(this.hand, t.hand) && modeEqualOrHarder(this.mode, t.mode)
     }
+
+    strictlyHarder(t: task) {
+        return this.equalOrHarder(t) && !this.equals(t)
+    }
 }
 
 export function urlToTask(query):task {
