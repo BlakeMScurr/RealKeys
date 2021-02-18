@@ -1,5 +1,7 @@
 // A (teaching) methodology is a means of building a curriculum out of a content.
-import type { curriculum } from "./curriculum";
+import { modeFactory, modeName } from "../mode/mode";
+import { curriculum, UnlockCheckerType, unlockCheckerFactory } from "./curriculum";
+import { hand, task } from "./task";
 
 export interface method {
     curriculum():curriculum
@@ -11,13 +13,38 @@ export interface method {
 // - The player learns predetermined discrete sections in order, then combines those sections bit by bit.
 // - The player learns each the notes, then plays them at 75% speed, then at 100% speed.
 // - The player learn each section with their right hand, then left hand, then both.
+
 export class SequentialCurriculum {
     pieces: Array<PieceBreakdown>;
+    constructor(pieces: Array<PieceBreakdown>) {
+        this.pieces = pieces
+    }
     
     curriculum():curriculum {
         // TODO: create the locked conditions
-        // TODO: build appropriate tasks/lessons for each section at appropriate speeds with appropriate hands
-        return null
+        let tasks = Array<task>()
+        this.pieces.forEach((piece) => {
+            piece.breakdown.forEach((layer) => {
+                for (let i = 1; i < layer.length; i++) {
+                    const startDelineator = layer[i-1];
+                    const endDelineator = layer[i];
+                    
+                    tasks.push(new task(startDelineator, endDelineator, hand.Right, piece.pieceName, modeFactory(modeName.wait)))
+                    tasks.push(new task(startDelineator, endDelineator, hand.Right, piece.pieceName, modeFactory(modeName.atSpeed, 75)))
+                    tasks.push(new task(startDelineator, endDelineator, hand.Right, piece.pieceName, modeFactory(modeName.atSpeed, 100)))
+
+                    tasks.push(new task(startDelineator, endDelineator, hand.Left, piece.pieceName, modeFactory(modeName.wait)))
+                    tasks.push(new task(startDelineator, endDelineator, hand.Left, piece.pieceName, modeFactory(modeName.atSpeed, 75)))
+                    tasks.push(new task(startDelineator, endDelineator, hand.Left, piece.pieceName, modeFactory(modeName.atSpeed, 100)))
+
+                    tasks.push(new task(startDelineator, endDelineator, hand.Both, piece.pieceName, modeFactory(modeName.wait)))
+                    tasks.push(new task(startDelineator, endDelineator, hand.Both, piece.pieceName, modeFactory(modeName.atSpeed, 75)))
+                    tasks.push(new task(startDelineator, endDelineator, hand.Both, piece.pieceName, modeFactory(modeName.atSpeed, 100)))
+                }
+            })
+        })
+
+        return new curriculum(tasks, unlockCheckerFactory(UnlockCheckerType.Lenient))
     }
 }
 
@@ -27,6 +54,7 @@ export class PieceBreakdown {
     // The first array represents bar numbers delineating the atomic parts of the piece.
     // The subsequent arrays are also bar number delineators, which represent larger parts build out of the previous layer.
     // The final array represents the whole piece.
+    // TODO: break this out into 
     breakdown: Array<Array<number>>;
 
     // TODO: create a more lenient breakdown composer

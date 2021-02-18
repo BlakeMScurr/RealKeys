@@ -62,7 +62,7 @@ function indexOfTask(t: task, p: progress[]):number {
             return i
         }
     }
-    return -1
+    throw new Error(`Couldn't find task ${JSON.stringify(t)}`)
 }
 
 // progress gives your score on a given task

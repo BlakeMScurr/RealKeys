@@ -20,12 +20,20 @@ export class task {
     }
 
     equals(t: task):boolean {
-        return this.lessonURL === t.lessonURL && this.startBar === t.startBar && this.endBar === t.endBar && this.mode.modeName() === t.mode.modeName()
+        return this.lessonURL === t.lessonURL &&
+            this.startBar === t.startBar &&
+            this.hand === t.hand &&
+            this.endBar === t.endBar &&
+            this.mode.modeName() === t.mode.modeName()
     }
 
     // used to complete trivial progress that would be a waste of a completionist's time
     equalOrHarder(t: task):boolean {
-        return this.lessonURL === t.lessonURL && this.endBar >= t.endBar && this.startBar <= t.startBar && handEqualOrHarder(this.hand, t.hand) && modeEqualOrHarder(this.mode, t.mode)
+        return this.lessonURL === t.lessonURL &&
+            this.endBar >= t.endBar && 
+            this.startBar <= t.startBar &&
+            handEqualOrHarder(this.hand, t.hand) &&
+            modeEqualOrHarder(this.mode, t.mode)
     }
 
     strictlyHarder(t: task) {
