@@ -17,6 +17,19 @@ test("curriculum.recordScore", () => {
     expect(c.getScore(trivialTask())).toBe(100)
 })
 
+test("curriculum.recordScore/backProp", () => {
+    let c = twoPartCurriculum()
+    expect(c.getScore(trivialTask(1,3))).toBe(0)
+
+    c.recordScore(trivialTask(1,3), 73)
+    expect(c.getScore(trivialTask())).toBe(0)
+    expect(c.getScore(trivialTask(1,3))).toBe(73)
+
+    c.recordScore(trivialTask(1,3), 100)
+    expect(c.getScore(trivialTask())).toBe(100)
+    expect(c.getScore(trivialTask(1,3))).toBe(100)
+})
+
 test("curriculum.next", () => {
     let c = twoPartCurriculum()
     expect(c.next().equals(trivialTask(1,2))).toBe(true)
