@@ -1,25 +1,18 @@
 <script lang="ts">
-    import { getLessons } from "../lib/gameplay/curriculum/data";
-    import type { taskSpec } from "../lib/gameplay/lesson";
-    import { NewNote, notesBetween } from "../lib/music/theory/notes";
     import DOMRoll from "../components/pianoroll/roll/DOMRoll.svelte";
     import type { TimedNotes } from "../lib/music/timed/timed";
     import ScoreBar from "../components/Generic/ScoreBar.svelte";
     import type { Colourer } from '../components/colours';
-    import type { timedScoreKeeper } from "../lib/lesson/score";
-    import { get } from "../lib/util";
+    import type { timedScoreKeeper } from "../lib/gameplay/score/score";
+    import type { task } from "../lib/gameplay/curriculum/task";
 
-    export let task: taskSpec;
+    export let currentTask: task;
     export let tracks: Map<string, TimedNotes>;
     export let colourer: Colourer;
     export let duration: number;
     export let position: number;
     export let scorer: timedScoreKeeper;
     export let keys;
-
-    if (!get(getLessons()).has(task.lesson)) {
-        throw new Error(`No lesson called ${task.lesson}`)
-    }
 
     let score = 0
     scorer.subscribe((s)=>{

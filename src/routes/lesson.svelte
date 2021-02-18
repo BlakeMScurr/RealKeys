@@ -3,11 +3,10 @@
     import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
     import ScoreBar from "../components/Generic/ScoreBar.svelte";
-    import { getLessons, lessonSet } from "../lib/lesson/data"
     import { stores } from "@sapper/app";
-    import { hand, longNameSpeed, speed, taskSpec, urlToTask } from "../lib/lesson/lesson";
-    import { state } from "../lib/lesson/lesson"
     import { goto } from '@sapper/app'
+    import { getProgress } from "../lib/storage";
+    import { onMount } from "svelte";
 
     const { page } = stores();
     const query = $page.query;
@@ -19,21 +18,11 @@
         }
     }
 
-    let lessons: lessonSet;
-    getLessons().subscribe((l) => {
-        lessons = l
+    let lesson = []
+    onMount(()=>{
+        lesson = getProgress().getLesson(query.lesson)
+
     })
-
-    let lesson = lessons.lessons[0]
-    // TODO: constant time lookup
-    $: {
-        lessons.lessons.forEach(l => {
-            if (l.name === query.lesson) {
-                lesson = l
-            } 
-        });
-    }
-
 </script>
 
 <style lang="scss">

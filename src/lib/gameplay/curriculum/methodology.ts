@@ -49,12 +49,12 @@ export class SequentialCurriculum {
 }
 
 // PieceBreakdown is a hierarchical breakdown of a given piece of music
+// TODO: create an alternative PieceBreakdown that's more lenient and allows any set of subdivisions
 export class PieceBreakdown {
     pieceName: string;
     // The first array represents bar numbers delineating the atomic parts of the piece.
     // The subsequent arrays are also bar number delineators, which represent larger parts build out of the previous layer.
     // The final array represents the whole piece.
-    // TODO: break this out into 
     breakdown: Array<Array<number>>;
 
     // TODO: create a more lenient breakdown composer

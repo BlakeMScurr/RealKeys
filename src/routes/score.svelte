@@ -3,20 +3,21 @@
     import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
     import ScoreBar from "../components/Generic/ScoreBar.svelte";
-    import type { lessonSet } from "../lib/lesson/data";
-    import { handDesc, taskSpec, urlToTask } from "../lib/lesson/lesson";
-    import { levels, nextLevel, replay } from "../lib/lesson/navigate";
+    import { urlToTask } from "../lib/gameplay/curriculum/task";
+    import { getProgress } from "../lib/storage";
     import { get } from "../lib/util";
 
     const { page, session } = stores();
     const query = $page.query;
-    let task: taskSpec = urlToTask(query)
+    let task = urlToTask(query)
+
+    let score = getProgress().getScore(task)
 
     // TODO: make sure this is valid regardless of how one gets to this page. Currently refresh kills the session and makes the next leve button unusable
     let lessons = get(session)
 
-    const heading = task.score === 100 ? "Congratulations!" : "Almost there!"
-    const paragraph = task.score === 100 ? `You learned ${handDesc(task.hand)} of bars ${task.startBar}-${task.endBar}` : undefined
+    const heading = score === 100 ? "Congratulations!" : "Almost there!"
+    const paragraph = score === 100 ? `You learned ${task.hand} of bars ${task.startBar}-${task.endBar}` : undefined
 
 
 </script>

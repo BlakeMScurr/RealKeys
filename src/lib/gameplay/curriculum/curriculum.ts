@@ -33,11 +33,19 @@ export class curriculum {
         }
     }
 
+    copyInScore(t: task, score: number) {
+        let i = indexOfTask(t, this.tasks)
+        if (i < 0) {
+            throw new Error(`Couldn't find task ${t} in curriculum ${this}`)
+        }
+        this.tasks[i].score = score
+    }
+
     unlocked(t: task):boolean{
        return this.checkUnlocked(t, this.tasks)
     }
 
-    // TODO: reduce from 0(n^2) complexity - may even be memoisable to O(1)
+    // TODO: reduce from 0(n^2) complexity (n^3 for lenient procession) - memoising unlocked makes it O(n), and it may be memoised to 0(1) itself
     next():task {
         for (let i = 0; i < this.tasks.length; i++) {
             const t = this.tasks[i].task;
@@ -52,6 +60,26 @@ export class curriculum {
 
     getScore(t: task):number {
         return this.tasks[indexOfTask(t, this.tasks)].score
+    }
+
+    getLessons():Array<string> {
+        let lessons = []
+        this.tasks.forEach((p) => {
+            if (lessons.indexOf(p.task.lessonURL) === -1) {
+                lessons.push(p.task.lessonURL)
+            }
+        })
+        return lessons
+    }
+
+    getLesson(lessonURL: string):Array<task> {
+        let tasks = []
+        this.tasks.forEach((p) => {
+            if (p.task.lessonURL === lessonURL) {
+                tasks.push(p.task)
+            }
+        })
+        return tasks
     }
 }
 
@@ -78,6 +106,7 @@ export class progress {
 
 
 // A unlockChecker determines whether you can try some task given your current progress
+// TODO: make unlockChecker a far stricter type that is more like a relation on the graph of task dependencies. This will make it more declarative and less error prone.
 type unlockChecker = (t: task, p: progress[]) => boolean
 
 export enum UnlockCheckerType {

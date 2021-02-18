@@ -8,8 +8,8 @@
     import Key from "./Key/Key.svelte";
     import { getCookie, handleErrors, QWERTYCookie } from "../../../lib/util";
     import type { SoundFont } from "../../../lib/track/soundfont";
-    import { state } from "../../../lib/lesson/score";
-    import type { scorer } from "../../../lib/lesson/score";
+    import { state } from "../../../lib/gameplay/score/score";
+    import type { scorer } from "../../../lib/gameplay/score/score";
 
     export let keys:Array<Note>;
     // TODO: use Map<Note, boolean>

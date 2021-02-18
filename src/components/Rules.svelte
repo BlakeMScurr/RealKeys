@@ -2,9 +2,10 @@
     import { createEventDispatcher } from "svelte";
     import { fade } from 'svelte/transition';
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
-    import { speed } from "../lib/gameplay/lesson";
+    import type { task } from "../lib/gameplay/curriculum/task";
+import { modeName } from "../lib/gameplay/mode/mode";
 
-    export let task;
+    export let currentTask: task;
     export let nextable;
 
     let dispatch = createEventDispatcher()
@@ -67,15 +68,15 @@
 
 <div class="centerer">
     <div class="descParent">
-        <h2>{task.lesson}</h2>
+        <h2>{currentTask.lessonURL}</h2>
         <div class="taskDesc">
-            <p>Bars {task.startBar}-{task.endBar}</p>
-            <p>{task.hand}</p>
-            <p>{task.speed}</p>
+            <p>Bars {currentTask.startBar}-{currentTask.endBar}</p>
+            <p>{currentTask.hand}</p>
+            <p>{currentTask.mode}</p>
         </div>
     </div>
     <div class="textCenterer">
-        {#if task.speed === speed.OwnPace}
+        {#if currentTask.mode.modeName() == modeName.wait}
             <h3>Tap the <mark>orange</mark> keys at your own pace</h3>
         {:else}
             <h3>As the notes reach the keys, play the keys</h3>
