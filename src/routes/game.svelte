@@ -1,10 +1,7 @@
 <script lang="ts">
     import { stores } from "@sapper/app";
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     import { fade } from 'svelte/transition';
-    import { getLessons, saveLessonProgress } from "../lib/lesson/data";
-    import type { LessonSet } from "../lib/lesson/data";
-    import { hand, speed, taskSpec, urlToTask } from "../lib/lesson/lesson";
     import { highestPianoNote, lowestPianoNote, NewNote, noteRange, notesBetween } from "../lib/music/theory/notes";
     import { newPiano } from "../lib/track/instrument";
     import { Colourer } from "../components/colours";
@@ -16,21 +13,20 @@
     import Rules from "../components/Rules.svelte";
     import Game from "../components/Game.svelte";
     import { GameMaster } from "../stores/stores";
-    import { timedScoreKeeper, untimedScoreKeeper } from "../lib/lesson/score";
+    import { timedScoreKeeper, untimedScoreKeeper } from "../lib/gameplay/score/score";
     import { handleNotes, nextWaitModeNote } from "../stores/waitMode";
     import { writable } from "svelte/store";
     import type { Readable } from "svelte/types/runtime/store"; // TODO: import this from "svelte/store", which works in .ts files not .svelte files
-    import { get, getUserID, handleErrors, OneTo100 } from "../lib/util";
+    import { get, handleErrors, OneTo100 } from "../lib/util";
     import { goto } from '@sapper/app'
     import { range } from "../components/pianoroll/pianoRollHelpers";
+    import { hand, task, urlToTask } from "../lib/gameplay/curriculum/task";
+    import { getProgress } from "../lib/storage";
+    import { modeName } from "../lib/gameplay/mode/mode";
 
     const { page, session } = stores();
     const query = $page.query;
-    let task: taskSpec = urlToTask(query)
-
-    if (!get(getLessons()).has(task.lesson)) {
-        throw new Error(`No lesson called ${task.lesson}`)
-    }
+    let currentTask: task = urlToTask(query)
 
     // TODO: there's so much state here it's disgusting, we neeeeed to tidy this up!!!
     // required as trying to creating instruments requires window.AudioContext, and errors in preprocessing on the server
@@ -60,17 +56,12 @@
     }
     let handlePlayingNotes = (e: Event) => {}
 
-    let progress: LessonSet;
-    getLessons().subscribe((p) => {
-        progress = p
-    })
-
-    let userID
-    getUserID((id) => {
-        userID = id
-    })
-
     let lessonNotes: Map<Note, string>;
+
+    let cleanup = ()=>{}
+    onDestroy(()=>{
+        cleanup()
+    })
 
     onMount(() => {
         handleErrors(window)
@@ -85,7 +76,7 @@
         screenWidth = window.innerWidth
         keyHeight = (window.innerHeight - 50) / 3
 
-        getMIDI("api/midi?path=%2FTutorials/" + task.lesson + ".mid", task.startBar, task.endBar).then((midi)=>{
+        getMIDI("api/midi?path=%2FTutorials/" + currentTask.lessonURL + ".mid", currentTask.startBar, currentTask.endBar).then((midi)=>{
             highest = midi.highest
             lowest = midi.lowest
             tracks = midi.tracks
@@ -93,18 +84,16 @@
             colourer = new Colourer(tracks.size)
             let gm = new GameMaster()
             gm.duration.set(duration)
-            gm.position.subscribe((pos)=>{
+            cleanup = gm.position.subscribe((pos)=>{
                 position = pos
                 if (pos >= 1) { // TODO: wait until the last note of the track is done instead
-                    task.score = OneTo100(scorer.validRatio() * 100)
-                    progress.recordScore(task)
-                    saveLessonProgress(userID, progress)
-                    // TODO: have session be more consistent, such that it always has the right lessons etc
-                    session.set(progress) // lessons is set here so that we have the right value of lessons immediately in score, so that we can calculate the correct next lesson etc
-                    goto("score?" + task.queryString())
+                    let score = OneTo100(scorer.validRatio() * 100)
+                    getProgress().recordScore(currentTask, score)
+                    goto("score?" + currentTask.queryString() + "&score=" + score)
                 }
             })
-            let rt = relevantTrack(tracks, task)
+
+            let rt = relevantTrack(tracks, currentTask)
     
             tracks.forEach((notes, name) => {
                 let trackPiano = newPiano(name, ()=>{console.log(`piano ${name} loaded`)})
@@ -118,8 +107,8 @@
             scorer = new timedScoreKeeper(gm.position)
             gm.seek.set(-2000/get(<Readable<number>>gm.duration)) // give space before the first note
     
-            switch (task.speed) {
-                case speed.OwnPace:
+            switch (currentTask.mode.modeType()) {
+                case modeName.wait:
                     gm.seek.set(0) // TODO: go to the first note
                     gm.waitMode.set(true)
                     onNext = () => {
@@ -133,7 +122,7 @@
                             stateSetter.set(state)
                         }
     
-                        let activeTrack = mergeTracks(relevantTrack(tracks, task), tracks)
+                        let activeTrack = mergeTracks(relevantTrack(tracks, currentTask), tracks)
                         gm.seek.subscribe(() => {
                             let state = get(stateSetter)
                             nextWaitModeNote(gm, activeTrack).sameStart.forEach(note => {
@@ -156,20 +145,8 @@
                     scorer = new untimedScoreKeeper()
     
                     break;
-                case speed.Fifty:
-                    gm.speed.set(0.5)
-                    gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
-                        lessonNotes = notes
-                    })
-                    break;
-                case speed.SeventyFive:
-                    gm.speed.set(0.75)
-                    gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
-                        lessonNotes = notes
-                    })
-                    break;
-                case speed.OneHundred:
-                    gm.speed.set(1)
+                case modeName.atSpeed:
+                    gm.speed.set(currentTask.mode.getSpeed()/100)
                     gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
                         lessonNotes = notes
                     })
@@ -180,10 +157,10 @@
         })
     })
 
-    function relevantTrack(tracks: Map<string, TimedNotes>, task: taskSpec):string[] {
+    function relevantTrack(tracks: Map<string, TimedNotes>, t: task):string[] {
         // assumes we have exactly 2 tracks, the first being the left hand, and the second being the right
         let arr = Array.from(tracks.keys())
-        switch (task.hand) {
+        switch (t.hand) {
             case hand.Right:
                 return [arr[0]]
             case hand.Left:
@@ -216,7 +193,7 @@
     // TODO: get rid of this, it's gross
     // TODO: make sure that we make the left hand coloured red when we're learning the left hand
     function rellietracks():Map<string, TimedNotes> {
-        return new Map<string, TimedNotes>(relevantTrack(tracks, task).map((track) => { return [track, tracks.get(track)] as [string, TimedNotes]}))
+        return new Map<string, TimedNotes>(relevantTrack(tracks, currentTask).map((track) => { return [track, tracks.get(track)] as [string, TimedNotes]}))
     }
 
     function getUsedNotes():Map<string, boolean> {
@@ -265,11 +242,11 @@
     <div class="nonpiano">
         {#if !started}
             <div>
-                <Rules {task} on:next={handleNext} {nextable}></Rules>
+                <Rules {currentTask} on:next={handleNext} {nextable}></Rules>
             </div>
         {:else}
             <div in:fade>
-                <Game keys={ getKeys(resizeTrigger) } {task} tracks={ rellietracks() } {colourer} {duration} {position} {scorer}></Game>
+                <Game keys={ getKeys(resizeTrigger) } tracks={ rellietracks() } {colourer} {duration} {position} {scorer}></Game>
             </div>
         {/if}
     </div>

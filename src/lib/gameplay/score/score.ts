@@ -1,6 +1,6 @@
 import type { Readable } from "svelte/types/runtime/store";
-import type { Note } from "../music/theory/notes";
-import { get } from "../util";
+import type { Note } from "../../music/theory/notes";
+import { get } from "../../util";
 
 export enum state {
     valid = "valid",
@@ -16,6 +16,7 @@ export interface scorer {
 }
 
 const defaultLeniency = 0.85
+// TODO: create an explicit link between the two types of score keeps and our modes
 export class timedScoreKeeper {
     private position: Readable<number>;
     private validSum: number;
@@ -129,11 +130,16 @@ export class untimedScoreKeeper {
     }
 
     recordNoteState(note: Note, s: state, position: number) {
+        // Check that the state of this note has actually changed between calls to recordNoteState
         if (this.lastNoteStates.has(note.string()) && this.lastNoteStates.get(note.string()) === s) {
             return
         }
         this.lastNoteStates.set(note.string(), s)
 
+        // Update the score if the user's input has changed
+        // The state may have changed as the piece proceeded to the next note,
+        // and in wait mode we do not expect someone to change input in order to accomodate that,
+        // we only expect them to enter the next note correctly
         if (this.inputHasChanged) {
             if (s === state.valid) {
                 this.validSum++

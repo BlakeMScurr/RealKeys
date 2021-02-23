@@ -1,5 +1,5 @@
-import { GameMaster } from "../../stores/stores"
-import { NewNote } from "../music/theory/notes"
+import { GameMaster } from "../../../stores/stores"
+import { NewNote } from "../../music/theory/notes"
 import { timedScoreKeeper, state } from "./score"
 
 

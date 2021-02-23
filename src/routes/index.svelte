@@ -3,15 +3,17 @@
     import { onMount } from "svelte";
     import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
-    import { getLessons } from "../lib/lesson/data"
-import { difficulty, lesson } from "../lib/lesson/lesson";
-    import { get, getCookie, handleErrors, QWERTYCookie } from "../lib/util";
+    import type { Curriculum } from "../lib/gameplay/curriculum/curriculum";
+    import { emptyProgress, getProgress } from "../lib/storage";
+    import { getCookie, handleErrors, QWERTYCookie } from "../lib/util";
 
     function handleClick(name: string) {
         return () => {
             goto("lesson?lesson=" + name)
         }
     }
+
+    let lessons: Curriculum = emptyProgress()
 
     // Detects a touch event from the home page and disables the letters on the keyboard
     onMount(()=>{
@@ -23,8 +25,9 @@ import { difficulty, lesson } from "../lib/lesson/lesson";
                 document.cookie = QWERTYCookie + "=" + false
             })
         }
-    })
 
+        lessons = getProgress()
+    })
 </script>
 
 <style lang="scss">
@@ -39,13 +42,6 @@ import { difficulty, lesson } from "../lib/lesson/lesson";
     .Beginner {
         background-color: #1bbe024a;
     }
-    .Intermediate {
-        background-color: #ffaa0040;
-    }
-    .Advanced {
-        background-color: #eb423640;
-    }
-
     .lessonholder {
         padding: 0px 30px 30px 30px;
 
@@ -80,19 +76,19 @@ import { difficulty, lesson } from "../lib/lesson/lesson";
 <h2>Learn Piano without Sheet Music</h2>
 
 <div class="lessonholder">
-    {#each get(getLessons()).lessons as lesson, i}
+    {#each lessons.getLessons() as lesson, i}
         <div class="lesson">
             <div class="description">
-                <h4>{lesson.name}</h4>
-                <p class={lesson.level}>{(lesson.level !== difficulty.Advanced) ? lesson.level : " MIDI Keyboard required"}</p>
+                <h4>{lesson}</h4>
+                <p class="Beginner">Beginner</p>
                 <!-- TODO: show how far through a lesson you are -->
             </div>
             <div class="button">
                 {#if i === 0}
                     <!-- TODO: reccomend the next one you haven't tried yet -->
-                    <ReccomendedButton text="Learn" on:click={handleClick(lesson.name)}></ReccomendedButton>
+                    <ReccomendedButton text="Learn" on:click={handleClick(lesson)}></ReccomendedButton>
                 {:else}
-                    <OptionButton text="Learn" on:click={handleClick(lesson.name)}></OptionButton>
+                    <OptionButton text="Learn" on:click={handleClick(lesson)}></OptionButton>
                 {/if}
             </div>
         </div>

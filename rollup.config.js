@@ -31,7 +31,9 @@ export default {
 				dev,
 				hydratable: true,
 				emitCss: true,
-				preprocess: autoPreprocess()
+				preprocess: autoPreprocess({
+					sourceMap: true,
+				})
 			}),
 			resolve({
 				browser: true,
@@ -79,7 +81,9 @@ export default {
 				generate: 'ssr',
 				hydratable: true,
 				dev,
-				preprocess: autoPreprocess()
+				preprocess: autoPreprocess({
+					sourceMap: true,
+				})
 			}),
 			resolve({
 				dedupe: ['svelte'],
