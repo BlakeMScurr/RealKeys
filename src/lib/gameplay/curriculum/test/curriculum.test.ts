@@ -148,12 +148,12 @@ test("splitBySection", () => {
 
     expect(splitBySection(c.tasks.map((t)=>t.task))).toEqual([
         [
-            {"endBar": 2, "hand": "Left", "lessonURL": "mockTask", "mode": {}, "startBar": 1},
-            {"endBar": 2, "hand": "Right", "lessonURL": "mockTask", "mode": {}, "startBar": 1}
+            {"endBar": 2, "hand": "Left", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
+            {"endBar": 2, "hand": "Right", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1}
         ], 
         [
-            {"endBar": 3, "hand": "Left", "lessonURL": "mockTask", "mode": {}, "startBar": 1},
-            {"endBar": 3, "hand": "Right", "lessonURL": "mockTask", "mode": {}, "startBar": 1}
+            {"endBar": 3, "hand": "Left", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
+            {"endBar": 3, "hand": "Right", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1}
         ]
     ])
 })
@@ -168,12 +168,12 @@ test("splitbyHand", () => {
 
     expect(splitByHand(c.tasks.map((t)=>t.task))).toEqual([
         [
-            {"endBar": 2, "hand": "Right", "lessonURL": "mockTask", "mode": {}, "startBar": 1},
-            {"endBar": 3, "hand": "Right", "lessonURL": "mockTask", "mode": {}, "startBar": 1},
+            {"endBar": 2, "hand": "Right", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
+            {"endBar": 3, "hand": "Right", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
         ], 
         [
-            {"endBar": 2, "hand": "Left", "lessonURL": "mockTask", "mode": {}, "startBar": 1},
-            {"endBar": 3, "hand": "Left", "lessonURL": "mockTask", "mode": {}, "startBar": 1},
+            {"endBar": 2, "hand": "Left", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
+            {"endBar": 3, "hand": "Left", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
         ]
     ])
 })
@@ -188,12 +188,12 @@ test("splitbyMode", () => {
 
     expect(splitByMode(c.tasks.map((t)=>t.task))).toEqual([
         [
-            {"endBar": 2, "hand": "Right", "lessonURL": "mockTask", "mode": {}, "startBar": 1},
-            {"endBar": 3, "hand": "Right", "lessonURL": "mockTask", "mode": {}, "startBar": 2}
+            {"endBar": 2, "hand": "Right", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
+            {"endBar": 3, "hand": "Right", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 2}
         ], 
         [
-            {"endBar": 4, "hand": "Right", "lessonURL": "mockTask", "mode": {"speed": 100}, "startBar": 3},
-            {"endBar": 5, "hand": "Right", "lessonURL": "mockTask", "mode": {"speed": 100}, "startBar": 4}
+            {"endBar": 4, "hand": "Right", "lessonURL": "mockTask", "mode": {"speed": 100, "modeID": "atSpeed100"}, "startBar": 3},
+            {"endBar": 5, "hand": "Right", "lessonURL": "mockTask", "mode": {"speed": 100, "modeID": "atSpeed100"}, "startBar": 4}
         ]
     ])
 })
