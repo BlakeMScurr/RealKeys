@@ -1,19 +1,21 @@
 import { defaultLessons } from "./gameplay/curriculum/data"
-import { deserializeArray } from 'class-transformer';
-import { curriculum, progress, unlockCheckerFactory, UnlockCheckerType } from "./gameplay/curriculum/curriculum";
-import type { task } from "./gameplay/curriculum/task";
+import { deserializeArray, plainToClass } from 'class-transformer';
+import { Curriculum, curriculum, progress, unlockCheckerFactory, UnlockCheckerType } from "./gameplay/curriculum/curriculum";
+import { task } from "./gameplay/curriculum/task";
+import { makeMode } from "./gameplay/mode/mode";
 
 const progressKey = "progress"
-export function getProgress() {
+export function getProgress():Curriculum {
     let c = defaultLessons()
     let p = localStorage.getItem(progressKey)
     if (p) {
-        let prog: Array<progress> = deserializeArray(progress, p)
+        let prog = JSON.parse(p)
         prog.forEach((t) => {
             try {
-                c.copyInScore(t.task, t.score)
+                let tsk = new task(t.task.startBar, t.task.endBar, t.task.hand, t.task.lessonURL, makeMode(t.task.mode.modeID))
+                c.copyInScore(tsk, t.score)
             } catch (e) {
-                console.warn(e)
+                console.warn("Failed to copy in score for task" + JSON.stringify(t) + e)
             }
         })
     }
@@ -30,7 +32,7 @@ class curriculumWrapper {
         this.curriculum.recordScore(t, score)
 
         // Save progress
-        let ps: Array<progress>;
+        let ps: Array<progress> = [];
         this.curriculum.tasks.forEach((p: progress)=>{
             if (p.score > 0) {
                 ps.push(p)
@@ -43,8 +45,8 @@ class curriculumWrapper {
         return this.curriculum.unlocked(t)
     }
 
-    next():task {
-        return this.curriculum.next()
+    next(constraint: (t:task) => boolean):task {
+        return this.curriculum.next(constraint)
     }
 
     getScore(t: task):number {

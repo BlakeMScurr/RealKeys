@@ -137,25 +137,6 @@ export function OneTo100(num: number) {
     return Math.floor(num)
 }
 
-const userIDCookie = "userID"
-export async function getUserID(cb: (userID: string)=>void) {
-    if (typeof document !== 'undefined' && document.cookie !== undefined) {
-        let userID = getCookie(userIDCookie, document.cookie)
-        if (userID) {
-            cb(userID)
-        } else {
-            let resp = await fetch("api/newUserID")
-            let json = await resp.json()
-            document.cookie = userIDCookie + "=" + json.userID
-            userID = getCookie(userIDCookie, document.cookie)
-            if (!userID) {
-                throw new Error("couldn't generate or store cookie")
-            }
-            cb(userID)
-        }
-    }
-}
-
 // This should be called in every onmount function
 export function handleErrors(window: Window & typeof globalThis) {
 
@@ -164,13 +145,11 @@ export function handleErrors(window: Window & typeof globalThis) {
     }
 
     window.onunhandledrejection = (e: PromiseRejectionEvent) => {
-        console.log(typeof e)
         postError(e)
     }
 }
 
 function postError(e: PromiseRejectionEvent) {
-    console.log(e)
     fetch("api/reportError", {
         method: 'POST',
         headers: {

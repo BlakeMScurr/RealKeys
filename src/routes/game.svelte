@@ -1,6 +1,6 @@
 <script lang="ts">
     import { stores } from "@sapper/app";
-    import { onMount } from "svelte";
+    import { onDestroy, onMount } from "svelte";
     import { fade } from 'svelte/transition';
     import { highestPianoNote, lowestPianoNote, NewNote, noteRange, notesBetween } from "../lib/music/theory/notes";
     import { newPiano } from "../lib/track/instrument";
@@ -17,11 +17,12 @@
     import { handleNotes, nextWaitModeNote } from "../stores/waitMode";
     import { writable } from "svelte/store";
     import type { Readable } from "svelte/types/runtime/store"; // TODO: import this from "svelte/store", which works in .ts files not .svelte files
-    import { get, getUserID, handleErrors, OneTo100 } from "../lib/util";
+    import { get, handleErrors, OneTo100 } from "../lib/util";
     import { goto } from '@sapper/app'
     import { range } from "../components/pianoroll/pianoRollHelpers";
-    import { task, urlToTask } from "../lib/gameplay/curriculum/task";
-import { getProgress } from "../lib/storage";
+    import { hand, task, urlToTask } from "../lib/gameplay/curriculum/task";
+    import { getProgress } from "../lib/storage";
+    import { modeName } from "../lib/gameplay/mode/mode";
 
     const { page, session } = stores();
     const query = $page.query;
@@ -55,14 +56,12 @@ import { getProgress } from "../lib/storage";
     }
     let handlePlayingNotes = (e: Event) => {}
 
-    let progress = getProgress()
-
-    let userID
-    getUserID((id) => {
-        userID = id
-    })
-
     let lessonNotes: Map<Note, string>;
+
+    let cleanup = ()=>{}
+    onDestroy(()=>{
+        cleanup()
+    })
 
     onMount(() => {
         handleErrors(window)
@@ -85,13 +84,15 @@ import { getProgress } from "../lib/storage";
             colourer = new Colourer(tracks.size)
             let gm = new GameMaster()
             gm.duration.set(duration)
-            gm.position.subscribe((pos)=>{
+            cleanup = gm.position.subscribe((pos)=>{
                 position = pos
                 if (pos >= 1) { // TODO: wait until the last note of the track is done instead
-                    progress.recordScore(currentTask, OneTo100(scorer.validRatio() * 100))
-                    goto("score?" + currentTask.queryString())
+                    let score = OneTo100(scorer.validRatio() * 100)
+                    getProgress().recordScore(currentTask, score)
+                    goto("score?" + currentTask.queryString() + "&score=" + score)
                 }
             })
+
             let rt = relevantTrack(tracks, currentTask)
     
             tracks.forEach((notes, name) => {
@@ -106,8 +107,8 @@ import { getProgress } from "../lib/storage";
             scorer = new timedScoreKeeper(gm.position)
             gm.seek.set(-2000/get(<Readable<number>>gm.duration)) // give space before the first note
     
-            switch (currentTask.speed) {
-                case speed.OwnPace:
+            switch (currentTask.mode.modeType()) {
+                case modeName.wait:
                     gm.seek.set(0) // TODO: go to the first note
                     gm.waitMode.set(true)
                     onNext = () => {
@@ -144,20 +145,8 @@ import { getProgress } from "../lib/storage";
                     scorer = new untimedScoreKeeper()
     
                     break;
-                case speed.Fifty:
-                    gm.speed.set(0.5)
-                    gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
-                        lessonNotes = notes
-                    })
-                    break;
-                case speed.SeventyFive:
-                    gm.speed.set(0.75)
-                    gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
-                        lessonNotes = notes
-                    })
-                    break;
-                case speed.OneHundred:
-                    gm.speed.set(1)
+                case modeName.atSpeed:
+                    gm.speed.set(currentTask.mode.getSpeed()/100)
                     gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
                         lessonNotes = notes
                     })
@@ -168,10 +157,10 @@ import { getProgress } from "../lib/storage";
         })
     })
 
-    function relevantTrack(tracks: Map<string, TimedNotes>, task: taskSpec):string[] {
+    function relevantTrack(tracks: Map<string, TimedNotes>, t: task):string[] {
         // assumes we have exactly 2 tracks, the first being the left hand, and the second being the right
         let arr = Array.from(tracks.keys())
-        switch (task.hand) {
+        switch (t.hand) {
             case hand.Right:
                 return [arr[0]]
             case hand.Left:
@@ -257,7 +246,7 @@ import { getProgress } from "../lib/storage";
             </div>
         {:else}
             <div in:fade>
-                <Game keys={ getKeys(resizeTrigger) } {currentTask} tracks={ rellietracks() } {colourer} {duration} {position} {scorer}></Game>
+                <Game keys={ getKeys(resizeTrigger) } tracks={ rellietracks() } {colourer} {duration} {position} {scorer}></Game>
             </div>
         {/if}
     </div>

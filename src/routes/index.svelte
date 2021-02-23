@@ -3,6 +3,7 @@
     import { onMount } from "svelte";
     import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
+    import type { Curriculum } from "../lib/gameplay/curriculum/curriculum";
     import { emptyProgress, getProgress } from "../lib/storage";
     import { getCookie, handleErrors, QWERTYCookie } from "../lib/util";
 
@@ -12,8 +13,7 @@
         }
     }
 
-
-    let lessons = emptyProgress()
+    let lessons: Curriculum = emptyProgress()
 
     // Detects a touch event from the home page and disables the letters on the keyboard
     onMount(()=>{
@@ -42,13 +42,6 @@
     .Beginner {
         background-color: #1bbe024a;
     }
-    .Intermediate {
-        background-color: #ffaa0040;
-    }
-    .Advanced {
-        background-color: #eb423640;
-    }
-
     .lessonholder {
         padding: 0px 30px 30px 30px;
 

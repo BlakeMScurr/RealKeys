@@ -7,22 +7,25 @@
     import { goto } from '@sapper/app'
     import { getProgress } from "../lib/storage";
     import { onMount } from "svelte";
+    import { describeHand, task } from "../lib/gameplay/curriculum/task";
+    import { progress, splitByHand, splitBySection } from "../lib/gameplay/curriculum/curriculum";
+    import type { Curriculum } from "../lib/gameplay/curriculum/curriculum";
 
     const { page } = stores();
     const query = $page.query;
 
-    function gotoGame(s: speed, h: hand, start: number, end: number) {
+    let lesson: Array<task> = []
+    let curric: Curriculum;
+    onMount(()=>{
+        curric = getProgress()
+        lesson = curric.getLesson(query.lesson)
+    })
+
+    function gotoTask(t: task) {
         return () => {
-            let t = new taskSpec(0, start, end, h, s, query.lesson)
             goto("game?" + t.queryString())
         }
     }
-
-    let lesson = []
-    onMount(()=>{
-        lesson = getProgress().getLesson(query.lesson)
-
-    })
 </script>
 
 <style lang="scss">
@@ -66,30 +69,31 @@
 </style>
 
 <div class="layout">
-    <h2>{lesson.name}</h2>
+    <h2>{query.lesson}</h2>
     
-    {#each lesson.sections as section}
+    {#each splitBySection(lesson) as section}
+        {#if section.length > 0}
         <div class="section">
             <div class="description">
-                <h3>Bars {section.startBar}-{section.endBar}</h3>
+                <h3>Bars {section[0].startBar}-{section[0].endBar}</h3>
                 <div class="handholder">
-                    {#each section.hands as hand}
+                    {#each splitByHand(section) as hand}
                         <div class="hand">
-                            <h4>{hand.hand}</h4>
+                            <h4>{describeHand(hand[0].hand)}</h4>
     
-                            {#each hand.speeds as speed}
+                            {#each hand as speed}
                                 <div class="task">
                                     <div>
-                                        <p>{longNameSpeed(speed.speed)}</p>
-                                        <ScoreBar value={speed.progress}></ScoreBar>
+                                        <p>{speed.mode.description()}</p>
+                                        <ScoreBar value={curric.getScore(speed)}></ScoreBar>
                                     </div>
                                     <div class="button">
-                                        {#if speed.state === state.locked}
-                                            <LockButton></LockButton>
-                                        {:else if speed.state === state.allowed}
-                                            <OptionButton text="Learn" on:click={gotoGame(speed.speed, hand.hand, section.startBar, section.endBar)}></OptionButton>
-                                        {:else if speed.state === state.reccomended}
-                                            <ReccomendedButton text="Learn" on:click={gotoGame(speed.speed, hand.hand, section.startBar, section.endBar)}></ReccomendedButton>
+                                        {#if !curric.unlocked(speed)}
+                                            <OptionButton text="Try" on:click={gotoTask(speed)}></OptionButton>
+                                        {:else if curric.getScore(speed) == 100}
+                                            <OptionButton text="Practice" on:click={gotoTask(speed)}></OptionButton>
+                                        {:else}
+                                            <ReccomendedButton text="Learn" on:click={gotoTask(speed)}></ReccomendedButton>
                                         {/if}
                                     </div>
                                 </div>
@@ -99,5 +103,6 @@
                 </div>
             </div>
         </div>
+        {/if}
     {/each}
 </div>

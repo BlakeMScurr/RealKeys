@@ -1,9 +1,9 @@
-import { modeFactory, modeName } from "../../mode/mode"
+import { modeFactory, modeName, playbackMode } from "../../mode/mode"
 import { curriculum, unlockCheckerFactory, UnlockCheckerType } from "../curriculum"
 import { hand, task } from "../task"
 
-export function trivialTask(start: number=1, end: number=2):task {
-    return new task(start, end, hand.Right, "mockTask", modeFactory(modeName.wait))
+export function trivialTask(start: number=1, end: number=2, h: hand=hand.Right, mode: playbackMode=modeFactory(modeName.wait)):task {
+    return new task(start, end, h, "mockTask", mode)
 }
 
 export function twoPartCurriculum():curriculum {

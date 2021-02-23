@@ -63,6 +63,17 @@ export enum hand {
     Both = "Both",
 }
 
+export function describeHand(h: hand) {
+    switch (h) {
+        case hand.Left:
+            return "Left hand"
+        case hand.Right:
+            return "Right hand"
+        case hand.Both:
+            return "Both hands"
+    }
+}
+
 // TODO: can I overload the >= operator to call this function?
 export function handEqualOrHarder(a: hand, b: hand):boolean {
     return a === b || a === hand.Both

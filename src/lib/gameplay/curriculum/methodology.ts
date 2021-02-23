@@ -44,12 +44,12 @@ export class SequentialCurriculum {
             })
         })
 
-        return new curriculum(tasks, unlockCheckerFactory(UnlockCheckerType.Lenient))
+        return new curriculum(tasks, unlockCheckerFactory(UnlockCheckerType.Strict))
     }
 }
 
 // PieceBreakdown is a hierarchical breakdown of a given piece of music
-// TODO: create an alternative PieceBreakdown that's more lenient and allows any set of subdivisions
+// TODO: create an alternative PieceBreakdown that's more flexible and allows any set of subdivisions
 export class PieceBreakdown {
     pieceName: string;
     // The first array represents bar numbers delineating the atomic parts of the piece.

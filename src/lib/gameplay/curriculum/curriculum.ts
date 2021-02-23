@@ -1,4 +1,13 @@
-import type { task } from "./task"
+import { hand, task } from "./task"
+
+export interface Curriculum {
+    recordScore(t: task, score: number)
+    unlocked(t: task):boolean
+    next(constraint?: (t:task) => boolean):task
+    getScore(t: task):number
+    getLessons():Array<string>
+    getLesson(lessonURL: string):Array<task>
+}
 
 // A curriculum is a set of a tasks, your progress through them, and way to determine whether you're ready for a given task
 export class curriculum {
@@ -46,11 +55,11 @@ export class curriculum {
     }
 
     // TODO: reduce from 0(n^2) complexity (n^3 for lenient procession) - memoising unlocked makes it O(n), and it may be memoised to 0(1) itself
-    next():task {
+    next(constraint: (t:task) => boolean = ()=>{return true}):task {
         for (let i = 0; i < this.tasks.length; i++) {
             const t = this.tasks[i].task;
 
-            if (this.unlocked(t) && this.tasks[i].score !== 100) {
+            if (this.unlocked(t) && this.tasks[i].score !== 100 && constraint(t)) {
                 return t
             }
         }
@@ -90,6 +99,7 @@ function indexOfTask(t: task, p: progress[]):number {
             return i
         }
     }
+    console.log("bout to throw an error not having found the index of a task")
     throw new Error(`Couldn't find task ${JSON.stringify(t)}`)
 }
 
@@ -158,4 +168,57 @@ function proceedLeniently(c: task, p: progress[]):boolean {
         if (c.strictlyHarder(p[i].task)) return false
     }
     return true
+}
+
+// functions that split up tasks to be viewed better
+
+export function splitBySection(tasks: Array<task>) {
+    return splitByX(tasks, (a: task,b: task):number=>{
+        let sizeDifference = (a.startBar - a.endBar) - (b.startBar - b.endBar)
+        if (sizeDifference != 0) {
+            return -sizeDifference // larger last
+        }
+        if (a.startBar != b.startBar) {
+            return a.startBar - b.startBar
+        }
+        return a.endBar - b.endBar
+    })
+}
+
+function handIndex(t: task) {
+    switch (t.hand) {
+        case hand.Right:
+            return 0
+        case hand.Left:
+            return 1
+        case hand.Both:
+            return 2
+    }
+}
+export function splitByHand(tasks: Array<task>) {
+    return splitByX(tasks, (a: task,b: task):number=>{
+        return handIndex(a) - handIndex(b)
+    })
+}
+
+export function splitByMode(tasks: Array<task>) {
+    return splitByX(tasks, (a: task,b: task):number=>{
+        return a.mode.getSpeed() - b.mode.getSpeed()
+    })
+}
+
+function splitByX(tasks: Array<task>, compare: (a: task, b: task)=>number):Array<Array<task>> {
+    if (tasks.length === 0) return []
+    tasks.sort(compare)
+
+    let arr = new Array<Array<task>>([tasks[0]])
+    for (let i = 1; i < tasks.length; i++) {
+        if (compare(tasks[i], tasks[i-1]) === 0) {
+            arr[arr.length-1].push(tasks[i])
+        } else {
+            arr.push([tasks[i]])
+        }
+    }
+
+    return arr
 }

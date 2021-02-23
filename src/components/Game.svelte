@@ -4,9 +4,7 @@
     import ScoreBar from "../components/Generic/ScoreBar.svelte";
     import type { Colourer } from '../components/colours';
     import type { timedScoreKeeper } from "../lib/gameplay/score/score";
-    import type { task } from "../lib/gameplay/curriculum/task";
 
-    export let currentTask: task;
     export let tracks: Map<string, TimedNotes>;
     export let colourer: Colourer;
     export let duration: number;
