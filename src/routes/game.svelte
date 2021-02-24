@@ -95,15 +95,20 @@
 
             let rt = relevantTrack(tracks, currentTask)
     
+            let trackInstrumentsLoaded = 0
             tracks.forEach((notes, name) => {
-                let trackPiano = newPiano(name, ()=>{console.log(`piano ${name} loaded`)})
+                let trackPiano = newPiano(name, ()=>{
+                    trackInstrumentsLoaded++
+                    if (trackInstrumentsLoaded === tracks.size) {
+                        nextable = true
+                    }
+                })
                 if (rt.includes(name)) {
                     trackPiano.setVolume(0)
                 }
                 gm.tracks.newPlaybackTrack(name, notes, trackPiano, gm)
             })
             onNext = () => { gm.play.play() }
-            nextable = true
             scorer = new timedScoreKeeper(gm.position)
             gm.seek.set(-2000/get(<Readable<number>>gm.duration)) // give space before the first note
     
@@ -252,7 +257,7 @@
                 <Piano keys={ getKeys(resizeTrigger) } {sandbox} instrument={piano} {lessonNotes} {position} scoreKeeper={scorer} on:playingNotes={handlePlayingNotes} usedNotes={getUsedNotes()}></Piano>
             </div>
         {/if}
-        {#if loading}
+        {#if loading || !nextable}
             <div class="loading" out:fade>
                 <Loader></Loader>
             </div>
