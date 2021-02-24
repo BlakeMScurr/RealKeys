@@ -114,24 +114,19 @@
                     onNext = () => {
                         //subscribe to the notes needed to progress
                         let stateSetter = writable(new Map<Note, string>());
-                        function onNoteStateChange(notes: Map<Note, string>) {
-                            let state = get(stateSetter)
-                            notes.forEach((noteState: string, note: Note)=>{
-                                state.set(note, noteState)
-                            })
-                            stateSetter.set(state)
-                        }
     
                         let activeTrack = mergeTracks(relevantTrack(tracks, currentTask), tracks)
                         gm.seek.subscribe(() => {
-                            let state = get(stateSetter)
-                            nextWaitModeNote(gm, activeTrack).sameStart.forEach(note => {
+                            let state = new Map<Note, string>()
+                            let nextState = nextWaitModeNote(gm, activeTrack)
+                            nextState.sameStart.forEach(note => {
                                 state.set(note.note, "expecting")
+                            })
+                            nextState.heldNotes.forEach((_, note) => {
+                                state.set(note, "soft")
                             })
                             stateSetter.set(state)
                         })
-    
-                        gm.tracks.subscribeToNotesOfTracks(rt, onNoteStateChange)
     
                         stateSetter.subscribe((notes) => {
                             lessonNotes = notes
