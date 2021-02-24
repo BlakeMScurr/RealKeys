@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { createEventDispatcher, onMount } from "svelte";
+    import { createEventDispatcher, onDestroy, onMount } from "svelte";
     import { NewNote, Line, parseNoteString } from "../../../lib/music/theory/notes";
     import type { Note} from "../../../lib/music/theory/notes";
     import { blackAndGhostBetween, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote, label, occupationTracker } from "./pianoHelpers";
@@ -116,6 +116,17 @@
             }
         });
     }
+
+    const keypressListener = (event) => {
+        if (!event.repeat) {
+            setActive(event.key, true)
+        }
+    }
+
+    const keyupListener = (event) => {
+        setActive(event.key, false)
+    }
+
     onMount(() => {
         handleErrors(window)
 
@@ -124,15 +135,13 @@
         enableWebMidi()
 
         // const listenFor = down ? "keypress" : "keyup"
-        document.addEventListener("keypress", (event) => {
-            if (!event.repeat) {
-                setActive(event.key, true)
-            }
-        })
+        document.addEventListener("keypress", keypressListener)
+        document.addEventListener("keyup", keyupListener);
+    })
 
-        document.addEventListener("keyup", (event) => {
-            setActive(event.key, false)
-        });
+    onDestroy(() => {
+        document.removeEventListener("keypress", keypressListener)
+        document.removeEventListener("keyup", keyupListener);
     })
 
     // setup computer keyboard input
