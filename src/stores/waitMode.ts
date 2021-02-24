@@ -14,34 +14,24 @@ export function handleNotes(gm: GameMaster, stateSetter: Writable<Map<Note, stri
             let currentlyPlaying:Array<Note> = event.detail.sort(comp)
             let shouldPlay = nextNotes.sameStart.map((note) => { return note.note }).sort(comp)
 
-            if (arraysEqual(currentlyPlaying, shouldPlay) && !get(gm.play)) { // don't proceed if we're currently playing
-                let dest = nextNotes.next ? nextNotes.next.start : 1
-                nextNotes.sameStart.forEach((note) => {
-                    setTimeout(()=> {
-                        let state = get(stateSetter)
-                        state.delete(note.note)
-                        stateSetter.set(state)
-                    }, (note.end - get(gm.position)) * get(<Readable<number>>gm.duration))
-                })
+            // Allow one to hold over notes that from the previous section
+            for (let i = currentlyPlaying.length - 1; i >= 0; i--) {
+                if (nextNotes.heldNotes.has(currentlyPlaying[i])) {
+                    currentlyPlaying.splice(i, 1)
+                }
+            }
 
-                // we have to set the deletion timeouts before seeking, as when there are two directly adjacent notes of the same pitch, there is
-                // a race condiion between the timeout deleting the previous one from the state map, and the seek listener which sets the next one.
-                // The seek listener depends directly on seek.setSlow, and it needs to happen second, so we run seek.setSlow second
-                // TODO: find a solution that can provide strict certainty about time.
-                gm.seek.setSlow(dest)
-
-                let state = get(stateSetter)
-                shouldPlay.forEach((noteName) => {
-                    state.set(noteName, "soft")
-                })
-                stateSetter.set(state)
+            if (arraysEqual(currentlyPlaying, shouldPlay) && !get(gm.play)) {
+                gm.seek.setSlow(nextNotes.next ? nextNotes.next.start : 1)
             }
         }
     }
 }
 
 export function nextWaitModeNote(gm: GameMaster, activeTrack: TimedNotes) {
-    let nextNotes = activeTrack.notesFrom(get(gm.position), 1)
+    let pos = get(gm.position)
+    // find all the notes that start at a give position
+    let nextNotes = activeTrack.notesFrom(pos, 1)
     let i = 0
     let sameStart: Array<TimedNote> = []
     while (i < nextNotes.length && nextNotes[i].start == nextNotes[0].start) {
@@ -54,5 +44,13 @@ export function nextWaitModeNote(gm: GameMaster, activeTrack: TimedNotes) {
         next = nextNotes[i]
     }
 
-    return { sameStart: sameStart, next: next }
+    // find all the notes that are still being played at a given position
+    let heldNotes = new Map<Note, boolean>()
+    activeTrack.notesFrom(0, pos).forEach((note) => {
+        if (note.start < pos && note.end > pos) {
+            heldNotes.set(note.note, true)
+        }
+    })
+
+    return { sameStart: sameStart, next: next, heldNotes: heldNotes }
 }
