@@ -4,5 +4,5 @@ if [ "$status_code" = "$expected" ]; then
     echo "RealKeys is up"
 else
     echo "RealKeys is down"
-    echo "Subject: RealKeys is down!" | sendmail blakemscurr@gmail.com
+    echo "Subject: RealKeys is down!" | /usr/sbin/sendmail blakemscurr@gmail.com
 fi
