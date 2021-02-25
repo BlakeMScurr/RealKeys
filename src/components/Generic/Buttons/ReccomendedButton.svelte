@@ -12,7 +12,7 @@
 <style lang="scss">
     div {
         height: 23px;
-        min-width: 72px;
+        min-width: 82px;
         border-radius: 2px;
         background-color: #38A3FA;
         border: none;
@@ -27,7 +27,7 @@
             display: flex;
             justify-content: center;
 
-            h5 {
+            h6 {
                 margin: 0;
                 padding-top: 0;
                 padding-bottom: 0;
@@ -42,6 +42,6 @@
 
 <div on:click={handleClick}>
     <div>
-        <h5 class="robotic">{text.toLocaleUpperCase()}</h5>
+        <h6 class="robotic">{text.toLocaleUpperCase()}</h6>
     </div>
 </div>

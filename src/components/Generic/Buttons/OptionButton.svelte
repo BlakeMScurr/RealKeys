@@ -12,7 +12,7 @@
 <style lang="scss">
     div {
         height: 21px;
-        min-width: 70px;
+        min-width: 80px;
         border: 1px solid black;
         color: black;
         display: inline-block;
@@ -28,7 +28,7 @@
             border: none;
             height: 100%;
 
-            h5 {
+            h6 {
                 margin: 0;
                 padding-top: 0;
                 padding-bottom: 0;
@@ -42,6 +42,6 @@
 
 <div on:click={handleClick}>
     <div>
-        <h5 class="robotic">{text.toLocaleUpperCase()}</h5>
+        <h6 class="robotic">{text.toLocaleUpperCase()}</h6>
     </div>
 </div>
