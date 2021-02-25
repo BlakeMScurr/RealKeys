@@ -126,7 +126,8 @@ export class untimedScoreKeeper {
         } else if (total < 0) {
             throw new Error("Can't have negative time")
         }
-        return 1 // we consider an attempt to be totally valid until proven otherwise
+        console.log("returning a zero because we haven't started yet!")
+        return 0 // start at 0 so that the default appearance of the score bar isn't so appealing to click on
     }
 
     recordNoteState(note: Note, s: state, position: number) {

@@ -1,7 +1,8 @@
 status_code=$(curl -s -o /dev/null -w "%{http_code}" https://www.realkeys.co)
 expected="200"
 if [ "$status_code" = "$expected" ]; then
-    echo "it's 200!"
+    echo "RealKeys is up"
 else
+    echo "RealKeys is down"
     echo "Subject: RealKeys is down!" | sendmail blakemscurr@gmail.com
 fi
