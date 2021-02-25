@@ -15,6 +15,7 @@ export function NewInstrument(GeneralMidiInstrumentNumber: number, name: string,
     return new SoundFont(GeneralMidiInstrumentNumber, name, percusive, onload, notes)
 }
 
+// TODO: create new pianos from a pool of pianos ready that last a session to avoid lag every time we open a new game
 export function newPiano(name: string, onload: (succeeded: boolean) => void){
     return NewInstrument(0, name, false, onload)
 }

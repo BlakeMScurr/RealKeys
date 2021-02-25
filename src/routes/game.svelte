@@ -76,6 +76,7 @@
         screenWidth = window.innerWidth
         keyHeight = (window.innerHeight - 50) / 3
 
+        // TODO: get the midi from current session, and load it in lesson.svelte too
         getMIDI("api/midi?path=%2FTutorials/" + currentTask.lessonURL + ".mid", currentTask.startBar, currentTask.endBar).then((midi)=>{
             highest = midi.highest
             lowest = midi.lowest

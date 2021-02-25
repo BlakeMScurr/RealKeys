@@ -13,8 +13,6 @@
     div {
         height: 21px;
         min-width: 70px;
-        box-sizing: border-box;
-        border-radius: 10px;
         border: 1px solid black;
         color: black;
         display: inline-block;
@@ -28,8 +26,9 @@
             display: flex;
             justify-content: center;
             border: none;
+            height: 100%;
 
-            h4 {
+            h5 {
                 margin: 0;
                 padding-top: 0;
                 padding-bottom: 0;
@@ -43,6 +42,6 @@
 
 <div on:click={handleClick}>
     <div>
-        <h4>{text}</h4>
+        <h5 class="robotic">{text.toLocaleUpperCase()}</h5>
     </div>
 </div>

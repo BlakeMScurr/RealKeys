@@ -1,5 +1,4 @@
 <script lang="ts">
-    import LockButton from "../components/Generic/Buttons/LockButton.svelte";
     import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
     import ScoreBar from "../components/Generic/ScoreBar.svelte";
@@ -8,7 +7,7 @@
     import { getProgress } from "../lib/storage";
     import { onMount } from "svelte";
     import { describeHand, task } from "../lib/gameplay/curriculum/task";
-    import { progress, splitByHand, splitBySection } from "../lib/gameplay/curriculum/curriculum";
+    import { splitByHand, splitBySection } from "../lib/gameplay/curriculum/curriculum";
     import type { Curriculum } from "../lib/gameplay/curriculum/curriculum";
 
     const { page } = stores();

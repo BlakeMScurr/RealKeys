@@ -1,7 +1,5 @@
 import ReccomendedButton from "./ReccomendedButton.svelte";
 import OptionButton from "./OptionButton.svelte";
-import CTAButton from "./CTAButton.svelte";
-import LockButton from "./LockButton.svelte";
 
 export default {
     title: 'Buttons',
@@ -53,12 +51,5 @@ export const OptSelectLevel = () => ({
     Component: OptionButton,
     props: {
         text: "Select Level",
-    }
-});
-
-export const Lock = () => ({
-    Component: LockButton,
-    props: {
-        text: "Get Started",
     }
 });

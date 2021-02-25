@@ -2,7 +2,7 @@
 import { onMount } from "svelte";
 
     import type { Note } from "../../../lib/music/theory/notes";
-    import type { TimedNotes } from "../../../lib/music/timed/timed";
+    import type { TimedNote, TimedNotes } from "../../../lib/music/timed/timed";
     import type { Colourer } from "../../colours";
     import RollBackground from "./RollBackground.svelte";
 
@@ -35,6 +35,18 @@ import { onMount } from "svelte";
                 gd.style.height = heightElement.clientHeight + "px"
             }
         }
+    }
+
+    $: {
+        console.log("position", position, "end of window", position + zoomWidth)
+    }
+
+    // TODO: use a logically identical function to this to hide notes that are off the screen. But implement it as a store that fires off show/hide note events based on position
+    // to update a map of which notes should be shown. This means we only have one small function firing for every position update, which reads off a queue which is a simple computation,
+    // and the only other computation is when a note is shown or hidden. The current implementation checks if every note is in bounds every time the position changes.
+    // TODO: change back to PIXI once the gameplay is somewhat verified.
+    function withinBounds(note: TimedNote, position: number, zoomWidth: number):boolean {
+        return (note.start > position && note.start < position + zoomWidth) || (note.end > position && note.end < position + zoomWidth)
     }
 
 </script>
@@ -89,6 +101,7 @@ import { onMount } from "svelte";
     <div class="fader"></div>
     <div class="noteholder" style="--top: {position*100/zoomWidth}%">
         {#each keys as key}
+        <!-- TODO: why does the keyholder inherit the --top variable from the noteholder? Does this massive increase the required rendering time? -->
             <div class="keyholder">
                 {#each Array.from(tracks.values()) as track, trackNum}
                     {#each track.notes as note}
