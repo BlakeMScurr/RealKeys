@@ -11,23 +11,23 @@
 
 <style lang="scss">
     div {
-        height: 21px;
-        min-width: 70px;
-        box-sizing: border-box;
-        border-radius: 10px;
+        height: 23px;
+        min-width: 72px;
+        border-radius: 2px;
         background-color: #38A3FA;
         border: none;
         display: inline-block;
 
         &:hover {
-            filter: brightness(85%);
+            color: white;
+            background-color: #1d5b8d;
         }
         
         div {
             display: flex;
             justify-content: center;
 
-            h4 {
+            h5 {
                 margin: 0;
                 padding-top: 0;
                 padding-bottom: 0;
@@ -42,6 +42,6 @@
 
 <div on:click={handleClick}>
     <div>
-        <h4 class="robotic">{text}</h4>
+        <h5 class="robotic">{text.toLocaleUpperCase()}</h5>
     </div>
 </div>
