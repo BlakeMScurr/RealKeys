@@ -3,10 +3,17 @@
     import { onMount } from 'svelte';
     import Nav from "../components/Generic/Nav.svelte";
     import { handleErrors } from "../lib/util";
+    import { stores, goto } from "@sapper/app";
+    import { getSettings } from "../lib/storage";
+    
+    const { page } = stores();
 
     onMount(()=>{
         handleErrors(window)
         addFetchListener()
+        if (!$page.path.includes("/settings") && !getSettings()) {
+            goto("/settings")
+        }
     })
 </script>
 

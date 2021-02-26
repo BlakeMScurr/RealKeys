@@ -57,7 +57,7 @@ export class SoundFont {
     play(note: Note, duration?: number, volume?: number) {
         if (this.loaded()) {
             if (this.highest().lowerThan(note) || note.lowerThan(this.lowest())) {
-                console.warn("trying to play", note.string(), "which is out of the instrument's range", this.lowest().string(), "-", this.highest().string())
+                throw new Error("trying to play" + note.string() + "which is out of the instrument's range" + this.lowest().string() + "-" + this.highest().string())
             } else {
                 let v = this.getVolume()
                 if (volume) v = volume * v

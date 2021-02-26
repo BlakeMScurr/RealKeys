@@ -1,8 +1,23 @@
 import { defaultLessons } from "./gameplay/curriculum/data"
-import { deserializeArray, plainToClass } from 'class-transformer';
 import { Curriculum, curriculum, progress, unlockCheckerFactory, UnlockCheckerType } from "./gameplay/curriculum/curriculum";
 import { task } from "./gameplay/curriculum/task";
 import { makeMode } from "./gameplay/mode/mode";
+
+const settingsKey = "settings"
+export function getSettings() {
+    return localStorage.getItem(settingsKey)
+}
+
+export function setSettings(t: inputType) {
+    localStorage.setItem(settingsKey, t)
+}
+
+
+export enum inputType {
+    midi = "MIDI Keyboard",
+    qwerty = "QWERTY Keyboard",
+    touch = "Touch Screen",
+}
 
 const progressKey = "progress"
 export function getProgress():Curriculum {

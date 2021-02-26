@@ -1,3 +1,7 @@
+<script lang="ts">
+  export let text = "Loading Sounds"
+</script>
+
 <style lang="scss">
 .lds-ring {
     display: inline-block;
@@ -59,7 +63,7 @@
 
 <div class="background">
   <div>
-    <h2>Loading Sounds</h2>
+    <h2>{text}</h2>
     <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
   </div>
 </div>
