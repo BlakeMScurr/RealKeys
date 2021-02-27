@@ -1,3 +1,4 @@
+import { objToURLArgs } from "../../util";
 import { makeMode, modeEqualOrHarder, playbackMode } from "../mode/mode";
 
 export class task {
@@ -16,7 +17,7 @@ export class task {
     }
 
     queryString() {
-        return Object.entries(this).map((a)=>{return a[0] + "=" + a[1]}).join("&")
+        return objToURLArgs(this)
     }
 
     equals(t: task):boolean {

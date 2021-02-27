@@ -141,7 +141,7 @@ export function OneTo100(num: number) {
 export function handleErrors(window: Window & typeof globalThis) {
 
     window.onerror = (e: PromiseRejectionEvent) => {
-        postError(e)
+        // postError(e)
     }
 
     window.onunhandledrejection = (e: PromiseRejectionEvent) => {
@@ -157,4 +157,8 @@ function postError(e: PromiseRejectionEvent) {
         },
         body: JSON.stringify({message: e.reason.message})
     })
+}
+
+export function objToURLArgs(x) {
+    return Object.entries(x).map((a)=>{return a[0] + "=" + a[1]}).join("&")
 }
