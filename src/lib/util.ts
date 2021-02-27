@@ -63,18 +63,6 @@ export function spotifyRedirectURI() {
     return 'https://realkeys.co/callback'
 }
 
-export const QWERTYCookie = "QWERTYCookie"
-export function getCookie(name, jar) {
-    const value = `; ${jar}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-}
-
-export function removeCookie(name, jar) {
-    const cookie = getCookie(name, jar)
-    return jar.replace(name, "")
-}
-
 // gives a unique key for a map
 export function uniqueKey(m, k) {
     return uniqueKeyPriv(m, k, 0)
@@ -141,7 +129,7 @@ export function OneTo100(num: number) {
 export function handleErrors(window: Window & typeof globalThis) {
 
     window.onerror = (e: PromiseRejectionEvent) => {
-        // postError(e)
+        postError(e)
     }
 
     window.onunhandledrejection = (e: PromiseRejectionEvent) => {

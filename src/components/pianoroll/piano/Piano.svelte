@@ -6,11 +6,12 @@
     import { state } from "../../../lib/gameplay/score/score";
     import type { Note } from "../../../lib/music/theory/notes";
     import { Line,NewNote } from "../../../lib/music/theory/notes";
-import { getSettings, inputType } from "../../../lib/storage";
+    import { getSettings,inputType } from "../../../lib/storage";
     import type { SoundFont } from "../../../lib/track/soundfont";
-    import { getCookie,handleErrors,QWERTYCookie } from "../../../lib/util";
+    import { handleErrors } from "../../../lib/util";
     import Key from "./Key/Key.svelte";
     import { blackAndGhostBetween,Ghost,keyboardInputNote,label,occupationTracker,regularWhiteWidth,whiteWidths } from "./pianoHelpers";
+
 
 
     export let keys:Array<Note>;
