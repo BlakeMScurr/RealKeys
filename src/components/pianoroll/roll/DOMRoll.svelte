@@ -37,10 +37,6 @@ import { onMount } from "svelte";
         }
     }
 
-    $: {
-        console.log("position", position, "end of window", position + zoomWidth)
-    }
-
     // TODO: use a logically identical function to this to hide notes that are off the screen. But implement it as a store that fires off show/hide note events based on position
     // to update a map of which notes should be shown. This means we only have one small function firing for every position update, which reads off a queue which is a simple computation,
     // and the only other computation is when a note is shown or hidden. The current implementation checks if every note is in bounds every time the position changes.

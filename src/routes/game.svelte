@@ -4,6 +4,7 @@
     import { fade } from 'svelte/transition';
     import { highestPianoNote, lowestPianoNote, NewNote, noteRange, notesBetween } from "../lib/music/theory/notes";
     import { newPiano } from "../lib/track/instrument";
+    import type { VirtualInstrument } from "../lib/track/instrument";
     import { Colourer } from "../components/colours";
     import { getMIDI } from "../lib/midi";
     import type { TimedNotes, TimedNote } from "../lib/music/timed/timed";
@@ -30,7 +31,7 @@
 
     // TODO: there's so much state here it's disgusting, we neeeeed to tidy this up!!!
     // required as trying to creating instruments requires window.AudioContext, and errors in preprocessing on the server
-    let piano
+    let piano;
     let loading = true
     let resizeTrigger = 0
     let screenWidth = 500

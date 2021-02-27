@@ -3,7 +3,10 @@
     import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
     import { getSettings, inputType, setSettings } from "../lib/storage";
-    import { goto } from "@sapper/app";
+    import { goto, stores } from "@sapper/app";
+    import { get } from "../lib/util";
+    
+    const { session } = stores();
 
     let setInputType = (t: inputType) => { return (e) => {}}
     let currentSetting = null
@@ -21,7 +24,15 @@
                         // TODO: warn if one clicks on the touch option, as that may mean they may not have a touch screen (though not necessarily, considera microsoft surcface)
                     case inputType.qwerty:
                         setSettings(t)
-                        goto("/") // TODO: go to a redirect
+
+                        let s = get(session)
+                        if (s && typeof s.redirect !== "undefined") {
+                            console.log("setting settings to empty object")
+                            session.set({})
+                            goto(s.redirect)
+                        }
+                        currentSetting = getSettings()
+
                         break
                 }
             }

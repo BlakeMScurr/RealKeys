@@ -1,15 +1,17 @@
 <script lang="ts">
-    import { createEventDispatcher, onDestroy, onMount } from "svelte";
-    import { NewNote, Line, parseNoteString } from "../../../lib/music/theory/notes";
-    import type { Note} from "../../../lib/music/theory/notes";
-    import { blackAndGhostBetween, Ghost, whiteWidths, regularWhiteWidth, keyboardInputNote, label, occupationTracker } from "./pianoHelpers";
-    import type { InputEventNoteon, InputEventNoteoff } from "webmidi";
+    import { createEventDispatcher,onDestroy,onMount } from "svelte";
+    import type { InputEventNoteoff,InputEventNoteon } from "webmidi";
     import WebMidi from "webmidi";
-    import Key from "./Key/Key.svelte";
-    import { getCookie, handleErrors, QWERTYCookie } from "../../../lib/util";
-    import type { SoundFont } from "../../../lib/track/soundfont";
-    import { state } from "../../../lib/gameplay/score/score";
     import type { scorer } from "../../../lib/gameplay/score/score";
+    import { state } from "../../../lib/gameplay/score/score";
+    import type { Note } from "../../../lib/music/theory/notes";
+    import { Line,NewNote } from "../../../lib/music/theory/notes";
+import { getSettings, inputType } from "../../../lib/storage";
+    import type { SoundFont } from "../../../lib/track/soundfont";
+    import { getCookie,handleErrors,QWERTYCookie } from "../../../lib/util";
+    import Key from "./Key/Key.svelte";
+    import { blackAndGhostBetween,Ghost,keyboardInputNote,label,occupationTracker,regularWhiteWidth,whiteWidths } from "./pianoHelpers";
+
 
     export let keys:Array<Note>;
     // TODO: use Map<Note, boolean>
@@ -19,6 +21,7 @@
     export let instrument: SoundFont;
     export let position;
     export let scoreKeeper: scorer;
+    export let midiOnly = false;
 
     let midiConnected = false
     let un = new Map();
@@ -55,6 +58,12 @@
         })
 
         previousStates = newPreviousStates
+    }
+
+    function touchNoteEvent(e) {
+        if (!midionly) {
+            forward(e)
+        }
     }
 
     const dispatch = createEventDispatcher();
@@ -94,27 +103,32 @@
     // TODO: fix webmidi disabling on refresh, we shouldn't rebuild every component, but rather, the pianoroll etc should stay the same while we're on the same page
     let enableWebMidi;
     enableWebMidi = () => {
-        WebMidi.enable(function (err) {
-            if (err) {
-            } else {
-                let addListeners;
-                addListeners = () => {
-                    try {
-                        WebMidi.inputs[0].addListener('noteon', "all", (e: InputEventNoteon) => {
-                            forward({type: "noteOn", detail: NewNote(e.note.name, e.note.octave)})
-                        });
-                        WebMidi.inputs[0].addListener('noteoff', "all", (e: InputEventNoteoff) => {
-                            forward({type: "noteOff", detail: NewNote(e.note.name, e.note.octave)})
-                        });
-                        midiConnected = true
-                    } catch (e) {
-                        // TODO: handle disconnects too
-                        setTimeout(addListeners, 200)
-                    } 
-                }
-                addListeners()
+        let setup = () => {
+            let addListeners;
+            addListeners = () => {
+                try {
+                    WebMidi.inputs[0].addListener('noteon', "all", (e: InputEventNoteon) => {
+                        forward({type: "noteOn", detail: NewNote(e.note.name, e.note.octave)})
+                    });
+                    WebMidi.inputs[0].addListener('noteoff', "all", (e: InputEventNoteoff) => {
+                        forward({type: "noteOff", detail: NewNote(e.note.name, e.note.octave)})
+                    });
+                    midiConnected = true
+                } catch (e) {
+                    // TODO: handle disconnects too
+                    setTimeout(addListeners, 200)
+                } 
             }
-        });
+            addListeners()
+        }
+
+        if (WebMidi.enabled) {
+            setup()
+        } else {
+            WebMidi.enable(function (err) {
+                setup()
+            });
+        }
     }
 
     const keypressListener = (event) => {
@@ -130,7 +144,7 @@
     onMount(() => {
         handleErrors(window)
 
-        labelsOn = getCookie(QWERTYCookie, document.cookie) === "true"
+        labelsOn = getSettings() === inputType.qwerty && !midiOnly
 
         enableWebMidi()
 
@@ -140,15 +154,19 @@
     })
 
     onDestroy(() => {
-        document.removeEventListener("keypress", keypressListener)
-        document.removeEventListener("keyup", keyupListener);
+        if (typeof document !== "undefined") {
+            document.removeEventListener("keypress", keypressListener)
+            document.removeEventListener("keyup", keyupListener);
+        }
     })
 
     // setup computer keyboard input
     function setActive(key: string, isActive: boolean) {
-        let changedNote = keyboardInputNote(key, notes)
-        if (changedNote != undefined) {
-            forward({type: isActive ? "noteOn" : "noteOff", detail: changedNote})
+        if (!midionly) {
+            let changedNote = keyboardInputNote(key, notes)
+            if (changedNote != undefined) {
+                forward({type: isActive ? "noteOn" : "noteOff", detail: changedNote})
+            }
         }
     }
 
@@ -166,6 +184,9 @@
     function getState(note: Note, activeMap: Map<Note, boolean>, lessonNotes: Map<Note, string>, occupation: occupationTracker) {
         let stateString = () => {
             if (sandbox) {
+                if (lessonNotes.has(note) && lessonNotes.get(note) === "expecting") {
+                    return activeMap.get(note) ? "right" : "expecting"
+                }
                 return activeMap.get(note) ? "active" : ""
             } else {
                 if (lessonNotes.has(note)) {
@@ -226,7 +247,7 @@
 <div> 
     <div class="rapper" id="LilPeep">
         {#each whiteWidths(notes.white()) as {note, width}}
-            <Key width={width} {note} state={getState(note, activeMap, lessonNotes, occupation)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
+            <Key width={width} {note} state={getState(note, activeMap, lessonNotes, occupation)} on:noteOn={touchNoteEvent} on:noteOff={touchNoteEvent} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
         {/each}
     </div>
     <div style="--blackMargin: {regularWhiteWidth(notes.white())*100/4}%;" class="rapper" id="JuiceWrld">
@@ -234,7 +255,7 @@
             {#if note instanceof Ghost}
                 <Key ghost={true} width={regularWhiteWidth(notes.white())*100 * (2/4)}></Key>
             {:else}
-                <Key width={regularWhiteWidth(notes.white())*100} {note} state={getState(note, activeMap, lessonNotes, occupation)} on:noteOn={forward} on:noteOff={forward} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
+                <Key width={regularWhiteWidth(notes.white())*100} {note} state={getState(note, activeMap, lessonNotes, occupation)} on:noteOn={touchNoteEvent} on:noteOff={touchNoteEvent} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
             {/if}
         {/each}
     </div>
