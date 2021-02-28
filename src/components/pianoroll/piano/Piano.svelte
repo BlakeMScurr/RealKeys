@@ -6,11 +6,12 @@
     import { state } from "../../../lib/gameplay/score/score";
     import type { Note } from "../../../lib/music/theory/notes";
     import { Line,NewNote } from "../../../lib/music/theory/notes";
-import { getSettings, inputType } from "../../../lib/storage";
+    import { getSettings,inputType } from "../../../lib/storage";
     import type { SoundFont } from "../../../lib/track/soundfont";
-    import { getCookie,handleErrors,QWERTYCookie } from "../../../lib/util";
+    import { handleErrors } from "../../../lib/util";
     import Key from "./Key/Key.svelte";
     import { blackAndGhostBetween,Ghost,keyboardInputNote,label,occupationTracker,regularWhiteWidth,whiteWidths } from "./pianoHelpers";
+
 
 
     export let keys:Array<Note>;
@@ -61,7 +62,7 @@ import { getSettings, inputType } from "../../../lib/storage";
     }
 
     function touchNoteEvent(e) {
-        if (!midionly) {
+        if (!midiOnly) {
             forward(e)
         }
     }
@@ -162,7 +163,7 @@ import { getSettings, inputType } from "../../../lib/storage";
 
     // setup computer keyboard input
     function setActive(key: string, isActive: boolean) {
-        if (!midionly) {
+        if (!midiOnly) {
             let changedNote = keyboardInputNote(key, notes)
             if (changedNote != undefined) {
                 forward({type: isActive ? "noteOn" : "noteOff", detail: changedNote})

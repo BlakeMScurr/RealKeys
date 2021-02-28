@@ -2,6 +2,7 @@
     import { stores } from "@sapper/app";
     import { onDestroy, onMount } from "svelte";
     import { fade } from 'svelte/transition';
+    import { getSettings } from "../lib/storage";
     import { highestPianoNote, lowestPianoNote, NewNote, noteRange, notesBetween } from "../lib/music/theory/notes";
     import { newPiano } from "../lib/track/instrument";
     import type { VirtualInstrument } from "../lib/track/instrument";
@@ -18,7 +19,7 @@
     import { handleNotes, nextWaitModeNote } from "../stores/waitMode";
     import { writable } from "svelte/store";
     import type { Readable } from "svelte/types/runtime/store"; // TODO: import this from "svelte/store", which works in .ts files not .svelte files
-    import { get, handleErrors, OneTo100 } from "../lib/util";
+    import { get, handleErrors, OneTo100, objToURLArgs } from "../lib/util";
     import { goto } from '@sapper/app'
     import { range } from "../components/pianoroll/pianoRollHelpers";
     import { hand, task, urlToTask } from "../lib/gameplay/curriculum/task";
@@ -65,6 +66,12 @@
     })
 
     onMount(() => {
+        // Setup input if it's not already set
+        if (!getSettings()) {
+            session.set({"redirect": $page.path + "?" + objToURLArgs($page.query)})
+            goto("/settings")
+        }
+
         handleErrors(window)
         // TODO: unlock iOS audio as per https://gist.github.com/laziel/7aefabe99ee57b16081c
         window.AudioContext = window.AudioContext || window["webkitAudioContext"] // TODO: move to some polyfill location which is guaranteed to be called before application code.
