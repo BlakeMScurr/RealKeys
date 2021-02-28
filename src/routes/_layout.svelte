@@ -2,19 +2,11 @@
     import { addFetchListener } from "../lib/thirdPartyCaching"
     import { onMount } from 'svelte';
     import Nav from "../components/Generic/Nav.svelte";
-    import { handleErrors, objToURLArgs } from "../lib/util";
-    import { stores, goto } from "@sapper/app";
-    import { getSettings } from "../lib/storage";
+    import { handleErrors } from "../lib/util";
     
-    const { page, session } = stores();
-
     onMount(()=>{
         handleErrors(window)
         addFetchListener()
-        if (!$page.path.includes("/settings") && !getSettings()) {
-            session.set({"redirect": $page.path + "?" + objToURLArgs($page.query)})
-            goto("/settings")
-        }
     })
 </script>
 

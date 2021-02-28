@@ -40,6 +40,7 @@ export class ChordBook {
         var flat = () => {return "b"} // TODO: render proper html entity
         this.symbolMap = new Map([
             // TODO: remove repeated symbol
+            ["5", new ChordType(new Array("Perfect5th"), "5", "power chord", 0)],
             ["sus2", new ChordType(new Array("Tone", "Perfect4th"), "sus2", "suspended second", 0)],
 
             ["dim", new ChordType(new Array("Minor3rd", "Minor3rd"), "dim", "diminished triad", -5)],

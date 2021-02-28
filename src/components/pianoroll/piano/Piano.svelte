@@ -62,7 +62,7 @@
     }
 
     function touchNoteEvent(e) {
-        if (!midionly) {
+        if (!midiOnly) {
             forward(e)
         }
     }
@@ -163,7 +163,7 @@
 
     // setup computer keyboard input
     function setActive(key: string, isActive: boolean) {
-        if (!midionly) {
+        if (!midiOnly) {
             let changedNote = keyboardInputNote(key, notes)
             if (changedNote != undefined) {
                 forward({type: isActive ? "noteOn" : "noteOff", detail: changedNote})
