@@ -1,0 +1,1104 @@
+
+> RealKeys@0.0.1 dev /Users/blakemcalevey-scurr/Documents/projects/transcribely
+> sapper dev
+
+✔ server (11.1s)
+✔ client (12.1s)
+✔ service worker (22ms)
+> Listening on http://localhost:3000
+start
+
+<!doctype html>
+<html lang="en">
+<head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# article: http://ogp.me/ns/article#">
+<script>
+    (function () {
+        var isTouch = 'ontouchstart' in window || 'onmsgesturechange' in window;
+        var isMac = ['Macintosh', 'MacIntel', 'MacPPC', 'Mac68K'].indexOf(window.navigator.platform) > -1;
+
+        if (isMac && isTouch) {
+            var date = new Date();
+            date.setFullYear(date.getFullYear() + 1);
+
+            document.cookie = '_ug_force_ipad=1;path=/;domain=.ultimate-guitar.com;expires=' + date.toUTCString() + ';';
+            window.location = window.location.href
+        }
+    })()
+</script>
+<script>
+    !function(n,e){var t,o,i,c=[],f={passive:!0,capture:!0},r=new Date,a="pointerup",u="pointercancel";function p(n,c){t||(t=c,o=n,i=new Date,w(e),s())}function s(){o>=0&&o<i-r&&(c.forEach(function(n){n(o,t)}),c=[])}function l(t){if(t.cancelable){var o=(t.timeStamp>1e12?new Date:performance.now())-t.timeStamp;"pointerdown"==t.type?function(t,o){function i(){p(t,o),r()}function c(){r()}function r(){e(a,i,f),e(u,c,f)}n(a,i,f),n(u,c,f)}(o,t):p(o,t)}}function w(n){["click","mousedown","keydown","touchstart","pointerdown"].forEach(function(e){n(e,l,f)})}w(n),self.perfMetrics=self.perfMetrics||{},self.perfMetrics.onFirstInputDelay=function(n){c.push(n),s()}}(addEventListener,removeEventListener);
+</script>
+
+<link rel="preload" href="https://tabs.ultimate-guitar.com/static/public/build/ug_react/vendor.d7178f8cb0abda47404c0a153173a2fc.js" as="script" />
+<link rel="preload" href="https://tabs.ultimate-guitar.com/static/public/build/ug_react/202102/4578.5cb025bb44aa3d77b0ebfb8216a05c5c.js" as="script" />
+<link rel="preload" href="https://tabs.ultimate-guitar.com/static/public/build/ug_react/ug~runtime.5e61101b961f9f1357779ca41c794971.js" as="script" />
+<link rel="preload" href="https://tabs.ultimate-guitar.com/static/public/build/ug_react/ug.99f14b29144402cdcfb03db5685609bb.js" as="script" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+<meta property="fb:app_id" content="539490962762175">
+<meta property="og:type" content="music.song">
+<meta property="og:title" content="Smash Mouth - All Star (Chords)">
+<meta property="og:description" content="CHORDS by Smash Mouth">
+<meta property="og:image" content="https://tabs.ultimate-guitar.com/static/_img/ug-logo-fb.png">
+<title>ALL STAR CHORDS by Smash Mouth @ Ultimate-Guitar.Com</title>
+<meta name="description" content="[Verse 1] G D Am C Somebody once told me the world is gonna roll me G D Am C I ain&#039;t the sharpest tool in the shed G D Am She was looking kinda dumb with her finger and her C G D Am C Thumb">
+<meta name="keywords" content="Smash Mouth - All Star (Chords), Chords, Smash Mouth, Ultimate-Guitar.Com, ug">
+<meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+
+<meta name="viewport" class="js-viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+<script>
+    (function() {
+        var viewport = document.querySelector('.js-viewport');
+        var date = new Date();
+        date.setFullYear(date.getFullYear() + 1);
+        function setViewport() {
+            var isLargeViewport = (screen.availWidth > 1300 || screen.availHeight > 1300) && window.matchMedia("(orientation: landscape)").matches;
+            viewport.setAttribute('content', isLargeViewport ? 'width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no' : 'width=1280, minimum-scale=0.1, maximum-scale=5.0');
+            document.cookie = '_ug_small_screen=' + (isLargeViewport ? 0 : 1) +';path=/;domain=.ultimate-guitar.com;expires=' + date.toUTCString() + ';';
+        }
+        setViewport();
+        window.matchMedia("(orientation: landscape)").addEventListener('change', setViewport)
+    })()
+</script>
+    <meta name="csrf-param" content="_csrf">
+<meta name="csrf-token" content="FUwN-gV8S8TGaLGT0wK2N5dA7HyWxYcdMEP_ZEtmsLlSGz6_NBYfq6UKwPy8RcwP3DS0H-Cj9m5qKYxcfEuC-A==">
+            <link rel="search"
+    type="application/opensearchdescription+xml"
+    href="//tabs.ultimate-guitar.com/static/opensearch/opensearch.xml"
+    title="Ultmate-Guitar tabs & chords search" />    <meta name="theme-color" content="#272727">
+    
+    <link rel="manifest" href="/manifest_new.json">
+<link rel="icon" type="image/x-icon" href="//tabs.ultimate-guitar.com/static/public/img/product_icons/ug/favicon.ico">
+<link rel="shortcut icon" type="image/png" href="//tabs.ultimate-guitar.com/static/public/img/product_icons/ug/favicon.png" />
+<link rel="apple-touch-icon" sizes="32x32" href="//tabs.ultimate-guitar.com/static/public/img/product_icons/ug/apple-touch-icon-48x48_ver2.png" />
+<link rel="apple-touch-icon" sizes="48x48" href="//tabs.ultimate-guitar.com/static/public/img/product_icons/ug/apple-touch-icon-48x48_ver2.png" />
+<link rel="apple-touch-icon" sizes="72x72" href="//tabs.ultimate-guitar.com/static/public/img/product_icons/ug/apple-touch-icon-72x72_ver2.png" />
+<link rel="apple-touch-icon" sizes="96x96" href="//tabs.ultimate-guitar.com/static/public/img/product_icons/ug/apple-touch-icon-96x96_ver2.png" />
+<link rel="apple-touch-icon" sizes="144x14" href="//tabs.ultimate-guitar.com/static/public/img/product_icons/ug/apple-touch-icon-144x144_ver2.png" />
+<link rel="apple-touch-icon" sizes="192x192" href="//tabs.ultimate-guitar.com/static/public/img/product_icons/ug/apple-touch-icon-192x192_ver2.png" />
+<link rel="apple-touch-icon" sizes="512x512" href="//tabs.ultimate-guitar.com/static/public/img/product_icons/ug/apple-touch-icon-512x512_ver2.png" />
+<meta name="application-name" content="Ultimate Guitar" />
+    
+        <script>
+        var UGERROR = {
+            errors: [],
+            loggerLoaded: false,
+        };
+        var oldOnError = window.onerror;
+        var loadScript = function(src, resolve) {
+            UGERROR.loggerLoaded = true;
+            var script = document.createElement('script');
+            script.async=true;
+            script.type = 'text/javascript';
+            script.src = src;
+
+            var changeState = function() {
+                if (!loaded) {
+                    resolve()
+                    loaded = true;
+                }
+            };
+            var loaded;
+
+            script.onreadystatechange = changeState;
+            script.onload = changeState;
+
+            var node = document.getElementsByTagName('script')[0];
+            node.parentNode.insertBefore(script, node);
+        };
+
+        UGERROR.loadErrorLogger = function (release) {
+            var whitelistUrls = [
+                new RegExp('https://tabs.ultimate-guitar.com/static/public'),
+            ];
+
+            if (window.location.pathname !== '/') {
+                whitelistUrls.push(new RegExp(window.location.href))
+            }
+
+            var tags = {
+                source: 'tabs',
+                country: 'NZ',
+                isProUser: false,
+                isAuthenticated: false,
+                userId: '0',
+            };
+
+            !UGERROR.loggerLoaded && loadScript('https://tabs.ultimate-guitar.com/static/vendor/centry/raven.3.27.0.min.js', function() {
+                window.onerror = oldOnError;
+                window.Raven.setUserContext({
+                    userId: '0'
+                });
+                window.Raven.config('https://71cf858585c249f5b0f360c3ab811c84@sentry10.ultimate-guitar.com/7', {
+                    release: release,
+                    whitelistUrls: whitelistUrls,
+                    tags: tags
+                }).install();
+
+                var messages = UGERROR.errors.map(function(err) {
+                    return err[0];
+                });
+                UGERROR.errors
+                    .filter(function(error, index) {
+                        return messages.indexOf(error[0]) === index;
+                    })
+                    .forEach(function(args) {
+                        if (args.length > 1) {
+                            window.onerror.apply(this, args);
+                        } else if (typeof args[0] === 'string') {
+                            window.Raven.captureMessage(args[0]);
+                        } else {
+                            window.Raven.captureException(args[0]);
+                        }
+                    });
+            })
+        };
+
+        window.onerror = function() {
+            UGERROR.errors.push(arguments);
+            oldOnError && oldOnError.apply(this, arguments);
+
+            var message = typeof arguments[0] === 'object' && arguments[0].message
+            if (typeof message === 'string' && message.toLowerCase().indexOf('loading chunk') && window.UGAPP.trigger) {
+                window.UGAPP.trigger('globalEvent:YM:metrica', 'Chunk Load Error')
+            }
+
+            if (!UGERROR.hasFirstError) {
+                function load() {
+                    UGERROR.loadErrorLogger("ug-web_1.10.24");
+                }
+                if (document.readyState === 'complete') {
+                    load();
+                } else {
+                    window.addEventListener('load', load)
+                }
+                UGERROR.hasFirstError = true
+            }
+        };
+    </script>
+
+                <script>
+        (function () {
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                    window.navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        registrations.forEach(function(registration) {
+                            if (
+                                registration.active.scriptURL.indexOf('sw_ug.js') !== -1
+                                ||
+                                registration.active.scriptURL.indexOf('sw_ug_v2.js') !== -1
+                            ) {
+                                registration.unregister()
+                            }
+                        })
+                    })
+                    window.navigator.serviceWorker.register('/sw_ug_v3.js').catch(function(error) {})
+                })
+            }
+        })()
+    </script>
+                    <script>
+function loadGoogleCmpTcf2() {
+    (function () {
+        'use strict';
+        var g = function (a) {
+            var b = 0;
+            return function () {
+                return b < a.length ? {done: !1, value: a[b++]} : {done: !0}
+            }
+        }, l = this || self, m = /^[\w+/_-]+[=]{0,2}$/, p = null, q = function () {
+        }, r = function (a) {
+            var b = typeof a;
+            if ("object" == b) if (a) {
+                if (a instanceof Array) return "array";
+                if (a instanceof Object) return b;
+                var c = Object.prototype.toString.call(a);
+                if ("[object Window]" == c) return "object";
+                if ("[object Array]" == c || "number" == typeof a.length && "undefined" != typeof a.splice && "undefined" != typeof a.propertyIsEnumerable && !a.propertyIsEnumerable("splice")) return "array";
+                if ("[object Function]" == c || "undefined" != typeof a.call && "undefined" != typeof a.propertyIsEnumerable && !a.propertyIsEnumerable("call")) return "function"
+            } else return "null"; else if ("function" == b && "undefined" == typeof a.call) return "object";
+            return b
+        }, u = function (a, b) {
+            function c() {
+            }
+
+            c.prototype = b.prototype;
+            a.prototype = new c;
+            a.prototype.constructor = a
+        };
+        var v = function (a, b) {
+            Object.defineProperty(l, a, {
+                configurable: !1, get: function () {
+                    return b
+                }, set: q
+            })
+        };
+        var y = function (a, b) {
+            this.b = a === w && b || "";
+            this.a = x
+        }, x = {}, w = {};
+        var aa = function (a, b) {
+            a.src = b instanceof y && b.constructor === y && b.a === x ? b.b : "type_error:TrustedResourceUrl";
+            if (null === p) b:{
+                b = l.document;
+                if ((b = b.querySelector && b.querySelector("script[nonce]")) && (b = b.nonce || b.getAttribute("nonce")) && m.test(b)) {
+                    p = b;
+                    break b
+                }
+                p = ""
+            }
+            b = p;
+            b && a.setAttribute("nonce", b)
+        };
+        var z = function () {
+            return Math.floor(2147483648 * Math.random()).toString(36) + Math.abs(Math.floor(2147483648 * Math.random()) ^ +new Date).toString(36)
+        };
+        var A = function (a, b) {
+            b = String(b);
+            "application/xhtml+xml" === a.contentType && (b = b.toLowerCase());
+            return a.createElement(b)
+        }, B = function (a) {
+            this.a = a || l.document || document
+        };
+        B.prototype.appendChild = function (a, b) {
+            a.appendChild(b)
+        };
+        var C = function (a, b, c, d, e, f) {
+            try {
+                var k = a.a, h = A(a.a, "SCRIPT");
+                h.async = !0;
+                aa(h, b);
+                k.head.appendChild(h);
+                h.addEventListener("load", function () {
+                    e();
+                    d && k.head.removeChild(h)
+                });
+                h.addEventListener("error", function () {
+                    0 < c ? C(a, b, c - 1, d, e, f) : (d && k.head.removeChild(h), f())
+                })
+            } catch (n) {
+                f()
+            }
+        };
+        var ba = l.atob("aHR0cHM6Ly93d3cuZ3N0YXRpYy5jb20vaW1hZ2VzL2ljb25zL21hdGVyaWFsL3N5c3RlbS8xeC93YXJuaW5nX2FtYmVyXzI0ZHAucG5n"), ca = l.atob("WW91IGFyZSBzZWVpbmcgdGhpcyBtZXNzYWdlIGJlY2F1c2UgYWQgb3Igc2NyaXB0IGJsb2NraW5nIHNvZnR3YXJlIGlzIGludGVyZmVyaW5nIHdpdGggdGhpcyBwYWdlLg=="), da = l.atob("RGlzYWJsZSBhbnkgYWQgb3Igc2NyaXB0IGJsb2NraW5nIHNvZnR3YXJlLCB0aGVuIHJlbG9hZCB0aGlzIHBhZ2Uu"), ea = function (a, b, c) {
+            this.b = a;
+            this.f = new B(this.b);
+            this.a = null;
+            this.c = [];
+            this.g = !1;
+            this.i = b;
+            this.h = c
+        }, F = function (a) {
+            if (a.b.body && !a.g) {
+                var b =
+                    function () {
+                        D(a);
+                        l.setTimeout(function () {
+                            return E(a, 3)
+                        }, 50)
+                    };
+                C(a.f, a.i, 2, !0, function () {
+                    l[a.h] || b()
+                }, b);
+                a.g = !0
+            }
+        }, D = function (a) {
+            for (var b = G(1, 5), c = 0; c < b; c++) {
+                var d = H(a);
+                a.b.body.appendChild(d);
+                a.c.push(d)
+            }
+            b = H(a);
+            b.style.bottom = "0";
+            b.style.left = "0";
+            b.style.position = "fixed";
+            b.style.width = G(100, 110).toString() + "%";
+            b.style.zIndex = G(2147483544, 2147483644).toString();
+            b.style["background-color"] = I(249, 259, 242, 252, 219, 229);
+            b.style["box-shadow"] = "0 0 12px #888";
+            b.style.color = I(0, 10, 0, 10, 0, 10);
+            b.style.display =
+                "flex";
+            b.style["justify-content"] = "center";
+            b.style["font-family"] = "Roboto, Arial";
+            c = H(a);
+            c.style.width = G(80, 85).toString() + "%";
+            c.style.maxWidth = G(750, 775).toString() + "px";
+            c.style.margin = "24px";
+            c.style.display = "flex";
+            c.style["align-items"] = "flex-start";
+            c.style["justify-content"] = "center";
+            d = A(a.f.a, "IMG");
+            d.className = z();
+            d.src = ba;
+            d.style.height = "24px";
+            d.style.width = "24px";
+            d.style["padding-right"] = "16px";
+            var e = H(a), f = H(a);
+            f.style["font-weight"] = "bold";
+            f.textContent = ca;
+            var k = H(a);
+            k.textContent = da;
+            J(a,
+                e, f);
+            J(a, e, k);
+            J(a, c, d);
+            J(a, c, e);
+            J(a, b, c);
+            a.a = b;
+            a.b.body.appendChild(a.a);
+            b = G(1, 5);
+            for (c = 0; c < b; c++) d = H(a), a.b.body.appendChild(d), a.c.push(d)
+        }, J = function (a, b, c) {
+            for (var d = G(1, 5), e = 0; e < d; e++) {
+                var f = H(a);
+                b.appendChild(f)
+            }
+            b.appendChild(c);
+            c = G(1, 5);
+            for (d = 0; d < c; d++) e = H(a), b.appendChild(e)
+        }, G = function (a, b) {
+            return Math.floor(a + Math.random() * (b - a))
+        }, I = function (a, b, c, d, e, f) {
+            return "rgb(" + G(Math.max(a, 0), Math.min(b, 255)).toString() + "," + G(Math.max(c, 0), Math.min(d, 255)).toString() + "," + G(Math.max(e, 0), Math.min(f,
+                255)).toString() + ")"
+        }, H = function (a) {
+            a = A(a.f.a, "DIV");
+            a.className = z();
+            return a
+        }, E = function (a, b) {
+            0 >= b || null != a.a && 0 != a.a.offsetHeight && 0 != a.a.offsetWidth || (fa(a), D(a), l.setTimeout(function () {
+                return E(a, b - 1)
+            }, 50))
+        }, fa = function (a) {
+            var b = a.c;
+            var c = "undefined" != typeof Symbol && Symbol.iterator && b[Symbol.iterator];
+            b = c ? c.call(b) : {next: g(b)};
+            for (c = b.next(); !c.done; c = b.next()) (c = c.value) && c.parentNode && c.parentNode.removeChild(c);
+            a.c = [];
+            (b = a.a) && b.parentNode && b.parentNode.removeChild(b);
+            a.a = null
+        };
+        var ia = function (a, b, c, d, e) {
+            var f = ha(c), k = function (n) {
+                n.appendChild(f);
+                l.setTimeout(function () {
+                    f ? (0 !== f.offsetHeight && 0 !== f.offsetWidth ? b() : a(), f.parentNode && f.parentNode.removeChild(f)) : a()
+                }, d)
+            }, h = function (n) {
+                document.body ? k(document.body) : 0 < n ? l.setTimeout(function () {
+                    h(n - 1)
+                }, e) : b()
+            };
+            h(3)
+        }, ha = function (a) {
+            var b = document.createElement("div");
+            b.className = a;
+            b.style.width = "1px";
+            b.style.height = "1px";
+            b.style.position = "absolute";
+            b.style.left = "-10000px";
+            b.style.top = "-10000px";
+            b.style.zIndex = "-10000";
+            return b
+        };
+        var K = {}, L = null;
+        var M = function () {
+        }, N = "function" == typeof Uint8Array, O = function (a, b) {
+            a.b = null;
+            b || (b = []);
+            a.j = void 0;
+            a.f = -1;
+            a.a = b;
+            a:{
+                if (b = a.a.length) {
+                    --b;
+                    var c = a.a[b];
+                    if (!(null === c || "object" != typeof c || Array.isArray(c) || N && c instanceof Uint8Array)) {
+                        a.g = b - a.f;
+                        a.c = c;
+                        break a
+                    }
+                }
+                a.g = Number.MAX_VALUE
+            }
+            a.i = {}
+        }, P = [], Q = function (a, b) {
+            if (b < a.g) {
+                b += a.f;
+                var c = a.a[b];
+                return c === P ? a.a[b] = [] : c
+            }
+            if (a.c) return c = a.c[b], c === P ? a.c[b] = [] : c
+        }, R = function (a, b, c) {
+            a.b || (a.b = {});
+            if (!a.b[c]) {
+                var d = Q(a, c);
+                d && (a.b[c] = new b(d))
+            }
+            return a.b[c]
+        };
+        M.prototype.h = N ? function () {
+            var a = Uint8Array.prototype.toJSON;
+            Uint8Array.prototype.toJSON = function () {
+                var b;
+                void 0 === b && (b = 0);
+                if (!L) {
+                    L = {};
+                    for (var c = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789".split(""), d = ["+/=", "+/", "-_=", "-_.", "-_"], e = 0; 5 > e; e++) {
+                        var f = c.concat(d[e].split(""));
+                        K[e] = f;
+                        for (var k = 0; k < f.length; k++) {
+                            var h = f[k];
+                            void 0 === L[h] && (L[h] = k)
+                        }
+                    }
+                }
+                b = K[b];
+                c = [];
+                for (d = 0; d < this.length; d += 3) {
+                    var n = this[d], t = (e = d + 1 < this.length) ? this[d + 1] : 0;
+                    h = (f = d + 2 < this.length) ? this[d + 2] : 0;
+                    k = n >> 2;
+                    n = (n &
+                        3) << 4 | t >> 4;
+                    t = (t & 15) << 2 | h >> 6;
+                    h &= 63;
+                    f || (h = 64, e || (t = 64));
+                    c.push(b[k], b[n], b[t] || "", b[h] || "")
+                }
+                return c.join("")
+            };
+            try {
+                return JSON.stringify(this.a && this.a, S)
+            } finally {
+                Uint8Array.prototype.toJSON = a
+            }
+        } : function () {
+            return JSON.stringify(this.a && this.a, S)
+        };
+        var S = function (a, b) {
+            return "number" !== typeof b || !isNaN(b) && Infinity !== b && -Infinity !== b ? b : String(b)
+        };
+        M.prototype.toString = function () {
+            return this.a.toString()
+        };
+        var T = function (a) {
+            O(this, a)
+        };
+        u(T, M);
+        var U = function (a) {
+            O(this, a)
+        };
+        u(U, M);
+        var ja = function (a, b) {
+            this.c = new B(a);
+            var c = R(b, T, 5);
+            c = new y(w, Q(c, 4) || "");
+            this.b = new ea(a, c, Q(b, 4));
+            this.a = b
+        }, ka = function (a, b, c, d) {
+            b = new T(b ? JSON.parse(b) : null);
+            b = new y(w, Q(b, 4) || "");
+            C(a.c, b, 3, !1, c, function () {
+                ia(function () {
+                    F(a.b);
+                    d(!1)
+                }, function () {
+                    d(!0)
+                }, Q(a.a, 2), Q(a.a, 3), Q(a.a, 1))
+            })
+        };
+        var la = function (a, b) {
+            V(a, "internal_api_load_with_sb", function (c, d, e) {
+                ka(b, c, d, e)
+            });
+            V(a, "internal_api_sb", function () {
+                F(b.b)
+            })
+        }, V = function (a, b, c) {
+            a = l.btoa(a + b);
+            v(a, c)
+        }, W = function (a, b, c) {
+            for (var d = [], e = 2; e < arguments.length; ++e) d[e - 2] = arguments[e];
+            e = l.btoa(a + b);
+            e = l[e];
+            if ("function" == r(e)) e.apply(null, d); else throw Error("API not exported.");
+        };
+        var X = function (a) {
+            O(this, a)
+        };
+        u(X, M);
+        var Y = function (a) {
+            this.h = window;
+            this.a = a;
+            this.b = Q(this.a, 1);
+            this.f = R(this.a, T, 2);
+            this.g = R(this.a, U, 3);
+            this.c = !1
+        };
+        Y.prototype.start = function () {
+            ma();
+            var a = new ja(this.h.document, this.g);
+            la(this.b, a);
+            na(this)
+        };
+        var ma = function () {
+            var a = function () {
+                if (!l.frames.googlefcPresent) if (document.body) {
+                    var b = document.createElement("iframe");
+                    b.style.display = "none";
+                    b.style.width = "0px";
+                    b.style.height = "0px";
+                    b.style.border = "none";
+                    b.style.zIndex = "-1000";
+                    b.style.left = "-1000px";
+                    b.style.top = "-1000px";
+                    b.name = "googlefcPresent";
+                    document.body.appendChild(b)
+                } else l.setTimeout(a, 5)
+            };
+            a()
+        }, na = function (a) {
+            var b = Date.now();
+            W(a.b, "internal_api_load_with_sb", a.f.h(), function () {
+                var c;
+                var d = a.b, e = l[l.btoa(d + "loader_js")];
+                if (e) {
+                    e = l.atob(e);
+                    e = parseInt(e, 10);
+                    d = l.btoa(d + "loader_js").split(".");
+                    var f = l;
+                    d[0] in f || "undefined" == typeof f.execScript || f.execScript("var " + d[0]);
+                    for (; d.length && (c = d.shift());) d.length ? f[c] && f[c] !== Object.prototype[c] ? f = f[c] : f = f[c] = {} : f[c] = null;
+                    c = Math.abs(b - e);
+                    c = 1728E5 > c ? 0 : c
+                } else c = -1;
+                0 != c && (W(a.b, "internal_api_sb"), Z(a, Q(a.a, 6)))
+            }, function (c) {
+                Z(a, c ? Q(a.a, 4) : Q(a.a, 5))
+            })
+        }, Z = function (a, b) {
+            a.c || (a.c = !0, a = new l.XMLHttpRequest, a.open("GET", b, !0), a.send())
+        };
+        (function (a, b) {
+            l[a] = function (c) {
+                for (var d = [], e = 0; e < arguments.length; ++e) d[e - 0] = arguments[e];
+                l[a] = q;
+                b.apply(null, d)
+            }
+        })("__d3lUW8vwsKlB__", function (a) {
+            "function" == typeof window.atob && (a = window.atob(a), a = new X(a ? JSON.parse(a) : null), (new Y(a)).start())
+        });
+    }).call(this);
+
+    window.__d3lUW8vwsKlB__("WyJkZGY2ZGJkNjczOTdkMzZhIixbbnVsbCxudWxsLG51bGwsImh0dHBzOi8vZnVuZGluZ2Nob2ljZXNtZXNzYWdlcy5nb29nbGUuY29tL2YvQUdTS1d4VXU3b0Fpd1ROMml2aVRnVURsc25TdlFZVG90eVB3Wk40UzlzaUwwMDdpRlRQTk51aWhjNkV2NktoYldDclY2T2RpakQtZm1sUUNpak91NVJVQUk1VVx1MDAzZCJdCixbMjAsImRpdi1ncHQtYWQiLDEwMCwiWkdSbU5tUmlaRFkzTXprM1pETTJZUVx1MDAzZFx1MDAzZCIsW251bGwsbnVsbCxudWxsLCJodHRwczovL3d3dy5nc3RhdGljLmNvbS8wZW1uL2YvcC9kZGY2ZGJkNjczOTdkMzZhLmpzP3VzcXBcdTAwM2RDQWMiXQpdCiwiaHR0cHM6Ly9mdW5kaW5nY2hvaWNlc21lc3NhZ2VzLmdvb2dsZS5jb20vbC9BR1NLV3hYWTVSY0NGSjBuWUpNajZRVmZXWlYyX1ZUU280c2NSS2ZIQzdBYno0R1I5cDFReS1Jcm11aEljSXhnTTZNYk8wTGQyOEc0ZDREV2Zqd1ZTaWNLP2FiXHUwMDNkMSIsImh0dHBzOi8vZnVuZGluZ2Nob2ljZXNtZXNzYWdlcy5nb29nbGUuY29tL2wvQUdTS1d4VllRNHdrUFVtZzdzWVY3QlRiblRGQnZTYzNnemtGQ2hGeFRnUzIyUEQwd0VneEo2REdyVUU5Ykc5SnVCUVVFRkFqWHFTMlhCV21pQnFHRnh1YT9hYlx1MDAzZDJcdTAwMjZzYmZcdTAwM2QxIiwiaHR0cHM6Ly9mdW5kaW5nY2hvaWNlc21lc3NhZ2VzLmdvb2dsZS5jb20vbC9BR1NLV3hYNVd5bUtaMkhiSVExUjVEMi0xT1dhTlJTZGxHejBMYl9oNjZkUTVCOGhMajNxUEJ2TTJNN09SdWZ5QnZtT1JtSjhCMTBXdTU2Tk9BanBhVHVJP3NiZlx1MDAzZDIiXQo=");
+}
+
+function loadQuantcastCmpTcf2() {
+    var host = window.location.hostname;
+    var element = document.createElement('script');
+    var firstScript = document.getElementsByTagName('script')[0];
+    var url = 'https://quantcast.mgr.consensu.org'
+        .concat('/choice/', 'DZZa7nKCW8kGP', '/', host, '/choice.js')
+    element.async = true;
+    element.type = 'text/javascript';
+    element.src = url;
+
+    firstScript.parentNode.insertBefore(element, firstScript);
+}
+</script>
+                                    <style>
+        #ad_cs_5723252_300_250 > div > iframe:only-child {
+            display: none;
+        }
+    </style>
+    <script>
+        function loadPubmaticIh() {
+            var purl = window.location.href;
+            var url = '//ads.pubmatic.com/AdServer/js/pwt/72623/2781';
+            var profileVersionId = '';
+            if(purl.indexOf('pwtv=')>0){
+                var regexp = /pwtv=(.*?)(&|$)/g;
+                var matches = regexp.exec(purl);
+                if(matches.length >= 2 && matches[1].length > 0){
+                    profileVersionId = '/'+matches[1];
+                }
+            }
+            var wtads = document.createElement('script');
+            wtads.async = true;
+            wtads.type = 'text/javascript';
+            wtads.src = url+profileVersionId+'/pwt.js';
+            var node = document.getElementsByTagName('script')[0];
+            node.parentNode.insertBefore(wtads, node);
+        }
+
+        document.domain = 'ultimate-guitar.com';
+
+                var pbjs = pbjs || {};
+        pbjs.que = pbjs.que || [];
+
+                var googletag = window.googletag || {};
+        googletag.cmd = googletag.cmd || [];
+
+                var biddingHelpers = {
+            prebidScriptLoadStarted: false,
+            gptLoadStarted: false,
+            loadScript: function (src, errCb, sucCb, parent) {
+                var script = document.createElement('script');
+                script.async = true;
+                script.type = 'text/javascript';
+                script.src = src;
+                if (typeof errCb === 'function') {
+                    script.addEventListener('error', errCb);
+                }
+                if (typeof sucCb === 'function') {
+                    script.addEventListener('load', sucCb);
+                }
+
+                if (parent) {
+                    parent.insertAdjacentElement('afterbegin', script);
+                } else {
+                    var node = document.getElementsByTagName('script')[0];
+                    node.parentNode.insertBefore(script, node);
+                }
+            },
+            loadPrebid: function () {
+                loadPubmaticIh();
+                // this.loadScript('//js-sec.indexww.com/ht/p/184163-181931164229939.js');
+                setTimeout(function() {
+                    biddingHelpers.prebidScriptLoad();
+                }, 100);
+            },
+            prebidScriptLoad: function() {
+                if (this.prebidScriptLoadStarted) {
+                    return
+                }
+                this.prebidScriptLoadStarted = true
+                this.loadScript('https://tabs.ultimate-guitar.com/static/public/build/prebid/prebid_ver1614383839.js', function () {
+                    window.UGAPP.bidding.prebidLoadError = true;
+                });
+            },
+            loadCmpTcf2: function(cb) {
+                                    loadQuantcastCmpTcf2();
+                
+                if (typeof cb === 'function') {
+                    this.onTcfReady(cb);
+                }
+            },
+            onTcfReady: function(cb) {
+                function waitForTcf(tcData) {
+                    if (!tcData || tcData === true) {
+                        return;
+                    }
+
+                    if (['tcloaded', 'useractioncomplete'].indexOf(tcData.eventStatus) !== -1) {
+                        window.__tcfapi('removeEventListener', 2, waitForTcf, tcData.listenerId);
+                        var hasNecessaryPurposes = tcData.purpose && tcData.purpose.consents && tcData.purpose.consents[1];
+                        if (hasNecessaryPurposes) {
+                            [2, 7, 9, 10].forEach(function(id) {
+                                if (!(
+                                    tcData.purpose && tcData.purpose.consents && tcData.purpose.consents[id] ||
+                                    tcData.purpose && tcData.purpose.egitimateInterests && tcData.purpose.egitimateInterests[id]
+                                )) {
+                                    hasNecessaryPurposes = false;
+                                }
+                            });
+                        }
+
+                        if (typeof cb === 'function') {
+                            cb(tcData, hasNecessaryPurposes);
+                        }
+                    }
+                }
+
+                window.__tcfapi('addEventListener', 2, waitForTcf);
+            },
+            loadAmazonApstag: function () {
+                !function (a9, a, p, s, t, A, g) {
+                    if (a[a9]) return;
+
+                    function q(c, r) {
+                        a[a9]._Q.push([c, r])
+                    }
+
+                    a[a9] = {
+                        init: function () {
+                            q("i", arguments)
+                        },
+                        fetchBids: function () {
+                            q("f", arguments)
+                        },
+                        setDisplayBids: function () {
+                        },
+                        targetingKeys: function () {
+                            return []
+                        }, _Q: []
+                    };
+                    A = p.createElement(s);
+                    A.async = !0;
+                    A.src = t;
+                    g = p.getElementsByTagName(s)[0];
+                    g.parentNode.insertBefore(A, g)
+                }("apstag", window, document, "script", "//c.amazon-adsystem.com/aax2/apstag.js");
+
+                var apstagParams = {
+                    pubID: 'fa84ab71-a984-4d4b-9cab-fa3b3879ff93',
+                    adServer: 'googletag',
+                }
+
+                if (window.UGAPP.bidding.isGDPRAvailable) {
+                    apstagParams.gdpr = {
+                        cmpTimeout: 50
+                    }
+                }
+
+                    apstag.init(apstagParams)
+            },
+            apstagFetchBids: function (units, refresh) {
+                if (!units || units.length === 0) {
+                    return;
+                }
+                apstag.fetchBids({
+                    slots: units.map(function (unit) {
+                        return {
+                            slotID: unit.code,
+                            slotName: '/' + window.UGAPP.bidding.dfpId + '/' + unit.dfpCode + (refresh ? '_REFRESH' : ''),
+                            sizes: unit.sizes
+                        };
+                    }),
+                    timeout: window.UGAPP.bidding.timeout
+                }, function (bids) {
+                    googletag.cmd.push(function () {
+                        apstag.setDisplayBids()
+                    })
+                })
+            },
+            loadAdServerScript: function() {
+                this.loadScript('//www.googletagservices.com/tag/js/gpt.js');
+            },
+            loadAdServer: function () {
+                if (this.gptLoadStarted) {
+                    return;
+                }
+
+                this.gptLoadStarted = true;
+
+                if (window.UGAPP.bidding.isGDPRAvailable) {
+                    this.onTcfReady(function(tcData, hasNecessaryPurposes) {
+                        if (hasNecessaryPurposes) {
+                            biddingHelpers.loadAdServerScript();
+                        }
+                    })
+                } else {
+                    this.loadAdServerScript();
+                }
+            },
+            getAdomikRandomAdGroup: function () {
+                var rand = Math.random()
+                switch (true) {
+                    case rand < 0.09:
+                        return 'ad_ex' + (Math.floor(100 * (rand)))
+                    case rand < 0.10:
+                        return 'ad_bc'
+                    default:
+                        return 'ad_opt'
+                }
+            },
+            defineGptTag: function (params, needRefresh) {
+                var dfpId = window.UGAPP.bidding.dfpId;
+                var dfpCode = needRefresh ? params.dfpCode + '_REFRESH' : params.dfpCode;
+                var path = '/' + dfpId + '/' + dfpCode;
+                var tag;
+
+                if (params.layoutPlacement === 'outOfPage') {
+                    tag = googletag.defineOutOfPageSlot(path, params.code);
+                } else {
+                    tag = googletag.defineSlot(path, params.sizes, params.code);
+                }
+
+                var connection = navigator.connection;
+                var downlink = (connection && connection.downlink) ? Math.ceil(navigator.connection.downlink) : 'not_available';
+
+                if (downlink > 11) {
+                    downlink = 'more';
+                }
+
+                tag = tag
+                    .addService(googletag.pubads())
+                    .setTargeting('ad_group', biddingHelpers.getAdomikRandomAdGroup())
+                    .setTargeting('actual_speed', downlink)
+                    .setTargeting('is_refresh', '0');
+
+                tag.setTargeting('allow_adx', window.UGAPP.bidding.disableAdx ? 'false' : 'true');
+                tag.setTargeting('page_type', window.UGAPP.bidding.analytics.pageType);
+
+                var t = window.performance && window.performance.timing;
+                if (t) {
+                    var start = t.navigationStart || t.fetchStart
+                    var value = Math.ceil((t.domContentLoadedEventStart - start) / 100) * 100
+
+                    if (!value || value < 0) {
+                        value = 'not_loaded';
+                    }
+
+                    if (value > 2500) {
+                        value = 'more';
+                    }
+
+                    tag.setTargeting('dom_ready', value);
+                } else {
+                    tag.setTargeting('dom_ready', 'not_available');
+                }
+
+                var windowWidth = document.documentElement.clientWidth;
+
+                var sekindoKeyValues = {
+                    1: 'sekindo',
+                    2: 'sekindohover'
+                };
+                if (params.additionalSekindoBehavior && sekindoKeyValues[params.additionalSekindoBehavior]) {
+                    tag.setTargeting('video', sekindoKeyValues[params.additionalSekindoBehavior]);
+                }
+
+                
+                                tag.setTargeting('song', "All Star");
+                tag.setTargeting('artist', "Smash Mouth");
+                
+                if (params.variation) {
+                    tag.setTargeting('variation', params.variation)
+                    tag.setTargeting('ab_variation', params.variationName)
+                }
+
+                
+                return tag;
+            },
+            getUnitByCode: function (code) {
+                return window.UGAPP.bidding.units.filter(function (unit) {
+                    return unit.code === code
+                })[0]
+            },
+            getSlotByCode: function (code) {
+                var slots = window.UGAPP.bidding.slots.filter(function (slot) {
+                    return slot.code === code
+                });
+
+                return slots ? slots[0] : null
+            }
+        };
+
+        window.googletag.cmd.push(function () {
+            window.googletag.pubads().addEventListener('slotRenderEnded', function (e) {
+                var slot = biddingHelpers.getSlotByCode(e.slot.getSlotElementId());
+                if (!slot) {
+                    return
+                }
+
+                if (document.location.href.indexOf('dfp_debug=true') !== -1) {
+                    console.log(e)
+                }
+
+                if (
+                    (
+                        slot.code === 'ad_cs_2010319_300_250' // tab_desktop tab_pro_desktop / Primis
+                        && (
+                            [138209404243, 138238546272, 138238996438, 138245687657, 138245691213, 138245902399, 138245692437, 138248215773, 138248239163].indexOf(e.sourceAgnosticCreativeId) !== -1
+                            || [5052151576, 5052153331, 5052153970, 5052154318, 5202683448].indexOf(e.sourceAgnosticLineItemId) !== -1
+                        )
+                    )
+                    // || (
+                    //     slot.code === 'ad_cs_2010320_160_600' // tab_desktop
+                    //     && [4954799754, 5041551514].indexOf(e.sourceAgnosticLineItemId) !== -1
+                    // )
+                    || (
+                        slot.code === 'ad_cs_5723252_300_250' // tab_mobile / Primis
+                        && (
+                            [4691094153, 5040180432, 5144436917].indexOf(e.sourceAgnosticLineItemId) !== -1
+                        )
+                    )
+                    || (
+                        slot.code === 'ad_cs_2010326_300_250' // mojo / Primis
+                        && (
+                            [4690704228, 5144436917].indexOf(e.sourceAgnosticLineItemId) !== -1
+                        )
+                    )
+                ) {
+                    slot.refresh = typeof slot.refresh === 'object' ? slot.refresh : {};
+                    slot.refresh.enabled = false
+                }
+            })
+        });
+    </script>
+            
+            <script>
+            function importFonts() {
+                var style = document.createElement('link');
+                style.rel = 'stylesheet';
+                style.href = 'https://fonts.googleapis.com/css?family=Open+Sans:400,600,700&subset=latin,latin-ext,greek,hebrew,vietnamese,arabic,devanagari,cyrillic,cyrillic-ext,khmer,greek-ext,tamil,thai,telugu,bengali,gujarati';
+                style.type = 'text/css';
+                document.head.appendChild(style)
+            }
+
+            try {
+                navigator.serviceWorker.getRegistrations().then(importFonts)
+            } catch (e) {
+                window.addEventListener('load', importFonts)
+            }
+        </script>
+    
+</head>
+<body style="background-color: #111; margin: 0" >
+            
+                
+            <div class="js-page js-global-wrapper">
+                    </div>
+        <div class="js-cmp"></div>
+                                <div class="js-store" data-content="{&quot;config&quot;:{&quot;abVariation&quot;:null,&quot;abVariation2&quot;:null,&quot;abVariation3&quot;:null,&quot;abTestAccountVariation&quot;:[],&quot;experiments&quot;:{&quot;isPianoChordGroup&quot;:true},&quot;urlFacebook&quot;:&quot;https://www.ultimate-guitar.com/user/auth/oauth?service=facebook&quot;,&quot;urlGoogle&quot;:&quot;https://www.ultimate-guitar.com/user/auth/oauth?service=google&quot;,&quot;urlApple&quot;:&quot;https://www.ultimate-guitar.com/user/auth/oauth?service=apple&quot;,&quot;main_server&quot;:&quot;ultimate-guitar.com&quot;,&quot;ps_server&quot;:&quot;plus.ultimate-guitar.com&quot;,&quot;static_server&quot;:&quot;https://tabs.ultimate-guitar.com/static&quot;,&quot;statik_cache&quot;:&quot;_ver1614383839&quot;,&quot;staticPrefix&quot;:&quot;/static&quot;,&quot;time&quot;:1614482075000,&quot;isGDPRAvailable&quot;:false,&quot;isCcpaAvailable&quot;:false,&quot;user&quot;:{&quot;id&quot;:0,&quot;uuid&quot;:511025028,&quot;username&quot;:&quot;Unregistered&quot;,&quot;iq&quot;:&quot;&quot;,&quot;contributorPower&quot;:false},&quot;isOfficeUser&quot;:false,&quot;isOfficeRequest&quot;:false,&quot;isWebp&quot;:false,&quot;isBot&quot;:false,&quot;is_mobile&quot;:false,&quot;is_tablet&quot;:false,&quot;isThemeMobile&quot;:false,&quot;isIe&quot;:false,&quot;socketCluster&quot;:{&quot;serviceKey&quot;:&quot;f0557aa8-2d06-43d9-9c16-f885bc710b97:main&quot;,&quot;channelPrefix&quot;:&quot;f0557aa8-2d06-43d9-9c16-f885bc710b97:main#prod&quot;,&quot;hostname&quot;:&quot;socketcluster.k8s.wsmgroup.ru&quot;,&quot;port&quot;:443,&quot;channelName&quot;:&quot;&quot;},&quot;metricaId&quot;:18746557,&quot;captcha_id&quot;:&quot;6LfCo_8SAAAAALEMHnlK18j8IemlAdvmxwRnQe2v&quot;,&quot;stripeApiKey&quot;:&quot;pk_live_4aZVHgEcj68d3uAgtisiXtZo&quot;,&quot;country&quot;:&quot;NZ&quot;,&quot;countryCode&quot;:&quot;NZ&quot;,&quot;browserName&quot;:&quot;&quot;,&quot;os&quot;:&quot;&quot;,&quot;platform&quot;:4,&quot;browser&quot;:&quot;{\&quot;device\&quot;:{\&quot;type\&quot;:\&quot;bot\&quot;}}&quot;,&quot;urlUgProAppIcon&quot;:&quot;https://tabs.ultimate-guitar.com/static/public/img/app_icons/icon_ug_pro_ver1614383839.png&quot;,&quot;withCritical&quot;:false,&quot;isJobEnabled&quot;:false,&quot;analytics&quot;:{&quot;userTrackerId&quot;:&quot;SA==&quot;},&quot;braintree&quot;:{&quot;environment&quot;:&quot;production&quot;,&quot;tokenizationKey&quot;:&quot;production_8htvrhhr_67vpx3rpxt6m5z7c&quot;,&quot;paypalClientId&quot;:&quot;ASwoeikdyflPIKFAC3U34ewfFVRE5-_p6qc1TTQG9g_sHNs3RP5Sq3pE_e7V2p0VTi-nJQuIA5ApP1XH&quot;},&quot;vimeo&quot;:{&quot;baseImagePath&quot;:&quot;https://cdn.ustatik.com/s3/ug.video.warm/preview/&quot;},&quot;hasStaticCache&quot;:0,&quot;rtAnalytics&quot;:{&quot;trackUrl&quot;:&quot;/components/ab/event&quot;,&quot;trackingEnabled&quot;:true},&quot;xtz&quot;:{&quot;isActive&quot;:true,&quot;hasAccess&quot;:true,&quot;canToggle&quot;:false,&quot;feedbackChannel&quot;:null},&quot;jinba&quot;:{&quot;customTimings&quot;:[],&quot;appLabel&quot;:&quot;tab_page&quot;,&quot;appLabelExp&quot;:&quot;null&quot;},&quot;metricaParams&quot;:{&quot;rights&quot;:0,&quot;u_id&quot;:&quot;SA==&quot;,&quot;auth&quot;:&quot;None&quot;,&quot;is_registered&quot;:0,&quot;ab&quot;:{&quot;410&quot;:1}}},&quot;store&quot;:{&quot;page&quot;:{&quot;experiments&quot;:{&quot;variations&quot;:{&quot;410&quot;:1},&quot;closed_experiments&quot;:[]},&quot;data&quot;:{&quot;mobile_device&quot;:null,&quot;show_rate_layer&quot;:false,&quot;tab&quot;:{&quot;id&quot;:428803,&quot;song_id&quot;:11474,&quot;song_name&quot;:&quot;All Star&quot;,&quot;artist_id&quot;:495,&quot;artist_name&quot;:&quot;Smash Mouth&quot;,&quot;type&quot;:&quot;Chords&quot;,&quot;part&quot;:&quot;&quot;,&quot;version&quot;:1,&quot;votes&quot;:1777,&quot;rating&quot;:4.7754799999999999471356204594485461711883544921875,&quot;date&quot;:&quot;1162166401&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:409,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;F#&quot;,&quot;version_description&quot;:&quot;&quot;,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/smash_mouth_495&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/smash-mouth/all-star-chords-428803&quot;,&quot;date_update&quot;:&quot;1603749730&quot;,&quot;user_id&quot;:173896,&quot;user_iq&quot;:93,&quot;username&quot;:&quot;Neeky&quot;,&quot;type_name&quot;:&quot;Chords&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/smash-mouth/all-star-guitar-pro-1472377&quot;},&quot;backing_track_tip&quot;:false,&quot;tab_view&quot;:{&quot;wiki_tab&quot;:{&quot;content&quot;:&quot;[Verse 1]\r\n[tab]    [ch]G[/ch]         [ch]D[/ch]           [ch]Am[/ch]             [ch]C[/ch]                    \r\nSomebody once told me the world is gonna roll me [/tab]\r\n[tab]  [ch]G[/ch]                  [ch]D[/ch]           [ch]Am[/ch]   [ch]C[/ch]     \r\nI ain't the sharpest tool in the shed [/tab]\r\n[tab]        [ch]G[/ch]             [ch]D[/ch]             [ch]Am[/ch]                         \r\nShe was looking kinda dumb with her finger and her [/tab]\r\n[tab][ch]C[/ch]            [ch]G[/ch]            [ch]D[/ch]         [ch]Am[/ch]       [ch]C[/ch]       \r\nThumb in the shape of an \&quot;L\&quot; on her forehead [/tab]\r\n \r\n[tab]         [ch]G[/ch]                           [ch]D[/ch] \r\nWell the years start coming and they don't stop coming [/tab]\r\n[tab][ch]Am[/ch]                     [ch]C[/ch] \r\nFed to the rules and I hit the ground running [/tab]\r\n[tab][ch]G[/ch]                        [ch]D[/ch] \r\nDidn't make sense not to live for fun [/tab]\r\n[tab]     [ch]Am[/ch]                        [ch]C[/ch] \r\nYour brain gets smart but your head gets dumb [/tab]\r\n \r\n[tab][ch]G[/ch]             [ch]D[/ch] \r\nSo much to do so much to see [/tab]\r\n[tab]          [ch]Am[/ch]                    [ch]C[/ch] \r\nSo what's wrong with taking the back streets [/tab]\r\n[tab]       [ch]G[/ch]                       [ch]D[/ch] \r\nYou'll never know if you don't go [/tab]\r\n[tab]       [ch]Am[/ch]                       [ch]C[/ch] \r\nYou'll never shine if you don't glow [/tab]\r\n \r\n[Chorus]\r\n[tab][ch]G[/ch]                 [ch]C[/ch]                 [ch]C#dim[/ch]      [ch]C[/ch]  \r\nHey now you're an All Star get your game on, go play [/tab]\r\n[tab][ch]G[/ch]                [ch]C[/ch]                 [ch]C#dim[/ch]      [ch]C[/ch]  \r\nHey now you're a Rock Star get the show on get paid [/tab]\r\n[tab]    [ch]G[/ch]        [ch]C[/ch]           [ch]C#dim[/ch] \r\nAnd all that glitters is gold [/tab]\r\n[tab][ch]C[/ch]             [ch]G[/ch]     [ch]F[/ch]         [ch]C[/ch] \r\nOnly shooting stars break the mold [/tab]\r\n\r\n[Verse 2]\r\n[tab]       [ch]G[/ch]                   [ch]D[/ch] \r\nIt's a cool place and they say it gets colder [/tab]\r\n[tab]       [ch]Am[/ch]                       [ch]C[/ch] \r\nYou're bundled up now but wait 'til you get older [/tab]\r\n[tab]        [ch]G[/ch]                 [ch]D[/ch] \r\nBut the meteor men beg to differ [/tab]\r\n[tab]               [ch]Am[/ch]                    [ch]C[/ch] \r\nJudging by the hole in the satellite picture [/tab]\r\n \r\n[tab]           [ch]G[/ch]                       [ch]D[/ch] \r\nThe ice we skate is getting pretty thin [/tab]\r\n[tab]                   [ch]Am[/ch]                        [ch]C[/ch] \r\nThe waters getting warm so you might as well swim [/tab]\r\n[tab]              [ch]G[/ch]              [ch]D[/ch] \r\nMy world's on fire how about yours [/tab]\r\n[tab]                 [ch]Am[/ch]                      [ch]C[/ch] \r\nThat's the way I like it and I never get bored [/tab]\r\n\r\n[Chorus]\r\n[tab][ch]G[/ch]                 [ch]C[/ch]                 [ch]C#dim[/ch]      [ch]C[/ch]  \r\nHey now you're an All Star get your game on, go play [/tab]\r\n[tab][ch]G[/ch]                [ch]C[/ch]                 [ch]C#dim[/ch]      [ch]C[/ch]  \r\nHey now you're a Rock Star get the show on get paid [/tab]\r\n[tab][ch]G[/ch]        [ch]C[/ch]           [ch]C#dim[/ch] \r\nall that glitters is gold [/tab]\r\n[tab][ch]C[/ch]             [ch]G[/ch]     [ch]F[/ch]         [ch]C[/ch] \r\nOnly shooting stars break the mold [/tab]\r\n\r\n[tab][ch]G[/ch]                 [ch]C[/ch]                 [ch]C#dim[/ch]      [ch]C[/ch]  \r\nHey now you're an All Star get your game on, go play [/tab]\r\n[tab][ch]G[/ch]                [ch]C[/ch]                 [ch]C#dim[/ch]      [ch]C[/ch]  \r\nHey now you're a Rock Star get the show on get paid [/tab]\r\n[tab]     [ch]G[/ch]       [ch]C[/ch]           [ch]C#dim[/ch] \r\nAnd all that glitters is gold [/tab]\r\n[tab][ch]C[/ch]             [ch]G[/ch]    [ch]F[/ch]\r\nOnly shooting stars[/tab]\r\n\r\n[Verse 3]\r\n[tab]    [ch]G[/ch]         [ch]D[/ch]              [ch]Am[/ch]                    [ch]C[/ch]  \r\nSomebody once asked, could I spare some change for gas [/tab]\r\n[tab]          [ch]G[/ch]           [ch]D[/ch]             [ch]Am[/ch]    [ch]C[/ch]        \r\nI need to get myself away from this place[/tab]\r\n[tab]       [ch]G[/ch]             [ch]D[/ch]            [ch]Am[/ch]                  [ch]C[/ch]  \r\nI said yep what a concept I could use a little fuel myself [/tab]\r\n[tab]             [ch]G[/ch]         [ch]D[/ch]      [ch]Am[/ch]       [ch]C[/ch]  \r\nAnd we could all use a little change [/tab]\r\n \r\n[tab]         [ch]G[/ch]                           [ch]D[/ch] \r\nWell the years start coming and they don't stop coming [/tab]\r\n[tab][ch]Am[/ch]                     [ch]C[/ch] \r\nFed to the rules and I hit the ground running [/tab]\r\n[tab][ch]G[/ch]                        [ch]D[/ch] \r\nDidn't make sense not to live for fun [/tab]\r\n[tab]     [ch]Am[/ch]                        [ch]C[/ch] \r\nYour brain gets smart but your head gets dumb [/tab]\r\n \r\n[tab][ch]G[/ch]             [ch]D[/ch] \r\nSo much to do so much to see [/tab]\r\n[tab]          [ch]Am[/ch]                    [ch]C[/ch] \r\nSo what's wrong with taking the back streets [/tab]\r\n[tab]       [ch]G[/ch]                       [ch]D[/ch] \r\nYou'll never know if you don't go, go [/tab]\r\n[tab]       [ch]Am[/ch]                       [ch]C[/ch] \r\nYou'll never shine if you don't glow [/tab]\r\n \r\n[Chorus]\r\n[tab][ch]G[/ch]                 [ch]C[/ch]                 [ch]C#dim[/ch]      [ch]C[/ch]  \r\nHey now you're an All Star get your game on, go play [/tab]\r\n[tab][ch]G[/ch]                [ch]C[/ch]                 [ch]C#dim[/ch]      [ch]C[/ch]  \r\nHey now you're a Rock Star get the show on get paid [/tab]\r\n[tab]    [ch]G[/ch]        [ch]C[/ch]           [ch]C#dim[/ch] \r\nAnd all that glitters is gold [/tab]\r\n[tab][ch]C[/ch]             [ch]G[/ch]     [ch]F[/ch]         [ch]C[/ch] \r\nOnly shooting stars break the mold [/tab]\r\n[tab]    [ch]G[/ch]        [ch]C[/ch]           [ch]C#dim[/ch] \r\nAnd all that glitters is gold [/tab]\r\n[tab][ch]C[/ch]             [ch]G[/ch]     [ch]F[/ch]         [ch]C[/ch] \r\nOnly shooting stars break the mold [/tab]&quot;,&quot;revision_id&quot;:13,&quot;user_id&quot;:26035962,&quot;username&quot;:&quot;bizzlex94&quot;,&quot;date&quot;:1603749703},&quot;contributors&quot;:[{&quot;userid&quot;:&quot;26035962&quot;,&quot;username&quot;:&quot;bizzlex94&quot;,&quot;usergroupid&quot;:&quot;25&quot;,&quot;iq&quot;:68558},{&quot;userid&quot;:&quot;18553090&quot;,&quot;username&quot;:&quot;dcd4gr1&quot;,&quot;usergroupid&quot;:&quot;2&quot;,&quot;iq&quot;:17},{&quot;userid&quot;:&quot;18244268&quot;,&quot;username&quot;:&quot;felix.inghe&quot;,&quot;usergroupid&quot;:&quot;12&quot;,&quot;iq&quot;:31},{&quot;userid&quot;:&quot;1064837&quot;,&quot;username&quot;:&quot;indieee&quot;,&quot;usergroupid&quot;:&quot;26&quot;,&quot;iq&quot;:22618},{&quot;userid&quot;:&quot;9290769&quot;,&quot;username&quot;:&quot;mandelstamdavid&quot;,&quot;usergroupid&quot;:&quot;26&quot;,&quot;iq&quot;:8739},{&quot;userid&quot;:&quot;11435431&quot;,&quot;username&quot;:&quot;nick_zubarev&quot;,&quot;usergroupid&quot;:&quot;26&quot;,&quot;iq&quot;:23754},{&quot;userid&quot;:&quot;3360025&quot;,&quot;username&quot;:&quot;NSpen1&quot;,&quot;usergroupid&quot;:&quot;25&quot;,&quot;iq&quot;:108079},{&quot;userid&quot;:&quot;18884338&quot;,&quot;username&quot;:&quot;reverend_&quot;,&quot;usergroupid&quot;:&quot;12&quot;,&quot;iq&quot;:188},{&quot;userid&quot;:&quot;13901102&quot;,&quot;username&quot;:&quot;Tikken&quot;,&quot;usergroupid&quot;:&quot;2&quot;,&quot;iq&quot;:75332}],&quot;strummings&quot;:[{&quot;part&quot;:&quot;Chorus (basic pattern)&quot;,&quot;denuminator&quot;:8,&quot;bpm&quot;:104,&quot;is_triplet&quot;:0,&quot;measures&quot;:[{&quot;measure&quot;:3},{&quot;measure&quot;:1},{&quot;measure&quot;:1},{&quot;measure&quot;:1},{&quot;measure&quot;:3},{&quot;measure&quot;:1},{&quot;measure&quot;:1},{&quot;measure&quot;:1}]},{&quot;part&quot;:&quot;Chorus ('advanced' pattern)&quot;,&quot;denuminator&quot;:16,&quot;bpm&quot;:104,&quot;is_triplet&quot;:0,&quot;measures&quot;:[{&quot;measure&quot;:1},{&quot;measure&quot;:202},{&quot;measure&quot;:1},{&quot;measure&quot;:202},{&quot;measure&quot;:2},{&quot;measure&quot;:102},{&quot;measure&quot;:2},{&quot;measure&quot;:102},{&quot;measure&quot;:1},{&quot;measure&quot;:202},{&quot;measure&quot;:1},{&quot;measure&quot;:202},{&quot;measure&quot;:2},{&quot;measure&quot;:102},{&quot;measure&quot;:2},{&quot;measure&quot;:102}]},{&quot;part&quot;:&quot;Verse&quot;,&quot;denuminator&quot;:8,&quot;bpm&quot;:104,&quot;is_triplet&quot;:0,&quot;measures&quot;:[{&quot;measure&quot;:203},{&quot;measure&quot;:202},{&quot;measure&quot;:1},{&quot;measure&quot;:203},{&quot;measure&quot;:202},{&quot;measure&quot;:1},{&quot;measure&quot;:1},{&quot;measure&quot;:203},{&quot;measure&quot;:202},{&quot;measure&quot;:202},{&quot;measure&quot;:1},{&quot;measure&quot;:203},{&quot;measure&quot;:202},{&quot;measure&quot;:1},{&quot;measure&quot;:203},{&quot;measure&quot;:1}]}],&quot;has_hq_description&quot;:0,&quot;blocked&quot;:false,&quot;adsupp_binary_blocked&quot;:null,&quot;meta&quot;:{&quot;tonality&quot;:&quot;F#&quot;,&quot;tuning&quot;:{&quot;name&quot;:&quot;Half-Step Down&quot;,&quot;value&quot;:&quot;Eb Ab Db Gb Bb Eb&quot;,&quot;index&quot;:2}},&quot;has_official_version&quot;:true,&quot;has_chord_pro&quot;:true,&quot;has_preset&quot;:false,&quot;versions&quot;:[{&quot;id&quot;:1967605,&quot;song_id&quot;:11474,&quot;song_name&quot;:&quot;All Star&quot;,&quot;artist_id&quot;:495,&quot;artist_name&quot;:&quot;Smash Mouth&quot;,&quot;type&quot;:&quot;Official&quot;,&quot;part&quot;:&quot;&quot;,&quot;version&quot;:1,&quot;votes&quot;:254,&quot;rating&quot;:4.74472999999999967002395351300947368144989013671875,&quot;date&quot;:&quot;1490277697&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:409,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;F#&quot;,&quot;version_description&quot;:&quot;&quot;,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/smash_mouth_495&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/smash-mouth/all-star-official-1967605&quot;,&quot;date_update&quot;:&quot;1603737453&quot;,&quot;user_id&quot;:11953453,&quot;user_iq&quot;:228,&quot;username&quot;:&quot;Virgil47&quot;,&quot;type_name&quot;:&quot;Official&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/smash-mouth/all-star-guitar-pro-1472377&quot;},{&quot;id&quot;:1689571,&quot;song_id&quot;:11474,&quot;song_name&quot;:&quot;All Star&quot;,&quot;artist_id&quot;:495,&quot;artist_name&quot;:&quot;Smash Mouth&quot;,&quot;type&quot;:&quot;Chords&quot;,&quot;part&quot;:&quot;&quot;,&quot;version&quot;:2,&quot;votes&quot;:443,&quot;rating&quot;:4.828260000000000218278728425502777099609375,&quot;date&quot;:&quot;1418412411&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:409,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;version_description&quot;:&quot;&quot;,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/smash_mouth_495&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/smash-mouth/all-star-chords-1689571&quot;,&quot;date_update&quot;:&quot;1541803603&quot;,&quot;user_id&quot;:4518820,&quot;user_iq&quot;:18056,&quot;username&quot;:&quot;BlenderBR&quot;,&quot;type_name&quot;:&quot;Chords&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/smash-mouth/all-star-guitar-pro-1472377&quot;},{&quot;id&quot;:1938571,&quot;song_id&quot;:11474,&quot;song_name&quot;:&quot;All Star&quot;,&quot;artist_id&quot;:495,&quot;artist_name&quot;:&quot;Smash Mouth&quot;,&quot;type&quot;:&quot;Chords&quot;,&quot;part&quot;:&quot;&quot;,&quot;version&quot;:3,&quot;votes&quot;:35,&quot;rating&quot;:4.6948600000000002552269506850279867649078369140625,&quot;date&quot;:&quot;1485533591&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:409,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;version_description&quot;:&quot;&quot;,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/smash_mouth_495&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/smash-mouth/all-star-chords-1938571&quot;,&quot;date_update&quot;:&quot;1495914404&quot;,&quot;user_id&quot;:14094300,&quot;user_iq&quot;:40,&quot;username&quot;:&quot;paulmccarthy10&quot;,&quot;type_name&quot;:&quot;Chords&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/smash-mouth/all-star-guitar-pro-1472377&quot;},{&quot;id&quot;:1942085,&quot;song_id&quot;:11474,&quot;song_name&quot;:&quot;All Star&quot;,&quot;artist_id&quot;:495,&quot;artist_name&quot;:&quot;Smash Mouth&quot;,&quot;type&quot;:&quot;Chords&quot;,&quot;part&quot;:&quot;&quot;,&quot;version&quot;:4,&quot;votes&quot;:38,&quot;rating&quot;:4.6440000000000001278976924368180334568023681640625,&quot;date&quot;:&quot;1486112431&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:409,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;version_description&quot;:&quot;The chords have been shuffled around, compared to the most popular version. Also, the A7 was added to the chorus, which is crucial for the grungy sound in the music video.&quot;,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/smash_mouth_495&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/smash-mouth/all-star-chords-1942085&quot;,&quot;date_update&quot;:&quot;1541801068&quot;,&quot;user_id&quot;:12699617,&quot;user_iq&quot;:46,&quot;username&quot;:&quot;OllieRockBrown&quot;,&quot;type_name&quot;:&quot;Chords&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/smash-mouth/all-star-guitar-pro-1472377&quot;},{&quot;id&quot;:2993429,&quot;song_id&quot;:11474,&quot;song_name&quot;:&quot;All Star&quot;,&quot;artist_id&quot;:495,&quot;artist_name&quot;:&quot;Smash Mouth&quot;,&quot;type&quot;:&quot;Chords&quot;,&quot;part&quot;:&quot;&quot;,&quot;version&quot;:5,&quot;votes&quot;:0,&quot;rating&quot;:0,&quot;date&quot;:&quot;1581929176&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:409,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;version_description&quot;:&quot;A slightly silly re-harmonization that draws on my personal music influences.&quot;,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/smash_mouth_495&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/smash-mouth/all-star-chords-2993429&quot;,&quot;date_update&quot;:&quot;1581929176&quot;,&quot;user_id&quot;:21086450,&quot;user_iq&quot;:21,&quot;username&quot;:&quot;ndwalka13&quot;,&quot;type_name&quot;:&quot;Chords&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/smash-mouth/all-star-guitar-pro-1472377&quot;}],&quot;song_image&quot;:&quot;PuiOz9tUsrg&quot;,&quot;applicature&quot;:{&quot;G&quot;:[{&quot;id&quot;:&quot;320003&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:7,&quot;notes&quot;:[55,47,43,38,35,31],&quot;frets&quot;:[3,0,0,0,2,3],&quot;fingers&quot;:[3,0,0,0,1,2],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;320033&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:7,&quot;notes&quot;:[55,50,43,38,35,31],&quot;frets&quot;:[3,3,0,0,2,3],&quot;fingers&quot;:[4,3,0,0,1,2],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;320403&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:7,&quot;notes&quot;:[55,47,47,38,35,31],&quot;frets&quot;:[3,0,4,0,2,3],&quot;fingers&quot;:[3,0,4,0,1,2],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;355433&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:3,&quot;startString&quot;:0,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:7,&quot;notes&quot;:[55,50,47,43,38,31],&quot;frets&quot;:[3,3,4,5,5,3],&quot;fingers&quot;:[0,0,2,4,3,0],&quot;fret&quot;:3,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;xx5433&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:3,&quot;startString&quot;:0,&quot;lastString&quot;:1,&quot;finger&quot;:1}],&quot;noteIndex&quot;:7,&quot;notes&quot;:[55,50,47,43,-1,-1],&quot;frets&quot;:[3,3,4,5,-1,-1],&quot;fingers&quot;:[0,0,2,3,0,0],&quot;fret&quot;:3,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;xx5787&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:7,&quot;notes&quot;:[59,55,50,43,-1,-1],&quot;frets&quot;:[7,8,7,5,-1,-1],&quot;fingers&quot;:[3,4,2,1,0,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x109787&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:7,&quot;startString&quot;:0,&quot;lastString&quot;:2,&quot;finger&quot;:1}],&quot;noteIndex&quot;:7,&quot;notes&quot;:[59,55,50,47,43,-1],&quot;frets&quot;:[7,8,7,9,10,-1],&quot;fingers&quot;:[0,2,0,3,4,0],&quot;fret&quot;:7,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x1012121210&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:10,&quot;startString&quot;:0,&quot;lastString&quot;:4,&quot;finger&quot;:1}],&quot;noteIndex&quot;:7,&quot;notes&quot;:[62,59,55,50,43,-1],&quot;frets&quot;:[10,12,12,12,10,-1],&quot;fingers&quot;:[0,4,3,2,0,0],&quot;fret&quot;:10,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;32000x&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:7,&quot;notes&quot;:[-1,47,43,38,35,31],&quot;frets&quot;:[-1,0,0,0,2,3],&quot;fingers&quot;:[0,0,0,0,1,2],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;32003x&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:7,&quot;notes&quot;:[-1,50,43,38,35,31],&quot;frets&quot;:[-1,3,0,0,2,3],&quot;fingers&quot;:[0,3,0,0,1,2],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;32040x&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:7,&quot;notes&quot;:[-1,47,47,38,35,31],&quot;frets&quot;:[-1,0,4,0,2,3],&quot;fingers&quot;:[0,0,3,0,1,2],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;32043x&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:7,&quot;notes&quot;:[-1,50,47,38,35,31],&quot;frets&quot;:[-1,3,4,0,2,3],&quot;fingers&quot;:[0,3,4,0,1,2],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;35543x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:3,&quot;startString&quot;:1,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:7,&quot;notes&quot;:[-1,50,47,43,38,31],&quot;frets&quot;:[-1,3,4,5,5,3],&quot;fingers&quot;:[0,0,2,4,3,0],&quot;fret&quot;:3,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x10978x&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:7,&quot;notes&quot;:[-1,55,50,47,43,-1],&quot;frets&quot;:[-1,8,7,9,10,-1],&quot;fingers&quot;:[0,2,1,3,4,0],&quot;fret&quot;:7,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x10121212x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:12,&quot;startString&quot;:1,&quot;lastString&quot;:3,&quot;finger&quot;:3}],&quot;noteIndex&quot;:7,&quot;notes&quot;:[-1,59,55,50,43,-1],&quot;frets&quot;:[-1,12,12,12,10,-1],&quot;fingers&quot;:[0,0,0,0,1,0],&quot;fret&quot;:10,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;3200xx&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:7,&quot;notes&quot;:[-1,-1,43,38,35,31],&quot;frets&quot;:[-1,-1,0,0,2,3],&quot;fingers&quot;:[0,0,0,0,1,2],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;3204xx&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:7,&quot;notes&quot;:[-1,-1,47,38,35,31],&quot;frets&quot;:[-1,-1,4,0,2,3],&quot;fingers&quot;:[0,0,3,0,1,2],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;3554xx&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:7,&quot;notes&quot;:[-1,-1,47,43,38,31],&quot;frets&quot;:[-1,-1,4,5,5,3],&quot;fingers&quot;:[0,0,2,4,3,1],&quot;fret&quot;:3,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;3x0003&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:7,&quot;notes&quot;:[55,47,43,38,-1,31],&quot;frets&quot;:[3,0,0,0,-1,3],&quot;fingers&quot;:[2,0,0,0,0,1],&quot;fret&quot;:3,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;3x0403&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:7,&quot;notes&quot;:[55,47,47,38,-1,31],&quot;frets&quot;:[3,0,4,0,-1,3],&quot;fingers&quot;:[2,0,3,0,0,1],&quot;fret&quot;:3,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;3x5433&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:3,&quot;startString&quot;:0,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:7,&quot;notes&quot;:[55,50,47,43,-1,31],&quot;frets&quot;:[3,3,4,5,-1,3],&quot;fingers&quot;:[0,0,2,3,0,0],&quot;fret&quot;:3,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x10x787&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:7,&quot;startString&quot;:0,&quot;lastString&quot;:2,&quot;finger&quot;:1}],&quot;noteIndex&quot;:7,&quot;notes&quot;:[59,55,50,-1,43,-1],&quot;frets&quot;:[7,8,7,-1,10,-1],&quot;fingers&quot;:[0,2,0,0,4,0],&quot;fret&quot;:7,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x10x121210&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:10,&quot;startString&quot;:0,&quot;lastString&quot;:4,&quot;finger&quot;:1}],&quot;noteIndex&quot;:7,&quot;notes&quot;:[62,59,55,-1,43,-1],&quot;frets&quot;:[10,12,12,-1,10,-1],&quot;fingers&quot;:[0,4,3,0,0,0],&quot;fret&quot;:10,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;3x000x&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:7,&quot;notes&quot;:[-1,47,43,38,-1,31],&quot;frets&quot;:[-1,0,0,0,-1,3],&quot;fingers&quot;:[0,0,0,0,0,1],&quot;fret&quot;:3,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;3x040x&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:7,&quot;notes&quot;:[-1,47,47,38,-1,31],&quot;frets&quot;:[-1,0,4,0,-1,3],&quot;fingers&quot;:[0,0,2,0,0,1],&quot;fret&quot;:3,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;3x043x&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:7,&quot;notes&quot;:[-1,50,47,38,-1,31],&quot;frets&quot;:[-1,3,4,0,-1,3],&quot;fingers&quot;:[0,2,3,0,0,1],&quot;fret&quot;:3,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;3x543x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:3,&quot;startString&quot;:1,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:7,&quot;notes&quot;:[-1,50,47,43,-1,31],&quot;frets&quot;:[-1,3,4,5,-1,3],&quot;fingers&quot;:[0,0,2,3,0,0],&quot;fret&quot;:3,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;}],&quot;D&quot;:[{&quot;id&quot;:&quot;xx0232&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:2,&quot;notes&quot;:[54,50,45,38,-1,-1],&quot;frets&quot;:[2,3,2,0,-1,-1],&quot;fingers&quot;:[2,3,1,0,0,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x54232&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:2,&quot;startString&quot;:0,&quot;lastString&quot;:2,&quot;finger&quot;:1}],&quot;noteIndex&quot;:2,&quot;notes&quot;:[54,50,45,42,38,-1],&quot;frets&quot;:[2,3,2,4,5,-1],&quot;fingers&quot;:[0,2,0,3,4,0],&quot;fret&quot;:2,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;xx0775&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:2,&quot;notes&quot;:[57,54,50,38,-1,-1],&quot;frets&quot;:[5,7,7,0,-1,-1],&quot;fingers&quot;:[1,4,3,0,0,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x57775&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:0,&quot;lastString&quot;:4,&quot;finger&quot;:1}],&quot;noteIndex&quot;:2,&quot;notes&quot;:[57,54,50,45,38,-1],&quot;frets&quot;:[5,7,7,7,5,-1],&quot;fingers&quot;:[0,4,3,2,0,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;xx0111010&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:10,&quot;startString&quot;:0,&quot;lastString&quot;:1,&quot;finger&quot;:1}],&quot;noteIndex&quot;:2,&quot;notes&quot;:[62,57,54,38,-1,-1],&quot;frets&quot;:[10,10,11,0,-1,-1],&quot;fingers&quot;:[0,0,2,0,0,0],&quot;fret&quot;:10,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;101212111010&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:10,&quot;startString&quot;:0,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:2,&quot;notes&quot;:[62,57,54,50,45,38],&quot;frets&quot;:[10,10,11,12,12,10],&quot;fingers&quot;:[0,0,2,4,3,0],&quot;fret&quot;:10,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;xx12111010&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:10,&quot;startString&quot;:0,&quot;lastString&quot;:1,&quot;finger&quot;:1}],&quot;noteIndex&quot;:2,&quot;notes&quot;:[62,57,54,50,-1,-1],&quot;frets&quot;:[10,10,11,12,-1,-1],&quot;fingers&quot;:[0,0,2,3,0,0],&quot;fret&quot;:10,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x5423x&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:2,&quot;notes&quot;:[-1,50,45,42,38,-1],&quot;frets&quot;:[-1,3,2,4,5,-1],&quot;fingers&quot;:[0,2,1,3,4,0],&quot;fret&quot;:2,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x5777x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:7,&quot;startString&quot;:1,&quot;lastString&quot;:3,&quot;finger&quot;:3}],&quot;noteIndex&quot;:2,&quot;notes&quot;:[-1,54,50,45,38,-1],&quot;frets&quot;:[-1,7,7,7,5,-1],&quot;fingers&quot;:[0,0,0,0,1,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;109777x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:7,&quot;startString&quot;:1,&quot;lastString&quot;:3,&quot;finger&quot;:1}],&quot;noteIndex&quot;:2,&quot;notes&quot;:[-1,54,50,45,42,38],&quot;frets&quot;:[-1,7,7,7,9,10],&quot;fingers&quot;:[0,0,0,0,3,4],&quot;fret&quot;:7,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;1012121110x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:10,&quot;startString&quot;:1,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:2,&quot;notes&quot;:[-1,57,54,50,45,38],&quot;frets&quot;:[-1,10,11,12,12,10],&quot;fingers&quot;:[0,0,2,4,3,0],&quot;fret&quot;:10,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;10977xx&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:7,&quot;startString&quot;:2,&quot;lastString&quot;:3,&quot;finger&quot;:1}],&quot;noteIndex&quot;:2,&quot;notes&quot;:[-1,-1,50,45,42,38],&quot;frets&quot;:[-1,-1,7,7,9,10],&quot;fingers&quot;:[0,0,0,0,3,4],&quot;fret&quot;:7,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;10121211xx&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:2,&quot;notes&quot;:[-1,-1,54,50,45,38],&quot;frets&quot;:[-1,-1,11,12,12,10],&quot;fingers&quot;:[0,0,2,4,3,1],&quot;fret&quot;:10,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x5x232&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:2,&quot;startString&quot;:0,&quot;lastString&quot;:2,&quot;finger&quot;:1}],&quot;noteIndex&quot;:2,&quot;notes&quot;:[54,50,45,-1,38,-1],&quot;frets&quot;:[2,3,2,-1,5,-1],&quot;fingers&quot;:[0,2,0,0,4,0],&quot;fret&quot;:2,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x5x775&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:0,&quot;lastString&quot;:4,&quot;finger&quot;:1}],&quot;noteIndex&quot;:2,&quot;notes&quot;:[57,54,50,-1,38,-1],&quot;frets&quot;:[5,7,7,-1,5,-1],&quot;fingers&quot;:[0,4,3,0,0,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;10x12111010&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:10,&quot;startString&quot;:0,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:2,&quot;notes&quot;:[62,57,54,50,-1,38],&quot;frets&quot;:[10,10,11,12,-1,10],&quot;fingers&quot;:[0,0,2,3,0,0],&quot;fret&quot;:10,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;10x777x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:7,&quot;startString&quot;:1,&quot;lastString&quot;:3,&quot;finger&quot;:1}],&quot;noteIndex&quot;:2,&quot;notes&quot;:[-1,54,50,45,-1,38],&quot;frets&quot;:[-1,7,7,7,-1,10],&quot;fingers&quot;:[0,0,0,0,0,4],&quot;fret&quot;:7,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;10x121110x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:10,&quot;startString&quot;:1,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:2,&quot;notes&quot;:[-1,57,54,50,-1,38],&quot;frets&quot;:[-1,10,11,12,-1,10],&quot;fingers&quot;:[0,0,2,3,0,0],&quot;fret&quot;:10,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;}],&quot;Am&quot;:[{&quot;id&quot;:&quot;x02210&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:9,&quot;notes&quot;:[52,48,45,40,33,-1],&quot;frets&quot;:[0,1,2,2,0,-1],&quot;fingers&quot;:[0,1,3,2,0,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x02555&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:0,&quot;lastString&quot;:2,&quot;finger&quot;:4}],&quot;noteIndex&quot;:9,&quot;notes&quot;:[57,52,48,40,33,-1],&quot;frets&quot;:[5,5,5,2,0,-1],&quot;fingers&quot;:[0,0,0,1,0,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x07555&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:0,&quot;lastString&quot;:2,&quot;finger&quot;:1}],&quot;noteIndex&quot;:9,&quot;notes&quot;:[57,52,48,45,33,-1],&quot;frets&quot;:[5,5,5,7,0,-1],&quot;fingers&quot;:[0,0,0,3,0,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x07558&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:1,&quot;lastString&quot;:2,&quot;finger&quot;:1}],&quot;noteIndex&quot;:9,&quot;notes&quot;:[60,52,48,45,33,-1],&quot;frets&quot;:[8,5,5,7,0,-1],&quot;fingers&quot;:[4,0,0,3,0,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;577555&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:0,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:9,&quot;notes&quot;:[57,52,48,45,40,33],&quot;frets&quot;:[5,5,5,7,7,5],&quot;fingers&quot;:[0,0,0,4,3,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;577558&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:1,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:9,&quot;notes&quot;:[60,52,48,45,40,33],&quot;frets&quot;:[8,5,5,7,7,5],&quot;fingers&quot;:[4,0,0,3,2,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;xx7555&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:0,&quot;lastString&quot;:2,&quot;finger&quot;:1}],&quot;noteIndex&quot;:9,&quot;notes&quot;:[57,52,48,45,-1,-1],&quot;frets&quot;:[5,5,5,7,-1,-1],&quot;fingers&quot;:[0,0,0,3,0,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;xx7558&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:1,&quot;lastString&quot;:2,&quot;finger&quot;:1}],&quot;noteIndex&quot;:9,&quot;notes&quot;:[60,52,48,45,-1,-1],&quot;frets&quot;:[8,5,5,7,-1,-1],&quot;fingers&quot;:[4,0,0,3,0,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x079108&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:9,&quot;notes&quot;:[60,57,52,45,33,-1],&quot;frets&quot;:[8,10,9,7,0,-1],&quot;fingers&quot;:[2,4,3,1,0,0],&quot;fret&quot;:7,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;xx79108&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:9,&quot;notes&quot;:[60,57,52,45,-1,-1],&quot;frets&quot;:[8,10,9,7,-1,-1],&quot;fingers&quot;:[2,4,3,1,0,0],&quot;fret&quot;:7,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x0109108&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:9,&quot;notes&quot;:[60,57,52,48,33,-1],&quot;frets&quot;:[8,10,9,10,0,-1],&quot;fingers&quot;:[1,4,2,3,0,0],&quot;fret&quot;:8,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x0255x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:1,&quot;lastString&quot;:2,&quot;finger&quot;:4}],&quot;noteIndex&quot;:9,&quot;notes&quot;:[-1,52,48,40,33,-1],&quot;frets&quot;:[-1,5,5,2,0,-1],&quot;fingers&quot;:[0,0,0,1,0,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x0221x&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:9,&quot;notes&quot;:[-1,48,45,40,33,-1],&quot;frets&quot;:[-1,1,2,2,0,-1],&quot;fingers&quot;:[0,1,3,2,0,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x0755x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:1,&quot;lastString&quot;:2,&quot;finger&quot;:1}],&quot;noteIndex&quot;:9,&quot;notes&quot;:[-1,52,48,45,33,-1],&quot;frets&quot;:[-1,5,5,7,0,-1],&quot;fingers&quot;:[0,0,0,3,0,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;57755x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:1,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:9,&quot;notes&quot;:[-1,52,48,45,40,33],&quot;frets&quot;:[-1,5,5,7,7,5],&quot;fingers&quot;:[0,0,0,4,3,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x010910x&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:9,&quot;notes&quot;:[-1,57,52,48,33,-1],&quot;frets&quot;:[-1,10,9,10,0,-1],&quot;fingers&quot;:[0,3,1,2,0,0],&quot;fret&quot;:9,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;5322xx&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:2,&quot;startString&quot;:2,&quot;lastString&quot;:3,&quot;finger&quot;:1}],&quot;noteIndex&quot;:9,&quot;notes&quot;:[-1,-1,45,40,36,33],&quot;frets&quot;:[-1,-1,2,2,3,5],&quot;fingers&quot;:[0,0,0,0,2,4],&quot;fret&quot;:2,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;5775xx&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:2,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:9,&quot;notes&quot;:[-1,-1,48,45,40,33],&quot;frets&quot;:[-1,-1,5,7,7,5],&quot;fingers&quot;:[0,0,0,4,3,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x0x210&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:9,&quot;notes&quot;:[52,48,45,-1,33,-1],&quot;frets&quot;:[0,1,2,-1,0,-1],&quot;fingers&quot;:[0,1,2,0,0,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;5x7555&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:0,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:9,&quot;notes&quot;:[57,52,48,45,-1,33],&quot;frets&quot;:[5,5,5,7,-1,5],&quot;fingers&quot;:[0,0,0,3,0,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;5x7558&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:1,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:9,&quot;notes&quot;:[60,52,48,45,-1,33],&quot;frets&quot;:[8,5,5,7,-1,5],&quot;fingers&quot;:[4,0,0,3,0,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;5x755x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:1,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:9,&quot;notes&quot;:[-1,52,48,45,-1,33],&quot;frets&quot;:[-1,5,5,7,-1,5],&quot;fingers&quot;:[0,0,0,3,0,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MINOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;}],&quot;C&quot;:[{&quot;id&quot;:&quot;x32010&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:0,&quot;notes&quot;:[52,48,43,40,36,-1],&quot;frets&quot;:[0,1,0,2,3,-1],&quot;fingers&quot;:[0,1,0,2,3,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x32013&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:0,&quot;notes&quot;:[55,48,43,40,36,-1],&quot;frets&quot;:[3,1,0,2,3,-1],&quot;fingers&quot;:[4,1,0,2,3,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x35553&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:3,&quot;startString&quot;:0,&quot;lastString&quot;:4,&quot;finger&quot;:1}],&quot;noteIndex&quot;:0,&quot;notes&quot;:[55,52,48,43,36,-1],&quot;frets&quot;:[3,5,5,5,3,-1],&quot;fingers&quot;:[0,4,3,2,0,0],&quot;fret&quot;:3,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;81010988&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:8,&quot;startString&quot;:0,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:0,&quot;notes&quot;:[60,55,52,48,43,36],&quot;frets&quot;:[8,8,9,10,10,8],&quot;fingers&quot;:[0,0,2,4,3,0],&quot;fret&quot;:8,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;xx10988&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:8,&quot;startString&quot;:0,&quot;lastString&quot;:1,&quot;finger&quot;:1}],&quot;noteIndex&quot;:0,&quot;notes&quot;:[60,55,52,48,-1,-1],&quot;frets&quot;:[8,8,9,10,-1,-1],&quot;fingers&quot;:[0,0,2,3,0,0],&quot;fret&quot;:8,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;xx10121312&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:0,&quot;notes&quot;:[64,60,55,48,-1,-1],&quot;frets&quot;:[12,13,12,10,-1,-1],&quot;fingers&quot;:[3,4,2,1,0,0],&quot;fret&quot;:10,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x3201x&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:0,&quot;notes&quot;:[-1,48,43,40,36,-1],&quot;frets&quot;:[-1,1,0,2,3,-1],&quot;fingers&quot;:[0,1,0,2,3,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x3555x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:1,&quot;lastString&quot;:3,&quot;finger&quot;:3}],&quot;noteIndex&quot;:0,&quot;notes&quot;:[-1,52,48,43,36,-1],&quot;frets&quot;:[-1,5,5,5,3,-1],&quot;fingers&quot;:[0,0,0,0,1,0],&quot;fret&quot;:3,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;87555x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:1,&quot;lastString&quot;:3,&quot;finger&quot;:1}],&quot;noteIndex&quot;:0,&quot;notes&quot;:[-1,52,48,43,40,36],&quot;frets&quot;:[-1,5,5,5,7,8],&quot;fingers&quot;:[0,0,0,0,3,4],&quot;fret&quot;:5,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;8101098x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:8,&quot;startString&quot;:1,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:0,&quot;notes&quot;:[-1,55,52,48,43,36],&quot;frets&quot;:[-1,8,9,10,10,8],&quot;fingers&quot;:[0,0,2,4,3,0],&quot;fret&quot;:8,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;8755xx&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:2,&quot;lastString&quot;:3,&quot;finger&quot;:1}],&quot;noteIndex&quot;:0,&quot;notes&quot;:[-1,-1,48,43,40,36],&quot;frets&quot;:[-1,-1,5,5,7,8],&quot;fingers&quot;:[0,0,0,0,3,4],&quot;fret&quot;:5,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;810109xx&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:0,&quot;notes&quot;:[-1,-1,52,48,43,36],&quot;frets&quot;:[-1,-1,9,10,10,8],&quot;fingers&quot;:[0,0,2,4,3,1],&quot;fret&quot;:8,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x3x010&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:0,&quot;notes&quot;:[52,48,43,-1,36,-1],&quot;frets&quot;:[0,1,0,-1,3,-1],&quot;fingers&quot;:[0,1,0,0,3,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x3x553&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:3,&quot;startString&quot;:0,&quot;lastString&quot;:4,&quot;finger&quot;:1}],&quot;noteIndex&quot;:0,&quot;notes&quot;:[55,52,48,-1,36,-1],&quot;frets&quot;:[3,5,5,-1,3,-1],&quot;fingers&quot;:[0,4,3,0,0,0],&quot;fret&quot;:3,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;8x10988&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:8,&quot;startString&quot;:0,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:0,&quot;notes&quot;:[60,55,52,48,-1,36],&quot;frets&quot;:[8,8,9,10,-1,8],&quot;fingers&quot;:[0,0,2,3,0,0],&quot;fret&quot;:8,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;8x555x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:1,&quot;lastString&quot;:3,&quot;finger&quot;:1}],&quot;noteIndex&quot;:0,&quot;notes&quot;:[-1,52,48,43,-1,36],&quot;frets&quot;:[-1,5,5,5,-1,8],&quot;fingers&quot;:[0,0,0,0,0,4],&quot;fret&quot;:5,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;8x1098x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:8,&quot;startString&quot;:1,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:0,&quot;notes&quot;:[-1,55,52,48,-1,36],&quot;frets&quot;:[-1,8,9,10,-1,8],&quot;fingers&quot;:[0,0,2,3,0,0],&quot;fret&quot;:8,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;}],&quot;C#dim&quot;:[{&quot;id&quot;:&quot;x42020&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:1,&quot;notes&quot;:[52,49,43,40,37,-1],&quot;frets&quot;:[0,2,0,2,4,-1],&quot;fingers&quot;:[0,2,0,1,4,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;DIM&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x42023&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:1,&quot;notes&quot;:[55,49,43,40,37,-1],&quot;frets&quot;:[3,2,0,2,4,-1],&quot;fingers&quot;:[3,2,0,1,4,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;DIM&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;xx11989&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:1,&quot;notes&quot;:[61,55,52,49,-1,-1],&quot;frets&quot;:[9,8,9,11,-1,-1],&quot;fingers&quot;:[3,1,2,4,0,0],&quot;fret&quot;:8,&quot;type&quot;:&quot;DIM&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x4202x&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:1,&quot;notes&quot;:[-1,49,43,40,37,-1],&quot;frets&quot;:[-1,2,0,2,4,-1],&quot;fingers&quot;:[0,2,0,1,4,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;DIM&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x4565x&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:1,&quot;notes&quot;:[-1,52,49,43,37,-1],&quot;frets&quot;:[-1,5,6,5,4,-1],&quot;fingers&quot;:[0,3,4,2,1,0],&quot;fret&quot;:4,&quot;type&quot;:&quot;DIM&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;910119xx&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:9,&quot;startString&quot;:2,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:1,&quot;notes&quot;:[-1,-1,52,49,43,37],&quot;frets&quot;:[-1,-1,9,11,10,9],&quot;fingers&quot;:[0,0,0,3,2,0],&quot;fret&quot;:9,&quot;type&quot;:&quot;DIM&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x4x020&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:1,&quot;notes&quot;:[52,49,43,-1,37,-1],&quot;frets&quot;:[0,2,0,-1,4,-1],&quot;fingers&quot;:[0,1,0,0,3,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;DIM&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x4x653&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:1,&quot;notes&quot;:[55,52,49,-1,37,-1],&quot;frets&quot;:[3,5,6,-1,4,-1],&quot;fingers&quot;:[1,3,4,0,2,0],&quot;fret&quot;:3,&quot;type&quot;:&quot;DIM&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;}],&quot;F&quot;:[{&quot;id&quot;:&quot;133211&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:1,&quot;startString&quot;:0,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:5,&quot;notes&quot;:[53,48,45,41,36,29],&quot;frets&quot;:[1,1,2,3,3,1],&quot;fingers&quot;:[0,0,2,4,3,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;xx3211&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:1,&quot;startString&quot;:0,&quot;lastString&quot;:1,&quot;finger&quot;:1}],&quot;noteIndex&quot;:5,&quot;notes&quot;:[53,48,45,41,-1,-1],&quot;frets&quot;:[1,1,2,3,-1,-1],&quot;fingers&quot;:[0,0,2,3,0,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;xx3565&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:5,&quot;notes&quot;:[57,53,48,41,-1,-1],&quot;frets&quot;:[5,6,5,3,-1,-1],&quot;fingers&quot;:[3,4,2,1,0,0],&quot;fret&quot;:3,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x87565&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:0,&quot;lastString&quot;:2,&quot;finger&quot;:1}],&quot;noteIndex&quot;:5,&quot;notes&quot;:[57,53,48,45,41,-1],&quot;frets&quot;:[5,6,5,7,8,-1],&quot;fingers&quot;:[0,2,0,3,4,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x81010108&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:8,&quot;startString&quot;:0,&quot;lastString&quot;:4,&quot;finger&quot;:1}],&quot;noteIndex&quot;:5,&quot;notes&quot;:[60,57,53,48,41,-1],&quot;frets&quot;:[8,10,10,10,8,-1],&quot;fingers&quot;:[0,4,3,2,0,0],&quot;fret&quot;:8,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;13321x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:1,&quot;startString&quot;:1,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:5,&quot;notes&quot;:[-1,48,45,41,36,29],&quot;frets&quot;:[-1,1,2,3,3,1],&quot;fingers&quot;:[0,0,2,4,3,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x8756x&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:5,&quot;notes&quot;:[-1,53,48,45,41,-1],&quot;frets&quot;:[-1,6,5,7,8,-1],&quot;fingers&quot;:[0,2,1,3,4,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x8101010x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:10,&quot;startString&quot;:1,&quot;lastString&quot;:3,&quot;finger&quot;:3}],&quot;noteIndex&quot;:5,&quot;notes&quot;:[-1,57,53,48,41,-1],&quot;frets&quot;:[-1,10,10,10,8,-1],&quot;fingers&quot;:[0,0,0,0,1,0],&quot;fret&quot;:8,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;1312101010x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:10,&quot;startString&quot;:1,&quot;lastString&quot;:3,&quot;finger&quot;:1}],&quot;noteIndex&quot;:5,&quot;notes&quot;:[-1,57,53,48,45,41],&quot;frets&quot;:[-1,10,10,10,12,13],&quot;fingers&quot;:[0,0,0,0,3,4],&quot;fret&quot;:10,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;1332xx&quot;,&quot;listCapos&quot;:[],&quot;noteIndex&quot;:5,&quot;notes&quot;:[-1,-1,45,41,36,29],&quot;frets&quot;:[-1,-1,2,3,3,1],&quot;fingers&quot;:[0,0,2,4,3,1],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;13121010xx&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:10,&quot;startString&quot;:2,&quot;lastString&quot;:3,&quot;finger&quot;:1}],&quot;noteIndex&quot;:5,&quot;notes&quot;:[-1,-1,53,48,45,41],&quot;frets&quot;:[-1,-1,10,10,12,13],&quot;fingers&quot;:[0,0,0,0,3,4],&quot;fret&quot;:10,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;1x3211&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:1,&quot;startString&quot;:0,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:5,&quot;notes&quot;:[53,48,45,41,-1,29],&quot;frets&quot;:[1,1,2,3,-1,1],&quot;fingers&quot;:[0,0,2,3,0,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x8x565&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:5,&quot;startString&quot;:0,&quot;lastString&quot;:2,&quot;finger&quot;:1}],&quot;noteIndex&quot;:5,&quot;notes&quot;:[57,53,48,-1,41,-1],&quot;frets&quot;:[5,6,5,-1,8,-1],&quot;fingers&quot;:[0,2,0,0,4,0],&quot;fret&quot;:5,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;x8x10108&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:8,&quot;startString&quot;:0,&quot;lastString&quot;:4,&quot;finger&quot;:1}],&quot;noteIndex&quot;:5,&quot;notes&quot;:[60,57,53,-1,41,-1],&quot;frets&quot;:[8,10,10,-1,8,-1],&quot;fingers&quot;:[0,4,3,0,0,0],&quot;fret&quot;:8,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;1x321x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:1,&quot;startString&quot;:1,&quot;lastString&quot;:5,&quot;finger&quot;:1}],&quot;noteIndex&quot;:5,&quot;notes&quot;:[-1,48,45,41,-1,29],&quot;frets&quot;:[-1,1,2,3,-1,1],&quot;fingers&quot;:[0,0,2,3,0,0],&quot;fret&quot;:0,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;},{&quot;id&quot;:&quot;13x101010x&quot;,&quot;listCapos&quot;:[{&quot;fret&quot;:10,&quot;startString&quot;:1,&quot;lastString&quot;:3,&quot;finger&quot;:1}],&quot;noteIndex&quot;:5,&quot;notes&quot;:[-1,57,53,48,-1,41],&quot;frets&quot;:[-1,10,10,10,-1,13],&quot;fingers&quot;:[0,0,0,0,0,4],&quot;fret&quot;:10,&quot;type&quot;:&quot;MAJOR&quot;,&quot;baseDisplayNote&quot;:&quot;&quot;}]},&quot;piano_inversions&quot;:null,&quot;last_comments&quot;:[{&quot;id&quot;:&quot;1903744&quot;,&quot;rowid&quot;:&quot;428803&quot;,&quot;text&quot;:&quot;lovely tab. listening to the record &amp; the bass part thats been tabbed i think they play it a semi tone lower. ie F# C# G#m B. but i like your way better, as the chords can be played open&quot;,&quot;author_userid&quot;:&quot;173896&quot;,&quot;rating&quot;:&quot;32&quot;,&quot;userid&quot;:&quot;346495&quot;,&quot;usergroupid&quot;:&quot;2&quot;,&quot;username&quot;:&quot;adam_mrx&quot;,&quot;date_created&quot;:&quot;1186046469&quot;,&quot;type&quot;:&quot;4&quot;,&quot;parent_id&quot;:0,&quot;added_from&quot;:&quot;&quot;,&quot;updated_at&quot;:null,&quot;status&quot;:&quot;new&quot;,&quot;moderator_user_id&quot;:&quot;11953509&quot;,&quot;likes_count&quot;:&quot;39&quot;,&quot;dislikes_count&quot;:&quot;7&quot;,&quot;contributor_level&quot;:null,&quot;avatar&quot;:&quot;https://tabs.ultimate-guitar.com/static/users/5/9/4/346495.gif?d=d&quot;,&quot;date&quot;:1186046469,&quot;user_iq&quot;:10,&quot;level&quot;:0},{&quot;id&quot;:&quot;2196124&quot;,&quot;rowid&quot;:&quot;428803&quot;,&quot;text&quot;:&quot;It;s good,better then the other one, but i don't like a-moll!&quot;,&quot;author_userid&quot;:&quot;173896&quot;,&quot;rating&quot;:&quot;4&quot;,&quot;userid&quot;:&quot;781109&quot;,&quot;usergroupid&quot;:&quot;2&quot;,&quot;username&quot;:&quot;LUXIS&quot;,&quot;date_created&quot;:&quot;1200370852&quot;,&quot;type&quot;:&quot;4&quot;,&quot;parent_id&quot;:0,&quot;added_from&quot;:&quot;&quot;,&quot;updated_at&quot;:null,&quot;status&quot;:&quot;new&quot;,&quot;moderator_user_id&quot;:&quot;11953509&quot;,&quot;likes_count&quot;:&quot;8&quot;,&quot;dislikes_count&quot;:&quot;4&quot;,&quot;contributor_level&quot;:null,&quot;avatar&quot;:&quot;https://tabs.ultimate-guitar.com/static/users/9/0/1/781109.gif?d=d&quot;,&quot;date&quot;:1200370852,&quot;user_iq&quot;:10,&quot;level&quot;:0},{&quot;id&quot;:&quot;2505789&quot;,&quot;rowid&quot;:&quot;428803&quot;,&quot;text&quot;:&quot;i agree with adam&quot;,&quot;author_userid&quot;:&quot;173896&quot;,&quot;rating&quot;:&quot;2&quot;,&quot;userid&quot;:&quot;890311&quot;,&quot;usergroupid&quot;:&quot;2&quot;,&quot;username&quot;:&quot;phetheri11&quot;,&quot;date_created&quot;:&quot;1213830239&quot;,&quot;type&quot;:&quot;4&quot;,&quot;parent_id&quot;:0,&quot;added_from&quot;:&quot;&quot;,&quot;updated_at&quot;:null,&quot;status&quot;:&quot;new&quot;,&quot;moderator_user_id&quot;:&quot;11953509&quot;,&quot;likes_count&quot;:&quot;7&quot;,&quot;dislikes_count&quot;:&quot;5&quot;,&quot;contributor_level&quot;:null,&quot;avatar&quot;:&quot;https://tabs.ultimate-guitar.com/static/users/1/1/3/890311.gif?d=d&quot;,&quot;date&quot;:1213830239,&quot;user_iq&quot;:10,&quot;level&quot;:0}],&quot;comments&quot;:77,&quot;stats&quot;:{&quot;view_total&quot;:&quot;1539408&quot;,&quot;favorites_count&quot;:&quot;42760&quot;},&quot;tab_corrects&quot;:[],&quot;is_simplify_available&quot;:true,&quot;can_edit_tab&quot;:false,&quot;can_edit_strumming&quot;:false,&quot;can_send_tab_stats&quot;:true,&quot;official_backingtrack&quot;:null,&quot;tab_search_link&quot;:&quot;https://www.ultimate-guitar.com/search.php?band_name=Smash+Mouth&amp;song_name=all+star&amp;type%5B0%5D=200&amp;type%5B1%5D=300&quot;,&quot;wiki_tab_user_group_id&quot;:25,&quot;wiki_tab_user_iq&quot;:68697,&quot;user_group_id&quot;:21,&quot;count_rating&quot;:1777,&quot;encode_strummings&quot;:&quot;{\&quot;patterns\&quot;:[{\&quot;part\&quot;:\&quot;Chorus (basic pattern)\&quot;,\&quot;denuminator\&quot;:8,\&quot;bpm\&quot;:104,\&quot;is_triplet\&quot;:0,\&quot;measures\&quot;:[3,1,1,1,3,1,1,1]},{\&quot;part\&quot;:\&quot;Chorus ('advanced' pattern)\&quot;,\&quot;denuminator\&quot;:16,\&quot;bpm\&quot;:104,\&quot;is_triplet\&quot;:0,\&quot;measures\&quot;:[1,202,1,202,2,102,2,102,1,202,1,202,2,102,2,102]},{\&quot;part\&quot;:\&quot;Verse\&quot;,\&quot;denuminator\&quot;:8,\&quot;bpm\&quot;:104,\&quot;is_triplet\&quot;:0,\&quot;measures\&quot;:[203,202,1,203,202,1,1,203,202,202,1,203,202,1,203,1]}]}&quot;,&quot;alert&quot;:null,&quot;recommendations&quot;:[{&quot;id&quot;:1956589,&quot;song_id&quot;:1710759,&quot;song_name&quot;:&quot;Perfect&quot;,&quot;artist_id&quot;:30232,&quot;artist_name&quot;:&quot;Ed Sheeran&quot;,&quot;type&quot;:&quot;Chords&quot;,&quot;part&quot;:&quot;&quot;,&quot;version&quot;:1,&quot;votes&quot;:34329,&quot;rating&quot;:4.85916999999999976722619976499117910861968994140625,&quot;date&quot;:&quot;1488453515&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:18913,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;Ab&quot;,&quot;version_description&quot;:&quot;&quot;,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/ed_sheeran_30232&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/ed-sheeran/perfect-chords-1956589&quot;,&quot;date_update&quot;:&quot;1585892114&quot;,&quot;user_id&quot;:1474302,&quot;user_iq&quot;:2270,&quot;username&quot;:&quot;LYNX-Music&quot;,&quot;type_name&quot;:&quot;Chords&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/ed-sheeran/perfect-guitar-pro-2222843&quot;},{&quot;id&quot;:991133,&quot;song_id&quot;:236334,&quot;song_name&quot;:&quot;Pumped Up Kicks&quot;,&quot;artist_id&quot;:30265,&quot;artist_name&quot;:&quot;Foster the People&quot;,&quot;type&quot;:&quot;Tabs&quot;,&quot;part&quot;:&quot;&quot;,&quot;version&quot;:1,&quot;votes&quot;:285,&quot;rating&quot;:4.60555000000000003268496584496460855007171630859375,&quot;date&quot;:&quot;1285545601&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:2641,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;version_description&quot;:null,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/foster_the_people_30265&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/foster-the-people/pumped-up-kicks-tabs-991133&quot;,&quot;date_update&quot;:&quot;1461587759&quot;,&quot;user_id&quot;:857873,&quot;user_iq&quot;:71,&quot;username&quot;:&quot;armadaskier14&quot;,&quot;type_name&quot;:&quot;Tab&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/foster-the-people/pumped-up-kicks-guitar-pro-1778644&quot;},{&quot;id&quot;:27336,&quot;song_id&quot;:135952,&quot;song_name&quot;:&quot;Hallelujah&quot;,&quot;artist_id&quot;:9898,&quot;artist_name&quot;:&quot;Jeff Buckley&quot;,&quot;type&quot;:&quot;Chords&quot;,&quot;part&quot;:&quot;&quot;,&quot;version&quot;:1,&quot;votes&quot;:3515,&quot;rating&quot;:4.8346900000000001540456651127897202968597412109375,&quot;date&quot;:&quot;1018396800&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:125,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;Db&quot;,&quot;version_description&quot;:&quot;&quot;,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/jeff_buckley_9898&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/jeff-buckley/hallelujah-chords-27336&quot;,&quot;date_update&quot;:&quot;1539082051&quot;,&quot;user_id&quot;:24054,&quot;user_iq&quot;:110,&quot;username&quot;:&quot;scottn1223&quot;,&quot;type_name&quot;:&quot;Chords&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/jeff-buckley/hallelujah-guitar-pro-2155367&quot;},{&quot;id&quot;:6125,&quot;song_id&quot;:19556,&quot;song_name&quot;:&quot;Wonderwall&quot;,&quot;artist_id&quot;:734,&quot;artist_name&quot;:&quot;Oasis&quot;,&quot;type&quot;:&quot;Chords&quot;,&quot;part&quot;:&quot;&quot;,&quot;version&quot;:1,&quot;votes&quot;:1714,&quot;rating&quot;:4.49934999999999973852027324028313159942626953125,&quot;date&quot;:&quot;1004486400&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:2332,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;F#m&quot;,&quot;version_description&quot;:&quot;&quot;,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/oasis_734&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/oasis/wonderwall-chords-6125&quot;,&quot;date_update&quot;:&quot;1589132708&quot;,&quot;user_id&quot;:0,&quot;user_iq&quot;:0,&quot;username&quot;:&quot;Unregistered&quot;,&quot;type_name&quot;:&quot;Chords&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/oasis/wonderwall-guitar-pro-227425&quot;},{&quot;id&quot;:1397194,&quot;song_id&quot;:349246,&quot;song_name&quot;:&quot;Wake Me Up&quot;,&quot;artist_id&quot;:34411,&quot;artist_name&quot;:&quot;Avicii&quot;,&quot;type&quot;:&quot;Chords&quot;,&quot;part&quot;:&quot;&quot;,&quot;version&quot;:2,&quot;votes&quot;:1538,&quot;rating&quot;:4.6933600000000001983835318242199718952178955078125,&quot;date&quot;:&quot;1371513601&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:10947,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;Bm&quot;,&quot;version_description&quot;:&quot;&quot;,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/avicii_34411&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/avicii/wake-me-up-chords-1397194&quot;,&quot;date_update&quot;:&quot;1536759124&quot;,&quot;user_id&quot;:2257834,&quot;user_iq&quot;:72,&quot;username&quot;:&quot;M8WHR&quot;,&quot;type_name&quot;:&quot;Chords&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/avicii/wake-me-up-guitar-pro-1408168&quot;},{&quot;id&quot;:202725,&quot;song_id&quot;:21003,&quot;song_name&quot;:&quot;Smells Like Teen Spirit&quot;,&quot;artist_id&quot;:780,&quot;artist_name&quot;:&quot;Nirvana&quot;,&quot;type&quot;:&quot;Tabs&quot;,&quot;part&quot;:&quot;solo&quot;,&quot;version&quot;:1,&quot;votes&quot;:485,&quot;rating&quot;:4.27132000000000022765789253753609955310821533203125,&quot;date&quot;:&quot;1104537600&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:83,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;version_description&quot;:&quot;&quot;,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/nirvana_780&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/nirvana/smells-like-teen-spirit-tabs-202725&quot;,&quot;date_update&quot;:&quot;1574367447&quot;,&quot;user_id&quot;:0,&quot;user_iq&quot;:0,&quot;username&quot;:&quot;Unregistered&quot;,&quot;type_name&quot;:&quot;Tab&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/nirvana/smells-like-teen-spirit-guitar-pro-227063&quot;},{&quot;id&quot;:1173278,&quot;song_id&quot;:314160,&quot;song_name&quot;:&quot;Riptide&quot;,&quot;artist_id&quot;:37940,&quot;artist_name&quot;:&quot;Vance Joy&quot;,&quot;type&quot;:&quot;Chords&quot;,&quot;part&quot;:&quot;&quot;,&quot;version&quot;:1,&quot;votes&quot;:2836,&quot;rating&quot;:4.78845999999999971663555697887204587459564208984375,&quot;date&quot;:&quot;1344384001&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:10737,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;Bbm&quot;,&quot;version_description&quot;:&quot;&quot;,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/vance_joy_37940&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/vance-joy/riptide-chords-1173278&quot;,&quot;date_update&quot;:&quot;1603685090&quot;,&quot;user_id&quot;:2841967,&quot;user_iq&quot;:82,&quot;username&quot;:&quot;tiff--brown&quot;,&quot;type_name&quot;:&quot;Chords&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/vance-joy/riptide-guitar-pro-2182213&quot;}],&quot;official_backingtrack_url&quot;:&quot;https://www.ultimate-guitar.com/backing_track/smash_mouth/all_star_18739&quot;,&quot;official_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/smash-mouth/all-star-official-1967605&quot;,&quot;official_tab_want&quot;:null,&quot;tab_manually_highlighted&quot;:false,&quot;pro_tab_onbording&quot;:null,&quot;smart_auto_scroll_available&quot;:true,&quot;lyrics_lines&quot;:[],&quot;video_feed&quot;:{&quot;total_count&quot;:83,&quot;artist_total_count&quot;:0},&quot;ug_difficulty&quot;:null,&quot;new_ug_difficulty&quot;:null},&quot;access&quot;:{&quot;can_edit_tab&quot;:false,&quot;can_edit_strumming&quot;:false,&quot;can_delete_comment&quot;:false,&quot;can_manage_rating&quot;:false,&quot;can_vote_strumming&quot;:false},&quot;recommended_tabs&quot;:[{&quot;id&quot;:1956589,&quot;song_id&quot;:1710759,&quot;song_name&quot;:&quot;Perfect&quot;,&quot;artist_id&quot;:30232,&quot;artist_name&quot;:&quot;Ed Sheeran&quot;,&quot;type&quot;:&quot;Chords&quot;,&quot;part&quot;:&quot;&quot;,&quot;version&quot;:1,&quot;votes&quot;:34329,&quot;rating&quot;:4.85916999999999976722619976499117910861968994140625,&quot;date&quot;:&quot;1488453515&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:18913,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;Ab&quot;,&quot;version_description&quot;:&quot;&quot;,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/ed_sheeran_30232&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/ed-sheeran/perfect-chords-1956589&quot;,&quot;date_update&quot;:&quot;1585892114&quot;,&quot;user_id&quot;:1474302,&quot;user_iq&quot;:2270,&quot;username&quot;:&quot;LYNX-Music&quot;,&quot;type_name&quot;:&quot;Chords&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/ed-sheeran/perfect-guitar-pro-2222843&quot;},{&quot;id&quot;:991133,&quot;song_id&quot;:236334,&quot;song_name&quot;:&quot;Pumped Up Kicks&quot;,&quot;artist_id&quot;:30265,&quot;artist_name&quot;:&quot;Foster the People&quot;,&quot;type&quot;:&quot;Tabs&quot;,&quot;part&quot;:&quot;&quot;,&quot;version&quot;:1,&quot;votes&quot;:285,&quot;rating&quot;:4.60555000000000003268496584496460855007171630859375,&quot;date&quot;:&quot;1285545601&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:2641,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;version_description&quot;:null,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/foster_the_people_30265&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/foster-the-people/pumped-up-kicks-tabs-991133&quot;,&quot;date_update&quot;:&quot;1461587759&quot;,&quot;user_id&quot;:857873,&quot;user_iq&quot;:71,&quot;username&quot;:&quot;armadaskier14&quot;,&quot;type_name&quot;:&quot;Tab&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/foster-the-people/pumped-up-kicks-guitar-pro-1778644&quot;},{&quot;id&quot;:27336,&quot;song_id&quot;:135952,&quot;song_name&quot;:&quot;Hallelujah&quot;,&quot;artist_id&quot;:9898,&quot;artist_name&quot;:&quot;Jeff Buckley&quot;,&quot;type&quot;:&quot;Chords&quot;,&quot;part&quot;:&quot;&quot;,&quot;version&quot;:1,&quot;votes&quot;:3515,&quot;rating&quot;:4.8346900000000001540456651127897202968597412109375,&quot;date&quot;:&quot;1018396800&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:125,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;Db&quot;,&quot;version_description&quot;:&quot;&quot;,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/jeff_buckley_9898&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/jeff-buckley/hallelujah-chords-27336&quot;,&quot;date_update&quot;:&quot;1539082051&quot;,&quot;user_id&quot;:24054,&quot;user_iq&quot;:110,&quot;username&quot;:&quot;scottn1223&quot;,&quot;type_name&quot;:&quot;Chords&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/jeff-buckley/hallelujah-guitar-pro-2155367&quot;},{&quot;id&quot;:6125,&quot;song_id&quot;:19556,&quot;song_name&quot;:&quot;Wonderwall&quot;,&quot;artist_id&quot;:734,&quot;artist_name&quot;:&quot;Oasis&quot;,&quot;type&quot;:&quot;Chords&quot;,&quot;part&quot;:&quot;&quot;,&quot;version&quot;:1,&quot;votes&quot;:1714,&quot;rating&quot;:4.49934999999999973852027324028313159942626953125,&quot;date&quot;:&quot;1004486400&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:2332,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;F#m&quot;,&quot;version_description&quot;:&quot;&quot;,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/oasis_734&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/oasis/wonderwall-chords-6125&quot;,&quot;date_update&quot;:&quot;1589132708&quot;,&quot;user_id&quot;:0,&quot;user_iq&quot;:0,&quot;username&quot;:&quot;Unregistered&quot;,&quot;type_name&quot;:&quot;Chords&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/oasis/wonderwall-guitar-pro-227425&quot;},{&quot;id&quot;:1397194,&quot;song_id&quot;:349246,&quot;song_name&quot;:&quot;Wake Me Up&quot;,&quot;artist_id&quot;:34411,&quot;artist_name&quot;:&quot;Avicii&quot;,&quot;type&quot;:&quot;Chords&quot;,&quot;part&quot;:&quot;&quot;,&quot;version&quot;:2,&quot;votes&quot;:1538,&quot;rating&quot;:4.6933600000000001983835318242199718952178955078125,&quot;date&quot;:&quot;1371513601&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:10947,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;Bm&quot;,&quot;version_description&quot;:&quot;&quot;,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/avicii_34411&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/avicii/wake-me-up-chords-1397194&quot;,&quot;date_update&quot;:&quot;1536759124&quot;,&quot;user_id&quot;:2257834,&quot;user_iq&quot;:72,&quot;username&quot;:&quot;M8WHR&quot;,&quot;type_name&quot;:&quot;Chords&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/avicii/wake-me-up-guitar-pro-1408168&quot;},{&quot;id&quot;:202725,&quot;song_id&quot;:21003,&quot;song_name&quot;:&quot;Smells Like Teen Spirit&quot;,&quot;artist_id&quot;:780,&quot;artist_name&quot;:&quot;Nirvana&quot;,&quot;type&quot;:&quot;Tabs&quot;,&quot;part&quot;:&quot;solo&quot;,&quot;version&quot;:1,&quot;votes&quot;:485,&quot;rating&quot;:4.27132000000000022765789253753609955310821533203125,&quot;date&quot;:&quot;1104537600&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:83,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;version_description&quot;:&quot;&quot;,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/nirvana_780&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/nirvana/smells-like-teen-spirit-tabs-202725&quot;,&quot;date_update&quot;:&quot;1574367447&quot;,&quot;user_id&quot;:0,&quot;user_iq&quot;:0,&quot;username&quot;:&quot;Unregistered&quot;,&quot;type_name&quot;:&quot;Tab&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/nirvana/smells-like-teen-spirit-guitar-pro-227063&quot;},{&quot;id&quot;:1173278,&quot;song_id&quot;:314160,&quot;song_name&quot;:&quot;Riptide&quot;,&quot;artist_id&quot;:37940,&quot;artist_name&quot;:&quot;Vance Joy&quot;,&quot;type&quot;:&quot;Chords&quot;,&quot;part&quot;:&quot;&quot;,&quot;version&quot;:1,&quot;votes&quot;:2836,&quot;rating&quot;:4.78845999999999971663555697887204587459564208984375,&quot;date&quot;:&quot;1344384001&quot;,&quot;status&quot;:&quot;approved&quot;,&quot;preset_id&quot;:10737,&quot;tab_access_type&quot;:&quot;public&quot;,&quot;tp_version&quot;:0,&quot;tonality_name&quot;:&quot;Bbm&quot;,&quot;version_description&quot;:&quot;&quot;,&quot;verified&quot;:0,&quot;recording&quot;:{&quot;is_acoustic&quot;:0,&quot;tonality_name&quot;:&quot;&quot;,&quot;performance&quot;:null,&quot;recording_artists&quot;:[]},&quot;artist_url&quot;:&quot;https://www.ultimate-guitar.com/artist/vance_joy_37940&quot;,&quot;tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/vance-joy/riptide-chords-1173278&quot;,&quot;date_update&quot;:&quot;1603685090&quot;,&quot;user_id&quot;:2841967,&quot;user_iq&quot;:82,&quot;username&quot;:&quot;tiff--brown&quot;,&quot;type_name&quot;:&quot;Chords&quot;,&quot;best_pro_tab_url&quot;:&quot;https://tabs.ultimate-guitar.com/tab/vance-joy/riptide-guitar-pro-2182213&quot;}],&quot;recentry_viewed_key&quot;:&quot;tab:428803&quot;,&quot;criticals&quot;:[],&quot;survey&quot;:null},&quot;header_bidding&quot;:{&quot;page_type&quot;:&quot;tab_desktop&quot;,&quot;ad_units&quot;:[{&quot;code&quot;:&quot;ad_cs_2010320_728_90&quot;,&quot;dfpCode&quot;:&quot;UG_ATF_728&quot;,&quot;sizes&quot;:[[728,90]],&quot;placementId&quot;:&quot;7478445&quot;,&quot;layoutPlacement&quot;:&quot;top&quot;,&quot;mediaTypes&quot;:{&quot;banner&quot;:{&quot;sizes&quot;:[[728,90]]}},&quot;appnexusPlacementId&quot;:12097756,&quot;mediaType&quot;:&quot;banner&quot;,&quot;bids&quot;:[{&quot;bidder&quot;:&quot;appnexus&quot;,&quot;params&quot;:{&quot;placementId&quot;:7478445,&quot;keywords&quot;:{&quot;is_refresh&quot;:&quot;false&quot;,&quot;artist&quot;:495,&quot;instr&quot;:&quot;guitar&quot;,&quot;title&quot;:&quot;Smash Mouth - All Star (chords)&quot;}}},{&quot;bidder&quot;:&quot;indexExchange&quot;,&quot;params&quot;:{&quot;id&quot;:&quot;2&quot;,&quot;siteID&quot;:&quot;179681&quot;,&quot;size&quot;:[728,90],&quot;siteId&quot;:&quot;179681&quot;}},{&quot;bidder&quot;:&quot;openx&quot;,&quot;params&quot;:{&quot;delDomain&quot;:&quot;ultimate-guitar-d.openx.net&quot;,&quot;unit&quot;:&quot;538591653&quot;}},{&quot;bidder&quot;:&quot;pubmatic&quot;,&quot;params&quot;:{&quot;publisherId&quot;:&quot;72623&quot;,&quot;adSlot&quot;:&quot;3131195&quot;}},{&quot;bidder&quot;:&quot;rubicon&quot;,&quot;params&quot;:{&quot;accountId&quot;:&quot;15178&quot;,&quot;siteId&quot;:&quot;93918&quot;,&quot;zoneId&quot;:&quot;441926&quot;}}]},{&quot;code&quot;:&quot;ad_cs_2010320_160_600&quot;,&quot;dfpCode&quot;:&quot;UG_ATF_160&quot;,&quot;sizes&quot;:[[160,600]],&quot;placementId&quot;:&quot;7478445&quot;,&quot;layoutPlacement&quot;:&quot;side&quot;,&quot;mediaTypes&quot;:{&quot;banner&quot;:{&quot;sizes&quot;:[[160,600]]}},&quot;refresh&quot;:{&quot;delay&quot;:30000,&quot;delayDeviation&quot;:10000,&quot;maxVisibleTime&quot;:1000,&quot;limit&quot;:20},&quot;appnexusPlacementId&quot;:12097756,&quot;mediaType&quot;:&quot;banner&quot;,&quot;bids&quot;:[{&quot;bidder&quot;:&quot;appnexus&quot;,&quot;params&quot;:{&quot;placementId&quot;:7478445,&quot;keywords&quot;:{&quot;is_refresh&quot;:&quot;false&quot;,&quot;artist&quot;:495,&quot;instr&quot;:&quot;guitar&quot;,&quot;title&quot;:&quot;Smash Mouth - All Star (chords)&quot;}}},{&quot;bidder&quot;:&quot;indexExchange&quot;,&quot;params&quot;:{&quot;id&quot;:&quot;1&quot;,&quot;siteID&quot;:&quot;177325&quot;,&quot;size&quot;:[160,600],&quot;siteId&quot;:&quot;177325&quot;}},{&quot;bidder&quot;:&quot;openx&quot;,&quot;params&quot;:{&quot;delDomain&quot;:&quot;ultimate-guitar-d.openx.net&quot;,&quot;unit&quot;:&quot;538591659&quot;}},{&quot;bidder&quot;:&quot;pubmatic&quot;,&quot;params&quot;:{&quot;publisherId&quot;:&quot;72623&quot;,&quot;adSlot&quot;:&quot;3131193&quot;}},{&quot;bidder&quot;:&quot;rubicon&quot;,&quot;params&quot;:{&quot;accountId&quot;:&quot;15178&quot;,&quot;siteId&quot;:&quot;93918&quot;,&quot;zoneId&quot;:&quot;441926&quot;}}]},{&quot;code&quot;:&quot;ad_cs_2010319_160_600&quot;,&quot;dfpCode&quot;:&quot;UG_BTFR_160&quot;,&quot;sizes&quot;:[[160,600]],&quot;placementId&quot;:&quot;7478445&quot;,&quot;layoutPlacement&quot;:&quot;sideBottom&quot;,&quot;mediaTypes&quot;:{&quot;banner&quot;:{&quot;sizes&quot;:[[160,600]]}},&quot;refresh&quot;:{&quot;delay&quot;:30000,&quot;delayDeviation&quot;:10000,&quot;maxVisibleTime&quot;:1000,&quot;limit&quot;:20},&quot;appnexusPlacementId&quot;:12097784,&quot;mediaType&quot;:&quot;banner&quot;,&quot;bids&quot;:[{&quot;bidder&quot;:&quot;appnexus&quot;,&quot;params&quot;:{&quot;placementId&quot;:7478445,&quot;keywords&quot;:{&quot;is_refresh&quot;:&quot;false&quot;,&quot;artist&quot;:495,&quot;instr&quot;:&quot;guitar&quot;,&quot;title&quot;:&quot;Smash Mouth - All Star (chords)&quot;}}},{&quot;bidder&quot;:&quot;indexExchange&quot;,&quot;params&quot;:{&quot;siteID&quot;:&quot;179682&quot;,&quot;id&quot;:&quot;03&quot;,&quot;size&quot;:[160,600],&quot;siteId&quot;:&quot;179682&quot;}},{&quot;bidder&quot;:&quot;pubmatic&quot;,&quot;params&quot;:{&quot;publisherId&quot;:&quot;72623&quot;,&quot;adSlot&quot;:&quot;3131225&quot;}}]},{&quot;code&quot;:&quot;ad_cs_2010319_300_250&quot;,&quot;dfpCode&quot;:&quot;UG_BTFR_300&quot;,&quot;sizes&quot;:[[1,1],[300,250],[610,300],[535,300],[535,400]],&quot;placementId&quot;:&quot;8549997&quot;,&quot;layoutPlacement&quot;:&quot;bottom&quot;,&quot;mediaTypes&quot;:{&quot;banner&quot;:{&quot;sizes&quot;:[[1,1],[300,250],[610,300],[535,300],[535,400]]}},&quot;refresh&quot;:{&quot;delay&quot;:30000,&quot;delayDeviation&quot;:10000,&quot;maxVisibleTime&quot;:1000,&quot;limit&quot;:20},&quot;appnexusPlacementId&quot;:12097784,&quot;mediaType&quot;:&quot;banner&quot;,&quot;bids&quot;:[{&quot;bidder&quot;:&quot;appnexus&quot;,&quot;params&quot;:{&quot;placementId&quot;:8549997,&quot;keywords&quot;:{&quot;is_refresh&quot;:&quot;false&quot;,&quot;artist&quot;:495,&quot;instr&quot;:&quot;guitar&quot;,&quot;title&quot;:&quot;Smash Mouth - All Star (chords)&quot;}}},{&quot;bidder&quot;:&quot;indexExchange&quot;,&quot;params&quot;:{&quot;id&quot;:&quot;5&quot;,&quot;siteID&quot;:&quot;179684&quot;,&quot;size&quot;:[1,1],&quot;siteId&quot;:&quot;179684&quot;}},{&quot;bidder&quot;:&quot;openx&quot;,&quot;params&quot;:{&quot;delDomain&quot;:&quot;ultimate-guitar-d.openx.net&quot;,&quot;unit&quot;:&quot;538591661&quot;}},{&quot;bidder&quot;:&quot;pubmatic&quot;,&quot;params&quot;:{&quot;publisherId&quot;:&quot;72623&quot;,&quot;adSlot&quot;:&quot;3131198@300x250&quot;}},{&quot;bidder&quot;:&quot;rubicon&quot;,&quot;params&quot;:{&quot;accountId&quot;:&quot;15178&quot;,&quot;siteId&quot;:&quot;93918&quot;,&quot;zoneId&quot;:&quot;491160&quot;}}],&quot;primis&quot;:true},{&quot;code&quot;:&quot;ad_cs_13538099_1_1&quot;,&quot;dfpCode&quot;:&quot;UG_ATF_1x1&quot;,&quot;sizes&quot;:[[1,1]],&quot;layoutPlacement&quot;:&quot;offSide&quot;,&quot;refresh&quot;:{&quot;delay&quot;:30000,&quot;delayDeviation&quot;:10000,&quot;maxVisibleTime&quot;:1000,&quot;limit&quot;:20},&quot;dynamic&quot;:true,&quot;mediaTypes&quot;:{&quot;banner&quot;:{&quot;sizes&quot;:[[1,1]]}},&quot;appnexusPlacementId&quot;:12097756,&quot;mediaType&quot;:&quot;banner&quot;,&quot;bids&quot;:[]}]},&quot;template&quot;:{&quot;module&quot;:&quot;tab&quot;,&quot;controller&quot;:&quot;view&quot;,&quot;action&quot;:&quot;index&quot;,&quot;reactAction&quot;:&quot;tab_text&quot;}},&quot;i18n&quot;:{},&quot;user&quot;:{&quot;id&quot;:0,&quot;avatarUrl&quot;:&quot;https://tabs.ultimate-guitar.com/static/users/0/0/0/0.gif?d=d&amp;h=1614482057&quot;,&quot;username&quot;:&quot;Unregistered&quot;,&quot;email&quot;:&quot;&quot;,&quot;usergroupid&quot;:0,&quot;contributor&quot;:{&quot;isContributor&quot;:false,&quot;first_tab&quot;:0},&quot;iq&quot;:0,&quot;tabsCount&quot;:0,&quot;playlistCount&quot;:0,&quot;messagesCount&quot;:0,&quot;rights&quot;:[],&quot;joinDate&quot;:0,&quot;user_status&quot;:&quot;&quot;},&quot;notifications&quot;:{&quot;count_new&quot;:0,&quot;data&quot;:[],&quot;giveaway_id&quot;:0,&quot;texts&quot;:{&quot;markAll&quot;:&quot;Mark all as read&quot;,&quot;settings&quot;:&quot;Settings&quot;,&quot;thanksForVote&quot;:&quot;Thanks for your vote&quot;}},&quot;forms&quot;:[],&quot;theme&quot;:&quot;dark&quot;,&quot;commentForm&quot;:{&quot;is_new&quot;:0},&quot;isUgOffice&quot;:0,&quot;ugSearch&quot;:{&quot;type&quot;:&quot;tabs&quot;,&quot;value&quot;:&quot;&quot;},&quot;sponsorsFooter&quot;:null,&quot;takeover&quot;:{&quot;items&quot;:[{&quot;id&quot;:191,&quot;start_at&quot;:1613986043,&quot;end_at&quot;:1614504443,&quot;date_updated&quot;:1610357243,&quot;county&quot;:[&quot;US&quot;,&quot;GB&quot;],&quot;page_type&quot;:[&quot;main&quot;,&quot;tab&quot;,&quot;topTabs&quot;,&quot;artist&quot;,&quot;article&quot;,&quot;forum&quot;,&quot;explore&quot;],&quot;platform&quot;:[&quot;desktop&quot;],&quot;track&quot;:{&quot;pixel&quot;:&quot;https://secure.adnxs.com/imptr?id=51180&amp;t=2&quot;,&quot;yandex&quot;:&quot;&quot;,&quot;click_left&quot;:&quot;https://www.ultimate-guitar.com/send?ug_from=redirect&amp;hash=f672a8697aae38bdd0d8436dc46b38db03b260d7663f0a2e2a19f30c029ac085&amp;url=https%3A%2F%2Ftinyurl.com%2Fyy3bdtgv&quot;,&quot;click_right&quot;:&quot;https://www.ultimate-guitar.com/send?ug_from=redirect&amp;hash=f672a8697aae38bdd0d8436dc46b38db03b260d7663f0a2e2a19f30c029ac085&amp;url=https%3A%2F%2Ftinyurl.com%2Fyy3bdtgv&quot;},&quot;style&quot;:{&quot;background&quot;:&quot;&quot;},&quot;extensions&quot;:{&quot;image_left&quot;:&quot;jpeg&quot;,&quot;image_right&quot;:&quot;jpeg&quot;},&quot;image_right&quot;:&quot;/storage/takeover/media/80664087b578a753fa3dc30bdf2dbf90cf56f1b8_1.jpeg&quot;,&quot;image_left&quot;:&quot;/storage/takeover/media/80664087b578a753fa3dc30bdf2dbf90cf56f1b8_0.jpeg&quot;},{&quot;id&quot;:194,&quot;start_at&quot;:1616406531,&quot;end_at&quot;:1616924931,&quot;date_updated&quot;:1610358531,&quot;county&quot;:[&quot;US&quot;,&quot;GB&quot;],&quot;page_type&quot;:[&quot;main&quot;,&quot;tab&quot;,&quot;topTabs&quot;,&quot;artist&quot;,&quot;article&quot;,&quot;forum&quot;,&quot;explore&quot;],&quot;platform&quot;:[&quot;desktop&quot;],&quot;track&quot;:{&quot;pixel&quot;:&quot;https://secure.adnxs.com/imptr?id=51180&amp;t=2&quot;,&quot;yandex&quot;:&quot;&quot;,&quot;click_left&quot;:&quot;https://www.ultimate-guitar.com/send?ug_from=redirect&amp;hash=f8fd83f7df1d60017933c2e14e5fddfc5f355e3123ab34cd8a04b1b55e915cb5&amp;url=https%3A%2F%2Ftinyurl.com%2Fyx8s9zop&quot;,&quot;click_right&quot;:&quot;https://www.ultimate-guitar.com/send?ug_from=redirect&amp;hash=f8fd83f7df1d60017933c2e14e5fddfc5f355e3123ab34cd8a04b1b55e915cb5&amp;url=https%3A%2F%2Ftinyurl.com%2Fyx8s9zop&quot;},&quot;style&quot;:{&quot;background&quot;:&quot;&quot;},&quot;extensions&quot;:{&quot;image_left&quot;:&quot;jpeg&quot;,&quot;image_right&quot;:&quot;jpeg&quot;},&quot;image_right&quot;:&quot;/storage/takeover/media/b95c4d172d9a7e3a3829e81766842e25a085e2e0_1.jpeg&quot;,&quot;image_left&quot;:&quot;/storage/takeover/media/b95c4d172d9a7e3a3829e81766842e25a085e2e0_0.jpeg&quot;}],&quot;debug_takeover_id&quot;:0},&quot;interstitial&quot;:false,&quot;customAlerts&quot;:[]},&quot;globalHelpers&quot;:[],&quot;helpers&quot;:{&quot;typeHelper&quot;:{&quot;short&quot;:{&quot;Official&quot;:&quot;OFFICIAL&quot;,&quot;Chords&quot;:&quot;CRD&quot;,&quot;Tabs&quot;:&quot;TAB&quot;,&quot;Pro&quot;:&quot;PRO&quot;,&quot;Power&quot;:&quot;PWR&quot;,&quot;Bass Tabs&quot;:&quot;BASS&quot;,&quot;Drum Tabs&quot;:&quot;DRM&quot;,&quot;Video&quot;:&quot;VID&quot;,&quot;Ukulele Chords&quot;:&quot;UKE&quot;,&quot;Tab Pro&quot;:&quot;TAB PRO&quot;,&quot;Chord Pro&quot;:&quot;CRD PRO&quot;},&quot;filter&quot;:{&quot;Official&quot;:&quot;official&quot;,&quot;Chords&quot;:&quot;chords&quot;,&quot;Tabs&quot;:&quot;tab&quot;,&quot;Pro&quot;:&quot;guitar pro&quot;,&quot;Power&quot;:&quot;power&quot;,&quot;Bass Tabs&quot;:&quot;bass&quot;,&quot;Drum Tabs&quot;:&quot;drums&quot;,&quot;Video&quot;:&quot;video&quot;,&quot;Ukulele Chords&quot;:&quot;ukulele&quot;,&quot;Tab Pro&quot;:&quot;tab pro&quot;,&quot;Chord Pro&quot;:&quot;chord pro&quot;},&quot;full&quot;:{&quot;Official&quot;:&quot;official tab&quot;,&quot;Chords&quot;:&quot;chords&quot;,&quot;Tabs&quot;:&quot;tab&quot;,&quot;Pro&quot;:&quot;guitar pro tab&quot;,&quot;Power&quot;:&quot;power tab&quot;,&quot;Bass Tabs&quot;:&quot;bass tab&quot;,&quot;Drum Tabs&quot;:&quot;drum tab&quot;,&quot;Video&quot;:&quot;video tab&quot;,&quot;Ukulele Chords&quot;:&quot;ukulele chords&quot;,&quot;Tab Pro&quot;:&quot;tab pro&quot;,&quot;Chord Pro&quot;:&quot;chord pro&quot;}}},&quot;cmp&quot;:{&quot;setConsentUrl&quot;:&quot;https://www.ultimate-guitar.com/user/security/consent&quot;},&quot;bidding&quot;:{&quot;analytics&quot;:{&quot;logUrl&quot;:&quot;//track.ultimate-guitar.com/ug/&quot;,&quot;pageType&quot;:&quot;tab_desktop&quot;,&quot;region&quot;:&quot;CEE&quot;,&quot;device&quot;:&quot;desktop&quot;,&quot;variation&quot;:&quot;&quot;,&quot;hasHardRefresh&quot;:true},&quot;refresh&quot;:{&quot;limit&quot;:20,&quot;maxVisibleTime&quot;:1000,&quot;delay&quot;:30000,&quot;delayDeviation&quot;:10000,&quot;enabled&quot;:true,&quot;hasHardRefresh&quot;:true,&quot;availableBidders&quot;:[&quot;appnexus&quot;,&quot;indexExchange&quot;,&quot;pubmatic&quot;,&quot;rubicon&quot;,&quot;sonobi&quot;,&quot;openx&quot;,&quot;adform&quot;,&quot;aol&quot;,&quot;onemobile&quot;,&quot;brealtime&quot;,&quot;audienceNetwork&quot;,&quot;improvedigital&quot;,&quot;adkernelAdn&quot;,&quot;districtM&quot;,&quot;oftmedia&quot;,&quot;onefiftytwo&quot;,&quot;sortable&quot;,&quot;emx_digital&quot;,&quot;teads&quot;,&quot;smartadserver&quot;,&quot;pulsepoint&quot;,&quot;amx&quot;,&quot;between&quot;],&quot;ignoreChangePageVisibility&quot;:false},&quot;minRefreshCpm&quot;:0.040000000000000000832667268468867405317723751068115234375,&quot;cpmFloor&quot;:0.1000000000000000055511151231257827021181583404541015625,&quot;timeout&quot;:2000,&quot;refreshTimeout&quot;:2000,&quot;dfpId&quot;:74268401,&quot;units&quot;:[{&quot;code&quot;:&quot;ad_cs_2010320_728_90&quot;,&quot;dfpCode&quot;:&quot;UG_ATF_728&quot;,&quot;sizes&quot;:[[728,90]],&quot;placementId&quot;:&quot;7478445&quot;,&quot;layoutPlacement&quot;:&quot;top&quot;,&quot;mediaTypes&quot;:{&quot;banner&quot;:{&quot;sizes&quot;:[[728,90]]}},&quot;appnexusPlacementId&quot;:12097756,&quot;mediaType&quot;:&quot;banner&quot;,&quot;bids&quot;:[{&quot;bidder&quot;:&quot;appnexus&quot;,&quot;params&quot;:{&quot;placementId&quot;:7478445,&quot;keywords&quot;:{&quot;is_refresh&quot;:&quot;false&quot;,&quot;artist&quot;:495,&quot;instr&quot;:&quot;guitar&quot;,&quot;title&quot;:&quot;Smash Mouth - All Star (chords)&quot;}}},{&quot;bidder&quot;:&quot;indexExchange&quot;,&quot;params&quot;:{&quot;id&quot;:&quot;2&quot;,&quot;siteID&quot;:&quot;179681&quot;,&quot;size&quot;:[728,90],&quot;siteId&quot;:&quot;179681&quot;}},{&quot;bidder&quot;:&quot;openx&quot;,&quot;params&quot;:{&quot;delDomain&quot;:&quot;ultimate-guitar-d.openx.net&quot;,&quot;unit&quot;:&quot;538591653&quot;}},{&quot;bidder&quot;:&quot;pubmatic&quot;,&quot;params&quot;:{&quot;publisherId&quot;:&quot;72623&quot;,&quot;adSlot&quot;:&quot;3131195&quot;}},{&quot;bidder&quot;:&quot;rubicon&quot;,&quot;params&quot;:{&quot;accountId&quot;:&quot;15178&quot;,&quot;siteId&quot;:&quot;93918&quot;,&quot;zoneId&quot;:&quot;441926&quot;}}]},{&quot;code&quot;:&quot;ad_cs_2010320_160_600&quot;,&quot;dfpCode&quot;:&quot;UG_ATF_160&quot;,&quot;sizes&quot;:[[160,600]],&quot;placementId&quot;:&quot;7478445&quot;,&quot;layoutPlacement&quot;:&quot;side&quot;,&quot;mediaTypes&quot;:{&quot;banner&quot;:{&quot;sizes&quot;:[[160,600]]}},&quot;refresh&quot;:{&quot;delay&quot;:30000,&quot;delayDeviation&quot;:10000,&quot;maxVisibleTime&quot;:1000,&quot;limit&quot;:20},&quot;appnexusPlacementId&quot;:12097756,&quot;mediaType&quot;:&quot;banner&quot;,&quot;bids&quot;:[{&quot;bidder&quot;:&quot;appnexus&quot;,&quot;params&quot;:{&quot;placementId&quot;:7478445,&quot;keywords&quot;:{&quot;is_refresh&quot;:&quot;false&quot;,&quot;artist&quot;:495,&quot;instr&quot;:&quot;guitar&quot;,&quot;title&quot;:&quot;Smash Mouth - All Star (chords)&quot;}}},{&quot;bidder&quot;:&quot;indexExchange&quot;,&quot;params&quot;:{&quot;id&quot;:&quot;1&quot;,&quot;siteID&quot;:&quot;177325&quot;,&quot;size&quot;:[160,600],&quot;siteId&quot;:&quot;177325&quot;}},{&quot;bidder&quot;:&quot;openx&quot;,&quot;params&quot;:{&quot;delDomain&quot;:&quot;ultimate-guitar-d.openx.net&quot;,&quot;unit&quot;:&quot;538591659&quot;}},{&quot;bidder&quot;:&quot;pubmatic&quot;,&quot;params&quot;:{&quot;publisherId&quot;:&quot;72623&quot;,&quot;adSlot&quot;:&quot;3131193&quot;}},{&quot;bidder&quot;:&quot;rubicon&quot;,&quot;params&quot;:{&quot;accountId&quot;:&quot;15178&quot;,&quot;siteId&quot;:&quot;93918&quot;,&quot;zoneId&quot;:&quot;441926&quot;}}]},{&quot;code&quot;:&quot;ad_cs_2010319_160_600&quot;,&quot;dfpCode&quot;:&quot;UG_BTFR_160&quot;,&quot;sizes&quot;:[[160,600]],&quot;placementId&quot;:&quot;7478445&quot;,&quot;layoutPlacement&quot;:&quot;sideBottom&quot;,&quot;mediaTypes&quot;:{&quot;banner&quot;:{&quot;sizes&quot;:[[160,600]]}},&quot;refresh&quot;:{&quot;delay&quot;:30000,&quot;delayDeviation&quot;:10000,&quot;maxVisibleTime&quot;:1000,&quot;limit&quot;:20},&quot;appnexusPlacementId&quot;:12097784,&quot;mediaType&quot;:&quot;banner&quot;,&quot;bids&quot;:[{&quot;bidder&quot;:&quot;appnexus&quot;,&quot;params&quot;:{&quot;placementId&quot;:7478445,&quot;keywords&quot;:{&quot;is_refresh&quot;:&quot;false&quot;,&quot;artist&quot;:495,&quot;instr&quot;:&quot;guitar&quot;,&quot;title&quot;:&quot;Smash Mouth - All Star (chords)&quot;}}},{&quot;bidder&quot;:&quot;indexExchange&quot;,&quot;params&quot;:{&quot;siteID&quot;:&quot;179682&quot;,&quot;id&quot;:&quot;03&quot;,&quot;size&quot;:[160,600],&quot;siteId&quot;:&quot;179682&quot;}},{&quot;bidder&quot;:&quot;pubmatic&quot;,&quot;params&quot;:{&quot;publisherId&quot;:&quot;72623&quot;,&quot;adSlot&quot;:&quot;3131225&quot;}}]},{&quot;code&quot;:&quot;ad_cs_2010319_300_250&quot;,&quot;dfpCode&quot;:&quot;UG_BTFR_300&quot;,&quot;sizes&quot;:[[1,1],[300,250],[610,300],[535,300],[535,400]],&quot;placementId&quot;:&quot;8549997&quot;,&quot;layoutPlacement&quot;:&quot;bottom&quot;,&quot;mediaTypes&quot;:{&quot;banner&quot;:{&quot;sizes&quot;:[[1,1],[300,250],[610,300],[535,300],[535,400]]}},&quot;refresh&quot;:{&quot;delay&quot;:30000,&quot;delayDeviation&quot;:10000,&quot;maxVisibleTime&quot;:1000,&quot;limit&quot;:20},&quot;appnexusPlacementId&quot;:12097784,&quot;mediaType&quot;:&quot;banner&quot;,&quot;bids&quot;:[{&quot;bidder&quot;:&quot;appnexus&quot;,&quot;params&quot;:{&quot;placementId&quot;:8549997,&quot;keywords&quot;:{&quot;is_refresh&quot;:&quot;false&quot;,&quot;artist&quot;:495,&quot;instr&quot;:&quot;guitar&quot;,&quot;title&quot;:&quot;Smash Mouth - All Star (chords)&quot;}}},{&quot;bidder&quot;:&quot;indexExchange&quot;,&quot;params&quot;:{&quot;id&quot;:&quot;5&quot;,&quot;siteID&quot;:&quot;179684&quot;,&quot;size&quot;:[1,1],&quot;siteId&quot;:&quot;179684&quot;}},{&quot;bidder&quot;:&quot;openx&quot;,&quot;params&quot;:{&quot;delDomain&quot;:&quot;ultimate-guitar-d.openx.net&quot;,&quot;unit&quot;:&quot;538591661&quot;}},{&quot;bidder&quot;:&quot;pubmatic&quot;,&quot;params&quot;:{&quot;publisherId&quot;:&quot;72623&quot;,&quot;adSlot&quot;:&quot;3131198@300x250&quot;}},{&quot;bidder&quot;:&quot;rubicon&quot;,&quot;params&quot;:{&quot;accountId&quot;:&quot;15178&quot;,&quot;siteId&quot;:&quot;93918&quot;,&quot;zoneId&quot;:&quot;491160&quot;}}],&quot;primis&quot;:true},{&quot;code&quot;:&quot;ad_cs_13538099_1_1&quot;,&quot;dfpCode&quot;:&quot;UG_ATF_1x1&quot;,&quot;sizes&quot;:[[1,1]],&quot;layoutPlacement&quot;:&quot;offSide&quot;,&quot;refresh&quot;:{&quot;delay&quot;:30000,&quot;delayDeviation&quot;:10000,&quot;maxVisibleTime&quot;:1000,&quot;limit&quot;:20},&quot;dynamic&quot;:true,&quot;mediaTypes&quot;:{&quot;banner&quot;:{&quot;sizes&quot;:[[1,1]]}},&quot;appnexusPlacementId&quot;:12097756,&quot;mediaType&quot;:&quot;banner&quot;,&quot;bids&quot;:[]}],&quot;priceGranularity&quot;:[{&quot;precision&quot;:2,&quot;min&quot;:0,&quot;max&quot;:1,&quot;increment&quot;:0.01000000000000000020816681711721685132943093776702880859375},{&quot;precision&quot;:2,&quot;min&quot;:1,&quot;max&quot;:2,&quot;increment&quot;:0.0200000000000000004163336342344337026588618755340576171875},{&quot;precision&quot;:2,&quot;min&quot;:2,&quot;max&quot;:5,&quot;increment&quot;:0.05000000000000000277555756156289135105907917022705078125},{&quot;precision&quot;:2,&quot;min&quot;:5,&quot;max&quot;:10,&quot;increment&quot;:0.1000000000000000055511151231257827021181583404541015625},{&quot;precision&quot;:2,&quot;min&quot;:10,&quot;max&quot;:20,&quot;increment&quot;:0.200000000000000011102230246251565404236316680908203125},{&quot;precision&quot;:2,&quot;min&quot;:20,&quot;max&quot;:50,&quot;increment&quot;:0.5}],&quot;dynamicLoad&quot;:true,&quot;disableAdx&quot;:false,&quot;apstagEnabled&quot;:true,&quot;isGDPRAvailable&quot;:false,&quot;tcfVersion&quot;:2,&quot;isShowOnTap&quot;:false}}"></div>
+        
+<script defer src="https://tabs.ultimate-guitar.com/static/public/build/ug_react/vendor.d7178f8cb0abda47404c0a153173a2fc.js"></script>
+        <script defer src="https://tabs.ultimate-guitar.com/static/public/build/ug_react/ug~runtime.5e61101b961f9f1357779ca41c794971.js"></script>
+<script defer src="https://tabs.ultimate-guitar.com/static/public/build/ug_react/ug.99f14b29144402cdcfb03db5685609bb.js"></script>
+        <script type="text/javascript">
+
+// GA start
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//tabs.ultimate-guitar.com/static/vendor/ga/analytics_ver1614383839.js','ga');
+
+ga('create', 'UA-9160560-1', 'auto');
+
+
+ga('set', 'dimension5', 'https');
+
+
+
+
+        ga('create', 'UA-9160560-20', 'auto', {"sampleRate":10,"name":"sampledTracker"});
+
+    
+    ga('sampledTracker.set', 'dimension5', 'https');
+
+            ga('create', 'UA-9160560-18', 'auto', {"name":"reactTracker"});
+
+    
+    ga('reactTracker.set', 'dimension5', 'https');
+
+    
+
+var ga_client_id = null;
+
+ga(function(tracker) {
+    ga_client_id = tracker.get('clientId');
+    ga('set', 'dimension4', ga_client_id);
+
+            ga('sampledTracker.set', 'dimension4', ga.getByName('sampledTracker').get('clientId'));
+
+                var ga_client_id_value = ga.getByName('sampledTracker').get('clientId');
+        document.cookie = 'ga_client_id=' + ga_client_id_value + '; path=/; domain=.ultimate-guitar.com';
+                    ga('reactTracker.set', 'dimension4', ga.getByName('reactTracker').get('clientId'));
+
+            });
+
+ga('send', 'pageview');
+    ga('sampledTracker.send', 'pageview');
+    ga('reactTracker.send', 'pageview');
+// GA end
+
+
+(function (d, w, c) {
+    (w[c] = w[c] || []).push(function() {
+        try {
+                            w.yaCounter18746557 = new Ya.Metrika({"clickmap":true,"trackLinks":true,"triggerEvent":true,"accurateTrackBounce":true,"ab":{"410":1},"id":18746557,"webvisor":true});
+
+                
+                                                                
+             var isPwa =  (
+                 (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+                 window.navigator.standalone === true
+             );
+             var params = {"has_web_pro_access":0,"ab":{"410":1},"uuid":511025028,"is_registered":0,"rights":0,"u_id":"SA==","type":"Chords","auth":"None"};
+             params.pwa = isPwa ? 1 : 0;
+             w.yaCounter18746557.params(params)
+        } catch(e) { }
+    });
+
+    var n = d.getElementsByTagName("script")[0],
+        s = d.createElement("script"),
+        f = function () { n.parentNode.insertBefore(s, n); };
+    s.type = "text/javascript";
+    s.async = true;
+    s.src = (d.location.protocol == "https:" ? "https:" : "http:") + "//tabs.ultimate-guitar.com/static/vendor/metrica/watch_ver1614383839.js";
+
+    if (w.opera == "[object Opera]") {
+        d.addEventListener("DOMContentLoaded", f, false);
+    } else { f(); }
+})(document, window, "yandex_metrika_callbacks");
+</script>
+
+<noscript>
+    <img src="//mc.yandex.ru/watch/18746557" style="position:absolute; left:-9999px;" alt="" />
+</noscript>
+                    <script type="application/ld+json">
+{
+  "@context":"http://schema.org",
+  "@type":"MusicRecording",
+  "byArtist": {
+    "@context":"http://schema.org",
+    "@type":"MusicGroup",
+    "name":"Smash Mouth",
+    "url":"https://www.ultimate-guitar.com/artist/smash_mouth_495"
+  },
+  "name":"All Star",
+  "url":"https://tabs.ultimate-guitar.com/tab/smash-mouth/all-star-chords-428803"
+  ,"datePublished": "2006-10-29T19:00:01-05:00"
+  ,"dateModified": "2020-10-26T22:02:10-04:00"
+  ,"aggregateRating": { "@type": "AggregateRating", "ratingValue": "4.8", "reviewCount": "1777", "bestRating": "5", "worstRating": "1" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context":"http://schema.org",
+  "@type":"CreativeWork",
+  "name":"All Star"
+}
+</script>
+<script type="application/ld+json">
+{
+ "@context": "http://schema.org",
+ "@type": "BreadcrumbList",
+ "itemListElement":
+ [
+   {
+   "@type": "ListItem",
+   "position": 1,
+   "item":
+   {
+    "@id": "https://www.ultimate-guitar.com/bands/s.htm",
+    "name": "S"
+    }
+  },
+  {
+   "@type": "ListItem",
+   "position": 2,
+   "item":
+   {
+    "@id": "https://www.ultimate-guitar.com/artist/smash_mouth_495",
+    "name": "Smash Mouth"
+    }
+  },
+  {
+   "@type": "ListItem",
+  "position": 3,
+  "item":
+   {
+     "@id": "https://tabs.ultimate-guitar.com/tab/smash-mouth/all-star-chords-428803",
+     "name": "All Star"
+   }
+  }
+ ]
+}
+</script>
+        </body>
+</html>
+

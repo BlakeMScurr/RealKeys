@@ -43,7 +43,7 @@ export class ChordBook {
             ["sus2", new ChordType(new Array("Tone", "Perfect4th"), "sus2", "suspended second", 0)],
 
             ["dim", new ChordType(new Array("Minor3rd", "Minor3rd"), "dim", "diminished triad", -5)],
-            ["dim7", new ChordType(new Array("Minor3rd", "Minor3rd","Minor3rd"), "dim7", "diminished 7th", -5)],
+            ["dim7", new ChordType(new Array("Minor3rd", "Minor3rd","Minor3rd"), "dim7", "diminished 7th", -5)], // TODO: 5 flats (i.e., Db major) doesn't actually contain a full diminished chord
             ["m7" + flat() +"5", new ChordType(new Array("Minor3rd", "Minor3rd","Major3rd"), "m7" + flat() +"5", "half diminished", -5)],
 
             ["m", new ChordType(new Array("Minor3rd", "Major3rd"), "m", "minor triad position", -3)],
