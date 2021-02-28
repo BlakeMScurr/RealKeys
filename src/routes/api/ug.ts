@@ -46,6 +46,13 @@ export async function get(request, response) {
         capo = parseInt(m[1])
     }
 
+    // ;tuning&quot;:{&quot;name&quot;:&quot;Half-Step Down&quo
+    // let halfStepTuningFinder = /tuning":{"name":"Half-Step Down/g;
+    let halfStepTuningFinder = /tuning":{"name":"Half-Step Down/;
+    if (rawChordChart.match(halfStepTuningFinder)) {
+        capo--
+    }
+
     for (let transpose = 0; transpose < 12; transpose++) {
         let accidentals = 0
         chordNames.forEach((chordName) => {
