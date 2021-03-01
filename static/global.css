@@ -50,8 +50,11 @@ body {
 
 a {
   text-decoration: inherit;
-  color: inherit;
   cursor: auto;
+}
+
+.everfreshlink {
+  color: inherit;
 }
 
 a:hover {
