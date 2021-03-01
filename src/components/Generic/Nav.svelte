@@ -33,9 +33,9 @@
 </style>
 
 <div>
-    <h1><a href="/">RealKeys</a></h1>
+    <h1><a class="everfreshlink" href="/">RealKeys</a></h1>
     <div class="right">
-        <h4><a href="/">Home</a></h4>
-        <h4><a href="/settings">Settings</a></h4>
+        <h4><a class="everfreshlink" href="/">Home</a></h4>
+        <h4><a class="everfreshlink" href="/settings">Settings</a></h4>
     </div>
 </div>
