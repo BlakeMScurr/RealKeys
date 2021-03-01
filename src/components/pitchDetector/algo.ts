@@ -1,3 +1,8 @@
+// TODO: make new interface for input methods
+// validate function which determines whether a song is valid for a given input method
+// listen method, which listens for input and sends note output
+// setup method (maybe, assuming we can encapsulate routes inside this kinda thing)
+
 // TODO: read papers to understand how to implement (or at least appraise existing) polyphonic pitch detection algorithms
 // - https://core.ac.uk/download/pdf/19152713.pdf
 // - https://mitpress.mit.edu/books/computer-music-tutorial
