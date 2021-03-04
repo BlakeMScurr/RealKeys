@@ -1,0 +1,17 @@
+/pause
+    Once you're comfortable playing C, it's easy to learn the next chord, G major.
+
+/play 1-3
+    G major has the same shape as C, but it starts on a G instead.
+
+/wait 4
+    Play G with your thumb
+
+/wait 5
+    Play G and B with your thumb and 3rd finger
+
+/wait 6
+    Play G, B, and D with your thumb, 3rd, and 5th
+
+/wait 7-8
+    Practice G major a couple of times

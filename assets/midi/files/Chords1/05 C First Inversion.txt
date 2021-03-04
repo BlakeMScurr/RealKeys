@@ -1,0 +1,29 @@
+/pause 1
+    It'd be great to play all 3 chords one after another, but C is quite a big jump from F or G
+/pause 1
+    So we're going to use a trick called an "inversion" to make our C closer to our F and G
+
+/play 1
+    Here's the C major you're familiar with
+
+/play 2-3
+    Notice how similar it sounds to this chord called C major first inversion
+
+/highlight 4/5
+    If you look carefully at the two chords, we get C major first inversion by taking the C from the bottom of the chord, and putting at the top. That's why they sound so similar - they're using the exact same notes!
+    /4
+        Root position
+    /5
+        First inversion
+
+/wait 6
+    Start by playing E with your thumb
+
+/wait 7
+    Then add G with your first 2nd
+
+/wait 8
+    Then add C with your 5th
+
+/wait 9
+    And practice it a few times

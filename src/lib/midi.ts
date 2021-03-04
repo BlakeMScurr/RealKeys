@@ -13,6 +13,8 @@ export async function getMIDI(url, startbar: number, endbar: number) {
         return
     }
 
+    console.log(midi)
+
     let bpm = midi.header.tempos[0].bpm
     let bpb = midi.header.timeSignatures[0].timeSignature[0] * (4/midi.header.timeSignatures[0].timeSignature[1]) // These latter brackets assume that bpm is denominated in crotchets
     let timePerBar = (1/bpm) * bpb * 60
