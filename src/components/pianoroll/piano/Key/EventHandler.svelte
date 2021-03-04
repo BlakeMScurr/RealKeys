@@ -20,7 +20,8 @@
         active = false
     }
 
-    function handletouchstart() {
+    function handletouchstart(e) {
+        e.preventDefault() // prevent touch from highlighting the key like a word on iOS
         active = true
         touchDevice = true
     }
