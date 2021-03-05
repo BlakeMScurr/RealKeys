@@ -9,12 +9,8 @@
 /play 2-3
     Notice how similar it sounds to this chord called C major first inversion
 
-/highlight 4/5
+/play 4-5
     If you look carefully at the two chords, we get C major first inversion by taking the C from the bottom of the chord, and putting at the top. That's why they sound so similar - they're using the exact same notes!
-    /4
-        Root position
-    /5
-        First inversion
 
 /wait 6
     Start by playing E with your thumb
@@ -29,12 +25,10 @@
     And practice it a few times
 
 /fingering
-    135 x2
-    125
     135
-    125
-    135 x2
-    125
+    135 125 x2
+    135
+    135 125 x4
     1
     12
     125 x5
