@@ -3,3 +3,9 @@
 
 /wait 1-3
     Be careful about the fingering!
+
+/fingering
+    (125 135 135 135)x4
+
+/chords
+    C F G F x3

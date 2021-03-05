@@ -27,3 +27,14 @@
 
 /wait 9
     And practice it a few times
+
+/fingering
+    135 x2
+    125
+    135
+    125
+    135 x2
+    125
+    1
+    12
+    125 x5

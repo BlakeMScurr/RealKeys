@@ -15,3 +15,9 @@
 
 /pause
     Nice work! Let's start learning some songs
+
+/fingering
+    (125 135) x9
+
+/chords
+    C G x9

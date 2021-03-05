@@ -18,3 +18,19 @@
 /wait 7-8
     Practice playing C a couple of times
     (tip: we often call shorten the chord name C major, to C)
+
+
+/fingering
+    1
+    13
+    135
+    135
+    1
+    13
+    135
+    135
+    135
+    135
+    135
+    135
+    135

@@ -1,0 +1,7 @@
+/fingering
+    125 135 135 x8
+    125
+
+/chords
+    C F G x8
+    C

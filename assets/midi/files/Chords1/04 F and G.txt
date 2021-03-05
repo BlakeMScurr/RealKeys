@@ -19,3 +19,13 @@
 
 /wait 7-8
     Back and forth a few times
+
+/fingering
+    135 x21
+
+/chords
+    F
+    G
+    F x6
+    G x6
+    F G x4

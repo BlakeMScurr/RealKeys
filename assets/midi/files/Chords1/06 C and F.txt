@@ -18,3 +18,13 @@
 
 /wait 4-5
     Let's practice this a few times
+
+/fingering
+    135 x4
+    125 x4
+    (135 125) x6
+
+/chords
+    F x4
+    C x4
+    F C x6
