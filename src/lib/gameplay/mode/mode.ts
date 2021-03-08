@@ -1,23 +1,23 @@
 export interface playbackMode {
-    modeName():string // The defining characteristic of a playbackMode
-    toString():string // Identical to modeName, but used as a utility method, in particular to let a task be easily serialisable
-    getSpeed():number
-    description():string
     modeType():modeName
-    modeID:string
+    getSpeed():number
+    toString():string // for serialisation, particularly in URLs
+    description():string
 }
 
 export enum modeName {
     atSpeed = "atSpeed",
     wait = "wait",
+    play = "play",
+    pause = "pause",
 }
 
 export function makeMode(mode: string):playbackMode {
-    if (mode.includes(modeName.atSpeed)) {
+    if (mode && mode.includes(modeName.atSpeed)) {
         return new atSpeedMode(parseInt(mode.replace(modeName.atSpeed, "")))
-    } else if (mode === modeName.wait) {
-        return new waitMode()
     }
+    if (typeof modeName[mode] === "undefined") throw new Error(`unknown mode type ${mode}`)
+    return modeFactory(<modeName>mode)
 }
 
 export function modeFactory(name: modeName, speed?: number):playbackMode {
@@ -26,72 +26,65 @@ export function modeFactory(name: modeName, speed?: number):playbackMode {
             return new atSpeedMode(speed)
         case modeName.wait:
             return new waitMode()
+        case modeName.play:
+            return new playMode()
+        case modeName.pause:
+            return new pauseMode()
     }
 }
 
+// TODO: can I made these methods on playback mode without redundantly adding it to every single class?
 // TODO: can I overload the >= operator to call this function?
 export function modeEqualOrHarder(a: playbackMode, b: playbackMode) {
-    return (a.modeName() === b.modeName())||
-        (a.modeName().includes(modeName.atSpeed) && b.modeName() === modeName.wait) ||
-        (a.modeName().includes(modeName.atSpeed) && b.modeName().includes(modeName.atSpeed) && (<atSpeedMode>a).getSpeed() >= (<atSpeedMode>b).getSpeed())
+    return a.modeType() === b.modeType() && a.getSpeed() >= b.getSpeed()
+}
+
+export function equalModes(m: playbackMode, n: playbackMode): boolean {
+    return  m.modeType() === n.modeType() && m.getSpeed() === n.getSpeed()
 }
 
 class atSpeedMode {
     private speed: number;
-    modeID: string;
     constructor(speed?: number) {
         if (!speed) speed = 100
         if (speed <= 0) throw new Error(`Speeds cannot be less than or equal to zero, got ${speed}`) // This one is logically impossible - it would result in going backwards
         if (speed > 200) throw new Error(`Speeds should not be played at greater than twice the song's expected speed, got ${speed}`) // This is a sanity check, as (I believe) there's no reasonable reason to go faster than this
         this.speed = speed
-        this.modeID = modeName.atSpeed + speed
     }
 
-    modeName():string {
-        return modeName.atSpeed + this.getSpeed()
-    }
-
-    toString():string {
-        return this.modeName()
+    modeType():modeName {
+        return modeName.atSpeed
     }
 
     getSpeed():number {
         return this.speed
     }
 
-    description():string {
-        return `At ${this.getSpeed()}% speed`
+    toString():string {
+        return "atSpeed" + this.getSpeed()
     }
 
-    modeType():modeName {
-        return modeName.atSpeed
+    description():string {
+        return `At ${this.getSpeed()}% speed`
     }
 }
 
 class waitMode {
-    modeID:string;
+    modeType():modeName { return modeName.wait }
+    getSpeed():number { return 0 }
+    toString():string { return "wait" }
+    description():string { return "At your own pace" }
+}
 
-    constructor() {
-        this.modeID = modeName.wait
-    }
-
-    modeName():string {
-        return modeName.wait
-    }
-
-    toString():string {
-        return this.modeName()
-    }
-
-    getSpeed():number {
-        return 0
-    }
-
-    description():string {
-        return "At your own pace"
-    }
-
-    modeType():modeName {
-        return modeName.wait
-    }
+class playMode {
+    modeType():modeName { return modeName.play }
+    getSpeed():number { return 0 }
+    toString():string { return "play" }
+    description():string { return "Just listen" }
+}
+class pauseMode {
+    modeType():modeName { return modeName.pause }
+    getSpeed():number { return 0 }
+    toString():string { return "pause" }
+    description():string { return "The music's paused, so absorb the info" }
 }

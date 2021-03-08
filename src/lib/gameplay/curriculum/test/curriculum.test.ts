@@ -49,13 +49,13 @@ test("curriculum.unlocked", () => {
     expect(c.unlocked(newTask(2,3))).toBe(true)
 })
 
-test("curriculum.unlocked/lenient/linear", () => {
+test("curriculum.unlocked/strict/linear", () => {
     // A -> B -> C
     let c = new curriculum([
         newTask(1,2),
         newTask(1,3),
         newTask(1,4),
-    ], unlockCheckerFactory(UnlockCheckerType.Lenient))
+    ], unlockCheckerFactory(UnlockCheckerType.Strict))
 
     expect(c.unlocked(newTask(1,2))).toBe(true)
     expect(c.unlocked(newTask(1,3))).toBe(false)
@@ -74,7 +74,7 @@ test("curriculum.unlocked/lenient/linear", () => {
     expect(c.unlocked(newTask(1,4))).toBe(true)
 })
 
-test("curriculum.unlocked/lenient/fork", () => {
+test("curriculum.unlocked/strict/fork", () => {
     // A ---v
     // B -> C
     let make = () => {
@@ -82,7 +82,7 @@ test("curriculum.unlocked/lenient/fork", () => {
             newTask(1,2),
             newTask(2,3),
             newTask(1,3),
-        ], unlockCheckerFactory(UnlockCheckerType.Lenient))
+        ], unlockCheckerFactory(UnlockCheckerType.Strict))
     }
     let c = make()
 
@@ -94,9 +94,8 @@ test("curriculum.unlocked/lenient/fork", () => {
 
     expect(c.unlocked(newTask(1,2))).toBe(true)
     expect(c.unlocked(newTask(2,3))).toBe(true)
-    expect(c.unlocked(newTask(1,3))).toBe(true)
+    expect(c.unlocked(newTask(1,3))).toBe(false)
 
-    c = make()
     c.recordScore(newTask(2,3), 100)
 
     expect(c.unlocked(newTask(1,2))).toBe(true)
@@ -104,7 +103,7 @@ test("curriculum.unlocked/lenient/fork", () => {
     expect(c.unlocked(newTask(1,3))).toBe(true)
 })
 
-test("curriculum.unlocked/lenient/wonkyfork", () => {
+test("curriculum.unlocked/strict/wonkyfork", () => {
     // A --------v
     // B -> C -> D
     let make = () => {
@@ -113,7 +112,7 @@ test("curriculum.unlocked/lenient/wonkyfork", () => {
             newTask(2,3), // B
             newTask(2,4), // C
             newTask(1,4), // D
-        ], unlockCheckerFactory(UnlockCheckerType.Lenient))
+        ], unlockCheckerFactory(UnlockCheckerType.Strict))
     }
     let c = make()
 
@@ -127,7 +126,7 @@ test("curriculum.unlocked/lenient/wonkyfork", () => {
     expect(c.unlocked(newTask(1,2))).toBe(true)
     expect(c.unlocked(newTask(2,3))).toBe(true)
     expect(c.unlocked(newTask(2,4))).toBe(false)
-    expect(c.unlocked(newTask(1,4))).toBe(true)
+    expect(c.unlocked(newTask(1,4))).toBe(false)
 
     c = make()
     c.recordScore(newTask(2,3), 100)
@@ -148,12 +147,11 @@ test("splitBySection", () => {
 
     expect(splitBySection(c.tasks.map((t)=>t.task))).toEqual([
         [
-            {"endBar": 2, "hand": "Left", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
-            {"endBar": 2, "hand": "Right", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1}
-        ], 
-        [
-            {"endBar": 3, "hand": "Left", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
-            {"endBar": 3, "hand": "Right", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1}
+            newTask(1,2, hand.Left),
+            newTask(1,2),
+        ],[
+            newTask(1,3, hand.Left),
+            newTask(1,3),
         ]
     ])
 })
@@ -168,12 +166,12 @@ test("splitbyHand", () => {
 
     expect(splitByHand(c.tasks.map((t)=>t.task))).toEqual([
         [
-            {"endBar": 2, "hand": "Right", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
-            {"endBar": 3, "hand": "Right", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
+            new task(1, 2, hand.Right, "mockTask", modeFactory(modeName.wait)),
+            new task(1, 3, hand.Right, "mockTask", modeFactory(modeName.wait)),
         ], 
         [
-            {"endBar": 2, "hand": "Left", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
-            {"endBar": 3, "hand": "Left", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
+            new task(1, 2, hand.Left, "mockTask", modeFactory(modeName.wait)),
+            new task(1, 3, hand.Left, "mockTask", modeFactory(modeName.wait)),
         ]
     ])
 })
@@ -188,12 +186,12 @@ test("splitbyMode", () => {
 
     expect(splitByMode(c.tasks.map((t)=>t.task))).toEqual([
         [
-            {"endBar": 2, "hand": "Right", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
-            {"endBar": 3, "hand": "Right", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 2}
-        ], 
+            newTask(1,2, hand.Right),
+            newTask(2,3, hand.Right),
+        ],
         [
-            {"endBar": 4, "hand": "Right", "lessonURL": "mockTask", "mode": {"speed": 100, "modeID": "atSpeed100"}, "startBar": 3},
-            {"endBar": 5, "hand": "Right", "lessonURL": "mockTask", "mode": {"speed": 100, "modeID": "atSpeed100"}, "startBar": 4}
+            newTask(3,4, hand.Right, modeFactory(modeName.atSpeed, 100)),
+            newTask(4,5, hand.Right, modeFactory(modeName.atSpeed, 100)),
         ]
     ])
 })

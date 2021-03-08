@@ -32,7 +32,7 @@ test("basicNoteSubscription", (done) => {
     gm.tracks.newPlaybackTrack("1", new TimedNotes([
         new TimedNote(0, 0.5, NewNote("C", 4)),
     ]), new MockInstrument(), gm)
-    let states = []
+    let states: Array<string> = []
     gm.tracks.subscribeToNotesOfTracks(["1"], (notes) => {
         states.push(JSON.stringify([...notes]))
     })
@@ -62,7 +62,7 @@ test("twoNoteOneTrackSubscription", (done) => {
     ]), new MockInstrument(), gm)
 
 
-    let states = []
+    let states: Array<string> = []
     gm.tracks.subscribeToNotesOfTracks(["1"], (notes) => {
         states.push(JSON.stringify([...notes]))
     })
@@ -99,7 +99,7 @@ test("twoTrackNoteSubscription", (done) => {
     ]), new MockInstrument(), gm)
 
 
-    let states = []
+    let states: Array<string> = []
     gm.tracks.subscribeToNotesOfTracks(["1", "2"], (notes) => {
         states.push(JSON.stringify([...notes]))
     })

@@ -1,0 +1,38 @@
+import { makeMode, modeName } from "../../mode/mode";
+import { curriculum, progress } from "../curriculum";
+import { hand, task } from "../task";
+
+// a tutorial produces is a curriculum that walks through a given MIDI file using various modalities for each section
+export class tutorial {
+    midiURL: string;
+    sections: Array<[number, modeName]>;
+
+    constructor(midiURL: string, sections: Array<[number, modeName]>) {
+        this.midiURL = midiURL
+        this.sections = sections
+
+    }
+
+    curriculum():curriculum {
+        let tasks = new Array<task>();
+        let startBar = 0
+        this.sections.forEach((section: [number, modeName], i: number) => {
+            if (section[0] <= startBar && section[1] !== modeName.pause) { // you have to proceed throw the bars in each section unless that section specifically pauses progress intentionally to show you something on screen
+                throw new Error(`end bar ${section[0]} before start bar ${startBar}`)
+            }
+            // TODO: generalise to different hands
+            tasks.push(new task(startBar, section[0], hand.Right, this.midiURL, makeMode(section[1])))
+            startBar = section[0]
+        })
+        return new curriculum(tasks, proceedBarToBar)
+    }
+}
+
+function proceedBarToBar(c: task, p: progress[]):boolean {
+    for (let i = 0; i < p.length; i++) {
+        if (p[i].score < 100 && p[i].task.endBar < c.endBar) {
+            return false
+        } 
+    }
+    return true
+}

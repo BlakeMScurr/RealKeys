@@ -1,5 +1,5 @@
 import type { curriculum } from "./curriculum";
-import { PieceBreakdown, SequentialCurriculum } from "./methodology";
+import { PieceBreakdown, SequentialCurriculum } from "./methodology/sequential";
 
 export function defaultLessons():curriculum {
     return new SequentialCurriculum([

@@ -1,11 +1,3 @@
-// A (teaching) methodology is a means of building a curriculum out of a content.
-import { modeFactory, modeName } from "../mode/mode";
-import { curriculum, UnlockCheckerType, unlockCheckerFactory } from "./curriculum";
-import { hand, task } from "./task";
-
-export interface method {
-    curriculum():curriculum
-}
 
 // A SequentialCurriculum defines a tradition curriclum where a player learns a piece step by step.
 // 
@@ -13,6 +5,10 @@ export interface method {
 // - The player learns predetermined discrete sections in order, then combines those sections bit by bit.
 // - The player learns each the notes, then plays them at 75% speed, then at 100% speed.
 // - The player learn each section with their right hand, then left hand, then both.
+
+import { modeFactory, modeName } from "../../mode/mode";
+import { curriculum, UnlockCheckerType, unlockCheckerFactory } from "../curriculum";
+import { hand, task } from "../task";
 
 export class SequentialCurriculum {
     pieces: Array<PieceBreakdown>;

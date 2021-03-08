@@ -54,12 +54,12 @@ export class curriculum {
        return this.checkUnlocked(t, this.tasks)
     }
 
-    // TODO: reduce from 0(n^2) complexity (n^3 for lenient procession) - memoising unlocked makes it O(n), and it may be memoised to 0(1) itself
+    // TODO: reduce from 0(n^2) complexity - memoising unlocked makes it O(n), and it may be memoised to 0(1) itself
     next(constraint: (t:task) => boolean = ()=>{return true}):task {
         for (let i = 0; i < this.tasks.length; i++) {
             const t = this.tasks[i].task;
 
-            if (this.unlocked(t) && this.tasks[i].score !== 100 && constraint(t)) {
+            if (this.tasks[i].score !== 100 && constraint(t) && this.unlocked(t) ) {
                 return t
             }
         }
@@ -99,7 +99,6 @@ function indexOfTask(t: task, p: progress[]):number {
             return i
         }
     }
-    console.log("bout to throw an error not having found the index of a task")
     throw new Error(`Couldn't find task ${JSON.stringify(t)}`)
 }
 
@@ -121,15 +120,12 @@ type unlockChecker = (t: task, p: progress[]) => boolean
 
 export enum UnlockCheckerType {
     Strict = 1,
-    Lenient,
 }
 
 export function unlockCheckerFactory(typ: UnlockCheckerType):unlockChecker {
     switch (typ) {
         case UnlockCheckerType.Strict:
             return proceedStrictly
-        case UnlockCheckerType.Lenient:
-            return proceedLeniently
     }
 }
 
@@ -146,29 +142,6 @@ function proceedStrictly(t: task, p: progress[]):boolean {
     return true
 }
 
-// When proceeding leniently, we move onto a task (C) if there is any easier task (A) where there is no middling task between them (B), or there is no easier task (A) at all.
-function proceedLeniently(c: task, p: progress[]):boolean {
-    // Proceed if there exists an A with no B between C and 
-    for (let i = 0; i < p.length; i++) {
-        let a = p[i].task
-        let aScore = p[i].score
-        if (c.strictlyHarder(a) && aScore >= 100) {
-            let bBetween = false
-            for (let j = 0; j < p.length; j++) {
-                let b = p[j].task
-                if (c.strictlyHarder(b) && b.strictlyHarder(a)) bBetween = true
-            }
-            
-            if (!bBetween) return true
-        }
-    }
-
-    // Proceed if there are no tasks easier than A
-    for (let i = 0; i < p.length; i++) {
-        if (c.strictlyHarder(p[i].task)) return false
-    }
-    return true
-}
 
 // functions that split up tasks to be viewed better
 

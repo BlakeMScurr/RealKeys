@@ -1,5 +1,5 @@
 import { objToURLArgs } from "../../util";
-import { makeMode, modeEqualOrHarder, playbackMode } from "../mode/mode";
+import { makeMode, modeEqualOrHarder, playbackMode, equalModes } from "../mode/mode";
 
 export class task {
     lessonURL: string;
@@ -25,7 +25,7 @@ export class task {
             this.startBar === t.startBar &&
             this.hand === t.hand &&
             this.endBar === t.endBar &&
-            this.mode.modeName() === t.mode.modeName()
+            equalModes(this.mode, t.mode)
     }
 
     // used to complete trivial progress that would be a waste of a completionist's time

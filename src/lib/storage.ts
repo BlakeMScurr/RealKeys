@@ -25,11 +25,13 @@ export function getProgress():Curriculum {
     let p = localStorage.getItem(progressKey)
     if (p) {
         let prog = JSON.parse(p)
-        prog.forEach((t) => {
+        prog.forEach((t: progress) => {
             try {
-                let tsk = new task(t.task.startBar, t.task.endBar, t.task.hand, t.task.lessonURL, makeMode(t.task.mode.modeID))
+                let tsk = new task(t.task.startBar, t.task.endBar, t.task.hand, t.task.lessonURL, makeMode(t.task.mode.toString()))
                 c.copyInScore(tsk, t.score)
             } catch (e) {
+                console.log(t.task.mode.toString())
+                console.log(t.task.mode)
                 console.warn("Failed to copy in score for task" + JSON.stringify(t) + e)
             }
         })
@@ -46,14 +48,15 @@ class curriculumWrapper {
     recordScore(t: task, score: number) {
         this.curriculum.recordScore(t, score)
 
-        // Save progress
-        let ps: Array<progress> = [];
-        this.curriculum.tasks.forEach((p: progress)=>{
-            if (p.score > 0) {
-                ps.push(p)
+        let serialisable = this.curriculum.tasks.map((p: progress)=> {
+            let t: any = p.task
+            t.mode = t.mode.toString()
+            return {
+                task: t,
+                score: p.score,
             }
         })
-        localStorage.setItem(progressKey, JSON.stringify(ps))
+        localStorage.setItem(progressKey, JSON.stringify(serialisable))
     }
 
     unlocked(t: task):boolean {
