@@ -8,31 +8,30 @@ export interface Curriculum {
     getScore(t: task):number
     getLessons():Array<string>
     getLesson(lessonURL: string):Array<task>
-    getTasks():Array<progress>; // TODO: remove this as it should be an implementation detail
+    getTasks():Map<task, number>
 }
 
 // A curriculum is a set of a tasks, your progress through them, and way to determine whether you're ready for a given task
 export class curriculum {
-    // TODO: replace with a Map<task, number>
-    tasks: Array<progress>; // Your progress through the tasks in the curriculum
+    // TODO: replace with a
+    tasks:  Map<task, number>;
     private dependencies: Map<task, Array<task>>;
 
     constructor(tasks: Array<task>, dependencies: Map<task, Array<task>>) {
         this.dependencies = dependencies
-        this.tasks = new Array<progress>()
+        this.tasks = new Map<task, number>()
         tasks.forEach((t)=> {
-            this.tasks.push(new progress(t))
+            this.tasks.set(t, 0)
         })
     }
 
     // Applies a certain amount of progress to a curriculum, and shows the all the tasks including those incomplete
     recordScore(t: task, score: number) {
-        let i = indexOfTask(t, this.tasks)
-        if (i < 0) {
+        if (!this.tasks.has(t)) {
             throw new Error(`Couldn't find task ${t} in curriculum ${this}`)
         }
-        if (this.tasks[i].score < score) {
-            this.tasks[i].score = score
+        if (this.tasks.get(t) < score) {
+            this.tasks.set(t, score)
 
             // complete tasks that are easier than this one, so the user doesn't have to redo their effort
             if (score >= 100) {
@@ -47,19 +46,17 @@ export class curriculum {
         let deps = this.dependencies.get(t)
             if (deps) {
                 deps.forEach((dep) => {
-                let i = indexOfTask(dep, this.tasks)
-                this.tasks[i].score = 100
+                this.tasks.set(dep, 100)
                 this.backwardsCompletion(dep)
             })
         }
     }
 
     copyInScore(t: task, score: number) {
-        let i = indexOfTask(t, this.tasks)
-        if (i < 0) {
+        if (!this.tasks.has(t)) {
             throw new Error(`Couldn't find task ${t} in curriculum ${this}`)
         }
-        this.tasks[i].score = score
+        this.tasks.set(t, score)
     }
 
     unlocked(t: task):boolean{
@@ -76,11 +73,9 @@ export class curriculum {
 
     // TODO: reduce complexity from O(nd), where d is the average number of dependencies per task. Not high priority.
     next(constraint: (t:task) => boolean = ()=>{return true}):task {
-        for (let i = 0; i < this.tasks.length; i++) {
-            const t = this.tasks[i].task;
-
-            if (this.tasks[i].score !== 100 && constraint(t) && this.unlocked(t) ) {
-                return t
+        for (const ts of this.tasks) {
+            if (ts[1] !== 100 && constraint(ts[0]) && this.unlocked(ts[0]) ) {
+                return ts[0]
             }
         }
 
@@ -88,14 +83,14 @@ export class curriculum {
     }
 
     getScore(t: task):number {
-        return this.tasks[indexOfTask(t, this.tasks)].score
+        return this.tasks.get(t)
     }
 
     getLessons():Array<string> {
         let lessons = []
-        this.tasks.forEach((p) => {
-            if (lessons.indexOf(p.task.getLessonURL()) === -1) {
-                lessons.push(p.task.getLessonURL())
+        this.tasks.forEach((_, t) => {
+            if (lessons.indexOf(t.getLessonURL()) === -1) {
+                lessons.push(t.getLessonURL())
             }
         })
         return lessons
@@ -103,15 +98,15 @@ export class curriculum {
 
     getLesson(lessonURL: string):Array<task> {
         let tasks = []
-        this.tasks.forEach((p) => {
-            if (p.task.getLessonURL() === lessonURL) {
-                tasks.push(p.task)
+        this.tasks.forEach((_, t) => {
+            if (t.getLessonURL() === lessonURL) {
+                tasks.push(t)
             }
         })
         return tasks
     }
 
-    getTasks():Array<progress> {
+    getTasks():Map<task, number> {
         return this.tasks
     }
 }
@@ -130,27 +125,6 @@ export function StrictCurriculum(tasks: Array<task>):Curriculum {
     })
 
     return new curriculum(tasks, deps)
-}
-
-function indexOfTask(t: task, p: progress[]):number {
-    // TODO: binary search by just using maps, as tasks are now equal by reference
-    for (let i = 0; i < p.length; i++) {
-        if (t.equals(p[i].task)) {
-            return i
-        }
-    }
-    throw new Error(`Couldn't find task ${JSON.stringify(t)}`)
-}
-
-// progress gives your score on a given task
-export class progress {
-    constructor(t: task) {
-        this.task = t
-        this.score = 0
-    }
-
-    task: task;
-    score: number;
 }
 
 // functions that split up tasks to be viewed better

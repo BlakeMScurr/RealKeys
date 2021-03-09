@@ -1,5 +1,5 @@
 import { makeMode, modeName } from "../../mode/mode";
-import { curriculum, progress } from "../curriculum";
+import { curriculum } from "../curriculum";
 import { hand, NewTask, task } from "../task";
 
 // a tutorial produces is a curriculum that walks through a given MIDI file using various modalities for each section

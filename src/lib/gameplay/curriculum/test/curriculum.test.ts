@@ -153,7 +153,7 @@ test("splitBySection", () => {
         newTask(1,3),
     ])
 
-    expect(splitBySection(c.getTasks().map((t)=>t.task))).toEqual([
+    expect(splitBySection(Array.from(c.getTasks().keys()))).toEqual([
         [
             newTask(1,2, hand.Left),
             newTask(1,2),
@@ -172,7 +172,7 @@ test("splitbyHand", () => {
         newTask(1,3),
     ])
 
-    expect(splitByHand(c.getTasks().map((t)=>t.task))).toEqual([
+    expect(splitByHand(Array.from(c.getTasks().keys()))).toEqual([
         [
             NewTask(1, 2, hand.Right, "mockTask", modeFactory(modeName.wait)),
             NewTask(1, 3, hand.Right, "mockTask", modeFactory(modeName.wait)),
@@ -192,7 +192,7 @@ test("splitbyMode", () => {
         newTask(2,3, hand.Right),
     ])
 
-    expect(splitByMode(c.getTasks().map((t)=>t.task))).toEqual([
+    expect(splitByMode(Array.from(c.getTasks().keys()))).toEqual([
         [
             newTask(1,2, hand.Right),
             newTask(2,3, hand.Right),

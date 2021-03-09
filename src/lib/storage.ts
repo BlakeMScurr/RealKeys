@@ -1,5 +1,5 @@
 import { defaultLessons } from "./gameplay/curriculum/data"
-import { Curriculum, curriculum, progress } from "./gameplay/curriculum/curriculum";
+import { Curriculum, curriculum } from "./gameplay/curriculum/curriculum";
 import { NewTask, task } from "./gameplay/curriculum/task";
 import { makeMode } from "./gameplay/mode/mode";
 
@@ -46,11 +46,12 @@ class curriculumWrapper {
     recordScore(t: task, score: number) {
         this.curriculum.recordScore(t, score)
 
-        let serialisable = this.curriculum.getTasks().map((p: progress)=> {
-            return {
-                task: p.task.serialisable(),
-                score: p.score,
-            }
+        let serialisable = []
+        this.curriculum.getTasks().forEach((score: number, t: task)=> {
+            serialisable.push({
+                task: t.serialisable(),
+                score: score,
+            })
         })
         localStorage.setItem(progressKey, JSON.stringify(serialisable))
     }
@@ -75,7 +76,7 @@ class curriculumWrapper {
         return this.curriculum.getLesson(lessonURL)
     }
 
-    getTasks():Array<progress> {
+    getTasks():Map<task, number> {
         return this.curriculum.getTasks()
     }
 
