@@ -1,6 +1,6 @@
-// A (teaching) methodology is a means of building a curriculum out of a content.
-import type { curriculum } from "../curriculum";
+// A (teaching) methodology is a means of building a Curriculum out of a content.
+import type { Curriculum } from "../curriculum";
 
 export interface methodology {
-    curriculum():curriculum
+    Curriculum():Curriculum
 }

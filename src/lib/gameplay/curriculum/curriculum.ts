@@ -2,20 +2,22 @@ import { hand, task } from "./task"
 
 export interface Curriculum {
     recordScore(t: task, score: number)
+    copyInScore(t: task, score: number)
     unlocked(t: task):boolean
     next(constraint?: (t:task) => boolean):task
     getScore(t: task):number
     getLessons():Array<string>
     getLesson(lessonURL: string):Array<task>
+    getTasks():Array<progress>; // TODO: remove this as it should be an implementation detail
 }
 
 // A curriculum is a set of a tasks, your progress through them, and way to determine whether you're ready for a given task
 export class curriculum {
     tasks: Array<progress>; // Your progress through the tasks in the curriculum
-    private checkUnlocked: unlockChecker;
+    private dependencies: Map<task, Array<task>>;
 
-    constructor(tasks: Array<task>, checkUnlocked: unlockChecker) {
-        this.checkUnlocked = checkUnlocked
+    constructor(tasks: Array<task>, dependencies: Map<task, Array<task>>) {
+        this.dependencies = dependencies
         this.tasks = new Array<progress>()
         tasks.forEach((t)=> {
             this.tasks.push(new progress(t))
@@ -51,7 +53,15 @@ export class curriculum {
     }
 
     unlocked(t: task):boolean{
-       return this.checkUnlocked(t, this.tasks)
+        let deps = this.dependencies.get(t)
+        if (!deps) return true
+        for (let i = 0; i < deps.length; i++) {
+            const dep: task = deps[i];
+            if (this.getScore(dep) !== 100) {
+                return false
+            }
+        }
+        return true
     }
 
     // TODO: reduce from 0(n^2) complexity - memoising unlocked makes it O(n), and it may be memoised to 0(1) itself
@@ -74,8 +84,8 @@ export class curriculum {
     getLessons():Array<string> {
         let lessons = []
         this.tasks.forEach((p) => {
-            if (lessons.indexOf(p.task.lessonURL) === -1) {
-                lessons.push(p.task.lessonURL)
+            if (lessons.indexOf(p.task.getLessonURL()) === -1) {
+                lessons.push(p.task.getLessonURL())
             }
         })
         return lessons
@@ -84,16 +94,35 @@ export class curriculum {
     getLesson(lessonURL: string):Array<task> {
         let tasks = []
         this.tasks.forEach((p) => {
-            if (p.task.lessonURL === lessonURL) {
+            if (p.task.getLessonURL() === lessonURL) {
                 tasks.push(p.task)
             }
         })
         return tasks
     }
+
+    getTasks():Array<progress> {
+        return this.tasks
+    }
+}
+
+export function StrictCurriculum(tasks: Array<task>):Curriculum {
+    let deps = new Map<task, Array<task>>();
+
+    tasks.forEach((t) => {
+        deps.set(t, new Array<task>())
+        tasks.forEach((dep) => {
+            if (t.strictlyHarder(dep)) {
+                deps.get(t).push(dep)
+            }
+        })
+    })
+
+    return new curriculum(tasks, deps)
 }
 
 function indexOfTask(t: task, p: progress[]):number {
-    // TODO: binary search
+    // TODO: binary search by just using maps, as tasks are now equal by reference
     for (let i = 0; i < p.length; i++) {
         if (t.equals(p[i].task)) {
             return i
@@ -113,53 +142,23 @@ export class progress {
     score: number;
 }
 
-
-// A unlockChecker determines whether you can try some task given your current progress
-// TODO: make unlockChecker a far stricter type that is more like a relation on the graph of task dependencies. This will make it more declarative and less error prone.
-type unlockChecker = (t: task, p: progress[]) => boolean
-
-export enum UnlockCheckerType {
-    Strict = 1,
-}
-
-export function unlockCheckerFactory(typ: UnlockCheckerType):unlockChecker {
-    switch (typ) {
-        case UnlockCheckerType.Strict:
-            return proceedStrictly
-    }
-}
-
-// When proceeding strictly, we only move onto a task once all tasks that are easier than it are done
-function proceedStrictly(t: task, p: progress[]):boolean {
-    for (let i = 0; i < p.length; i++) {
-        let comp = p[i]
-        // a task is valid iff there is no other task that is strictly easier and is incomplete
-        // thus we set valid to false if we find an easier incomplete task
-        if (t.strictlyHarder(comp.task) && comp.score < 100) {
-            return false
-        }
-    }
-    return true
-}
-
-
 // functions that split up tasks to be viewed better
 
 export function splitBySection(tasks: Array<task>) {
     return splitByX(tasks, (a: task,b: task):number=>{
-        let sizeDifference = (a.startBar - a.endBar) - (b.startBar - b.endBar)
+        let sizeDifference = (a.getStartBar() - a.getEndBar()) - (b.getStartBar() - b.getEndBar())
         if (sizeDifference != 0) {
             return -sizeDifference // larger last
         }
-        if (a.startBar != b.startBar) {
-            return a.startBar - b.startBar
+        if (a.getStartBar() != b.getStartBar()) {
+            return a.getStartBar() - b.getStartBar()
         }
-        return a.endBar - b.endBar
+        return a.getEndBar() - b.getEndBar()
     })
 }
 
 function handIndex(t: task) {
-    switch (t.hand) {
+    switch (t.getHand()) {
         case hand.Right:
             return 0
         case hand.Left:
@@ -176,7 +175,7 @@ export function splitByHand(tasks: Array<task>) {
 
 export function splitByMode(tasks: Array<task>) {
     return splitByX(tasks, (a: task,b: task):number=>{
-        return a.mode.getSpeed() - b.mode.getSpeed()
+        return a.getMode().getSpeed() - b.getMode().getSpeed()
     })
 }
 

@@ -22,7 +22,8 @@
     import { get, handleErrors, OneTo100, objToURLArgs } from "../lib/util";
     import { goto } from '@sapper/app'
     import { range } from "../components/pianoroll/pianoRollHelpers";
-    import { hand, task, urlToTask } from "../lib/gameplay/curriculum/task";
+    import { hand, urlToTask } from "../lib/gameplay/curriculum/task";
+    import type { task } from "../lib/gameplay/curriculum/task";
     import { getProgress } from "../lib/storage";
     import { modeName } from "../lib/gameplay/mode/mode";
 
@@ -85,7 +86,7 @@
         keyHeight = (window.innerHeight - 50) / 3
 
         // TODO: get the midi from current session, and load it in lesson.svelte too
-        getMIDI("api/midi?path=%2FTutorials/" + currentTask.lessonURL + ".mid", currentTask.startBar, currentTask.endBar).then((midi)=>{
+        getMIDI("api/midi?path=%2FTutorials/" + currentTask.getLessonURL() + ".mid", currentTask.getStartBar(), currentTask.getEndBar()).then((midi)=>{
             highest = midi.highest
             lowest = midi.lowest
             tracks = midi.tracks
@@ -155,7 +156,7 @@
     
                     break;
                 case modeName.atSpeed:
-                    gm.speed.set(currentTask.mode.getSpeed()/100)
+                    gm.speed.set(currentTask.getMode().getSpeed()/100)
                     gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
                         lessonNotes = notes
                     })
@@ -169,7 +170,7 @@
     function relevantTrack(tracks: Map<string, TimedNotes>, t: task):string[] {
         // assumes we have exactly 2 tracks, the first being the left hand, and the second being the right
         let arr = Array.from(tracks.keys())
-        switch (t.hand) {
+        switch (t.getHand()) {
             case hand.Right:
                 return [arr[0]]
             case hand.Left:

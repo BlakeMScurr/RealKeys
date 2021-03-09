@@ -1,6 +1,6 @@
 import { makeMode, modeName } from "../../mode/mode";
 import { curriculum, progress } from "../curriculum";
-import { hand, task } from "../task";
+import { hand, NewTask, task } from "../task";
 
 // a tutorial produces is a curriculum that walks through a given MIDI file using various modalities for each section
 export class tutorial {
@@ -21,18 +21,15 @@ export class tutorial {
                 throw new Error(`end bar ${section[0]} before start bar ${startBar}`)
             }
             // TODO: generalise to different hands
-            tasks.push(new task(startBar, section[0], hand.Right, this.midiURL, makeMode(section[1])))
+            tasks.push(NewTask(startBar, section[0], hand.Right, this.midiURL, makeMode(section[1])))
             startBar = section[0]
         })
-        return new curriculum(tasks, proceedBarToBar)
-    }
-}
 
-function proceedBarToBar(c: task, p: progress[]):boolean {
-    for (let i = 0; i < p.length; i++) {
-        if (p[i].score < 100 && p[i].task.endBar < c.endBar) {
-            return false
-        } 
+        let deps = new Map<task, Array<task>>()
+        for (let i = 1; i < tasks.length; i++) {
+            deps.set(tasks[i], [tasks[i-1]])
+        }
+
+        return new curriculum(tasks, deps)
     }
-    return true
 }

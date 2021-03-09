@@ -1,6 +1,6 @@
 import { defaultLessons } from "./gameplay/curriculum/data"
-import { Curriculum, curriculum, progress, unlockCheckerFactory, UnlockCheckerType } from "./gameplay/curriculum/curriculum";
-import { task } from "./gameplay/curriculum/task";
+import { Curriculum, curriculum, progress } from "./gameplay/curriculum/curriculum";
+import { NewTask, task } from "./gameplay/curriculum/task";
 import { makeMode } from "./gameplay/mode/mode";
 
 const settingsKey = "settings"
@@ -25,13 +25,11 @@ export function getProgress():Curriculum {
     let p = localStorage.getItem(progressKey)
     if (p) {
         let prog = JSON.parse(p)
-        prog.forEach((t: progress) => {
+        prog.forEach((t: any) => {
             try {
-                let tsk = new task(t.task.startBar, t.task.endBar, t.task.hand, t.task.lessonURL, makeMode(t.task.mode.toString()))
+                let tsk = NewTask(t.task.startBar, t.task.endBar, t.task.hand, t.task.lessonURL, makeMode(t.task.mode))
                 c.copyInScore(tsk, t.score)
             } catch (e) {
-                console.log(t.task.mode.toString())
-                console.log(t.task.mode)
                 console.warn("Failed to copy in score for task" + JSON.stringify(t) + e)
             }
         })
@@ -40,19 +38,17 @@ export function getProgress():Curriculum {
 }
 
 class curriculumWrapper {
-    private curriculum: curriculum;
-    constructor(c: curriculum) {
+    private curriculum: Curriculum;
+    constructor(c: Curriculum) {
         this.curriculum = c
     }
 
     recordScore(t: task, score: number) {
         this.curriculum.recordScore(t, score)
 
-        let serialisable = this.curriculum.tasks.map((p: progress)=> {
-            let t: any = p.task
-            t.mode = t.mode.toString()
+        let serialisable = this.curriculum.getTasks().map((p: progress)=> {
             return {
-                task: t,
+                task: p.task.serialisable(),
                 score: p.score,
             }
         })
@@ -79,9 +75,16 @@ class curriculumWrapper {
         return this.curriculum.getLesson(lessonURL)
     }
 
+    getTasks():Array<progress> {
+        return this.curriculum.getTasks()
+    }
+
+    copyInScore(t: task, score: number) {
+        this.curriculum.copyInScore(t, score)
+    }
 }
 
 // TODO: remove this garbo thing required to get around server side rendering
 export function emptyProgress() {
-    return new curriculumWrapper(new curriculum([], unlockCheckerFactory(UnlockCheckerType.Strict)))
+    return new curriculumWrapper(new curriculum([], new Map()))
 }

@@ -1,6 +1,6 @@
 // TODO: prevent double testing. When we import something from the other test suites, it
 
-import { hand, makeHand, urlToTask, handEqualOrHarder } from "../task"
+import { hand, makeHand, urlToTask, handEqualOrHarder, NewTask } from "../task"
 import { trivialTask } from "./testutil"
 
 test("task.equals", () => {
@@ -51,4 +51,12 @@ test("handEqualOrHarder", () => {
 
     expect(handEqualOrHarder(hand.Right, hand.Both)).toBe(false)
     expect(handEqualOrHarder(hand.Both, hand.Right)).toBe(true)
+})
+
+test("referenceEquality", () => {
+    expect(trivialTask()).toBe(trivialTask())
+    expect(trivialTask(600, 876)).toBe(trivialTask(600, 876))
+
+    let m = new Map([[trivialTask(), 5]])
+    expect(m.get(trivialTask())).toBe(5)
 })

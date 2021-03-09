@@ -7,8 +7,9 @@
 // - The player learn each section with their right hand, then left hand, then both.
 
 import { modeFactory, modeName } from "../../mode/mode";
-import { curriculum, UnlockCheckerType, unlockCheckerFactory } from "../curriculum";
-import { hand, task } from "../task";
+import { StrictCurriculum } from "../curriculum";
+import type { Curriculum } from "../curriculum";
+import { hand, NewTask, task } from "../task";
 
 export class SequentialCurriculum {
     pieces: Array<PieceBreakdown>;
@@ -16,7 +17,7 @@ export class SequentialCurriculum {
         this.pieces = pieces
     }
     
-    curriculum():curriculum {
+    curriculum():Curriculum {
         // TODO: create the locked conditions
         let tasks = Array<task>()
         this.pieces.forEach((piece) => {
@@ -25,22 +26,22 @@ export class SequentialCurriculum {
                     const startDelineator = layer[i-1];
                     const endDelineator = layer[i];
                     
-                    tasks.push(new task(startDelineator, endDelineator, hand.Right, piece.pieceName, modeFactory(modeName.wait)))
-                    tasks.push(new task(startDelineator, endDelineator, hand.Right, piece.pieceName, modeFactory(modeName.atSpeed, 75)))
-                    tasks.push(new task(startDelineator, endDelineator, hand.Right, piece.pieceName, modeFactory(modeName.atSpeed, 100)))
+                    tasks.push(NewTask(startDelineator, endDelineator, hand.Right, piece.pieceName, modeFactory(modeName.wait)))
+                    tasks.push(NewTask(startDelineator, endDelineator, hand.Right, piece.pieceName, modeFactory(modeName.atSpeed, 75)))
+                    tasks.push(NewTask(startDelineator, endDelineator, hand.Right, piece.pieceName, modeFactory(modeName.atSpeed, 100)))
 
-                    tasks.push(new task(startDelineator, endDelineator, hand.Left, piece.pieceName, modeFactory(modeName.wait)))
-                    tasks.push(new task(startDelineator, endDelineator, hand.Left, piece.pieceName, modeFactory(modeName.atSpeed, 75)))
-                    tasks.push(new task(startDelineator, endDelineator, hand.Left, piece.pieceName, modeFactory(modeName.atSpeed, 100)))
+                    tasks.push(NewTask(startDelineator, endDelineator, hand.Left, piece.pieceName, modeFactory(modeName.wait)))
+                    tasks.push(NewTask(startDelineator, endDelineator, hand.Left, piece.pieceName, modeFactory(modeName.atSpeed, 75)))
+                    tasks.push(NewTask(startDelineator, endDelineator, hand.Left, piece.pieceName, modeFactory(modeName.atSpeed, 100)))
 
-                    tasks.push(new task(startDelineator, endDelineator, hand.Both, piece.pieceName, modeFactory(modeName.wait)))
-                    tasks.push(new task(startDelineator, endDelineator, hand.Both, piece.pieceName, modeFactory(modeName.atSpeed, 75)))
-                    tasks.push(new task(startDelineator, endDelineator, hand.Both, piece.pieceName, modeFactory(modeName.atSpeed, 100)))
+                    tasks.push(NewTask(startDelineator, endDelineator, hand.Both, piece.pieceName, modeFactory(modeName.wait)))
+                    tasks.push(NewTask(startDelineator, endDelineator, hand.Both, piece.pieceName, modeFactory(modeName.atSpeed, 75)))
+                    tasks.push(NewTask(startDelineator, endDelineator, hand.Both, piece.pieceName, modeFactory(modeName.atSpeed, 100)))
                 }
             })
         })
 
-        return new curriculum(tasks, unlockCheckerFactory(UnlockCheckerType.Strict))
+        return StrictCurriculum(tasks)
     }
 }
 

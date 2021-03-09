@@ -36,7 +36,7 @@ export function modeFactory(name: modeName, speed?: number):playbackMode {
 // TODO: can I made these methods on playback mode without redundantly adding it to every single class?
 // TODO: can I overload the >= operator to call this function?
 export function modeEqualOrHarder(a: playbackMode, b: playbackMode) {
-    return a.modeType() === b.modeType() && a.getSpeed() >= b.getSpeed()
+    return (a.modeType() === b.modeType() && a.getSpeed() >= b.getSpeed()) || (a.modeType() === modeName.atSpeed && b.modeType() === modeName.wait)
 }
 
 export function equalModes(m: playbackMode, n: playbackMode): boolean {

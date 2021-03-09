@@ -1,7 +1,7 @@
 import { modeFactory, modeName } from "../../mode/mode"
 import { PieceBreakdown, SequentialCurriculum } from "../methodology/sequential"
 import { tutorial } from "../methodology/tutorial"
-import { hand, task } from "../task"
+import { hand, NewTask, task } from "../task"
 
 test("PieceBreakdown", ()=>{
     expect(()=>{new PieceBreakdown("mock", [[1,2]])}).not.toThrow()
@@ -19,15 +19,15 @@ test("PieceBreakdown", ()=>{
 test("Sequential Curriculum.next", () => {
     let c = new SequentialCurriculum([new PieceBreakdown("mock", [[1,2]])]).curriculum()
 
-    let t1 = new task(1,2, hand.Right, "mock", modeFactory(modeName.wait))
-    let t2 = new task(1,2, hand.Right, "mock", modeFactory(modeName.atSpeed, 75))
-    let t3 = new task(1,2, hand.Right, "mock", modeFactory(modeName.atSpeed, 100))
-    let t4 = new task(1,2, hand.Left, "mock", modeFactory(modeName.wait))
-    let t5 = new task(1,2, hand.Left, "mock", modeFactory(modeName.atSpeed, 75))
-    let t6 = new task(1,2, hand.Left, "mock", modeFactory(modeName.atSpeed, 100))
-    let t7 = new task(1,2, hand.Both, "mock", modeFactory(modeName.wait))
-    let t8 = new task(1,2, hand.Both, "mock", modeFactory(modeName.atSpeed, 75))
-    let t9 = new task(1,2, hand.Both, "mock", modeFactory(modeName.atSpeed, 100))
+    let t1 = NewTask(1,2, hand.Right, "mock", modeFactory(modeName.wait))
+    let t2 = NewTask(1,2, hand.Right, "mock", modeFactory(modeName.atSpeed, 75))
+    let t3 = NewTask(1,2, hand.Right, "mock", modeFactory(modeName.atSpeed, 100))
+    let t4 = NewTask(1,2, hand.Left, "mock", modeFactory(modeName.wait))
+    let t5 = NewTask(1,2, hand.Left, "mock", modeFactory(modeName.atSpeed, 75))
+    let t6 = NewTask(1,2, hand.Left, "mock", modeFactory(modeName.atSpeed, 100))
+    let t7 = NewTask(1,2, hand.Both, "mock", modeFactory(modeName.wait))
+    let t8 = NewTask(1,2, hand.Both, "mock", modeFactory(modeName.atSpeed, 75))
+    let t9 = NewTask(1,2, hand.Both, "mock", modeFactory(modeName.atSpeed, 100))
 
     expect(c.next()).toEqual(t1)
     c.recordScore(t1, 100)
@@ -75,10 +75,10 @@ test('Tutorial.locked', () => {
         [4, modeName.wait],
     ]).curriculum()
 
-    let t1 = new task(0,1, hand.Right, "mock", modeFactory(modeName.wait))
-    let t2 = new task(1,2, hand.Right, "mock", modeFactory(modeName.wait))
-    let t3 = new task(2,3, hand.Right, "mock", modeFactory(modeName.wait))
-    let t4 = new task(3,4, hand.Right, "mock", modeFactory(modeName.wait))
+    let t1 = NewTask(0,1, hand.Right, "mock", modeFactory(modeName.wait))
+    let t2 = NewTask(1,2, hand.Right, "mock", modeFactory(modeName.wait))
+    let t3 = NewTask(2,3, hand.Right, "mock", modeFactory(modeName.wait))
+    let t4 = NewTask(3,4, hand.Right, "mock", modeFactory(modeName.wait))
 
 
     expect(c.getLessons()).toEqual(["mock"])
