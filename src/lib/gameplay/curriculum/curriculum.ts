@@ -13,6 +13,7 @@ export interface Curriculum {
 
 // A curriculum is a set of a tasks, your progress through them, and way to determine whether you're ready for a given task
 export class curriculum {
+    // TODO: replace with a Map<task, number>
     tasks: Array<progress>; // Your progress through the tasks in the curriculum
     private dependencies: Map<task, Array<task>>;
 
@@ -35,12 +36,21 @@ export class curriculum {
 
             // complete tasks that are easier than this one, so the user doesn't have to redo their effort
             if (score >= 100) {
-                this.tasks.forEach((incompleteTask)=>{
-                    if (t.equalOrHarder(incompleteTask.task)) {
-                        incompleteTask.score = 100
-                    }
-                })
+               this.backwardsCompletion(t)
             }
+        }
+    }
+
+    // complete all this task's deps and all its deps' deps etc
+    // TODO: prevent infinite recursion on cycles
+    private backwardsCompletion(t: task) {
+        let deps = this.dependencies.get(t)
+            if (deps) {
+                deps.forEach((dep) => {
+                let i = indexOfTask(dep, this.tasks)
+                this.tasks[i].score = 100
+                this.backwardsCompletion(dep)
+            })
         }
     }
 
@@ -64,7 +74,7 @@ export class curriculum {
         return true
     }
 
-    // TODO: reduce from 0(n^2) complexity - memoising unlocked makes it O(n), and it may be memoised to 0(1) itself
+    // TODO: reduce complexity from O(nd), where d is the average number of dependencies per task. Not high priority.
     next(constraint: (t:task) => boolean = ()=>{return true}):task {
         for (let i = 0; i < this.tasks.length; i++) {
             const t = this.tasks[i].task;
@@ -106,6 +116,7 @@ export class curriculum {
     }
 }
 
+// TODO: should this function live at the methodology level?
 export function StrictCurriculum(tasks: Array<task>):Curriculum {
     let deps = new Map<task, Array<task>>();
 
