@@ -9,6 +9,9 @@ export interface Curriculum {
     getLessons():Array<string>
     getLesson(lessonURL: string):Array<task>
     getTasks():Map<task, number>
+    maximalTasks():Array<task>
+    minimalTasks():Array<task>
+    getDependencies():Map<task, Array<task>>
 }
 
 // A curriculum is a set of a tasks, your progress through them, and way to determine whether you're ready for a given task
@@ -108,6 +111,40 @@ export class curriculum {
 
     getTasks():Map<task, number> {
         return this.tasks
+    }
+
+    // Tasks on which nothing else in the curriculum depends
+    // To be understood in the sense of a poset https://en.wikipedia.org/wiki/Partially_ordered_set#Extrema
+    // TODO: make this one a bit let computationally expensive - to be fair though, it's basically only used when merging curriculae right now, which is a one off or irregular occurrence, so it's probably OK
+    maximalTasks():Array<task> {
+        let nonMaxes = new Map<task, boolean>()
+        this.dependencies.forEach((deps) => {
+            deps.forEach(dep => {
+                nonMaxes.set(dep, true)
+            })
+        })
+
+        let maxes = new Array<task>()
+        this.tasks.forEach((_, t) => {
+            if (!nonMaxes.has(t)) maxes.push(t)
+        })
+
+        return maxes
+    }
+
+    // Tasks which depend on nothing
+    minimalTasks():Array<task> {
+        let mins = new Array<task>();
+        this.tasks.forEach((_, t) => {
+            if (!this.dependencies.has(t) || this.dependencies.get(t).length === 0) {
+                mins.push(t)
+            }
+        })
+        return mins
+    }
+
+    getDependencies():Map<task, Array<task>> {
+        return this.dependencies
     }
 }
 

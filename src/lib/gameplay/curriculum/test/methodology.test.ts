@@ -1,4 +1,5 @@
 import { modeFactory, modeName } from "../../mode/mode"
+import { compose } from "../methodology/compose"
 import { PieceBreakdown, SequentialCurriculum } from "../methodology/sequential"
 import { tutorial } from "../methodology/tutorial"
 import { hand, NewTask, task } from "../task"
@@ -109,6 +110,79 @@ test('Tutorial.locked', () => {
     expect(c.unlocked(t4)).toBe(true)
     c.recordScore(t4, 100)
     expect(c.getScore(t4)).toBe(100)
+})
 
+test("composite_tutorial", () => {
+    let a = new tutorial("first", [
+        [1, modeName.wait],
+        [2, modeName.wait],
+    ]).curriculum()
 
+    let b = new tutorial("second", [
+        [1, modeName.wait],
+        [2, modeName.wait],
+    ]).curriculum()
+
+    let c = compose([a, b])
+
+    let t1 = NewTask(0,1, hand.Right, "first", modeFactory(modeName.wait))
+    let t2 = NewTask(1,2, hand.Right, "first", modeFactory(modeName.wait))
+    let t3 = NewTask(0,1, hand.Right, "second", modeFactory(modeName.wait))
+    let t4 = NewTask(1,2, hand.Right, "second", modeFactory(modeName.wait))
+
+    expect(c.unlocked(t1)).toBe(true)
+    expect(c.unlocked(t2)).toBe(false)
+    expect(c.unlocked(t3)).toBe(false)
+    expect(c.unlocked(t4)).toBe(false)
+
+    c.recordScore(t1, 100)
+    expect(c.unlocked(t1)).toBe(true)
+    expect(c.unlocked(t2)).toBe(true)
+    expect(c.unlocked(t3)).toBe(false)
+    expect(c.unlocked(t4)).toBe(false)
+
+    c.recordScore(t2, 100)
+    expect(c.unlocked(t1)).toBe(true)
+    expect(c.unlocked(t2)).toBe(true)
+    expect(c.unlocked(t3)).toBe(true)
+    expect(c.unlocked(t4)).toBe(false)
+
+    c.recordScore(t3, 100)
+    expect(c.unlocked(t1)).toBe(true)
+    expect(c.unlocked(t2)).toBe(true)
+    expect(c.unlocked(t3)).toBe(true)
+    expect(c.unlocked(t4)).toBe(true)
+})
+
+test("composite_mixed", () => {
+    let a = new tutorial("tutorial", [
+        [1, modeName.wait],
+    ]).curriculum()
+
+    let b = new SequentialCurriculum([new PieceBreakdown("piece", [[1,2]])]).curriculum()
+
+    let t0 = NewTask(0,1, hand.Right, "tutorial", modeFactory(modeName.wait))
+    let t1 = NewTask(1,2, hand.Right, "piece", modeFactory(modeName.wait))
+    let t2 = NewTask(1,2, hand.Right, "piece", modeFactory(modeName.atSpeed, 75))
+
+    let c = compose([a, b])
+    
+    // What was unlocked in b now requires a to be complete in order to be started
+    expect(c.unlocked(t1)).toBe(false)
+    expect(b.unlocked(t1)).toBe(true)
+    
+    // complete the tutorial
+    expect(c.unlocked(t0)).toBe(true)
+    expect(c.getScore(t0)).toBe(0)
+    c.recordScore(t0, 100)
+
+    // now the piece is ready to be learned
+    expect(c.unlocked(t1)).toBe(true)
+    expect(c.unlocked(t2)).toBe(false)
+    expect(c.getScore(t1)).toBe(0)
+    c.recordScore(t1, 100)
+
+    // proceed to the next part of learning the piece as normal
+    expect(c.unlocked(t2)).toBe(true)
+    expect(c.getScore(t2)).toBe(0)
 })

@@ -203,3 +203,37 @@ test("splitbyMode", () => {
         ]
     ])
 })
+
+test("minmax", () => {
+    // A -> B
+    // C -> D
+    let twoTrack = StrictCurriculum([
+        newTask(1,2), // A
+        newTask(1,3), // B
+        newTask(3,4), // C
+        newTask(3,5), // D
+    ])
+    expect(twoTrack.minimalTasks()).toEqual([newTask(1,2), newTask(3,4)]) // A, C
+    expect(twoTrack.maximalTasks()).toEqual([newTask(1,3), newTask(3,5)]) // B, D
+
+    // A ---v
+    // B -> C
+    let fork = StrictCurriculum([
+        newTask(1,2), // A
+        newTask(2,3), // B
+        newTask(1,3), // C
+    ])
+    expect(fork.minimalTasks()).toEqual([newTask(1,2), newTask(2,3)]) // A, B
+    expect(fork.maximalTasks()).toEqual([newTask(1,3)]) // C
+
+    // A --------v
+    // B -> C -> D
+    let wonky = StrictCurriculum([
+        newTask(1,2), // A
+        newTask(2,3), // B
+        newTask(2,4), // C
+        newTask(1,4), // D
+    ])
+    expect(wonky.minimalTasks()).toEqual([newTask(1,2), newTask(2,3)]) // A, B
+    expect(wonky.maximalTasks()).toEqual([newTask(1,4)]) // D
+})
