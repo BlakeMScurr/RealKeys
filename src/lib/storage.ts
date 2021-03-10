@@ -83,6 +83,18 @@ class curriculumWrapper {
     copyInScore(t: task, score: number) {
         this.curriculum.copyInScore(t, score)
     }
+
+    maximalTasks():Array<task> {
+        return this.curriculum.maximalTasks()
+    }
+
+    minimalTasks():Array<task> {
+        return this.curriculum.minimalTasks()
+    }
+
+    getDependencies():Map<task, Array<task>> {
+        return this.curriculum.getDependencies()
+    }
 }
 
 // TODO: remove this garbo thing required to get around server side rendering
