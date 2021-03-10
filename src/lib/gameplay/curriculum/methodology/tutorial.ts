@@ -15,7 +15,7 @@ export class tutorial {
 
     curriculum():curriculum {
         let tasks = new Array<task>();
-        let startBar = 0
+        let startBar = 1
         this.sections.forEach((section: [number, modeName], i: number) => {
             if (section[0] <= startBar && section[1] !== modeName.pause) { // you have to proceed throw the bars in each section unless that section specifically pauses progress intentionally to show you something on screen
                 throw new Error(`end bar ${section[0]} before start bar ${startBar}`)

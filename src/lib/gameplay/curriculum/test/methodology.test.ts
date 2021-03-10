@@ -51,35 +51,39 @@ test("Sequential Curriculum.next", () => {
 })
 
 test('Tutorial.curriculum fails', () => {
-    let c = new tutorial("mock", [[1, modeName.wait], [0, modeName.wait]])
-    expect(()=>{c.curriculum()}).toThrow("end bar 0 before start bar 1")
+    let c = new tutorial("mock", [[2, modeName.wait], [1, modeName.wait]])
+    expect(()=>{c.curriculum()}).toThrow("end bar 1 before start bar 2")
     
-    c = new tutorial("mock", [[0, modeName.wait], [0, modeName.wait]])
-    expect(()=>{c.curriculum()}).toThrow("end bar 0 before start bar 0")
+    c = new tutorial("mock", [[0, modeName.wait]])
+    expect(()=>{c.curriculum()}).toThrow("end bar 0 before start bar 1")
 
-    c = new tutorial("mock", [[0, modeName.pause], [1, modeName.wait]])
-    expect(()=>{c.curriculum()}).not.toThrow()
-
-    c = new tutorial("mock", [[1, modeName.play], [1, modeName.wait]])
+    c = new tutorial("mock", [[1, modeName.wait]])
     expect(()=>{c.curriculum()}).toThrow("end bar 1 before start bar 1")
 
-    c = new tutorial("mock", [[1, modeName.play], [1, modeName.pause]])
+    c = new tutorial("mock", [[1, modeName.pause], [2, modeName.wait]])
     expect(()=>{c.curriculum()}).not.toThrow()
+
+    c = new tutorial("mock", [[2, modeName.play], [2, modeName.wait]])
+    expect(()=>{c.curriculum()}).toThrow("end bar 2 before start bar 2")
+
+    c = new tutorial("mock", [[2, modeName.play], [2, modeName.pause]])
+    expect(()=>{c.curriculum()}).not.toThrow()
+
 
 })
 
 test('Tutorial.locked', () => {
     let c = new tutorial("mock", [
-        [1, modeName.wait],
         [2, modeName.wait],
         [3, modeName.wait],
         [4, modeName.wait],
+        [5, modeName.wait],
     ]).curriculum()
 
-    let t1 = NewTask(0,1, hand.Right, "mock", modeFactory(modeName.wait))
-    let t2 = NewTask(1,2, hand.Right, "mock", modeFactory(modeName.wait))
-    let t3 = NewTask(2,3, hand.Right, "mock", modeFactory(modeName.wait))
-    let t4 = NewTask(3,4, hand.Right, "mock", modeFactory(modeName.wait))
+    let t1 = NewTask(1,2, hand.Right, "mock", modeFactory(modeName.wait))
+    let t2 = NewTask(2,3, hand.Right, "mock", modeFactory(modeName.wait))
+    let t3 = NewTask(3,4, hand.Right, "mock", modeFactory(modeName.wait))
+    let t4 = NewTask(4,5, hand.Right, "mock", modeFactory(modeName.wait))
 
 
     expect(c.getLessons()).toEqual(["mock"])
@@ -114,21 +118,21 @@ test('Tutorial.locked', () => {
 
 test("composite_tutorial", () => {
     let a = new tutorial("first", [
-        [1, modeName.wait],
         [2, modeName.wait],
+        [3, modeName.wait],
     ]).curriculum()
 
     let b = new tutorial("second", [
-        [1, modeName.wait],
         [2, modeName.wait],
+        [3, modeName.wait],
     ]).curriculum()
 
     let c = compose([a, b])
 
-    let t1 = NewTask(0,1, hand.Right, "first", modeFactory(modeName.wait))
-    let t2 = NewTask(1,2, hand.Right, "first", modeFactory(modeName.wait))
-    let t3 = NewTask(0,1, hand.Right, "second", modeFactory(modeName.wait))
-    let t4 = NewTask(1,2, hand.Right, "second", modeFactory(modeName.wait))
+    let t1 = NewTask(1,2, hand.Right, "first", modeFactory(modeName.wait))
+    let t2 = NewTask(2,3, hand.Right, "first", modeFactory(modeName.wait))
+    let t3 = NewTask(1,2, hand.Right, "second", modeFactory(modeName.wait))
+    let t4 = NewTask(2,3, hand.Right, "second", modeFactory(modeName.wait))
 
     expect(c.unlocked(t1)).toBe(true)
     expect(c.unlocked(t2)).toBe(false)
@@ -156,12 +160,12 @@ test("composite_tutorial", () => {
 
 test("composite_mixed", () => {
     let a = new tutorial("tutorial", [
-        [1, modeName.wait],
+        [2, modeName.wait],
     ]).curriculum()
 
     let b = new SequentialCurriculum([new PieceBreakdown("piece", [[1,2]])]).curriculum()
 
-    let t0 = NewTask(0,1, hand.Right, "tutorial", modeFactory(modeName.wait))
+    let t0 = NewTask(1,2, hand.Right, "tutorial", modeFactory(modeName.wait))
     let t1 = NewTask(1,2, hand.Right, "piece", modeFactory(modeName.wait))
     let t2 = NewTask(1,2, hand.Right, "piece", modeFactory(modeName.atSpeed, 75))
 
