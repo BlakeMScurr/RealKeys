@@ -1,16 +1,31 @@
 <script lang="ts">
     import {onMount} from "svelte"
+    import { modeName } from "../lib/gameplay/mode/mode";
 
     let mounted
     onMount(() => {
         mounted = true
     })
 
+    class section {
+        startBar: number;
+        endBar: number;
+        text: string;
+        mode: modeName;
+
+        constructor(startBar: number, endBar: number) {
+            this.startBar = startBar
+            this.endBar = endBar
+            this.text = ""
+            this.mode = modeName.wait
+        }
+    }
+
     let startBar = 1;
     let endBar = 10000;
     let input
     let draw = () => {}
-    let sections = new Array<section>();
+    let sections = []
     let loaded = false
     function handleInput() {
         if (mounted) {
@@ -71,48 +86,60 @@
         sections = sections
     }
 
-    class section {
-        startBar: number;
-        endBar: number;
-        text: string;
 
-        constructor(startBar: number, endBar: number) {
-            this.startBar = startBar
-            this.endBar = endBar
-            this.text = ""
-        }
-    }
 
     let editingSection = -1
     let textEdit = ""
+    let editMode = modeName.wait
 </script>
 
-<style>
+<style lang="scss">
     .osmdContainer {
         height: 100%;
         width: 100%;
     }
+
+    .sections {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        grid-gap: 20px;
+        padding: 20px;
+
+        .section {
+            background-color: lightgrey;
+            border-radius: 4px;
+            padding: 4px;
+        }
+    }
+
+    h3, h4 {
+        margin: 0;
+    }
 </style>
 
 {#if !loaded}
-    <input type="file" on:input={handleInput} bind:this={input}>
+<!-- TODO: make this better -->
+    <!-- <label for="musicxml">Select MusicXML file</label> -->
+    <input type="file" id="musicxml" on:input={handleInput} bind:this={input}>
+
+    
 {/if}
-
-
-<!-- Old code, maybe remove lol? -->
-<!-- <hr> -->
-<!-- <button on:click={addSection}>Add section</button>
-<label for="startbar">Start bar</label>
-<input id="startbar" type="number" bind:value={startBar}>
-<label for="endbar">End bar</label>
-<input id="endbar" type="number" bind:value={endBar}> -->
-
 
 {#if editingSection != -1}
     <input type="text" bind:value={textEdit}>
 
+    <label for="mode">Choose a mode:</label>
+    <select name="mode" id="mode" bind:value={editMode}>
+        <option value={modeName.wait}>{modeName.wait}</option>
+        <option value={modeName.atSpeed}>{modeName.atSpeed}</option>
+        <option value={modeName.pause}>{modeName.pause}</option>
+        <option value={modeName.play}>{modeName.play}</option>
+    </select>
+
     <button on:click={()=>{
         sections[editingSection].text = textEdit
+        sections[editingSection].mode = editMode
         textEdit = ""
         editingSection = -1;
         startBar = 1;
@@ -123,24 +150,22 @@
     <hr>
 {/if}
 
-{#each sections as section, i}
-    <div class="section">
-        From {section.startBar} to {section.endBar}
+<div class="sections">
+    {#each sections as section, i}
+        <div class="section">
+            <h3>From {section.startBar} to {section.endBar}</h3>
+            <h4>{section.mode} mode</h4>
 
-        <div class="text">{section.text}</div>
-        <button on:click={()=>{
-            editingSection = i;
-            textEdit = section.text;
-            startBar = section.startBar;
-            endBar = section.endBar;
-            draw();
-        }}>Edit</button>
-        <!-- Not necessary? -->
-        <!-- <button on:click={()=>{
-            sections.splice(i, 1);
-            sections = sections;
-        }}>Remove</button> -->
-    </div>
-{/each}
+            <p>{section.text}<p>
+            <button on:click={()=>{
+                editingSection = i;
+                textEdit = section.text;
+                startBar = section.startBar;
+                endBar = section.endBar;
+                draw();
+            }}>Edit</button>
+        </div>
+    {/each}
+</div>
 
 <div id="osmdContainer"></div>
