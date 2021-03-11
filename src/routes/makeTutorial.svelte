@@ -134,8 +134,9 @@ import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
 
 <style lang="scss">
 
-    .osmdContainer {
+    #osmdContainer {
         height: 100%;
+        min-height: 1000px; // just so that when we redraw we don't generally lose our vertical place in the scrren
         width: 100%;
     }
 
@@ -199,30 +200,6 @@ import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
     <a href="" id="exporter">{dltext}</a>
 </div>
 
-{#if editingSection != -1}
-    <input type="text" bind:value={textEdit}>
-
-    <label for="mode">Choose a mode:</label>
-    <select name="mode" id="mode" bind:value={editMode}>
-        <option value={modeName.wait}>{modeName.wait}</option>
-        <option value={modeName.atSpeed}>{modeName.atSpeed}</option>
-        <option value={modeName.pause}>{modeName.pause}</option>
-        <option value={modeName.play}>{modeName.play}</option>
-    </select>
-
-    <button on:click={()=>{
-        sections.get(currentFile)[editingSection].text = textEdit
-        sections.get(currentFile)[editingSection].mode = editMode
-        textEdit = ""
-        editingSection = -1;
-        startBar = 0;
-        endBar = 10000;
-        rerender();
-    }}>Save</button>
-
-    <hr>
-{/if}
-
 {#if xmlfiles.size !== 0}
     <h1>Files</h1>
 {/if}
@@ -256,5 +233,27 @@ import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
         </div>
     {/each}
 </div>
+
+{#if editingSection != -1}
+    <input type="text" bind:value={textEdit}>
+
+    <label for="mode">Choose a mode:</label>
+    <select name="mode" id="mode" bind:value={editMode}>
+        <option value={modeName.wait}>{modeName.wait}</option>
+        <option value={modeName.atSpeed}>{modeName.atSpeed}</option>
+        <option value={modeName.pause}>{modeName.pause}</option>
+        <option value={modeName.play}>{modeName.play}</option>
+    </select>
+
+    <button on:click={()=>{
+        sections.get(currentFile)[editingSection].text = textEdit
+        sections.get(currentFile)[editingSection].mode = editMode
+        textEdit = ""
+        editingSection = -1;
+        startBar = 0;
+        endBar = 10000;
+        rerender();
+    }}>Save</button>
+{/if}
 
 <div id="osmdContainer"></div>
