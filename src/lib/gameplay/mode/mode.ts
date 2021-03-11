@@ -9,7 +9,6 @@ export enum modeName {
     atSpeed = "atSpeed",
     wait = "wait",
     play = "play",
-    pause = "pause",
 }
 
 export function makeMode(mode: string):playbackMode {
@@ -28,8 +27,6 @@ export function modeFactory(name: modeName, speed?: number):playbackMode {
             return new waitMode()
         case modeName.play:
             return new playMode()
-        case modeName.pause:
-            return new pauseMode()
     }
 }
 
@@ -81,10 +78,4 @@ class playMode {
     getSpeed():number { return 0 }
     toString():string { return "play" }
     description():string { return "Just listen" }
-}
-class pauseMode {
-    modeType():modeName { return modeName.pause }
-    getSpeed():number { return 0 }
-    toString():string { return "pause" }
-    description():string { return "The music's paused, so absorb the info" }
 }
