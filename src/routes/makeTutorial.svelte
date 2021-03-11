@@ -130,9 +130,16 @@ import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
         xmlfiles = xmlfiles
         draw()
     }
+
+    $: {
+        console.log(textEdit)
+    }
 </script>
 
 <style lang="scss">
+    p {
+        white-space: pre-wrap;
+    }
 
     #osmdContainer {
         height: 100%;
@@ -153,7 +160,7 @@ import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
         }
     }
 
-    span {
+    .textinput {
         display: inline-block;
         border: solid 1px black;
         background-color: white;
@@ -238,10 +245,10 @@ import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
                 </select>
                 <br>
 
-                <span contenteditable="true" type="text" bind:textContent={textEdit}></span>
+                <span class="textinput" contenteditable="true" type="text" bind:innerHTML={textEdit}></span>
 
                 <button on:click={()=>{
-                    sections.get(currentFile)[editingSection].text = textEdit
+                    sections.get(currentFile)[editingSection].text = textEdit.replaceAll("\<br\>", "\r\n")
                     sections.get(currentFile)[editingSection].mode = editMode
                     textEdit = ""
                     editingSection = -1;
