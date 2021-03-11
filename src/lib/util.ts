@@ -150,3 +150,24 @@ function postError(e: PromiseRejectionEvent) {
 export function objToURLArgs(x) {
     return Object.entries(x).map((a)=>{return a[0] + "=" + a[1]}).join("&")
 }
+
+// from https://stackoverflow.com/a/56150320
+export function mapStringifyReplacer(key, value) {
+    if(value instanceof Map) {
+        return {
+        dataType: 'Map',
+        value: Array.from(value.entries()), // or with spread: value: [...value]
+        };
+    } else {
+        return value;
+    }
+}
+
+export function mapStringifyReviver(key, value) {
+    if(typeof value === 'object' && value !== null) {
+        if (value.dataType === 'Map') {
+        return new Map(value.value);
+        }
+    }
+    return value;
+}
