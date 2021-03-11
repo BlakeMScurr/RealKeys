@@ -211,7 +211,7 @@ import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
     <label for="musicxml" class="btn">Import</label>
     <input type="file" class="fileinput" id="musicxml" multiple={true} on:input={handleMusicXMLInput} bind:this={musicXMLInput}>
 
-    <div class="btn" on:click={()=>{download(JSON.stringify(sections, mapStringifyReplacer), 'myfilename.txt', 'text/plain')}}>Export</div>
+    <div class="btn" on:click={()=>{download(JSON.stringify(sections, mapStringifyReplacer), 'tutorial.txt', 'text/plain')}}>Export</div>
     <a href="" id="exporter">{dltext}</a>
 </div>
 
