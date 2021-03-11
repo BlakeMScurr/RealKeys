@@ -44,42 +44,40 @@ import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
                     reader.onload = function() {
                         if (file.name.includes(".txt")) {
                             priorState = <Map<string, Array<section>>>JSON.parse(<string>reader.result, mapStringifyReviver)
-                        }
-
-                        let parser = new DOMParser();
-                        let xmlDoc = parser.parseFromString(<string>reader.result, "text/xml");
-
-                        let theseSections = []
-                        let firstBar = 0
-                        Array.from(xmlDoc.getElementsByTagName("measure")).forEach((measure) => {
-                            try {
-                                let bs = measure.getElementsByTagName("bar-style")[0]
-                                if (bs.textContent === "light-light" || bs.textContent === "light-heavy") {
-                                    let endOfMeasure = parseInt(measure.getAttribute("number"))
-                                    theseSections.push(new section(firstBar, endOfMeasure))
-                                    firstBar = endOfMeasure
-                                    measure.removeAttribute("number") // TODO: remove this hack - numbers are rendered wrongly too
-                                    measure.removeChild(measure.getElementsByTagName("barline")[0]) // TODO: remove this hack, which is just here because the barlines aren't rendered correctly
-                                }
-                            } catch (e) {
-                                console.warn(e)
-                            } // do big deal here, just shitty programming
-                        })
-
-                        if (priorState) {
                             sections = priorState
-                        } else {
-                            sections.set(file.name, theseSections)
-                            sections = sections
-                        }
-
-                        xmlfiles.set(file.name, new XMLSerializer().serializeToString(xmlDoc))
-                        xmlfiles = xmlfiles
-
-
-                        if (i === 0) {
-                            currentFile = file.name
-                            draw()
+                        } else if (file.name.includes(".musicxml")){
+                            let parser = new DOMParser();
+                            let xmlDoc = parser.parseFromString(<string>reader.result, "text/xml");
+    
+                            let theseSections = []
+                            let firstBar = 0
+                            Array.from(xmlDoc.getElementsByTagName("measure")).forEach((measure) => {
+                                try {
+                                    let bs = measure.getElementsByTagName("bar-style")[0]
+                                    if (bs.textContent === "light-light" || bs.textContent === "light-heavy") {
+                                        let endOfMeasure = parseInt(measure.getAttribute("number"))
+                                        theseSections.push(new section(firstBar, endOfMeasure))
+                                        firstBar = endOfMeasure
+                                        measure.removeAttribute("number") // TODO: remove this hack - numbers are rendered wrongly too
+                                        measure.removeChild(measure.getElementsByTagName("barline")[0]) // TODO: remove this hack, which is just here because the barlines aren't rendered correctly
+                                    }
+                                } catch (e) {
+                                    console.warn(e)
+                                } // do big deal here, just shitty programming
+                            })
+    
+                            if (!priorState) {
+                                sections.set(file.name, theseSections)
+                                sections = sections
+                            }
+    
+                            xmlfiles.set(file.name, new XMLSerializer().serializeToString(xmlDoc))
+                            xmlfiles = xmlfiles
+    
+                            if (i === 0) {
+                                currentFile = file.name
+                                draw()
+                            }
                         }
                     };
                     
