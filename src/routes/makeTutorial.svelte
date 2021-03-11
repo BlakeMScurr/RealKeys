@@ -153,6 +153,14 @@ import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
         }
     }
 
+    span {
+        display: inline-block;
+        border: solid 1px black;
+        background-color: white;
+        width: 100%;
+        margin: 1em 0 1em 0;
+    }
+
     .sections {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
@@ -220,40 +228,44 @@ import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
     {#each sections.get(currentFile) as section, i}
         <div class="section">
             <h3>From {section.startBar} to {section.endBar}</h3>
-            <h4>{section.mode} mode</h4>
 
-            <p>{section.text}<p>
-            <button on:click={()=>{
-                editingSection = i;
-                textEdit = section.text;
-                startBar = section.startBar;
-                endBar = section.endBar;
-                rerender();
-            }}>Edit</button>
+            {#if editingSection === i}
+                <select name="mode" id="mode" bind:value={editMode}>
+                    <option value={modeName.wait}>{modeName.wait}</option>
+                    <option value={modeName.atSpeed}>{modeName.atSpeed}</option>
+                    <option value={modeName.pause}>{modeName.pause}</option>
+                    <option value={modeName.play}>{modeName.play}</option>
+                </select>
+                <br>
+
+                <span contenteditable="true" type="text" bind:textContent={textEdit}></span>
+
+                <button on:click={()=>{
+                    sections.get(currentFile)[editingSection].text = textEdit
+                    sections.get(currentFile)[editingSection].mode = editMode
+                    textEdit = ""
+                    editingSection = -1;
+                    startBar = 0;
+                    endBar = 10000;
+                    rerender();
+                }}>Save</button>
+            {:else}
+                <h4>{section.mode} mode</h4>
+
+                <p>{section.text}<p>
+
+                <button on:click={()=>{
+                    editingSection = i;
+                    textEdit = section.text;
+                    startBar = section.startBar;
+                    endBar = section.endBar;
+                    rerender();
+                }}>Edit</button>
+            {/if}
         </div>
     {/each}
 </div>
 
-{#if editingSection != -1}
-    <input type="text" bind:value={textEdit}>
 
-    <label for="mode">Choose a mode:</label>
-    <select name="mode" id="mode" bind:value={editMode}>
-        <option value={modeName.wait}>{modeName.wait}</option>
-        <option value={modeName.atSpeed}>{modeName.atSpeed}</option>
-        <option value={modeName.pause}>{modeName.pause}</option>
-        <option value={modeName.play}>{modeName.play}</option>
-    </select>
-
-    <button on:click={()=>{
-        sections.get(currentFile)[editingSection].text = textEdit
-        sections.get(currentFile)[editingSection].mode = editMode
-        textEdit = ""
-        editingSection = -1;
-        startBar = 0;
-        endBar = 10000;
-        rerender();
-    }}>Save</button>
-{/if}
 
 <div id="osmdContainer"></div>
