@@ -23,6 +23,13 @@ test("CycleFomNode/Cyclic", () => {
     expect(cycle4().cycleFrom(3, [])).toEqual([3, 0, 1, 2, 3])
 })
 
+test("dag", () => {
+    expect(()=>{fork().dag()}).not.toThrow()
+    expect(()=>{diamond().dag()}).not.toThrow()
+    expect(()=>{cycle3().dag()}).toThrow()
+    expect(()=>{cycle4().dag()}).toThrow()
+})
+
 // 0
 // |\
 // 1 2
