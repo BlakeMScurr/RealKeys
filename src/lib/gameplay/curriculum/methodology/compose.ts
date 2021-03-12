@@ -23,8 +23,8 @@ export function compose(curriculae: Array<Curriculum>, graph: dag):Curriculum {
     })
 
     // Link curriculae
-    for (let i = 1; i < curriculae.length; i++) {
-        for (let j = 1; j < curriculae.length; j++) {
+    for (let i = 0; i < curriculae.length; i++) {
+        for (let j = 0; j < curriculae.length; j++) {
             if (graph.dependsOn(i, j)) {
                 const preceding = curriculae[j].maximalTasks();
                 const following = curriculae[i].minimalTasks();

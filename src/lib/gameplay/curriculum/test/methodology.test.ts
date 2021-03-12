@@ -1,3 +1,4 @@
+import { graph } from "../../../math/graph"
 import { modeFactory, modeName } from "../../mode/mode"
 import { compose } from "../methodology/compose"
 import { PieceBreakdown, SequentialCurriculum } from "../methodology/sequential"
@@ -60,16 +61,8 @@ test('Tutorial.curriculum fails', () => {
     c = new tutorial("mock", [[1, modeName.wait]])
     expect(()=>{c.curriculum()}).toThrow("end bar 1 before start bar 1")
 
-    c = new tutorial("mock", [[1, modeName.pause], [2, modeName.wait]])
-    expect(()=>{c.curriculum()}).not.toThrow()
-
     c = new tutorial("mock", [[2, modeName.play], [2, modeName.wait]])
     expect(()=>{c.curriculum()}).toThrow("end bar 2 before start bar 2")
-
-    c = new tutorial("mock", [[2, modeName.play], [2, modeName.pause]])
-    expect(()=>{c.curriculum()}).not.toThrow()
-
-
 })
 
 test('Tutorial.locked', () => {
@@ -127,7 +120,7 @@ test("composite_tutorial", () => {
         [3, modeName.wait],
     ]).curriculum()
 
-    let c = compose([a, b])
+    let c = compose([a, b], new graph([[1, 0]]).dag())
 
     let t1 = NewTask(1,2, hand.Right, "first", modeFactory(modeName.wait))
     let t2 = NewTask(2,3, hand.Right, "first", modeFactory(modeName.wait))
@@ -169,7 +162,7 @@ test("composite_mixed", () => {
     let t1 = NewTask(1,2, hand.Right, "piece", modeFactory(modeName.wait))
     let t2 = NewTask(1,2, hand.Right, "piece", modeFactory(modeName.atSpeed, 75))
 
-    let c = compose([a, b])
+    let c = compose([a, b], new graph([[1, 0]]))
     
     // What was unlocked in b now requires a to be complete in order to be started
     expect(c.unlocked(t1)).toBe(false)
