@@ -2,9 +2,29 @@
 // dag is a matrix representation of a directed
 // node i -> j iff this.matrix[i][j]
 export class graph {
-    matrix: Array<Array<boolean>>;
-    constructor(matrix: Array<Array<boolean>>) {
-       this.matrix = matrix
+    private matrix: Array<Array<boolean>>;
+    constructor(edges: Array<[number, number]>) {
+        let highest = 0
+        edges.forEach((edge) => {
+            // only allow non negative integers
+            if (edge[0] < 0 || Math.floor(edge[0]) !== edge[0] || edge[1] < 0 || Math.floor(edge[1]) !== edge[1]) {
+                throw new Error(`edges can only have non negative integers, got edge ${edge[0]} -> ${edge[1]}`)
+            }
+
+            if (edge[0] > highest) highest = edge[0]
+            if (edge[1] > highest) highest = edge[1]
+        })
+
+        // initialise the matrix
+        // TODO: could I do this more efficiently and elegantly with fill at the top level too??
+        this.matrix = new Array<Array<boolean>>()
+        for (let i = 0; i <= highest; i++) {
+            this.matrix.push(new Array<boolean>(highest + 1).fill(false))
+        }
+
+        edges.forEach(edge => {
+            this.matrix[edge[0]][edge[1]] = true
+        });
     }
 
     // return this as a directed acyclic graph if possible, error otherwise
@@ -41,8 +61,15 @@ export class graph {
 
         return []
     }
+
+    dependsOn(a: number, b: number):boolean {
+        if (a >= this.matrix.length || b >= this.matrix.length) {
+            throw new Error(`node ${a} and/or ${b} outside range 0->${this.matrix.length-1}`)
+        }
+        return this.matrix[a][b]
+    }
 }
 
 export interface dag {
-
+    dependsOn(a: number, b: number):boolean
 }
