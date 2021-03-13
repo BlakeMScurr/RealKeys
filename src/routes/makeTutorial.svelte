@@ -1,9 +1,9 @@
 <script lang="ts">
     import {onMount} from "svelte"
     import { modeName } from "../lib/gameplay/mode/mode";
-    import { plainToClass } from 'class-transformer';
     import 'reflect-metadata';
     import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
+    import Dependencies from "../components/editor/Dependencies.svelte";
 
     let mounted
     onMount(() => {
@@ -149,7 +149,7 @@
         display: grid;
         grid-template-columns: repeat(5, 1fr);
         grid-gap: 4px;
-        padding: 5px;
+        padding: 5px;   
         div {
             background-color: #eee;
             &:hover {
@@ -213,7 +213,9 @@
     <a href="" id="exporter">{dltext}</a>
 </div>
 
-{#if xmlfiles.size !== 0}
+<Dependencies curriculae={Array.from(xmlfiles.keys()) on:edit={}}></Dependencies>
+
+<!-- {#if xmlfiles.size !== 0}
     <h1>Files</h1>
 {/if}
 <div class="files">
@@ -223,7 +225,7 @@
             rerender();
         }}>{file}</div>
     {/each}
-</div>
+</div> -->
 
 
 {#if sections.get(currentFile).length !== 0}

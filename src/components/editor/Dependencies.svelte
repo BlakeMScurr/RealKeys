@@ -4,6 +4,8 @@
 
     export let curriculae: Array<string> = new Array<string>();
     export let deps: Array<[number, number]> = new Array<[number, number]>();
+
+    $: internalCurriculae = curriculae.slice()
     
     let holding = null
     let selected = 0
@@ -12,11 +14,10 @@
 
     function drop(i) {
         return () => {
-            let tmp = curriculae[holding]
-            curriculae[holding] = curriculae[i]
-            curriculae[i] = tmp
+            let tmp = internalCurriculae[holding]
+            internalCurriculae[holding] = internalCurriculae[i]
+            internalCurriculae[i] = tmp
 
-            console.log(JSON.stringify(deps))
             deps.forEach((dep: [number, number]) => {
                 if (dep[0] === holding) {
                      dep[0] = i
@@ -29,17 +30,16 @@
                      dep[1] = holding
                 }
             }) 
-            console.log(JSON.stringify(deps))
             deps = deps
-            console.log(JSON.stringify(deps))
-            curriculae = curriculae
+            internalCurriculae = internalCurriculae
+            dispatch("edit", { deps: deps, order: internalCurriculae})
         }
     }
 
     function click(i) {
         return (e) => {
             selected = i
-            dispatch("select", curriculae)
+            dispatch("select", internalCurriculae)
         }
     }
 
@@ -62,6 +62,7 @@
                 console.warn(e)
             }
             deps = deps
+            dispatch("edit", { deps: deps, order: internalCurriculae})
         }
     }
 
@@ -69,11 +70,25 @@
         return () => {
             deps.splice(i, 1)
             deps = deps
+            dispatch("edit", { deps: deps, order: internalCurriculae})
         }
     }
+
+    let showDeps = true
 </script>
 
 <style lang="scss">
+     .depHolder {
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        grid-gap: 14px;
+        padding: 14px;
+
+        .dep {
+            background-color: #eee;
+        }
+    }
+
     .curriculumHolder {
         display: grid;
         grid-template-columns: repeat(5, 1fr);
@@ -88,21 +103,12 @@
             background-color: #bbb;
         }
     }
-
-    .depHolder {
-        display: grid;
-        grid-template-columns: repeat(8, 1fr);
-        grid-gap: 14px;
-        padding: 14px;
-
-        .dep {
-            background-color: #eee;
-        }
-    }
 </style>
 
+<h1>Sections</h1>
+
 <div class="curriculumHolder">
-    {#each curriculae as curriculum, i}
+    {#each internalCurriculae as curriculum, i}
         <div draggable={true}
             on:drop={drop(i)}
             on:dragover={e => e.preventDefault()}
@@ -120,12 +126,18 @@
     {/each}
 </div>
 
-<!-- TODO: render deps as a graph directly -->
-<div class="depHolder">
-    {#each deps as dep, i}
-        <div class="dep">
-            <p>{curriculae[dep[0]]} -> {curriculae[dep[1]]}</p>
-            <button on:click={removeDep(i)}>Delete</button>
-        </div>
-    {/each}
-</div>
+<h1>Dependencies</h1>
+<label for="showdeps">show</label>
+<input id="showdeps" type="checkbox" bind:checked={showDeps}>
+
+{#if showDeps}
+    <!-- TODO: render deps as a graph directly -->
+    <div class="depHolder">
+        {#each deps as dep, i}
+            <div class="dep">
+                <p>{internalCurriculae[dep[0]]} -> {internalCurriculae[dep[1]]}</p>
+                <button on:click={removeDep(i)}>Delete</button>
+            </div>
+        {/each}
+    </div>
+{/if}
