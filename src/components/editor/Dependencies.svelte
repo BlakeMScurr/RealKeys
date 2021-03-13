@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { rightClickEvent } from "../../lib/util";
     import { createEventDispatcher } from "svelte";
+    import { graph } from "../../lib/math/graph";
 
     export let curriculae: Array<string> = new Array<string>();
     export let deps: Array<[number, number]> = new Array<[number, number]>();
@@ -15,6 +15,23 @@
             let tmp = curriculae[holding]
             curriculae[holding] = curriculae[i]
             curriculae[i] = tmp
+
+            console.log(JSON.stringify(deps))
+            deps.forEach((dep: [number, number]) => {
+                if (dep[0] === holding) {
+                     dep[0] = i
+                } else if (dep[0] === i) {
+                     dep[0] = holding
+                }
+                if (dep[1] === holding) {
+                     dep[1] = i
+                } else if (dep[1] === i) {
+                     dep[1] = holding
+                }
+            }) 
+            console.log(JSON.stringify(deps))
+            deps = deps
+            console.log(JSON.stringify(deps))
             curriculae = curriculae
         }
     }
@@ -26,10 +43,24 @@
         }
     }
 
-    function addDep(i) {
+    function addDep(i: number) {
         return (e) => {
             e.stopPropagation()
-            deps.push([selected, i])
+            let newDep: [number, number] = [selected, i]
+            try {
+                deps.forEach((dep: [number, number]) => {
+                    if (newDep[0] === dep[0] && newDep[1] === dep[1]) {
+                        throw new Error("dep already exists")
+                    }
+                })
+
+                let x = deps.slice()
+                x.push(newDep)
+                new graph(x).dag()
+                deps.push(newDep)
+            } catch (e) {
+                console.warn(e)
+            }
             deps = deps
         }
     }
@@ -89,6 +120,7 @@
     {/each}
 </div>
 
+<!-- TODO: render deps as a graph directly -->
 <div class="depHolder">
     {#each deps as dep, i}
         <div class="dep">
