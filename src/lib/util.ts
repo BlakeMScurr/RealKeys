@@ -171,3 +171,7 @@ export function mapStringifyReviver(key, value) {
     }
     return value;
 }
+
+export function rightClickEvent(e):boolean {
+    return e.which === 3 || e.button === 2
+}

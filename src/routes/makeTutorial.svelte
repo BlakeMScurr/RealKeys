@@ -3,7 +3,7 @@
     import { modeName } from "../lib/gameplay/mode/mode";
     import { plainToClass } from 'class-transformer';
     import 'reflect-metadata';
-import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
+    import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
 
     let mounted
     onMount(() => {
@@ -27,7 +27,6 @@ import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
     let startBar = 0;
     let endBar = 10000;
     let musicXMLInput
-    let fileInput
     let osmdModule
     let xmlfiles = new Map<string, string>();
     let sections: Map<string, Array<section>> = new Map([["mock", []]])
@@ -46,6 +45,7 @@ import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
                             priorState = <Map<string, Array<section>>>JSON.parse(<string>reader.result, mapStringifyReviver)
                             sections = priorState
                         } else if (file.name.includes(".musicxml")){
+                            // TODO: make musicxml rendering component
                             let parser = new DOMParser();
                             let xmlDoc = parser.parseFromString(<string>reader.result, "text/xml");
     
@@ -238,7 +238,6 @@ import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
                 <select name="mode" id="mode" bind:value={editMode}>
                     <option value={modeName.wait}>{modeName.wait}</option>
                     <option value={modeName.atSpeed}>{modeName.atSpeed}</option>
-                    <option value={modeName.pause}>{modeName.pause}</option>
                     <option value={modeName.play}>{modeName.play}</option>
                 </select>
                 <br>
