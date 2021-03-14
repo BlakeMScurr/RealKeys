@@ -5,8 +5,6 @@
     export let curriculae: Array<string> = new Array<string>();
     export let deps: Array<[number, number]> = new Array<[number, number]>();
 
-    $: internalCurriculae = curriculae.slice()
-    
     let holding = null
     let selected = 0
 
@@ -14,9 +12,9 @@
 
     function drop(i) {
         return () => {
-            let tmp = internalCurriculae[holding]
-            internalCurriculae[holding] = internalCurriculae[i]
-            internalCurriculae[i] = tmp
+            let tmp = curriculae[holding]
+            curriculae[holding] = curriculae[i]
+            curriculae[i] = tmp
 
             deps.forEach((dep: [number, number]) => {
                 if (dep[0] === holding) {
@@ -31,15 +29,14 @@
                 }
             })
             deps = deps
-            internalCurriculae = internalCurriculae.slice() // TODO: why do we need to slice in order for the ui to react?
-            dispatch("edit", { deps: deps, order: internalCurriculae })
+            curriculae = curriculae.slice() // TODO: why do we need to slice in order for the ui to react?
         }
     }
 
     function click(i) {
         return (e) => {
             selected = i
-            dispatch("select", internalCurriculae)
+            dispatch("select", curriculae[i])
         }
     }
 
@@ -62,7 +59,6 @@
                 console.warn(e)
             }
             deps = deps
-            dispatch("edit", { deps: deps, order: internalCurriculae})
         }
     }
 
@@ -70,7 +66,6 @@
         return () => {
             deps.splice(i, 1)
             deps = deps
-            dispatch("edit", { deps: deps, order: internalCurriculae})
         }
     }
 
@@ -108,7 +103,7 @@
 <h1>Sections</h1>
 
 <div class="curriculumHolder">
-    {#each internalCurriculae as curriculum, i}
+    {#each curriculae as curriculum, i}
         <div draggable={true}
             on:drop={drop(i)}
             on:dragover={e => e.preventDefault()}
@@ -135,7 +130,7 @@
     <div class="depHolder">
         {#each deps as dep, i}
             <div class="dep">
-                <p>{internalCurriculae[dep[0]]} -> {internalCurriculae[dep[1]]}</p>
+                <p>{curriculae[dep[0]]} -> {curriculae[dep[1]]}</p>
                 <button on:click={removeDep(i)}>Delete</button>
             </div>
         {/each}

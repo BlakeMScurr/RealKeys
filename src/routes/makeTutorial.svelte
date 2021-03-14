@@ -24,6 +24,8 @@
         }
     }
 
+    let deps = new Array<[number, number]>();
+    let curriculae = new Array<string>();
     let startBar = 0;
     let endBar = 10000;
     let musicXMLInput
@@ -42,8 +44,10 @@
                     let reader = new FileReader()
                     reader.onload = function() {
                         if (file.name.includes(".txt")) {
-                            priorState = <Map<string, Array<section>>>JSON.parse(<string>reader.result, mapStringifyReviver)
-                            sections = priorState
+                            priorState = JSON.parse(<string>reader.result, mapStringifyReviver)
+                            if (priorState.sections) sections = <Map<string, Array<section>>>priorState.sections
+                            if (priorState.curriculae) curriculae = priorState.curriculae
+                            if (priorState.deps) deps = priorState.deps
                         } else if (file.name.includes(".musicxml")){
                             // TODO: make musicxml rendering component
                             let parser = new DOMParser();
@@ -73,6 +77,7 @@
     
                             xmlfiles.set(file.name, new XMLSerializer().serializeToString(xmlDoc))
                             xmlfiles = xmlfiles
+                            curriculae = Array.from(xmlfiles.keys())
     
                             if (i === 0) {
                                 currentFile = file.name
@@ -209,11 +214,11 @@
     <label for="musicxml" class="btn">Import</label>
     <input type="file" class="fileinput" id="musicxml" multiple={true} on:input={handleMusicXMLInput} bind:this={musicXMLInput}>
 
-    <div class="btn" on:click={()=>{download(JSON.stringify(sections, mapStringifyReplacer), 'tutorial.txt', 'text/plain')}}>Export</div>
+    <div class="btn" on:click={()=>{download(JSON.stringify({sections: sections, deps: deps, curriculae: curriculae}, mapStringifyReplacer), 'tutorial.txt', 'text/plain')}}>Export</div>
     <a href="" id="exporter">{dltext}</a>
 </div>
 
-<Dependencies curriculae={Array.from(xmlfiles.keys())}></Dependencies>
+<Dependencies bind:deps bind:curriculae on:select={(e)=>{currentFile = e.detail; rerender()}}></Dependencies>
 
 {#if sections.get(currentFile).length !== 0}
     <h1>Sections</h1>
