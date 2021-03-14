@@ -29,10 +29,10 @@
                 } else if (dep[1] === i) {
                      dep[1] = holding
                 }
-            }) 
+            })
             deps = deps
-            internalCurriculae = internalCurriculae
-            dispatch("edit", { deps: deps, order: internalCurriculae})
+            internalCurriculae = internalCurriculae.slice() // TODO: why do we need to slice in order for the ui to react?
+            dispatch("edit", { deps: deps, order: internalCurriculae })
         }
     }
 

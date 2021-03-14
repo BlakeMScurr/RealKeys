@@ -213,20 +213,7 @@
     <a href="" id="exporter">{dltext}</a>
 </div>
 
-<Dependencies curriculae={Array.from(xmlfiles.keys()) on:edit={}}></Dependencies>
-
-<!-- {#if xmlfiles.size !== 0}
-    <h1>Files</h1>
-{/if}
-<div class="files">
-    {#each Array.from(xmlfiles.keys()) as file }
-        <div on:click={()=>{
-            currentFile = file;
-            rerender();
-        }}>{file}</div>
-    {/each}
-</div> -->
-
+<Dependencies curriculae={Array.from(xmlfiles.keys())}></Dependencies>
 
 {#if sections.get(currentFile).length !== 0}
     <h1>Sections</h1>
