@@ -2,7 +2,7 @@
     import {onMount} from "svelte"
     import { modeName } from "../lib/gameplay/mode/mode";
     import 'reflect-metadata';
-    import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
+    import { get, mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
     import Dependencies from "../components/editor/Dependencies.svelte";
 
     let mounted
@@ -48,6 +48,7 @@
                             if (priorState.sections) sections = <Map<string, Array<section>>>priorState.sections
                             if (priorState.curriculae) curriculae = priorState.curriculae
                             if (priorState.deps) deps = priorState.deps
+                            if (priorState.sequential) sequential = priorState.sequential
                         } else if (file.name.includes(".musicxml")){
                             // TODO: make musicxml rendering component
                             let parser = new DOMParser();
@@ -134,8 +135,10 @@
         draw()
     }
 
+    let sequential = new Map<string, boolean>();
+    let currSequential = false
     $: {
-        console.log(textEdit)
+        sequential.set(currentFile, currSequential)
     }
 </script>
 
@@ -214,56 +217,62 @@
     <label for="musicxml" class="btn">Import</label>
     <input type="file" class="fileinput" id="musicxml" multiple={true} on:input={handleMusicXMLInput} bind:this={musicXMLInput}>
 
-    <div class="btn" on:click={()=>{download(JSON.stringify({sections: sections, deps: deps, curriculae: curriculae}, mapStringifyReplacer), 'tutorial.txt', 'text/plain')}}>Export</div>
+    <div class="btn" on:click={()=>{download(JSON.stringify({sections: sections, deps: deps, curriculae: curriculae, sequential: sequential}, mapStringifyReplacer), 'tutorial.txt', 'text/plain')}}>Export</div>
     <a href="" id="exporter">{dltext}</a>
 </div>
 
-<Dependencies bind:deps bind:curriculae on:select={(e)=>{currentFile = e.detail; rerender()}}></Dependencies>
+<Dependencies bind:deps bind:curriculae on:select={(e)=>{currSequential=sequential.get(e.detail); currentFile = e.detail; rerender()}}></Dependencies>
 
 {#if sections.get(currentFile).length !== 0}
     <h1>Sections</h1>
+
+    <label for="sequential">Sequential</label>
+    <input id="sequential" type="checkbox" bind:checked={currSequential}>
 {/if}
-<div class="sections">
-    {#each sections.get(currentFile) as section, i}
-        <div class="section">
-            <h3>From {section.startBar} to {section.endBar}</h3>
 
-            {#if editingSection === i}
-                <select name="mode" id="mode" bind:value={editMode}>
-                    <option value={modeName.wait}>{modeName.wait}</option>
-                    <option value={modeName.atSpeed}>{modeName.atSpeed}</option>
-                    <option value={modeName.play}>{modeName.play}</option>
-                </select>
-                <br>
+<!-- TODO: show an indication of the task breakdown if it is sequential -->
+{#if !currSequential}
+    <div class="sections">
+        {#each sections.get(currentFile) as section, i}
+            <div class="section">
+                <h3>From {section.startBar} to {section.endBar}</h3>
 
-                <span class="textinput" contenteditable="true" type="text" bind:innerHTML={textEdit}></span>
+                {#if editingSection === i}
+                    <select name="mode" id="mode" bind:value={editMode}>
+                        <option value={modeName.wait}>{modeName.wait}</option>
+                        <option value={modeName.atSpeed}>{modeName.atSpeed}</option>
+                        <option value={modeName.play}>{modeName.play}</option>
+                    </select>
+                    <br>
 
-                <button on:click={()=>{
-                    sections.get(currentFile)[editingSection].text = textEdit.replaceAll("\<br\>", "\r\n")
-                    sections.get(currentFile)[editingSection].mode = editMode
-                    textEdit = ""
-                    editingSection = -1;
-                    startBar = 0;
-                    endBar = 10000;
-                    rerender();
-                }}>Save</button>
-            {:else}
-                <h4>{section.mode} mode</h4>
+                    <span class="textinput" contenteditable="true" type="text" bind:innerHTML={textEdit}></span>
 
-                <p>{section.text}<p>
+                    <button on:click={()=>{
+                        sections.get(currentFile)[editingSection].text = textEdit.replaceAll("\<br\>", "\r\n")
+                        sections.get(currentFile)[editingSection].mode = editMode
+                        textEdit = ""
+                        editingSection = -1;
+                        startBar = 0;
+                        endBar = 10000;
+                        rerender();
+                    }}>Save</button>
+                {:else}
+                    <h4>{section.mode} mode</h4>
 
-                <button on:click={()=>{
-                    editingSection = i;
-                    textEdit = section.text;
-                    startBar = section.startBar;
-                    endBar = section.endBar;
-                    rerender();
-                }}>Edit</button>
-            {/if}
-        </div>
-    {/each}
-</div>
+                    <p>{section.text}<p>
 
+                    <button on:click={()=>{
+                        editingSection = i;
+                        textEdit = section.text;
+                        startBar = section.startBar;
+                        endBar = section.endBar;
+                        rerender();
+                    }}>Edit</button>
+                {/if}
+            </div>
+        {/each}
+    </div>
+{/if}
 
 
 <div id="osmdContainer"></div>
