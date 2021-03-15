@@ -130,7 +130,8 @@
     <div class="depHolder">
         {#each deps as dep, i}
             <div class="dep">
-                <p>{curriculae[dep[0]]} -> {curriculae[dep[1]]}</p>
+                <!-- The direction here may appear to be reversed, 0 depends on 1 actually means that we go from 1 to 0 -->
+                <p>{curriculae[dep[1]]} -> {curriculae[dep[0]]} </p>
                 <button on:click={removeDep(i)}>Delete</button>
             </div>
         {/each}

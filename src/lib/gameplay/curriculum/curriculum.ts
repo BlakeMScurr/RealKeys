@@ -166,6 +166,14 @@ export function StrictCurriculum(tasks: Array<task>):Curriculum {
 
 // functions that split up tasks to be viewed better
 
+export function splitByName(tasks: Array<task>) {
+    return splitByX(tasks, (a: task,b: task):number=>{
+        if(a.getLessonURL() < b.getLessonURL()) { return -1; }
+        if(a.getLessonURL() > b.getLessonURL()) { return 1; }
+        return 0;
+    })
+}
+
 export function splitBySection(tasks: Array<task>) {
     return splitByX(tasks, (a: task,b: task):number=>{
         let sizeDifference = (a.getStartBar() - a.getEndBar()) - (b.getStartBar() - b.getEndBar())

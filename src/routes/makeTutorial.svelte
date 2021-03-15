@@ -1,28 +1,14 @@
 <script lang="ts">
     import {onMount} from "svelte"
     import { modeName } from "../lib/gameplay/mode/mode";
-    import 'reflect-metadata';
-    import { get, mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
+    import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
     import Dependencies from "../components/editor/Dependencies.svelte";
+    import type { section } from "../lib/gameplay/curriculum/builder";
 
     let mounted
     onMount(() => {
         mounted = true
     })
-
-    class section {
-        startBar: number;
-        endBar: number;
-        text: string;
-        mode: modeName;
-
-        constructor(startBar: number, endBar: number) {
-            this.startBar = startBar
-            this.endBar = endBar
-            this.text = ""
-            this.mode = modeName.wait
-        }
-    }
 
     let deps = new Array<[number, number]>();
     let curriculae = new Array<string>();
