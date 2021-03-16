@@ -1,24 +1,21 @@
 <script lang="ts">
-    import { onDestroy, onMount } from "svelte";
-    import { fade } from 'svelte/transition';
-    import { getSettings } from "../lib/storage";
-    import { highestPianoNote, lowestPianoNote, NewNote} from "../lib/music/theory/notes";
-    import { newPiano } from "../lib/track/instrument";
-    import { Colourer } from "../components/colours";
-    import type { TimedNotes } from "../lib/music/timed/timed";
-    import type { Note } from "../lib/music/theory/notes";
-    import Piano from "../components/pianoroll/piano/Piano.svelte";
-    import Loader from "../components/loader/Loader.svelte";
-    import Rules from "../components/Rules.svelte";
-    import GameLayout from "../components/GameLayout.svelte";
-    import { GameMaster } from "../stores/stores";
-    import { timedScoreKeeper } from "../lib/gameplay/score/score";
-    import { handleErrors, objToURLArgs } from "../lib/util";
-    import { goto, stores } from '@sapper/app'
-    import { range } from "../components/pianoroll/pianoRollHelpers";
-    import type { task } from "../lib/gameplay/curriculum/task";
-    import { defaultGame, gameDefinition, getGameDef, getUsedNotes, rellietracks } from "./gameHelpers";
+    import { goto,stores } from '@sapper/app';
+    import { onDestroy,onMount } from "svelte";
     import { writable } from "svelte/store";
+    import { fade } from 'svelte/transition';
+    import GameLayout from "../components/GameLayout.svelte";
+    import Loader from "../components/loader/Loader.svelte";
+    import Piano from "../components/pianoroll/piano/Piano.svelte";
+    import { range } from "../components/pianoroll/pianoRollHelpers";
+    import Rules from "../components/Rules.svelte";
+    import type { task } from "../lib/gameplay/curriculum/task";
+    import type { Note } from "../lib/music/theory/notes";
+    import { highestPianoNote,lowestPianoNote } from "../lib/music/theory/notes";
+    import { getSettings } from "../lib/storage";
+    import { newPiano } from "../lib/track/instrument";
+    import { handleErrors,objToURLArgs } from "../lib/util";
+    import { defaultGame,getGameDef,getUsedNotes,rellietracks } from "./gameHelpers";
+
 
     export let text: string = "";
     export let currentTask: task;
