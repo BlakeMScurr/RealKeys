@@ -116,9 +116,7 @@ export function getGameDef(courseName: string, currentTask: task, setPosition: (
                 gd.gm.tracks.newPlaybackTrack(name, notes, trackPiano, gd.gm)
             })
         })
-        gd.onNext = () => { gd.gm.play.play() }
-        gd.scorer = new timedScoreKeeper(gd.gm.position)
-        gd.gm.seek.set(-2000/get(<Readable<number>>gd.gm.duration)) // give space before the first note
+        
 
         switch (currentTask.getMode().modeType()) {
             case modeName.wait:
@@ -154,6 +152,10 @@ export function getGameDef(courseName: string, currentTask: task, setPosition: (
 
                 break;
             case modeName.atSpeed:
+                gd.onNext = () => { gd.gm.play.play() }
+                gd.scorer = new timedScoreKeeper(gd.gm.position)
+                gd.gm.seek.set(-2000/get(<Readable<number>>gd.gm.duration)) // give space before the first note
+
                 gd.gm.speed.set(currentTask.getMode().getSpeed()/100)
                 gd.gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
                     setNotes(notes)
