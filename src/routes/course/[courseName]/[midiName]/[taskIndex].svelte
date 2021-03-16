@@ -15,16 +15,14 @@
     export let midiName;
     export let taskIndex;
 
-    let taskPromise = new Promise<task>(()=>{})
+    let taskPromise = new Promise<[task, string]>(()=>{})
     onMount(() => {
         taskPromise = build(courseName).then((bp) => {
-            return bp.Curriculum().getLesson(midiName)[taskIndex]
+            return [bp.Curriculum().getLesson(midiName)[taskIndex], bp.sections.get(midiName)[taskIndex].text]
         })
     })
 </script>
 
-{#await taskPromise then currentTask}
-    <Game {currentTask} {courseName}></Game>
+{#await taskPromise then gameDesc}
+    <Game currentTask={gameDesc[0]} text={gameDesc[1]} {courseName}></Game>
 {/await}
-
-

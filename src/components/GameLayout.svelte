@@ -3,13 +3,13 @@
     import type { TimedNotes } from "../lib/music/timed/timed";
     import ScoreBar from "../components/Generic/ScoreBar.svelte";
     import type { Colourer } from '../components/colours';
-    import type { timedScoreKeeper } from "../lib/gameplay/score/score";
+    import type { scorer, timedScoreKeeper } from "../lib/gameplay/score/score";
 
     export let tracks: Map<string, TimedNotes>;
     export let colourer: Colourer;
     export let duration: number;
     export let position: number;
-    export let scorer: timedScoreKeeper;
+    export let scorer: scorer;
     export let keys;
 
     let score = 0

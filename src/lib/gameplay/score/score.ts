@@ -13,7 +13,8 @@ export interface scorer {
     validRatio():number
     inputChange()
     recordNoteState(note: Note, s: state, position: number)
-}
+    subscribe(f)
+}   
 
 const defaultLeniency = 0.85
 // TODO: create an explicit link between the two types of score keeps and our modes

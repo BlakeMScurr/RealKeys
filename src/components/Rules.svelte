@@ -7,7 +7,7 @@
     import { modeName } from "../lib/gameplay/mode/mode";
 
     export let currentTask: task;
-    export let nextable;
+    export let nextable: Promise<boolean>;
 
     let dispatch = createEventDispatcher()
 
@@ -65,25 +65,26 @@
 
 <div class="centerer">
     <div class="descParent">
-        <h2>{currentTask.lessonURL}</h2>
+        <h2>{currentTask.getLessonURL()}</h2>
         <div class="taskDesc">
-            <p>Bars {currentTask.startBar}-{currentTask.endBar}</p>
-            <p>{describeHand(currentTask.hand)}</p>
-            <p>{currentTask.mode.description()}</p>
+            <p>Bars {currentTask.getStartBar()}-{currentTask.getEndBar()}</p>
+            <p>{describeHand(currentTask.getHand())}</p>
+            <p>{currentTask.getMode().description()}</p>
         </div>
     </div>
     <div class="textCenterer">
-        {#if currentTask.mode.modeType() == modeName.wait}
+        {#if currentTask.getMode().modeType() == modeName.wait}
             <h3>Tap the <mark>orange</mark> keys at your own pace</h3>
         {:else}
             <h3>Play the keys as the notes reach them</h3>
         {/if}
         <div class="button" on:click={handleNext}>
-            {#if nextable}
+            {#await nextable}
+            {:then}
                 <div in:fade>   
                     <ReccomendedButton text="Start" ></ReccomendedButton>
                 </div>
-            {/if}
+            {/await}
         </div>
     </div>
     <div></div> <!-- ghost :) -->
