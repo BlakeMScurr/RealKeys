@@ -1,10 +1,11 @@
 import { objToURLArgs } from "../../util";
 import { makeMode, modeEqualOrHarder, playbackMode, equalModes } from "../mode/mode";
+import type { methodologyName } from "./methodology/methodology";
 
 let existingTasks = new Map<string, internalTask>();
 // NewTask ensures that all tasks having the same data also use the same reference so that they are well behaved in maps
-export function NewTask(startBar: number, endBar: number, hand: hand, lessonURL: string, mode: playbackMode):task {
-    let it = new internalTask(startBar, endBar, hand, lessonURL, mode)
+export function NewTask(startBar: number, endBar: number, hand: hand, lessonURL: string, mode: playbackMode, methodology: methodologyName):task {
+    let it = new internalTask(startBar, endBar, hand, lessonURL, mode, methodology)
     let str = JSON.stringify(it.serialisable())
     if (existingTasks.has(str)) {
         return existingTasks.get(str)
@@ -18,6 +19,7 @@ export interface task {
     getStartBar():number
     getEndBar():number
     getLessonURL():string
+    getMethodology():methodologyName
 
     queryString():string
     equals(t: task):boolean
@@ -32,13 +34,15 @@ class internalTask {
     endBar: number;
     hand: hand;
     mode: playbackMode;
+    methodology: methodologyName;
 
-    constructor(startBar: number, endBar: number, hand: hand, lessonURL: string, mode: playbackMode) {
+    constructor(startBar: number, endBar: number, hand: hand, lessonURL: string, mode: playbackMode, methodology: methodologyName) {
         this.startBar = startBar
         this.endBar = endBar
         this.hand = hand
         this.lessonURL = lessonURL
         this.mode = mode
+        this.methodology = methodology
     }
 
     queryString():string {
@@ -95,10 +99,14 @@ class internalTask {
     getLessonURL():string {
         return this.lessonURL
     }
+
+    getMethodology():methodologyName {
+        return this.methodology
+    }
 }
 
 export function urlToTask(query):task {
-    return NewTask(parseInt(query.startBar), parseInt(query.endBar), makeHand(query.hand), query.lessonURL, makeMode(query.mode))
+    return NewTask(parseInt(query.startBar), parseInt(query.endBar), makeHand(query.hand), query.lessonURL, makeMode(query.mode), query.methodology)
 }
 
 export function makeHand(h: string):hand {

@@ -31,7 +31,7 @@ export class curriculum {
     // Applies a certain amount of progress to a curriculum, and shows the all the tasks including those incomplete
     recordScore(t: task, score: number) {
         if (!this.tasks.has(t)) {
-            throw new Error(`Couldn't find task ${t} in curriculum ${this}`)
+            throw new Error(`Couldn't find task ${JSON.stringify(t)} in curriculum ${JSON.stringify(this)}`)
         }
         if (this.tasks.get(t) < score) {
             this.tasks.set(t, score)
@@ -57,7 +57,7 @@ export class curriculum {
 
     copyInScore(t: task, score: number) {
         if (!this.tasks.has(t)) {
-            throw new Error(`Couldn't find task ${t} in curriculum ${this}`)
+            throw new Error(`Couldn't find task ${JSON.stringify(t)} in curriculum ${JSON.stringify(this)}`)
         }
         this.tasks.set(t, score)
     }

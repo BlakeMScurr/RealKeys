@@ -10,14 +10,18 @@
         mounted = true
     })
 
+    // TODO: make these part of a blueprints object
+    // The trouble is that would make `bind:curriculae` into `bind:bp.curriculumNames` which is impossible in svelte
     let deps = new Array<[number, number]>();
     let curriculae = new Array<string>();
+    let sections: Map<string, Array<section>> = new Map([["mock", []]])
+    let sequential = new Map<string, boolean>();
+
     let startBar = 0;
     let endBar = 10000;
     let musicXMLInput
     let osmdModule
     let xmlfiles = new Map<string, string>();
-    let sections: Map<string, Array<section>> = new Map([["mock", []]])
     let currentFile = "mock"
     function handleMusicXMLInput() {    
         if (mounted) {
@@ -122,7 +126,6 @@
         draw()
     }
 
-    let sequential = new Map<string, boolean>();
     let currSequential = false
     $: {
         sequential.set(currentFile, currSequential)

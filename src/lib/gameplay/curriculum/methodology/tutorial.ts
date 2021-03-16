@@ -1,6 +1,7 @@
 import { makeMode, modeName } from "../../mode/mode";
 import { curriculum } from "../curriculum";
 import { hand, NewTask, task } from "../task";
+import { methodologyName } from "./methodology";
 
 // a tutorial produces is a curriculum that walks through a given MIDI file using various modalities for each section
 export class tutorial {
@@ -21,7 +22,7 @@ export class tutorial {
                 throw new Error(`end bar ${section[0]} before start bar ${startBar}`)
             }
             // TODO: generalise to different hands
-            tasks.push(NewTask(startBar, section[0], hand.Right, this.midiURL, makeMode(section[1])))
+            tasks.push(NewTask(startBar, section[0], hand.Right, this.midiURL, makeMode(section[1]), methodologyName.tutorial))
             startBar = section[0]
         })
 

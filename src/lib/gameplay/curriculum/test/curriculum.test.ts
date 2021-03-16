@@ -12,7 +12,7 @@ test("curriculum.getLessons", () => {
 })
 
 test("curriculum.getLesson", () => {
-    expect(trivialCurriculum().getLesson("mockTask")).toEqual([{"endBar": 2, "hand": "Right", "lessonURL": "mockTask", "mode": {}, "startBar": 1}])
+    expect(trivialCurriculum().getLesson("mockTask")).toEqual([{"endBar": 2, "hand": "Right", "lessonURL": "mockTask", "mode": {}, "startBar": 1, "methodology": "none"}])
 })
 
 test("curriculum.recordScore", () => {
@@ -174,12 +174,11 @@ test("splitbyHand", () => {
 
     expect(splitByHand(Array.from(c.getTasks().keys()))).toEqual([
         [
-            NewTask(1, 2, hand.Right, "mockTask", modeFactory(modeName.wait)),
-            NewTask(1, 3, hand.Right, "mockTask", modeFactory(modeName.wait)),
-        ], 
-        [
-            NewTask(1, 2, hand.Left, "mockTask", modeFactory(modeName.wait)),
-            NewTask(1, 3, hand.Left, "mockTask", modeFactory(modeName.wait)),
+            newTask(1,2),
+            newTask(1,3),
+        ],[
+            newTask(1,2, hand.Left),
+            newTask(1,3, hand.Left),
         ]
     ])
 })

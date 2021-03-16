@@ -2,6 +2,7 @@ import { defaultLessons } from "./gameplay/curriculum/data"
 import { Curriculum, curriculum } from "./gameplay/curriculum/curriculum";
 import { NewTask, task } from "./gameplay/curriculum/task";
 import { makeMode } from "./gameplay/mode/mode";
+import { makeMethodology, methodologyName } from "./gameplay/curriculum/methodology/methodology";
 
 const settingsKey = "settings"
 export function getSettings() {
@@ -27,7 +28,7 @@ export function getProgress():Curriculum {
         let prog = JSON.parse(p)
         prog.forEach((t: any) => {
             try {
-                let tsk = NewTask(t.task.startBar, t.task.endBar, t.task.hand, t.task.lessonURL, makeMode(t.task.mode))
+                let tsk = NewTask(t.task.startBar, t.task.endBar, t.task.hand, t.task.lessonURL, makeMode(t.task.mode), makeMethodology(t.task.methodology))
                 c.copyInScore(tsk, t.score)
             } catch (e) {
                 console.warn("Failed to copy in score for task" + JSON.stringify(t) + e)
@@ -48,10 +49,12 @@ class curriculumWrapper {
 
         let serialisable = []
         this.curriculum.getTasks().forEach((score: number, t: task)=> {
-            serialisable.push({
-                task: t.serialisable(),
-                score: score,
-            })
+            if (score > 0) {
+                serialisable.push({
+                    task: t.serialisable(),
+                    score: score,
+                })
+            }
         })
         localStorage.setItem(progressKey, JSON.stringify(serialisable))
     }

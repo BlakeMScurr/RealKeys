@@ -25,6 +25,7 @@
     import { getProgress } from "../lib/storage";
     import { modeName } from "../lib/gameplay/mode/mode";
 
+    export let text: string = "";
     export let currentTask: task;
     export let courseName: string = "Tutorials";
     const { session, page } = stores();
@@ -49,7 +50,7 @@
     let highest = NewNote("C", 5)
 
     let onNext = () => {}
-    let started = false
+    let started = text !== ""
     function handleNext() {
         started = true
         onNext()

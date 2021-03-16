@@ -10,6 +10,7 @@ import { modeFactory, modeName } from "../../mode/mode";
 import { StrictCurriculum } from "../curriculum";
 import type { Curriculum } from "../curriculum";
 import { hand, NewTask, task } from "../task";
+import { methodologyName } from "./methodology";
 
 export class SequentialCurriculum {
     pieces: Array<PieceBreakdown>;
@@ -26,17 +27,17 @@ export class SequentialCurriculum {
                     const startDelineator = layer[i-1];
                     const endDelineator = layer[i];
                     
-                    tasks.push(NewTask(startDelineator, endDelineator, hand.Right, piece.pieceName, modeFactory(modeName.wait)))
-                    tasks.push(NewTask(startDelineator, endDelineator, hand.Right, piece.pieceName, modeFactory(modeName.atSpeed, 75)))
-                    tasks.push(NewTask(startDelineator, endDelineator, hand.Right, piece.pieceName, modeFactory(modeName.atSpeed, 100)))
+                    tasks.push(NewTask(startDelineator, endDelineator, hand.Right, piece.pieceName, modeFactory(modeName.wait), methodologyName.sequential))
+                    tasks.push(NewTask(startDelineator, endDelineator, hand.Right, piece.pieceName, modeFactory(modeName.atSpeed, 75), methodologyName.sequential))
+                    tasks.push(NewTask(startDelineator, endDelineator, hand.Right, piece.pieceName, modeFactory(modeName.atSpeed, 100), methodologyName.sequential))
 
-                    tasks.push(NewTask(startDelineator, endDelineator, hand.Left, piece.pieceName, modeFactory(modeName.wait)))
-                    tasks.push(NewTask(startDelineator, endDelineator, hand.Left, piece.pieceName, modeFactory(modeName.atSpeed, 75)))
-                    tasks.push(NewTask(startDelineator, endDelineator, hand.Left, piece.pieceName, modeFactory(modeName.atSpeed, 100)))
+                    tasks.push(NewTask(startDelineator, endDelineator, hand.Left, piece.pieceName, modeFactory(modeName.wait), methodologyName.sequential))
+                    tasks.push(NewTask(startDelineator, endDelineator, hand.Left, piece.pieceName, modeFactory(modeName.atSpeed, 75), methodologyName.sequential))
+                    tasks.push(NewTask(startDelineator, endDelineator, hand.Left, piece.pieceName, modeFactory(modeName.atSpeed, 100), methodologyName.sequential))
 
-                    tasks.push(NewTask(startDelineator, endDelineator, hand.Both, piece.pieceName, modeFactory(modeName.wait)))
-                    tasks.push(NewTask(startDelineator, endDelineator, hand.Both, piece.pieceName, modeFactory(modeName.atSpeed, 75)))
-                    tasks.push(NewTask(startDelineator, endDelineator, hand.Both, piece.pieceName, modeFactory(modeName.atSpeed, 100)))
+                    tasks.push(NewTask(startDelineator, endDelineator, hand.Both, piece.pieceName, modeFactory(modeName.wait), methodologyName.sequential))
+                    tasks.push(NewTask(startDelineator, endDelineator, hand.Both, piece.pieceName, modeFactory(modeName.atSpeed, 75), methodologyName.sequential))
+                    tasks.push(NewTask(startDelineator, endDelineator, hand.Both, piece.pieceName, modeFactory(modeName.atSpeed, 100), methodologyName.sequential))
                 }
             })
         })

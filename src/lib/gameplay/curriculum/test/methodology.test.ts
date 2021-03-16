@@ -1,6 +1,7 @@
 import { graph } from "../../../math/graph"
 import { modeFactory, modeName } from "../../mode/mode"
 import { compose } from "../methodology/compose"
+import { methodologyName } from "../methodology/methodology"
 import { PieceBreakdown, SequentialCurriculum } from "../methodology/sequential"
 import { tutorial } from "../methodology/tutorial"
 import { hand, NewTask, task } from "../task"
@@ -21,15 +22,15 @@ test("PieceBreakdown", ()=>{
 test("Sequential Curriculum.next", () => {
     let c = new SequentialCurriculum([new PieceBreakdown("mock", [[1,2]])]).curriculum()
 
-    let t1 = NewTask(1,2, hand.Right, "mock", modeFactory(modeName.wait))
-    let t2 = NewTask(1,2, hand.Right, "mock", modeFactory(modeName.atSpeed, 75))
-    let t3 = NewTask(1,2, hand.Right, "mock", modeFactory(modeName.atSpeed, 100))
-    let t4 = NewTask(1,2, hand.Left, "mock", modeFactory(modeName.wait))
-    let t5 = NewTask(1,2, hand.Left, "mock", modeFactory(modeName.atSpeed, 75))
-    let t6 = NewTask(1,2, hand.Left, "mock", modeFactory(modeName.atSpeed, 100))
-    let t7 = NewTask(1,2, hand.Both, "mock", modeFactory(modeName.wait))
-    let t8 = NewTask(1,2, hand.Both, "mock", modeFactory(modeName.atSpeed, 75))
-    let t9 = NewTask(1,2, hand.Both, "mock", modeFactory(modeName.atSpeed, 100))
+    let t1 = NewTask(1,2, hand.Right, "mock", modeFactory(modeName.wait), methodologyName.sequential)
+    let t2 = NewTask(1,2, hand.Right, "mock", modeFactory(modeName.atSpeed, 75), methodologyName.sequential)
+    let t3 = NewTask(1,2, hand.Right, "mock", modeFactory(modeName.atSpeed, 100), methodologyName.sequential)
+    let t4 = NewTask(1,2, hand.Left, "mock", modeFactory(modeName.wait), methodologyName.sequential)
+    let t5 = NewTask(1,2, hand.Left, "mock", modeFactory(modeName.atSpeed, 75), methodologyName.sequential)
+    let t6 = NewTask(1,2, hand.Left, "mock", modeFactory(modeName.atSpeed, 100), methodologyName.sequential)
+    let t7 = NewTask(1,2, hand.Both, "mock", modeFactory(modeName.wait), methodologyName.sequential)
+    let t8 = NewTask(1,2, hand.Both, "mock", modeFactory(modeName.atSpeed, 75), methodologyName.sequential)
+    let t9 = NewTask(1,2, hand.Both, "mock", modeFactory(modeName.atSpeed, 100), methodologyName.sequential)
 
     expect(c.next()).toEqual(t1)
     c.recordScore(t1, 100)
@@ -73,10 +74,10 @@ test('Tutorial.locked', () => {
         [5, modeName.wait],
     ]).curriculum()
 
-    let t1 = NewTask(1,2, hand.Right, "mock", modeFactory(modeName.wait))
-    let t2 = NewTask(2,3, hand.Right, "mock", modeFactory(modeName.wait))
-    let t3 = NewTask(3,4, hand.Right, "mock", modeFactory(modeName.wait))
-    let t4 = NewTask(4,5, hand.Right, "mock", modeFactory(modeName.wait))
+    let t1 = NewTask(1,2, hand.Right, "mock", modeFactory(modeName.wait), methodologyName.tutorial)
+    let t2 = NewTask(2,3, hand.Right, "mock", modeFactory(modeName.wait), methodologyName.tutorial)
+    let t3 = NewTask(3,4, hand.Right, "mock", modeFactory(modeName.wait), methodologyName.tutorial)
+    let t4 = NewTask(4,5, hand.Right, "mock", modeFactory(modeName.wait), methodologyName.tutorial)
 
 
     expect(c.getLessons()).toEqual(["mock"])
@@ -122,10 +123,10 @@ test("composite_tutorial", () => {
 
     let c = compose([a, b], new graph([[1, 0]]).dag())
 
-    let t1 = NewTask(1,2, hand.Right, "first", modeFactory(modeName.wait))
-    let t2 = NewTask(2,3, hand.Right, "first", modeFactory(modeName.wait))
-    let t3 = NewTask(1,2, hand.Right, "second", modeFactory(modeName.wait))
-    let t4 = NewTask(2,3, hand.Right, "second", modeFactory(modeName.wait))
+    let t1 = NewTask(1,2, hand.Right, "first", modeFactory(modeName.wait), methodologyName.tutorial)
+    let t2 = NewTask(2,3, hand.Right, "first", modeFactory(modeName.wait), methodologyName.tutorial)
+    let t3 = NewTask(1,2, hand.Right, "second", modeFactory(modeName.wait), methodologyName.tutorial)
+    let t4 = NewTask(2,3, hand.Right, "second", modeFactory(modeName.wait), methodologyName.tutorial)
 
     expect(c.unlocked(t1)).toBe(true)
     expect(c.unlocked(t2)).toBe(false)
@@ -158,9 +159,9 @@ test("composite_mixed", () => {
 
     let b = new SequentialCurriculum([new PieceBreakdown("piece", [[1,2]])]).curriculum()
 
-    let t0 = NewTask(1,2, hand.Right, "tutorial", modeFactory(modeName.wait))
-    let t1 = NewTask(1,2, hand.Right, "piece", modeFactory(modeName.wait))
-    let t2 = NewTask(1,2, hand.Right, "piece", modeFactory(modeName.atSpeed, 75))
+    let t0 = NewTask(1,2, hand.Right, "tutorial", modeFactory(modeName.wait), methodologyName.tutorial)
+    let t1 = NewTask(1,2, hand.Right, "piece", modeFactory(modeName.wait), methodologyName.sequential)
+    let t2 = NewTask(1,2, hand.Right, "piece", modeFactory(modeName.atSpeed, 75), methodologyName.sequential)
 
     let c = compose([a, b], new graph([[1, 0]]))
     

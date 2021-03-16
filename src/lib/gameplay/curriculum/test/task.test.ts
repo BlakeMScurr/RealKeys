@@ -14,8 +14,8 @@ test("task.equalOrHarder", () => {
 })
 
 test("task.queryString", () => {
-    expect(trivialTask().queryString()).toBe("startBar=1&endBar=2&hand=Right&lessonURL=mockTask&mode=wait")
-    expect(trivialTask(12345, 67890).queryString()).toBe("startBar=12345&endBar=67890&hand=Right&lessonURL=mockTask&mode=wait")
+    expect(trivialTask().queryString()).toBe("startBar=1&endBar=2&hand=Right&lessonURL=mockTask&mode=wait&methodology=none")
+    expect(trivialTask(12345, 67890).queryString()).toBe("startBar=12345&endBar=67890&hand=Right&lessonURL=mockTask&mode=wait&methodology=none")
 })
 
 test("task.urlToTask", () => {

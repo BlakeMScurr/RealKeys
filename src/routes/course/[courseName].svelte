@@ -14,6 +14,8 @@
     import { build } from "../../lib/gameplay/curriculum/methodology/builder";
     import OptionButton from "../../components/Generic/Buttons/OptionButton.svelte";
     import { goto } from "@sapper/app";
+    import type { task } from "../../lib/gameplay/curriculum/task";
+import { methodologyName } from "../../lib/gameplay/curriculum/methodology/methodology";
 
     export let courseName;
 
@@ -24,6 +26,14 @@
             return b.Curriculum()
         })
     })
+
+    function gotoSubcurriculum(t: task) {
+        return () => {
+            let taskUrl = "/course/" + courseName + "/" + t.getLessonURL()
+            if (t.getMethodology() === methodologyName.tutorial) taskUrl += "/0"
+            goto(taskUrl)
+        }
+    }
 </script>
 
 <style lang="scss">
@@ -63,12 +73,12 @@
                 <ScoreCircle></ScoreCircle>
                 {#if curriculum.unlocked(lesson[0])}
                     {#if curriculum.getScore(lesson[0]) === 100}
-                        <OptionButton text="Practice" on:click={()=>{goto("/course/" + courseName + "/" + lesson[0].getLessonURL())}}></OptionButton>
+                        <OptionButton text="Practice" on:click={gotoSubcurriculum(lesson[0])}></OptionButton>
                     {:else}
-                        <ReccomendedButton text="LEARN" on:click={()=>{goto("/course/" + courseName + "/" + lesson[0].getLessonURL())}}></ReccomendedButton>
+                        <ReccomendedButton text="LEARN" on:click={gotoSubcurriculum(lesson[0])}></ReccomendedButton>
                     {/if}
                 {:else}
-                    <OptionButton text="TRY" on:click={()=>{goto("/course/" + courseName + "/" + lesson[0].getLessonURL())}}></OptionButton>
+                    <OptionButton text="TRY" on:click={gotoSubcurriculum(lesson[0])}></OptionButton>
                 {/if}
             </div>
         {/each}
