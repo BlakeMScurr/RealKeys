@@ -3,7 +3,7 @@
     import { modeName } from "../lib/gameplay/mode/mode";
     import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
     import Dependencies from "../components/editor/Dependencies.svelte";
-    import type { section } from "../lib/gameplay/curriculum/builder";
+    import { section } from "../lib/gameplay/curriculum/methodology/builder";
 
     let mounted
     onMount(() => {
@@ -57,17 +57,18 @@
                                 } // do big deal here, just shitty programming
                             })
     
+                            let filename = file.name.replace(".musicxml", "")
                             if (!priorState) {
-                                sections.set(file.name, theseSections)
+                                sections.set(filename, theseSections)
                                 sections = sections
                             }
     
-                            xmlfiles.set(file.name, new XMLSerializer().serializeToString(xmlDoc))
+                            xmlfiles.set(filename, new XMLSerializer().serializeToString(xmlDoc))
                             xmlfiles = xmlfiles
                             curriculae = Array.from(xmlfiles.keys())
     
                             if (i === 0) {
-                                currentFile = file.name
+                                currentFile = filename
                                 draw()
                             }
                         }

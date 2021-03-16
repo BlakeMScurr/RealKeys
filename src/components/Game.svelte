@@ -26,10 +26,10 @@
     import { modeName } from "../lib/gameplay/mode/mode";
 
     export let currentTask: task;
-    export let courseName: string;
+    export let courseName: string = "Tutorials";
     const { session, page } = stores();
 
-    // TODO: there's so much state here it's disgusting, we neeeeed to tidy this up!!!
+    // TODO: there's so much state here it's disgusting, we neeeeed to tidy this up!!! Try using a promise of a single object or something.
     // required as trying to creating instruments requires window.AudioContext, and errors in preprocessing on the server
     let piano;
     let loading = true
@@ -120,7 +120,7 @@
             scorer = new timedScoreKeeper(gm.position)
             gm.seek.set(-2000/get(<Readable<number>>gm.duration)) // give space before the first note
     
-            switch (currentTask.mode.modeType()) {
+            switch (currentTask.getMode().modeType()) {
                 case modeName.wait:
                     gm.seek.set(0) // TODO: go to the first note
                     gm.waitMode.set(true)
