@@ -10,6 +10,7 @@
     import type { task } from "../lib/gameplay/curriculum/task";
     import { splitByHand, splitBySection } from "../lib/gameplay/curriculum/curriculum";
     import type { Curriculum } from "../lib/gameplay/curriculum/curriculum";
+import { defaultLessons } from "../lib/gameplay/curriculum/data";
 
     const { page } = stores();
     const query = $page.query;
@@ -17,7 +18,7 @@
     let lesson: Array<task> = []
     let curric: Curriculum;
     onMount(()=>{
-        curric = getProgress()
+        curric = getProgress(defaultLessons())
         lesson = curric.getLesson(query.lesson)
     })
 

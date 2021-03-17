@@ -5,6 +5,7 @@
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
     import ScoreBar from "../components/Generic/ScoreBar.svelte";
     import type { Curriculum } from "../lib/gameplay/curriculum/curriculum";
+    import { defaultLessons } from "../lib/gameplay/curriculum/data";
     import { urlToTask } from "../lib/gameplay/curriculum/task";
     import { getProgress } from "../lib/storage";
     import { get } from "../lib/util";
@@ -17,7 +18,7 @@
     let progress: Curriculum;
     
     onMount(()=>{
-        progress = getProgress()
+        progress = getProgress(defaultLessons())
     })
 
     // TODO: make sure this is valid regardless of how one gets to this page. Currently refresh kills the session and makes the next leve button unusable
@@ -26,10 +27,10 @@
     $: heading = score === 100 ? "Congratulations!" : "Almost there!"
     let paragraph;
     $: {
-        if (progress && progress.next((t)=>{ return t.lessonURL === task.lessonURL }) === null) {
-            paragraph = `You learned ${task.lessonURL} is its entirety!`
+        if (progress && progress.next((t)=>{ return t.getLessonURL() === task.getLessonURL() }) === null) {
+            paragraph = `You learned ${task.getLessonURL()} is its entirety!`
         } else {
-            paragraph = score === 100 ? `You learned ${task.hand} of bars ${task.startBar}-${task.endBar}` : undefined
+            paragraph = score === 100 ? `You learned ${task.getHand()} of bars ${task.getStartBar()}-${task.getEndBar()}` : undefined
         }
     }
 
@@ -67,13 +68,13 @@
     </div>
     <div>
         {#if score < 100}
-            <OptionButton text="Select Level" on:click={()=>{goto("lesson?lesson=" + task.lessonURL)}}></OptionButton>
+            <OptionButton text="Select Level" on:click={()=>{goto("lesson?lesson=" + task.getLessonURL())}}></OptionButton>
             <ReccomendedButton text="Retry" on:click={()=>{goto("game?" + task.queryString())}}></ReccomendedButton>
         {:else}
             {#if progress}
-                {#if progress.next((t)=>{ return t.lessonURL === task.lessonURL })}
-                    <OptionButton text="Select Level" on:click={()=>{goto("lesson?lesson=" + task.lessonURL)}}></OptionButton>
-                    <ReccomendedButton text="Next Level" on:click={()=>{goto("game?" + progress.next((t)=>{ return t.lessonURL === task.lessonURL }).queryString())}}></ReccomendedButton>
+                {#if progress.next((t)=>{ return t.getLessonURL() === task.getLessonURL() })}
+                    <OptionButton text="Select Level" on:click={()=>{goto("lesson?lesson=" + task.getLessonURL())}}></OptionButton>
+                    <ReccomendedButton text="Next Level" on:click={()=>{goto("game?" + progress.next((t)=>{ return t.getLessonURL() === task.getLessonURL() }).queryString())}}></ReccomendedButton>
                 {:else}
                     <OptionButton text="Home" on:click={()=>{goto("/")}}></OptionButton>
                     <ReccomendedButton text="New Lesson" on:click={()=>{goto("game?" + progress.next().queryString())}}></ReccomendedButton>

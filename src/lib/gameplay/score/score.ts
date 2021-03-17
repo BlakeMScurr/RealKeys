@@ -13,7 +13,7 @@ export interface scorer {
     validRatio():number
     inputChange()
     recordNoteState(note: Note, s: state, position: number)
-    subscribe(f)
+    subscribe(f) // TODO: return an unsubscriber
 }   
 
 const defaultLeniency = 0.85
@@ -180,3 +180,10 @@ export class untimedScoreKeeper {
         return this.invalidSum
     }
 }
+
+export class staticScoreKeeper {
+    validRatio():number { return 1 }
+    inputChange() {}
+    recordNoteState(note: Note, s: state, position: number) {}
+    subscribe(f){}
+}   

@@ -1,8 +1,21 @@
+import { Readable, writable } from "svelte/store"
+import type { GameMaster } from "../../../stores/stores"
+import { handleNotes, nextWaitModeNote } from "../../../stores/waitMode"
+import type { Note } from "../../music/theory/notes"
+import type { TimedNotes } from "../../music/timed/timed"
+import { get } from "../../util"
+import { scorer, staticScoreKeeper, timedScoreKeeper, untimedScoreKeeper } from "../score/score"
+
 export interface playbackMode {
-    modeType():modeName
+    modeName():modeName
     getSpeed():number
     toString():string // for serialisation, particularly in URLs
     description():string
+
+    // static style methods that define the mode's operation
+    scorer(position: Readable<number>):scorer
+    handleNotes(gm: GameMaster, tn: TimedNotes):(event: any)=>void
+    setup(gm: GameMaster, activeTrack: TimedNotes, rt: string[], setNotes: (notes: Map<Note, string>)=>void):()=>void // sets up the game and returns a function to be run when the user starts the game
 }
 
 export enum modeName {
@@ -33,11 +46,11 @@ export function modeFactory(name: modeName, speed?: number):playbackMode {
 // TODO: can I made these methods on playback mode without redundantly adding it to every single class?
 // TODO: can I overload the >= operator to call this function?
 export function modeEqualOrHarder(a: playbackMode, b: playbackMode) {
-    return (a.modeType() === b.modeType() && a.getSpeed() >= b.getSpeed()) || (a.modeType() === modeName.atSpeed && b.modeType() === modeName.wait)
+    return (a.modeName() === b.modeName() && a.getSpeed() >= b.getSpeed()) || (a.modeName() === modeName.atSpeed && b.modeName() === modeName.wait)
 }
 
 export function equalModes(m: playbackMode, n: playbackMode): boolean {
-    return  m.modeType() === n.modeType() && m.getSpeed() === n.getSpeed()
+    return  m.modeName() === n.modeName() && m.getSpeed() === n.getSpeed()
 }
 
 class atSpeedMode {
@@ -49,33 +62,62 @@ class atSpeedMode {
         this.speed = speed
     }
 
-    modeType():modeName {
-        return modeName.atSpeed
-    }
-
-    getSpeed():number {
-        return this.speed
-    }
-
-    toString():string {
-        return "atSpeed" + this.getSpeed()
-    }
-
-    description():string {
-        return `At ${this.getSpeed()}% speed`
+    modeName():modeName { return modeName.atSpeed }
+    getSpeed():number { return this.speed }
+    toString():string { return "atSpeed" + this.getSpeed() }
+    description():string { return `At ${this.getSpeed()}% speed` }
+    scorer(position: Readable<number>):scorer { return new timedScoreKeeper(position) }
+    handleNotes(gm: GameMaster, tm: TimedNotes):(event: any)=>void { return ()=>{} }
+    setup(gm: GameMaster, activeTrack: TimedNotes, rt: string[], setNotes: (notes: Map<Note, string>)=>void):()=>void {
+        gm.seek.set(-2000/get(<Readable<number>>gm.duration)) // give space before the first note
+        gm.speed.set(this.getSpeed()/100)
+        gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
+            setNotes(notes)
+        })
+        return () => { gm.play.play() }
     }
 }
 
 class waitMode {
-    modeType():modeName { return modeName.wait }
+    modeName():modeName { return modeName.wait }
     getSpeed():number { return 0 }
     toString():string { return "wait" }
     description():string { return "At your own pace" }
+    scorer():scorer { return new untimedScoreKeeper() }
+    handleNotes(gm: GameMaster, tn: TimedNotes):(event: any)=>void { return handleNotes(gm, tn)}
+    setup(gm: GameMaster, activeTrack: TimedNotes, rt: string[], setNotes: (notes: Map<Note, string>)=>void):()=>void {
+        gm.seek.set(0) // TODO: go to the first note
+        gm.waitMode.set(true)
+        gm.tracks.enable(rt)
+
+        return () => {
+            //subscribe to the notes needed to progress
+            let stateSetter = writable(new Map<Note, string>());
+            gm.seek.subscribe(() => {
+                let state = new Map<Note, string>()
+                let nextState = nextWaitModeNote(gm, activeTrack)
+                nextState.sameStart.forEach(note => {
+                    state.set(note.note, "expecting")
+                })
+                nextState.heldNotes.forEach((_, note) => {
+                    state.set(note, "soft")
+                })
+                stateSetter.set(state)
+            })
+
+            stateSetter.subscribe((notes: Map<Note, string>) => {
+                setNotes(notes)
+            })
+        }
+    }
 }
 
 class playMode {
-    modeType():modeName { return modeName.play }
+    modeName():modeName { return modeName.play }
     getSpeed():number { return 0 }
     toString():string { return "play" }
     description():string { return "Just listen" }
+    scorer():scorer { return new staticScoreKeeper() } // TODO: make a trivial scorer
+    handleNotes(gm: GameMaster, tm: TimedNotes):(event: any)=>void { return ()=>{}}
+    setup(gm: GameMaster, activeTrack: TimedNotes, rt: string[], setNotes: (notes: Map<Note, string>)=>void):()=>void { return ()=>{ gm.play.play() }} // TODO: implement
 }

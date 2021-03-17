@@ -4,16 +4,10 @@ import { getMIDI } from "../lib/midi";
 import type { TimedNotes, TimedNote } from "../lib/music/timed/timed";
 import { NewNote, Note } from "../lib/music/theory/notes";
 import { GameMaster } from "../stores/stores";
-import { scorer, timedScoreKeeper, untimedScoreKeeper } from "../lib/gameplay/score/score";
-import { handleNotes, nextWaitModeNote } from "../stores/waitMode";
-import { writable } from "svelte/store";
-import type { Readable, Writable } from "svelte/types/runtime/store";
-import { get, handleErrors, OneTo100, objToURLArgs } from "../lib/util";
-import { goto, stores } from '@sapper/app'
-import { range } from "../components/pianoroll/pianoRollHelpers";
+import { scorer, timedScoreKeeper } from "../lib/gameplay/score/score";
+import { OneTo100 } from "../lib/util";
 import { hand, task } from "../lib/gameplay/curriculum/task";
 import { getProgress } from "../lib/storage";
-import { modeName } from "../lib/gameplay/mode/mode";
 
 export function relevantTrack(tracks: Map<string, TimedNotes>, t: task):string[] {
     // assumes we have exactly 2 tracks, the first being the left hand, and the second being the right
@@ -64,6 +58,7 @@ export function mergeTracks(relevant: Array<string>, all: Map<string, TimedNotes
     throw new Error("Couldn't merge tracks")
 }
 
+// TODO: tidy up this class, as it's really the core of how a given game works!
 export class gameDefinition {
     highest: Note;
     lowest: Note;
@@ -78,7 +73,7 @@ export class gameDefinition {
     instrumentsLoaded: Promise<boolean>;
 }
 
-export function getGameDef(courseName: string, currentTask: task, setPosition: (p: number)=>void, setNotes: (notes: Map<Note, string>) => void):Promise<gameDefinition> {
+export function getGameDef(courseName: string, currentTask: task, setPosition: (p: number)=>void, setNotes: (notes: Map<Note, string>) => void, onComplete: (scorer)=>void):Promise<gameDefinition> {
     // TODO: get the midi from current session, and load it in lesson.svelte too
     return getMIDI("api/midi?path=" + courseName + "/" + currentTask.getLessonURL() + ".mid", currentTask.getStartBar(), currentTask.getEndBar()).then((midi)=>{
         let gd = new gameDefinition()
@@ -93,13 +88,12 @@ export function getGameDef(courseName: string, currentTask: task, setPosition: (
         gd.cleanup = gd.gm.position.subscribe((pos: number)=>{
             setPosition(pos)
             if (pos >= 1) { // TODO: wait until the last note of the track is done instead
-                let score = OneTo100(gd.scorer.validRatio() * 100)
-                getProgress().recordScore(currentTask, score)
-                goto("score?" + currentTask.queryString() + "&score=" + score)
+                onComplete(gd.scorer)
             }
         })
 
         let rt = relevantTrack(gd.tracks, currentTask)
+        let activeTrack = mergeTracks(rt, gd.tracks)
 
         let trackInstrumentsLoaded = 0
         gd.instrumentsLoaded = new Promise<boolean>((resolve)=> {
@@ -116,52 +110,11 @@ export function getGameDef(courseName: string, currentTask: task, setPosition: (
                 gd.gm.tracks.newPlaybackTrack(name, notes, trackPiano, gd.gm)
             })
         })
-        
 
-        switch (currentTask.getMode().modeType()) {
-            case modeName.wait:
-                gd.gm.seek.set(0) // TODO: go to the first note
-                gd.gm.waitMode.set(true)
-                gd.onNext = () => {
-                    //subscribe to the notes needed to progress
-                    let stateSetter = writable(new Map<Note, string>());
-
-                    let activeTrack = mergeTracks(relevantTrack(gd.tracks, currentTask), gd.tracks)
-                    gd.gm.seek.subscribe(() => {
-                        let state = new Map<Note, string>()
-                        let nextState = nextWaitModeNote(gd.gm, activeTrack)
-                        nextState.sameStart.forEach(note => {
-                            state.set(note.note, "expecting")
-                        })
-                        nextState.heldNotes.forEach((_, note) => {
-                            state.set(note, "soft")
-                        })
-                        stateSetter.set(state)
-                    })
-
-                    stateSetter.subscribe((notes: Map<Note, string>) => {
-                        setNotes(notes)
-                    })
-
-                    // hook up the notes played
-                    gd.handlePlayingNotes = handleNotes(gd.gm, stateSetter, activeTrack)
-                }
-                gd.gm.tracks.enable(rt)
-                gd.gm.seek.set(0)
-                gd.scorer = new untimedScoreKeeper()
-
-                break;
-            case modeName.atSpeed:
-                gd.onNext = () => { gd.gm.play.play() }
-                gd.scorer = new timedScoreKeeper(gd.gm.position)
-                gd.gm.seek.set(-2000/get(<Readable<number>>gd.gm.duration)) // give space before the first note
-
-                gd.gm.speed.set(currentTask.getMode().getSpeed()/100)
-                gd.gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
-                    setNotes(notes)
-                })
-                break;
-        }
+        let mode = currentTask.getMode()
+        gd.scorer = mode.scorer(gd.gm.position)
+        gd.handlePlayingNotes = mode.handleNotes(gd.gm, activeTrack)
+        gd.onNext = mode.setup(gd.gm, activeTrack, rt, setNotes)
 
         return gd
     }).catch((e)=>{
@@ -179,5 +132,6 @@ export function defaultGame():gameDefinition {
     gd.highest = NewNote("C", 5)
     gd.handlePlayingNotes = (e: Event) => {}
     gd.onNext = () => {}
+    gd.cleanup = () => {}
     return gd
 }

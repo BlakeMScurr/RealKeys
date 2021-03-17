@@ -3,7 +3,7 @@
     import type { TimedNotes } from "../lib/music/timed/timed";
     import ScoreBar from "../components/Generic/ScoreBar.svelte";
     import type { Colourer } from '../components/colours';
-    import type { scorer, timedScoreKeeper } from "../lib/gameplay/score/score";
+    import type { scorer } from "../lib/gameplay/score/score";
 
     export let tracks: Map<string, TimedNotes>;
     export let colourer: Colourer;
@@ -11,11 +11,14 @@
     export let position: number;
     export let scorer: scorer;
     export let keys;
+    export let showScore = true;
 
     let score = 0
-    scorer.subscribe((s)=>{
-        score = s
-    })
+    $: {
+        scorer.subscribe((s)=>{
+            score = s
+        })
+    }
 
     let roll;
 </script>
@@ -54,11 +57,13 @@
 
 <!-- TODO: consider adding a loading icon here, if the midi doesn't load fully on the rules screen -->
 <div class="parent">
-    <div class="score">
-        <div>
-            <ScoreBar size={"flex"} showValue={false} value={ score*100 }></ScoreBar>
+    {#if showScore}
+        <div class="score">
+            <div>
+                <ScoreBar size={"flex"} showValue={false} value={ score*100 }></ScoreBar>
+            </div>
         </div>
-    </div>
+    {/if}
     <div class="roll" bind:this={roll}>
         <DOMRoll {keys} {tracks} {colourer} {duration} {position} heightElement={roll}></DOMRoll>
     </div>

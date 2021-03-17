@@ -1,6 +1,6 @@
 <script lang="ts">
-    import { goto,stores } from '@sapper/app';
-    import { onDestroy,onMount } from "svelte";
+    import { goto, stores } from '@sapper/app';
+    import { onDestroy, onMount } from "svelte";
     import { writable } from "svelte/store";
     import { fade } from 'svelte/transition';
     import GameLayout from "../components/GameLayout.svelte";
@@ -8,18 +8,28 @@
     import Piano from "../components/pianoroll/piano/Piano.svelte";
     import { range } from "../components/pianoroll/pianoRollHelpers";
     import Rules from "../components/Rules.svelte";
+    import type { Curriculum } from '../lib/gameplay/curriculum/curriculum';
+    import { defaultLessons } from '../lib/gameplay/curriculum/data';
+    import { methodologyName } from '../lib/gameplay/curriculum/methodology/methodology';
     import type { task } from "../lib/gameplay/curriculum/task";
+    import { modeName } from '../lib/gameplay/mode/mode';
+    import type { scorer } from '../lib/gameplay/score/score';
+    import { untimedScoreKeeper } from '../lib/gameplay/score/score';
     import type { Note } from "../lib/music/theory/notes";
     import { highestPianoNote,lowestPianoNote } from "../lib/music/theory/notes";
-    import { getSettings } from "../lib/storage";
+    import { getProgress, getSettings } from "../lib/storage";
     import { newPiano } from "../lib/track/instrument";
-    import { handleErrors,objToURLArgs } from "../lib/util";
+    import { handleErrors,objToURLArgs, OneTo100 } from "../lib/util";
     import { defaultGame,getGameDef,getUsedNotes,rellietracks } from "./gameHelpers";
-
+    import OptionButton from './Generic/Buttons/OptionButton.svelte';
+    import ReccomendedButton from './Generic/Buttons/ReccomendedButton.svelte';
 
     export let text: string = "";
     export let currentTask: task;
     export let courseName: string = "Tutorials";
+    export let curriculum: Curriculum;
+    export let next = ()=>{}
+
     const { session, page } = stores();
 
     // required as trying to creating instruments requires window.AudioContext, and errors in preprocessing on the server
@@ -39,12 +49,12 @@
         gd.onNext()
         sandbox = false
     }
+    let finalScore = -1
 
     let lessonNotes: Map<Note, string>;
 
-    let cleanup = ()=>{}
     onDestroy(()=>{
-        cleanup()
+        gd.cleanup()
     })
 
     onMount(() => {
@@ -76,8 +86,35 @@
             lessonNotes = notes
         })
 
-        getGameDef(courseName, currentTask, positionStore.set, notesStore.set).then((newgd) => {
+        if (!curriculum) curriculum = defaultLessons()
+
+        let onComplete
+        switch(currentTask.getMethodology()) {
+            case methodologyName.sequential: // TODO: use the enums
+                onComplete = (s: scorer) => {
+                    let score = OneTo100(s.validRatio() * 100)
+                    getProgress(curriculum).recordScore(currentTask, score)
+                    goto("score?" + currentTask.queryString() + "&score=" + score)
+                }
+                break
+            case methodologyName.tutorial:
+                onComplete = (s: scorer) => {
+                    let score = OneTo100(s.validRatio() * 100)
+                    getProgress(curriculum).recordScore(currentTask, score)
+                    console.log("setting final score to", score)
+                    finalScore = score
+                }
+                break
+            default:
+                throw new Error(`invalid methodology "${currentTask.getMethodology()}"`)
+        }
+
+
+        getGameDef(courseName, currentTask, positionStore.set, notesStore.set, onComplete).then((newgd) => {
             gd = newgd
+            if (currentTask.getMethodology() === methodologyName.tutorial && currentTask.getMode().modeName() === modeName.wait) {
+                handleNext()
+            }
         })
 
     })
@@ -96,6 +133,37 @@
             div {
                 height: 100%;
             }
+
+            .overlayHolder {
+                position: absolute;
+                z-index: 2;
+                height: 67%;
+                display: flex;
+                justify-content: center;
+                width: 100%;
+                .textOverlay {
+                    margin: 20px;
+                    padding: 20px;
+                    background-color: #ffffff;
+                    height: fit-content;
+                    height: fit-content;
+                    border-radius: 10px;
+                    box-shadow: 5px 5px #ddd, -5px 5px #ddd, 5px -5px #ddd, -5px -5px #ddd;
+                    max-height: 50%;
+                    overflow: scroll;
+
+                    .buttons {
+                        display: flex;
+                        justify-content: center;
+
+                        div {
+                            padding: 10px;
+                        }
+                    }
+                }
+
+            }
+
         }
         .piano {
             position: relative;
@@ -103,6 +171,8 @@
             width: 100%;
             height: 33%
         }
+
+        
     }
 
     .loading {
@@ -112,6 +182,8 @@
         top: calc(50% - 75px); // centred, given ~150 width loading icon
         left: calc(50% - 75px);
     }
+
+   
 </style>
 
 <div class="centerer">
@@ -127,7 +199,30 @@
                 </div>
             {/if}
         {:else}
-            <GameLayout keys={ getKeys(resizeTrigger) } tracks={ rellietracks(currentTask, gd.tracks) } colourer={gd.colourer} duration={gd.duration} {position} scorer={gd.scorer}></GameLayout>
+            <div class="overlayHolder">
+                <div class="textOverlay">
+                    <h3>{text}</h3>
+                    <div class="buttons">
+                        {#if currentTask.getMode().modeName() === modeName.play}
+                            {#if finalScore !== -1}
+                                <div><OptionButton text="listen again" on:click={()=>{gd.gm.seek.set(0); gd.gm.play.play()}}></OptionButton></div>
+                                <div><ReccomendedButton text="next" on:click={next}></ReccomendedButton></div>
+                            {:else}
+                                <div><ReccomendedButton text="listen" on:click={handleNext}></ReccomendedButton></div>
+                            {/if}
+                        {:else if currentTask.getMode().modeName() === modeName.wait && finalScore !== -1}
+                            {#if finalScore === 100}
+                                <div><ReccomendedButton text="next" on:click={next}></ReccomendedButton></div>
+                            {:else}
+                                <div><ReccomendedButton text="retry" on:click={()=>{gd.gm.seek.set(0); gd.scorer = new untimedScoreKeeper(); gd = gd}}></ReccomendedButton></div>
+                            {/if}
+                        {/if}
+                    </div>
+                </div>
+            </div>
+            {#if gd.tracks.size > 0}
+                <GameLayout keys={ getKeys(resizeTrigger) } tracks={ rellietracks(currentTask, gd.tracks) } colourer={gd.colourer} duration={gd.duration} {position} scorer={gd.scorer} showScore={currentTask.getMode().modeName() !== modeName.play}></GameLayout>
+            {/if}
         {/if}
     </div>
 

@@ -73,7 +73,7 @@
         </div>
     </div>
     <div class="textCenterer">
-        {#if currentTask.getMode().modeType() == modeName.wait}
+        {#if currentTask.getMode().modeName() == modeName.wait}
             <h3>Tap the <mark>orange</mark> keys at your own pace</h3>
         {:else}
             <h3>Play the keys as the notes reach them</h3>
