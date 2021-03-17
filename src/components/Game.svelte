@@ -13,6 +13,7 @@
     import { methodologyName } from '../lib/gameplay/curriculum/methodology/methodology';
     import type { task } from "../lib/gameplay/curriculum/task";
     import { modeName } from '../lib/gameplay/mode/mode';
+    import { staticScoreKeeper } from '../lib/gameplay/score/score';
     import type { scorer } from '../lib/gameplay/score/score';
     import { untimedScoreKeeper } from '../lib/gameplay/score/score';
     import type { Note } from "../lib/music/theory/notes";
@@ -20,7 +21,7 @@
     import { getProgress, getSettings } from "../lib/storage";
     import { newPiano } from "../lib/track/instrument";
     import { handleErrors,objToURLArgs, OneTo100 } from "../lib/util";
-import type { noteState } from '../stores/track';
+    import type { noteState } from '../stores/track';
     import { defaultGame,getGameDef,getUsedNotes,rellietracks } from "./gameHelpers";
     import OptionButton from './Generic/Buttons/OptionButton.svelte';
     import ReccomendedButton from './Generic/Buttons/ReccomendedButton.svelte';
@@ -103,6 +104,11 @@ import type { noteState } from '../stores/track';
                     let score = OneTo100(s.validRatio() * 100)
                     getProgress(curriculum).recordScore(currentTask, score)
                     finalScore = score
+
+                    // Let you play around after finishing
+                    sandbox = true
+                    gd.scorer = new staticScoreKeeper()
+                    gd = gd
                 }
                 break
             default:
@@ -118,6 +124,8 @@ import type { noteState } from '../stores/track';
         })
 
     })
+
+
 
     function getKeys(resizeTrigger):Note[] {
         return range(gd.lowest, gd.highest, highestPianoNote, lowestPianoNote, screenWidth, keyHeight)
