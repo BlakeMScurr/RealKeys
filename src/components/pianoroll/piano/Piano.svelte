@@ -1,6 +1,5 @@
 <script lang="ts">
     import { createEventDispatcher,onDestroy,onMount } from "svelte";
-import { less } from "svelte-preprocess";
     import type { InputEventNoteoff,InputEventNoteon } from "webmidi";
     import WebMidi from "webmidi";
     import type { scorer } from "../../../lib/gameplay/score/score";
