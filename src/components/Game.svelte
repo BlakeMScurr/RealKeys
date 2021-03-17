@@ -20,6 +20,7 @@
     import { getProgress, getSettings } from "../lib/storage";
     import { newPiano } from "../lib/track/instrument";
     import { handleErrors,objToURLArgs, OneTo100 } from "../lib/util";
+import type { noteState } from '../stores/track';
     import { defaultGame,getGameDef,getUsedNotes,rellietracks } from "./gameHelpers";
     import OptionButton from './Generic/Buttons/OptionButton.svelte';
     import ReccomendedButton from './Generic/Buttons/ReccomendedButton.svelte';
@@ -51,7 +52,7 @@
     }
     let finalScore = -1
 
-    let lessonNotes: Map<Note, string>;
+    let lessonNotes: Map<Note, noteState>;
 
     onDestroy(()=>{
         gd.cleanup()
@@ -81,8 +82,8 @@
             position = pos
         })
 
-        let notesStore = writable(new Map<Note, string>())
-        notesStore.subscribe((notes: Map<Note, string>) => {
+        let notesStore = writable(new Map<Note, noteState>())
+        notesStore.subscribe((notes: Map<Note, noteState>) => {
             lessonNotes = notes
         })
 
@@ -101,7 +102,6 @@
                 onComplete = (s: scorer) => {
                     let score = OneTo100(s.validRatio() * 100)
                     getProgress(curriculum).recordScore(currentTask, score)
-                    console.log("setting final score to", score)
                     finalScore = score
                 }
                 break
@@ -229,7 +229,7 @@
     <div class="piano">
         {#if gd.tracks.size > 0}
             <div in:fade>
-                <Piano keys={ getKeys(resizeTrigger) } {sandbox} instrument={piano} {lessonNotes} {position} scoreKeeper={gd.scorer} on:playingNotes={gd.handlePlayingNotes} usedNotes={getUsedNotes(currentTask, gd.tracks)}></Piano>
+                <Piano keys={ getKeys(resizeTrigger) } sandbox={sandbox || currentTask.getMode().modeName() === modeName.play} instrument={piano} {lessonNotes} {position} scoreKeeper={gd.scorer} on:playingNotes={gd.handlePlayingNotes} usedNotes={getUsedNotes(currentTask, gd.tracks)}></Piano>
             </div>
         {/if}
         

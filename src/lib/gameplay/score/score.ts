@@ -1,4 +1,5 @@
 import type { Readable } from "svelte/types/runtime/store";
+import { noteState } from "../../../stores/track";
 import type { Note } from "../../music/theory/notes";
 import { get } from "../../util";
 
@@ -8,13 +9,13 @@ export enum state {
     indifferent = "indifferent",
 }
 
-
 export interface scorer {
     validRatio():number
     inputChange()
     recordNoteState(note: Note, s: state, position: number)
     subscribe(f) // TODO: return an unsubscriber
-}   
+    expect(notes: Map<Note, noteState>)
+}
 
 const defaultLeniency = 0.85
 // TODO: create an explicit link between the two types of score keeps and our modes
@@ -100,9 +101,14 @@ export class timedScoreKeeper {
 
     // fulfills the interface for untimed scorer
     inputChange(){}
+    expect(notes: Map<Note, noteState>){}
 }
 
-// TODO: test
+enum satisfaction {
+    notExpected = "notExpected", // TODO: remove, as we may have encoded this as non existence in the satisfaction map
+    expected = "expected",
+    satisfied = "satisfied",
+}
 export class untimedScoreKeeper {
     private validSum: number;
     private invalidSum: number;
@@ -110,6 +116,7 @@ export class untimedScoreKeeper {
     private lastNoteStates: Map<string, state>;
     private leniency: number;
     private inputHasChanged: boolean;
+    private expectations: Map<Note, satisfaction>;
 
     constructor(leniency?: number) {
         this.validSum = 0
@@ -118,6 +125,7 @@ export class untimedScoreKeeper {
         this.lastNoteStates = new Map();
         this.leniency = leniency !== undefined ? leniency : defaultLeniency
         this.inputHasChanged = true
+        this.expectations = new Map();
     }
 
     validRatio():number {
@@ -137,13 +145,16 @@ export class untimedScoreKeeper {
         }
         this.lastNoteStates.set(note.string(), s)
 
-        // Update the score if the user's input has changed
+        // Why only update the score if the user's input has changed?
         // The state may have changed as the piece proceeded to the next note,
         // and in wait mode we do not expect someone to change input in order to accomodate that,
         // we only expect them to enter the next note correctly
         if (this.inputHasChanged) {
-            if (s === state.valid) {
+            if (s === state.valid && this.expectations.get(note) !== satisfaction.satisfied) {
                 this.validSum++
+                if (this.expectations.get(note) === satisfaction.expected) {
+                    this.expectations.set(note, satisfaction.satisfied)
+                } 
             } else if (s === state.invalid) {
                 this.invalidSum++
             }
@@ -158,6 +169,25 @@ export class untimedScoreKeeper {
     // TODO: test (for that matter, test this whole class at least a bit)
     inputChange() {
         this.inputHasChanged = true
+    }
+
+    // In wait mode you don't get extra points for hitting the same note multiple times
+    // So we record a which notes have already been played by accepting which ones are expected here
+    // and updating whether they're satisfied as we record the score
+    expect(notes: Map<Note, noteState>) {
+        // Set notes as expected
+        notes.forEach((state, note) => {
+            if (state === noteState.expecting && !this.expectations.has(note)) {
+                this.expectations.set(note, satisfaction.expected)
+            }
+        })
+
+        // Remove previously expected and satisfied notes
+        this.expectations.forEach((state, note) => {
+            if (!notes.has(note)) {
+                this.expectations.delete(note)
+            }
+        })
     }
 
     triggerScoreUpdate(pos: number) {
@@ -186,4 +216,5 @@ export class staticScoreKeeper {
     inputChange() {}
     recordNoteState(note: Note, s: state, position: number) {}
     subscribe(f){}
-}   
+    expect(notes: Map<Note, noteState>){}
+}

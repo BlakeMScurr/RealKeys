@@ -1,5 +1,6 @@
 import { Readable, writable } from "svelte/store"
 import type { GameMaster } from "../../../stores/stores"
+import { noteState } from "../../../stores/track"
 import { handleNotes, nextWaitModeNote } from "../../../stores/waitMode"
 import type { Note } from "../../music/theory/notes"
 import type { TimedNotes } from "../../music/timed/timed"
@@ -15,7 +16,7 @@ export interface playbackMode {
     // static style methods that define the mode's operation
     scorer(position: Readable<number>):scorer
     handleNotes(gm: GameMaster, tn: TimedNotes):(event: any)=>void
-    setup(gm: GameMaster, activeTrack: TimedNotes, rt: string[], setNotes: (notes: Map<Note, string>)=>void):()=>void // sets up the game and returns a function to be run when the user starts the game
+    setup(gm: GameMaster, activeTrack: TimedNotes, rt: string[], setNotes: (notes: Map<Note, noteState>)=>void):()=>void // sets up the game and returns a function to be run when the user starts the game
 }
 
 export enum modeName {
@@ -68,7 +69,7 @@ class atSpeedMode {
     description():string { return `At ${this.getSpeed()}% speed` }
     scorer(position: Readable<number>):scorer { return new timedScoreKeeper(position) }
     handleNotes(gm: GameMaster, tm: TimedNotes):(event: any)=>void { return ()=>{} }
-    setup(gm: GameMaster, activeTrack: TimedNotes, rt: string[], setNotes: (notes: Map<Note, string>)=>void):()=>void {
+    setup(gm: GameMaster, activeTrack: TimedNotes, rt: string[], setNotes: (notes: Map<Note, noteState>)=>void):()=>void {
         gm.seek.set(-2000/get(<Readable<number>>gm.duration)) // give space before the first note
         gm.speed.set(this.getSpeed()/100)
         gm.tracks.subscribeToNotesOfTracks(rt, (notes) => {
@@ -85,27 +86,27 @@ class waitMode {
     description():string { return "At your own pace" }
     scorer():scorer { return new untimedScoreKeeper() }
     handleNotes(gm: GameMaster, tn: TimedNotes):(event: any)=>void { return handleNotes(gm, tn)}
-    setup(gm: GameMaster, activeTrack: TimedNotes, rt: string[], setNotes: (notes: Map<Note, string>)=>void):()=>void {
+    setup(gm: GameMaster, activeTrack: TimedNotes, rt: string[], setNotes: (notes: Map<Note, noteState>)=>void):()=>void {
         gm.seek.set(0) // TODO: go to the first note
         gm.waitMode.set(true)
         gm.tracks.enable(rt)
 
         return () => {
             //subscribe to the notes needed to progress
-            let stateSetter = writable(new Map<Note, string>());
+            let stateSetter = writable(new Map<Note, noteState>());
             gm.seek.subscribe(() => {
-                let state = new Map<Note, string>()
+                let state = new Map<Note, noteState>()
                 let nextState = nextWaitModeNote(gm, activeTrack)
                 nextState.sameStart.forEach(note => {
-                    state.set(note.note, "expecting")
+                    state.set(note.note, noteState.expecting)
                 })
                 nextState.heldNotes.forEach((_, note) => {
-                    state.set(note, "soft")
+                    state.set(note, noteState.soft)
                 })
                 stateSetter.set(state)
             })
 
-            stateSetter.subscribe((notes: Map<Note, string>) => {
+            stateSetter.subscribe((notes: Map<Note, noteState>) => {
                 setNotes(notes)
             })
         }
@@ -119,5 +120,7 @@ class playMode {
     description():string { return "Just listen" }
     scorer():scorer { return new staticScoreKeeper() } // TODO: make a trivial scorer
     handleNotes(gm: GameMaster, tm: TimedNotes):(event: any)=>void { return ()=>{}}
-    setup(gm: GameMaster, activeTrack: TimedNotes, rt: string[], setNotes: (notes: Map<Note, string>)=>void):()=>void { return ()=>{ gm.play.play() }} // TODO: implement
+    setup(gm: GameMaster, activeTrack: TimedNotes, rt: string[], setNotes: (notes: Map<Note, noteState>)=>void):()=>void { 
+        return () => { gm.play.play() }
+    }
 }

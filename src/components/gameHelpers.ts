@@ -8,6 +8,8 @@ import { scorer, timedScoreKeeper } from "../lib/gameplay/score/score";
 import { OneTo100 } from "../lib/util";
 import { hand, task } from "../lib/gameplay/curriculum/task";
 import { getProgress } from "../lib/storage";
+import { modeName } from "../lib/gameplay/mode/mode";
+import type { noteState } from "../stores/track";
 
 export function relevantTrack(tracks: Map<string, TimedNotes>, t: task):string[] {
     // assumes we have exactly 2 tracks, the first being the left hand, and the second being the right
@@ -73,9 +75,10 @@ export class gameDefinition {
     instrumentsLoaded: Promise<boolean>;
 }
 
-export function getGameDef(courseName: string, currentTask: task, setPosition: (p: number)=>void, setNotes: (notes: Map<Note, string>) => void, onComplete: (scorer)=>void):Promise<gameDefinition> {
+export function getGameDef(courseName: string, currentTask: task, setPosition: (p: number)=>void, setNotes: (notes: Map<Note, noteState>) => void, onComplete: (scorer)=>void):Promise<gameDefinition> {
     // TODO: get the midi from current session, and load it in lesson.svelte too
     return getMIDI("api/midi?path=" + courseName + "/" + currentTask.getLessonURL() + ".mid", currentTask.getStartBar(), currentTask.getEndBar()).then((midi)=>{
+        // TODO: move all references to mode static mode methods
         let gd = new gameDefinition()
         gd.highest = midi.highest
         gd.lowest = midi.lowest
@@ -104,7 +107,7 @@ export function getGameDef(courseName: string, currentTask: task, setPosition: (
                         resolve(true)
                     }
                 })
-                if (rt.includes(name)) {
+                if (rt.includes(name) && currentTask.getMode().modeName() !== modeName.play) {
                     trackPiano.setVolume(0)
                 }
                 gd.gm.tracks.newPlaybackTrack(name, notes, trackPiano, gd.gm)

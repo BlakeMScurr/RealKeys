@@ -1,23 +1,25 @@
 <script lang="ts">
     import { createEventDispatcher,onDestroy,onMount } from "svelte";
+import { less } from "svelte-preprocess";
     import type { InputEventNoteoff,InputEventNoteon } from "webmidi";
     import WebMidi from "webmidi";
     import type { scorer } from "../../../lib/gameplay/score/score";
-    import { state } from "../../../lib/gameplay/score/score";
+    import { getKeyState, occupationTracker } from "../../../lib/gameplay/score/stateTracking";
     import type { Note } from "../../../lib/music/theory/notes";
     import { Line,NewNote } from "../../../lib/music/theory/notes";
     import { getSettings,inputType } from "../../../lib/storage";
     import type { SoundFont } from "../../../lib/track/soundfont";
     import { handleErrors } from "../../../lib/util";
+    import { noteState } from "../../../stores/track";
     import Key from "./Key/Key.svelte";
-    import { blackAndGhostBetween,Ghost,keyboardInputNote,label,occupationTracker,regularWhiteWidth,whiteWidths } from "./pianoHelpers";
+    import { blackAndGhostBetween,Ghost,keyboardInputNote,label,regularWhiteWidth,whiteWidths } from "./pianoHelpers";
 
 
 
     export let keys:Array<Note>;
     // TODO: use Map<Note, boolean>
     export let usedNotes:Map<string, boolean> = new Map();
-    export let lessonNotes: Map<Note, string> = new Map();
+    export let lessonNotes: Map<Note, noteState> = new Map();
     export let sandbox: boolean = false; // sandbox pianos are just for playing, and aren't used to test one on a task
     export let instrument: SoundFont;
     export let position;
@@ -29,20 +31,21 @@
     let labelsOn = false
     $: labels = labelsOn ? label(new Line(keys)) : new Map();
 
+    // TODO: move to stateTracking.ts
     // If a new note arrives, and the current depression of its key was due to a previous note, then the note should be invalid
     // Played map records whether a given note has been played yet
     let occupation: occupationTracker = new occupationTracker();
-
-    let previousStates = new Map<Note, string>();
+    let previousStates = new Map<Note, noteState>();
     $: {
-        let newPreviousStates = new Map<Note, string>();
+        let newPreviousStates = new Map<Note, noteState>();
         if (lessonNotes) {
+            scoreKeeper.expect(lessonNotes)
             lessonNotes.forEach((value, note) => {
-                if (value === "softstart") {
+                if (value === noteState.softStart) {
                     if (!previousStates.has(note)) {
                         occupation.expect(note)
                     } else {
-                        if (previousStates.get(note) !== "softstart") {
+                        if (previousStates.get(note) !== noteState.softStart) {
                             occupation.unexpect(note)
                             occupation.expect(note)
                         }
@@ -180,51 +183,7 @@
         return ""
     }
 
-    // TODO: surely make it more concise
-    // TODO: use an enum for possible expectations of a note, and another for state of a key
-    function getState(note: Note, activeMap: Map<Note, boolean>, lessonNotes: Map<Note, string>, occupation: occupationTracker) {
-        let stateString = () => {
-            if (sandbox) {
-                if (lessonNotes.has(note) && lessonNotes.get(note) === "expecting") {
-                    return activeMap.get(note) ? "right" : "expecting"
-                }
-                return activeMap.get(note) ? "active" : ""
-            } else {
-                if (lessonNotes.has(note)) {
-                    let val = lessonNotes.get(note)
-                    if (val == "strict") {
-                        return activeMap.get(note) && !occupation.occupiedPrevious(note) ? "right" : "wrong"
-                    } else if (val.includes("soft")) {
-                        return activeMap.get(note) && !occupation.occupiedPrevious(note) ? "right" : ""
-                    } else if (val == "expecting") {
-                        return activeMap.get(note) ? "right" : "expecting"
-                    }
-                    throw new Error("unexpected note state value " + val)
-                } else {
-                    return activeMap.get(note) ? "wrong" : ""
-                }
-             }
-        }
 
-        let ss = stateString()
-
-        try {
-            switch (ss) {
-                case "right":
-                    scoreKeeper.recordNoteState(note, state.valid, position)
-                    break
-                case "wrong":
-                    scoreKeeper.recordNoteState(note, state.invalid, position)
-                    break
-                default:
-                    scoreKeeper.recordNoteState(note, state.indifferent, position)
-            }
-        } catch(e) {
-
-        }
-
-        return ss
-    }
 </script>
 
 <style lang="scss">
@@ -248,7 +207,7 @@
 <div> 
     <div class="rapper" id="LilPeep">
         {#each whiteWidths(notes.white()) as {note, width}}
-            <Key width={width} {note} state={getState(note, activeMap, lessonNotes, occupation)} on:noteOn={touchNoteEvent} on:noteOff={touchNoteEvent} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
+            <Key width={width} {note} state={getKeyState(note, activeMap, lessonNotes, occupation, sandbox, scoreKeeper, position)} on:noteOn={touchNoteEvent} on:noteOff={touchNoteEvent} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
         {/each}
     </div>
     <div style="--blackMargin: {regularWhiteWidth(notes.white())*100/4}%;" class="rapper" id="JuiceWrld">
@@ -256,7 +215,7 @@
             {#if note instanceof Ghost}
                 <Key ghost={true} width={regularWhiteWidth(notes.white())*100 * (2/4)}></Key>
             {:else}
-                <Key width={regularWhiteWidth(notes.white())*100} {note} state={getState(note, activeMap, lessonNotes, occupation)} on:noteOn={touchNoteEvent} on:noteOff={touchNoteEvent} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
+                <Key width={regularWhiteWidth(notes.white())*100} {note} state={getKeyState(note, activeMap, lessonNotes, occupation, sandbox, scoreKeeper, position)} on:noteOn={touchNoteEvent} on:noteOff={touchNoteEvent} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
             {/if}
         {/each}
     </div>

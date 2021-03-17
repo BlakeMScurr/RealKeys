@@ -26,7 +26,7 @@ export function getProgress(c: Curriculum):Curriculum {
         try {
             c.copyInScore(t[0], t[1])
         } catch (e) {
-            console.warn("Failed to copy in score for task" + JSON.stringify(t) + e)
+            // console.warn("Failed to copy in score for task" + JSON.stringify(t) + e)
         }
     })
     return new curriculumWrapper(c)

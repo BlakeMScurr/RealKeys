@@ -4,11 +4,12 @@
     import Black from "./Black.svelte"
     import White from "./White.svelte"
     import Ghost from "./Ghost.svelte"
+    import type { keyState } from "../pianoHelpers";
 
     export let width:number;
     export let note:Note;
     export let active:Boolean;
-    export let state:string;
+    export let state:keyState;
     export let ghost:Boolean = false;
     export let label:String = "";
     export let used:Boolean = false;
@@ -33,8 +34,8 @@
     {#if ghost}
         <Ghost></Ghost>
     {:else if note.color() == "white"}
-        <White {note} bind:active={active} on:noteOn={forward} on:noteOff={forward} {label} {used} {state}></White>
+        <White {note} on:noteOn={forward} on:noteOff={forward} {label} {used} {state}></White>
     {:else}
-        <Black {note} bind:active={active} on:noteOn={forward} on:noteOff={forward} {label} {used} {state}></Black>
+        <Black {note} on:noteOn={forward} on:noteOff={forward} {label} {used} {state}></Black>
     {/if}
 </div>

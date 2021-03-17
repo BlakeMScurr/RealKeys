@@ -3,7 +3,7 @@ import type { VirtualInstrument } from '../lib/track/instrument'
 import { TimedNotes } from '../lib/music/timed/timed';
 import type { Note } from '../lib/music/theory/notes';
 import { get } from '../lib/util'
-import { midiTrack } from "./track";
+import { midiTrack, noteState } from "./track";
 
 // TODO: refactor to eliminate all the store boilerplate
 // TODO: consider using a state machine, as it will have stricter guarantees about the possible states the game can be in
@@ -274,6 +274,15 @@ class tracks {
         }
     }
 
+    enableAll() {
+        this.subscribe((currentPlayers: Map<string, midiTrack>) => {
+            this.playingStore.pause()
+            currentPlayers.forEach((track) => {
+                track.relink()
+            })
+        })
+    }
+
     enabled() {
         // TODO: refactor so we just have a currentlyEnabled variable to read
         let currentlyEnabled = new Array<string>();
@@ -304,7 +313,7 @@ class tracks {
         return noteMap
     }
 
-    subscribeToNotesOfTracks(tracks: string[], onStateChange: (notes: Map<Note, string>) => void) {
+    subscribeToNotesOfTracks(tracks: string[], onStateChange: (notes: Map<Note, noteState>) => void) {
         let unsubscribers = []
         let sq = new squasher()
         tracks.forEach(track => {
@@ -315,7 +324,7 @@ class tracks {
                 
                 // This thing here squashes the notes of the various tracks together
                 let subber = (channel: string) => {
-                    return (notes: Map<Note, string>) => {
+                    return (notes: Map<Note, noteState>) => {
                         sq.updateState(channel, notes)
                         onStateChange(sq.state())
                     }
@@ -335,13 +344,13 @@ class tracks {
 
 // squasher is specifically for combining note states of multiple MIDI channels
 export class squasher {
-    states: Map<string, Map<Note, string>>;
+    states: Map<string, Map<Note, noteState>>;
     constructor() {
-        this.states = new Map<string, Map<Note, string>>();
+        this.states = new Map<string, Map<Note, noteState>>();
     }
 
-    state():Map<Note, string> {
-        let s = new Map<Note, string>();
+    state():Map<Note, noteState> {
+        let s = new Map<Note, noteState>();
         // TODO: implement state precedence, i.e., if one channel says a note is soft, and another says it's strict, make it strict
         this.states.forEach((stateChannel) => {
             stateChannel.forEach((value, note) => {
@@ -351,7 +360,7 @@ export class squasher {
         return s
     }
 
-    updateState(channel: string, state: Map<Note, string>) {
+    updateState(channel: string, state: Map<Note, noteState>) {
         this.states.set(channel, state)
     }
 }

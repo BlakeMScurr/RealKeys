@@ -4,6 +4,19 @@ import type { Note } from '../lib/music/theory/notes';
 import { get } from '../lib/util';
 import { Readable, Writable, writable } from 'svelte/store';
 import type { GameMaster } from './stores';
+
+export enum noteState {
+    softStart = "softStart",
+    softEnd = "softEnd",
+    soft = "soft",
+    strict = "strict",
+    expecting = "expecting",
+}
+
+export function isSoft(state: noteState):boolean {
+    return state === noteState.softStart || state === noteState.softEnd || state === noteState.soft
+}
+
 export class midiTrack {
     notes: TimedNotes;
     currentPosition: number;
@@ -16,7 +29,7 @@ export class midiTrack {
     noteTimeouts: Map<string, Array<ReturnType<typeof setTimeout>>>;
     windowTimeouts: Array<ReturnType<typeof setTimeout>>;
     playbackInstrument: VirtualInstrument;
-    currentNotes: Writable<Map<Note, string>>;
+    currentNotes: Writable<Map<Note, noteState>>;
     gm: GameMaster;
     private noteNumbers: Map<string, number>;
 
@@ -29,7 +42,7 @@ export class midiTrack {
         this.windowTimeouts = [];
         this.lastNoteWindow = -1;
         this.playbackInstrument = playbackInstrument
-        this.currentNotes = writable(new Map<Note, string>())
+        this.currentNotes = writable(new Map<Note, noteState>())
         this.playing = false
         this.linked = false
         // TODO: don't add the full game master. Just passing in relevant stores or functions will reduce scope creep and coupling.
@@ -130,13 +143,13 @@ export class midiTrack {
                 });
             }
             // TODO: make the names of set soft and playable the same
-            set("softstart")()
+            set(noteState.softStart)()
         }
 
-        const set = (noteState: string) => {
+        const set = (noteState: noteState) => {
             return () => {
                 // Set the note as being allowed to be played
-                this.currentNotes.update((notes: Map<Note, string>)=> {
+                this.currentNotes.update((notes: Map<Note, noteState>)=> {
                     notes.set(note.note, noteState)
                     return notes
                 })
@@ -148,7 +161,7 @@ export class midiTrack {
         }
 
         const requireNoteOff = () => {
-            this.currentNotes.update((notes: Map<Note, string>)=> {
+            this.currentNotes.update((notes: Map<Note, noteState>)=> {
                 notes.delete(note.note)
                 return notes
             })
@@ -160,8 +173,8 @@ export class midiTrack {
         let firstNote = (note.start - pos) * get(<Readable<number>>this.gm.duration) / get(<Readable<number>>this.gm.speed)
         this.pushTimeout(key, startPlayable,    firstNote - noteLeeway)
         this.pushTimeout(key, playNote,         firstNote)
-        this.pushTimeout(key, set("strict"),    firstNote + noteLeeway)
-        this.pushTimeout(key, set("softend"),      firstNote + length - noteLeeway)
+        this.pushTimeout(key, set(noteState.strict),    firstNote + noteLeeway)
+        this.pushTimeout(key, set(noteState.softEnd),      firstNote + length - noteLeeway)
         this.pushTimeout(key, requireNoteOff,   firstNote + length + noteLeeway)
     }
 
@@ -182,7 +195,7 @@ export class midiTrack {
         })
 
         this.noteTimeouts = new Map();
-        this.currentNotes.set(new Map<Note, string>())
+        this.currentNotes.set(new Map<Note, noteState>())
 
     }
 
@@ -204,7 +217,7 @@ class playbackInterface {
         this.track = track
     }
 
-    subscribeToNotes(callback: (notes: Map<Note, string>)=> void) {
+    subscribeToNotes(callback: (notes: Map<Note, noteState>)=> void) {
         return this.track.currentNotes.subscribe((notes)=>{
             callback(notes)
         })
