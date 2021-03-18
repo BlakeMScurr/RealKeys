@@ -115,7 +115,7 @@ export function getGameDef(courseName: string, currentTask: task, setPosition: (
         })
 
         let mode = currentTask.getMode()
-        gd.scorer = mode.scorer(gd.gm.position)
+        gd.scorer = mode.scorer(activeTrack, gd.gm.position)
         gd.handlePlayingNotes = mode.handleNotes(gd.gm, activeTrack)
         gd.onNext = mode.setup(gd.gm, activeTrack, rt, setNotes)
 

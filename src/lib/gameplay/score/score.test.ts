@@ -109,7 +109,7 @@ test("timed/Leniency", () => {
 
 test("untimed/Double note", () => {
     let gm = new GameMaster()
-    let sk = new untimedScoreKeeper(1)
+    let sk = new untimedScoreKeeper(3, 1)
     let score;
     sk.subscribe((s) => { score = s })
 
@@ -137,12 +137,12 @@ test("untimed/Double note", () => {
     expect(sk.invalidTime()).toBe(1)
     expect(sk.validTime()).toBe(2)
     expect(sk.validRatio()).toBeCloseTo(2/3, 5)
-    expect(score).toBeCloseTo(2/3, 5)
+    expect(score).toBeCloseTo(4/9, 5) // we got 2/3, and we hit an invalid, giving us a 2/3 hits being right, giving (2/3)^2 = 4/9
 })
 
 test("untimed/Double dip", () => {
     let gm = new GameMaster()
-    let sk = new untimedScoreKeeper(1)
+    let sk = new untimedScoreKeeper(2, 1)
     let score;
     sk.subscribe((s) => { score = s })
 
@@ -168,7 +168,7 @@ test("untimed/Double dip", () => {
     expect(sk.invalidTime()).toBe(1)
     expect(sk.validTime()).toBe(1)
     expect(sk.validRatio()).toBeCloseTo(1/2, 5)
-    expect(score).toBeCloseTo(1/2, 5)
+    expect(score).toBeCloseTo(1/4, 5) // we got 1/2 valid notes right, and 1/2 of the notes we hit was valid, giving 1/4
 })
 
 const c4 = () => { return NewNote("C", 4) }

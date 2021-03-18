@@ -1,6 +1,7 @@
 import type { Readable } from "svelte/types/runtime/store";
 import { noteState } from "../../../stores/track";
 import type { Note } from "../../music/theory/notes";
+import type { TimedNotes } from "../../music/timed/timed";
 import { get } from "../../util";
 
 export enum state {
@@ -11,9 +12,12 @@ export enum state {
 
 export interface scorer {
     validRatio():number
-    inputChange()
     recordNoteState(note: Note, s: state, position: number)
     subscribe(f) // TODO: return an unsubscriber
+    reset()
+
+    // specifically required for the untimed scorer
+    inputChange()
     expect(notes: Map<Note, noteState>)
 }
 
@@ -40,6 +44,15 @@ export class timedScoreKeeper {
             this.triggerScoreUpdate(pos)
         })
         this.position = position
+    }
+
+    // TODO: remove repeated code between constructor and reset
+    reset() {
+        this.validSum = 0
+        this.invalidSum = 0
+        this.lastNotePositions = new Map<string, number>();
+        this.lastNoteStates = new Map<string, state>();
+        this.subscribers = []
     }
 
     validRatio():number {
@@ -117,8 +130,10 @@ export class untimedScoreKeeper {
     private leniency: number;
     private inputHasChanged: boolean;
     private expectations: Map<Note, satisfaction>;
+    private total: number;
 
-    constructor(leniency?: number) {
+    constructor(total: number, leniency?: number) {
+        this.total = total
         this.validSum = 0
         this.invalidSum = 0
         this.subscribers = []
@@ -126,6 +141,17 @@ export class untimedScoreKeeper {
         this.leniency = leniency !== undefined ? leniency : defaultLeniency
         this.inputHasChanged = true
         this.expectations = new Map();
+    }
+
+    // TODO: remove repeated code between constructor and reset
+    reset() {
+        this.validSum = 0
+        this.invalidSum = 0
+        this.subscribers = []
+        this.lastNoteStates = new Map();
+        this.inputHasChanged = true
+        this.expectations = new Map();
+        this.triggerScoreUpdate(0)
     }
 
     validRatio():number {
@@ -150,11 +176,11 @@ export class untimedScoreKeeper {
         // and in wait mode we do not expect someone to change input in order to accomodate that,
         // we only expect them to enter the next note correctly
         if (this.inputHasChanged) {
-            if (s === state.valid && this.expectations.get(note) !== satisfaction.satisfied) {
+            if (s === state.valid &&this.expectations.get(note) !== satisfaction.satisfied) {
                 this.validSum++
                 if (this.expectations.get(note) === satisfaction.expected) {
                     this.expectations.set(note, satisfaction.satisfied)
-                } 
+                }
             } else if (s === state.invalid) {
                 this.invalidSum++
             }
@@ -176,22 +202,19 @@ export class untimedScoreKeeper {
     // and updating whether they're satisfied as we record the score
     expect(notes: Map<Note, noteState>) {
         // Set notes as expected
+        this.expectations.forEach((_, note) => {
+            this.expectations.delete(note)
+        })
+        
         notes.forEach((state, note) => {
             if (state === noteState.expecting && !this.expectations.has(note)) {
                 this.expectations.set(note, satisfaction.expected)
             }
         })
-
-        // Remove previously expected and satisfied notes
-        this.expectations.forEach((state, note) => {
-            if (!notes.has(note)) {
-                this.expectations.delete(note)
-            }
-        })
     }
 
     triggerScoreUpdate(pos: number) {
-        const score = this.validRatio()
+        const score = this.validRatio() * (this.validSum/this.total)
         this.subscribers.forEach(f => {
             f(score)
         }); 
@@ -217,4 +240,5 @@ export class staticScoreKeeper {
     recordNoteState(note: Note, s: state, position: number) {}
     subscribe(f){}
     expect(notes: Map<Note, noteState>){}
+    reset(){}
 }

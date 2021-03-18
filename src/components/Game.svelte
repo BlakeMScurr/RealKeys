@@ -25,6 +25,7 @@
     import { defaultGame,getGameDef,getUsedNotes,rellietracks } from "./gameHelpers";
     import OptionButton from './Generic/Buttons/OptionButton.svelte';
     import ReccomendedButton from './Generic/Buttons/ReccomendedButton.svelte';
+import ScoreBar from './Generic/ScoreBar.svelte';
 
     export let text: string = "";
     export let currentTask: task;
@@ -52,6 +53,7 @@
         sandbox = false
     }
     let finalScore = -1
+    let score = 0;
 
     let lessonNotes: Map<Note, noteState>;
 
@@ -104,28 +106,24 @@
                     let score = OneTo100(s.validRatio() * 100)
                     getProgress(curriculum).recordScore(currentTask, score)
                     finalScore = score
-
-                    // Let you play around after finishing
-                    sandbox = true
-                    gd.scorer = new staticScoreKeeper()
-                    gd = gd
+                    sandbox = true // Let you play around after finishing
                 }
                 break
             default:
                 throw new Error(`invalid methodology "${currentTask.getMethodology()}"`)
         }
 
-
         getGameDef(courseName, currentTask, positionStore.set, notesStore.set, onComplete).then((newgd) => {
             gd = newgd
             if (currentTask.getMethodology() === methodologyName.tutorial && currentTask.getMode().modeName() === modeName.wait) {
                 handleNext()
             }
+            gd.scorer.subscribe((s: number) => {
+                score = s
+            })
         })
 
     })
-
-
 
     function getKeys(resizeTrigger):Note[] {
         return range(gd.lowest, gd.highest, highestPianoNote, lowestPianoNote, screenWidth, keyHeight)
@@ -159,6 +157,10 @@
                     box-shadow: 5px 5px #ddd, -5px 5px #ddd, 5px -5px #ddd, -5px -5px #ddd;
                     max-height: 50%;
                     overflow: scroll;
+
+                    h5 {
+                        text-align: center;
+                    }
 
                     .buttons {
                         display: flex;
@@ -209,7 +211,8 @@
         {:else}
             <div class="overlayHolder">
                 <div class="textOverlay">
-                    <h3>{text}</h3>
+                    <h3>{text.split("(tip:")[0]}</h3>
+                    <h5>{text.split("(tip:")[1]? "(tip:" + text.split("(tip:")[1]: ""}</h5>
                     <div class="buttons">
                         {#if currentTask.getMode().modeName() === modeName.play}
                             {#if finalScore !== -1}
@@ -218,18 +221,20 @@
                             {:else}
                                 <div><ReccomendedButton text="listen" on:click={handleNext}></ReccomendedButton></div>
                             {/if}
-                        {:else if currentTask.getMode().modeName() === modeName.wait && finalScore !== -1}
+                        {:else if currentTask.getMode().modeName() === modeName.wait}
                             {#if finalScore === 100}
                                 <div><ReccomendedButton text="next" on:click={next}></ReccomendedButton></div>
+                            {:else if finalScore === -1}
+                                <div><ScoreBar size={"medium"} showValue={false} value={ score*100 }></ScoreBar></div>
                             {:else}
-                                <div><ReccomendedButton text="retry" on:click={()=>{gd.gm.seek.set(0); gd.scorer = new untimedScoreKeeper(); gd = gd}}></ReccomendedButton></div>
+                                <div><ReccomendedButton text="retry" on:click={()=>{gd.gm.seek.set(0); gd.scorer.reset(); gd.scorer.subscribe((s)=>{score=s}); gd = gd; finalScore = -1; sandbox = false}}></ReccomendedButton></div>
                             {/if}
                         {/if}
                     </div>
                 </div>
             </div>
             {#if gd.tracks.size > 0}
-                <GameLayout keys={ getKeys(resizeTrigger) } tracks={ rellietracks(currentTask, gd.tracks) } colourer={gd.colourer} duration={gd.duration} {position} scorer={gd.scorer} showScore={currentTask.getMode().modeName() !== modeName.play}></GameLayout>
+                <GameLayout keys={ getKeys(resizeTrigger) } tracks={ rellietracks(currentTask, gd.tracks) } colourer={gd.colourer} duration={gd.duration} {position} scorer={gd.scorer} showScore={text === ""}></GameLayout>
             {/if}
         {/if}
     </div>

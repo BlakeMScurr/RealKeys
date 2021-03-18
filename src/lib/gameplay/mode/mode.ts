@@ -14,7 +14,7 @@ export interface playbackMode {
     description():string
 
     // static style methods that define the mode's operation
-    scorer(position: Readable<number>):scorer
+    scorer(activeTrack: TimedNotes, position: Readable<number>):scorer
     handleNotes(gm: GameMaster, tn: TimedNotes):(event: any)=>void
     setup(gm: GameMaster, activeTrack: TimedNotes, rt: string[], setNotes: (notes: Map<Note, noteState>)=>void):()=>void // sets up the game and returns a function to be run when the user starts the game
 }
@@ -67,7 +67,7 @@ class atSpeedMode {
     getSpeed():number { return this.speed }
     toString():string { return "atSpeed" + this.getSpeed() }
     description():string { return `At ${this.getSpeed()}% speed` }
-    scorer(position: Readable<number>):scorer { return new timedScoreKeeper(position) }
+    scorer(activeTrack: TimedNotes, position: Readable<number>):scorer { return new timedScoreKeeper(position) }
     handleNotes(gm: GameMaster, tm: TimedNotes):(event: any)=>void { return ()=>{} }
     setup(gm: GameMaster, activeTrack: TimedNotes, rt: string[], setNotes: (notes: Map<Note, noteState>)=>void):()=>void {
         gm.seek.set(-2000/get(<Readable<number>>gm.duration)) // give space before the first note
@@ -84,7 +84,7 @@ class waitMode {
     getSpeed():number { return 0 }
     toString():string { return "wait" }
     description():string { return "At your own pace" }
-    scorer():scorer { return new untimedScoreKeeper() }
+    scorer(activeTrack: TimedNotes, position: Readable<number>):scorer { return new untimedScoreKeeper(activeTrack.notes.length) }
     handleNotes(gm: GameMaster, tn: TimedNotes):(event: any)=>void { return handleNotes(gm, tn)}
     setup(gm: GameMaster, activeTrack: TimedNotes, rt: string[], setNotes: (notes: Map<Note, noteState>)=>void):()=>void {
         gm.seek.set(0) // TODO: go to the first note
