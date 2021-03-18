@@ -133,15 +133,12 @@
                 currentTask = v[0]
                 text = v[1]
                 curriculum = v[2]
+
+                gd.gm.play.pause()
                 // TODO: reduce code repetition here
                 sandbox = true
                 position
                 started = false
-                function handleNext() {
-                    started = true
-                    gd.onNext()
-                    sandbox = false
-                }
                 finalScore = -1
                 score = 0;
                 // resize refering here also to the size of the keyboard

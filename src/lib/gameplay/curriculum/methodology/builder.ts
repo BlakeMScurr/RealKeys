@@ -1,6 +1,7 @@
 // a builder is a highly general method to define a curriculum, builders are generally the output of the makeTutorial interface
 
 import { graph } from "../../../math/graph";
+import { getProgress } from "../../../storage";
 import { mapStringifyReviver } from "../../../util";
 import { modeName } from "../../mode/mode";
 import type { Curriculum } from "../curriculum";

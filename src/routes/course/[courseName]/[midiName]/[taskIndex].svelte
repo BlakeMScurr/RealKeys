@@ -36,12 +36,16 @@
 {#await taskPromise then gameDesc}
     <Game currentTask={gameDesc[0]} text={gameDesc[1]} {courseName} {forward} curriculum={gameDesc[2]} next={()=>{
         let next = parseInt(taskIndex)+1
-        goto(`/course/${courseName}/${midiName}/${next}`);
-
-        // TODO: we should update the content in such a way that we don't actually flash everything
-        // taskPromise = tp(next);
-        tp(next).then((gd) => {
-            forward.set(gd)
-        })
+        if (gameDesc[2].getLesson(midiName).length > next) {
+            goto(`/course/${courseName}/${midiName}/${next}`);
+    
+            // TODO: we should update the content in such a way that we don't actually flash everything
+            // taskPromise = tp(next);
+            tp(next).then((gd) => {
+                forward.set(gd)
+            })
+        } else {
+            goto(`course/${courseName}`)
+        }
     }}></Game>
 {/await}

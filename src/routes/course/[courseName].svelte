@@ -16,6 +16,8 @@
     import { goto } from "@sapper/app";
     import type { task } from "../../lib/gameplay/curriculum/task";
 import { methodologyName } from "../../lib/gameplay/curriculum/methodology/methodology";
+import { getProgress } from "../../lib/storage";
+import ScoreBar from "../../components/Generic/ScoreBar.svelte";
 
     export let courseName;
 
@@ -23,7 +25,7 @@ import { methodologyName } from "../../lib/gameplay/curriculum/methodology/metho
 
     onMount(() => {
         curriculumPromise = build(courseName).then((b) => {
-            return b.Curriculum()
+            return getProgress(b.Curriculum())
         })
     })
 
@@ -41,21 +43,28 @@ import { methodologyName } from "../../lib/gameplay/curriculum/methodology/metho
     $column: 300px;
     div {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        grid-column-gap: 28px;
-        grid-row-gap: 7px;
-        padding: 14px;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-column-gap: 10%;
+        grid-row-gap: 14px;
+        padding: 28px;
 
         div {
             padding: 0;
-            display: grid;
-            grid-template-columns: 10fr 1fr 1fr;
+            background-color: white;
+            border-radius: 10px;
+            display: flex;
             align-items: center;
             grid-column-gap: 3px;
+            grid-row-gap: 0px;
+            justify-content: space-between;
 
-            div {
-                display: inline-block;
-                text-align: right;
+            .vert {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                h4 {
+                    margin: 0;
+                }
             }
         }
     }
@@ -69,8 +78,11 @@ import { methodologyName } from "../../lib/gameplay/curriculum/methodology/metho
         {#each splitByName(Array.from(curriculum.getTasks().keys())) as lesson}
             <div>
                 <!-- TODO: replace lesson[0] by aggregating the average scores of the lessons - should be an easy reduce function -->
-                <h3>{lesson[0].getLessonURL()}</h3>
-                <ScoreCircle></ScoreCircle>
+                <div class="vert">
+                    <h4>{lesson[0].getLessonURL()}</h4>
+                    <ScoreBar value={curriculum.getScore(lesson[0])}></ScoreBar>
+                </div>
+
                 {#if curriculum.unlocked(lesson[0])}
                     {#if curriculum.getScore(lesson[0]) === 100}
                         <OptionButton text="Practice" on:click={gotoSubcurriculum(lesson[0])}></OptionButton>
