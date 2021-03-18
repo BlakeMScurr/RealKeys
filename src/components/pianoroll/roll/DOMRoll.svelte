@@ -17,7 +17,7 @@ import { onMount } from "svelte";
     export let heightElement;
 
     // show 5 seconds
-    zoomWidth = 5000/duration
+    $: zoomWidth = 5000/duration
 
     // TODO: FUCKING GET RID OF THIS PIECE OF SHIT PILE OF TRASH
     // bs hackery to get the height working on iPhone, the height of grandaddy, despite being 100%, is 0px, while the parent (also relatively positioned) has a non zero pixel height

@@ -1,6 +1,4 @@
 import { Note, Line, InstanceOfNote } from "../../../lib/music/theory/notes";
-import { scorer, state } from "../../../lib/gameplay/score/score";
-import { isSoft, noteState } from "../../../stores/track";
 
 export class Ghost {}
 

@@ -2,6 +2,7 @@
     import { goto, stores } from '@sapper/app';
     import { onDestroy, onMount } from "svelte";
     import { writable } from "svelte/store";
+    import type { Readable } from "svelte/store";
     import { fade } from 'svelte/transition';
     import GameLayout from "../components/GameLayout.svelte";
     import Loader from "../components/loader/Loader.svelte";
@@ -13,9 +14,7 @@
     import { methodologyName } from '../lib/gameplay/curriculum/methodology/methodology';
     import type { task } from "../lib/gameplay/curriculum/task";
     import { modeName } from '../lib/gameplay/mode/mode';
-    import { staticScoreKeeper } from '../lib/gameplay/score/score';
     import type { scorer } from '../lib/gameplay/score/score';
-    import { untimedScoreKeeper } from '../lib/gameplay/score/score';
     import type { Note } from "../lib/music/theory/notes";
     import { highestPianoNote,lowestPianoNote } from "../lib/music/theory/notes";
     import { getProgress, getSettings } from "../lib/storage";
@@ -25,13 +24,14 @@
     import { defaultGame,getGameDef,getUsedNotes,rellietracks } from "./gameHelpers";
     import OptionButton from './Generic/Buttons/OptionButton.svelte';
     import ReccomendedButton from './Generic/Buttons/ReccomendedButton.svelte';
-import ScoreBar from './Generic/ScoreBar.svelte';
+    import ScoreBar from './Generic/ScoreBar.svelte';
 
     export let text: string = "";
     export let currentTask: task;
     export let courseName: string = "Tutorials";
     export let curriculum: Curriculum;
     export let next = ()=>{}
+    export let forward: Readable<[task, string, Curriculum]>
 
     const { session, page } = stores();
 
@@ -54,6 +54,7 @@ import ScoreBar from './Generic/ScoreBar.svelte';
     }
     let finalScore = -1
     let score = 0;
+    let noteCleanUp = () => {}
 
     let lessonNotes: Map<Note, noteState>;
 
@@ -80,49 +81,75 @@ import ScoreBar from './Generic/ScoreBar.svelte';
         screenWidth = window.innerWidth
         keyHeight = (window.innerHeight - 50) / 3
 
-        let positionStore = writable(0)
-        positionStore.subscribe((pos: number) => {
-            position = pos
-        })
-
-        let notesStore = writable(new Map<Note, noteState>())
-        notesStore.subscribe((notes: Map<Note, noteState>) => {
-            lessonNotes = notes
-        })
-
-        if (!curriculum) curriculum = defaultLessons()
-
-        let onComplete
-        switch(currentTask.getMethodology()) {
-            case methodologyName.sequential: // TODO: use the enums
-                onComplete = (s: scorer) => {
-                    let score = OneTo100(s.validRatio() * 100)
-                    getProgress(curriculum).recordScore(currentTask, score)
-                    goto("score?" + currentTask.queryString() + "&score=" + score)
+        let buildGame = () => {
+            let positionStore = writable(0)
+            positionStore.subscribe((pos: number) => {
+                position = pos
+            })
+    
+            let notesStore = writable(new Map<Note, noteState>())
+            noteCleanUp = notesStore.subscribe((notes: Map<Note, noteState>) => {
+                lessonNotes = notes
+            })
+    
+            if (!curriculum) curriculum = defaultLessons()
+    
+            let onComplete
+            switch(currentTask.getMethodology()) {
+                case methodologyName.sequential: // TODO: use the enums
+                    onComplete = (s: scorer) => {
+                        let score = OneTo100(s.validRatio() * 100)
+                        getProgress(curriculum).recordScore(currentTask, score)
+                        goto("score?" + currentTask.queryString() + "&score=" + score)
+                    }
+                    break
+                case methodologyName.tutorial:
+                    onComplete = (s: scorer) => {
+                        let score = OneTo100(s.validRatio() * 100)
+                        getProgress(curriculum).recordScore(currentTask, score)
+                        finalScore = score
+                        sandbox = true // Let you play around after finishing
+                    }
+                    break
+                default:
+                    throw new Error(`invalid methodology "${currentTask.getMethodology()}"`)
+            }
+    
+            getGameDef(courseName, currentTask, positionStore.set, notesStore.set, onComplete).then((newgd) => {
+                gd = newgd
+                if (currentTask.getMethodology() === methodologyName.tutorial && currentTask.getMode().modeName() === modeName.wait) {
+                    handleNext()
                 }
-                break
-            case methodologyName.tutorial:
-                onComplete = (s: scorer) => {
-                    let score = OneTo100(s.validRatio() * 100)
-                    getProgress(curriculum).recordScore(currentTask, score)
-                    finalScore = score
-                    sandbox = true // Let you play around after finishing
-                }
-                break
-            default:
-                throw new Error(`invalid methodology "${currentTask.getMethodology()}"`)
+                gd.scorer.subscribe((s: number) => {
+                    score = s
+                })
+            })
         }
 
-        getGameDef(courseName, currentTask, positionStore.set, notesStore.set, onComplete).then((newgd) => {
-            gd = newgd
-            if (currentTask.getMethodology() === methodologyName.tutorial && currentTask.getMode().modeName() === modeName.wait) {
-                handleNext()
-            }
-            gd.scorer.subscribe((s: number) => {
-                score = s
-            })
-        })
+        buildGame()
 
+        forward.subscribe((v) => {
+            if (v !== null) {
+                currentTask = v[0]
+                text = v[1]
+                curriculum = v[2]
+                // TODO: reduce code repetition here
+                sandbox = true
+                position
+                started = false
+                function handleNext() {
+                    started = true
+                    gd.onNext()
+                    sandbox = false
+                }
+                finalScore = -1
+                score = 0;
+                // resize refering here also to the size of the keyboard
+                // TODO: fix misnomer
+                resizeTrigger++
+                buildGame()
+            }
+        })
     })
 
     function getKeys(resizeTrigger):Note[] {
@@ -192,8 +219,6 @@ import ScoreBar from './Generic/ScoreBar.svelte';
         top: calc(50% - 75px); // centred, given ~150 width loading icon
         left: calc(50% - 75px);
     }
-
-   
 </style>
 
 <div class="centerer">
@@ -217,17 +242,17 @@ import ScoreBar from './Generic/ScoreBar.svelte';
                         {#if currentTask.getMode().modeName() === modeName.play}
                             {#if finalScore !== -1}
                                 <div><OptionButton text="listen again" on:click={()=>{gd.gm.seek.set(0); gd.gm.play.play()}}></OptionButton></div>
-                                <div><ReccomendedButton text="next" on:click={next}></ReccomendedButton></div>
+                                <div><ReccomendedButton text="next" on:click={next} defaultAction={true}></ReccomendedButton></div>
                             {:else}
-                                <div><ReccomendedButton text="listen" on:click={handleNext}></ReccomendedButton></div>
+                                <div><ReccomendedButton text="listen" on:click={handleNext} defaultAction={true}></ReccomendedButton></div>
                             {/if}
                         {:else if currentTask.getMode().modeName() === modeName.wait}
                             {#if finalScore === 100}
-                                <div><ReccomendedButton text="next" on:click={next}></ReccomendedButton></div>
+                                <div><ReccomendedButton text="next" on:click={next} defaultAction={true}></ReccomendedButton></div>
                             {:else if finalScore === -1}
                                 <div><ScoreBar size={"medium"} showValue={false} value={ score*100 }></ScoreBar></div>
                             {:else}
-                                <div><ReccomendedButton text="retry" on:click={()=>{gd.gm.seek.set(0); gd.scorer.reset(); gd.scorer.subscribe((s)=>{score=s}); gd = gd; finalScore = -1; sandbox = false}}></ReccomendedButton></div>
+                                <div><ReccomendedButton text="retry" on:click={()=>{gd.gm.seek.set(0); gd.scorer.reset(); gd.scorer.subscribe((s)=>{score=s}); gd = gd; finalScore = -1; sandbox = false}} defaultAction={true}></ReccomendedButton></div>
                             {/if}
                         {/if}
                     </div>
@@ -242,14 +267,16 @@ import ScoreBar from './Generic/ScoreBar.svelte';
     <div class="piano">
         {#if gd.tracks.size > 0}
             <div in:fade>
-                <Piano keys={ getKeys(resizeTrigger) } sandbox={sandbox || currentTask.getMode().modeName() === modeName.play} instrument={piano} {lessonNotes} {position} scoreKeeper={gd.scorer} on:playingNotes={gd.handlePlayingNotes} usedNotes={getUsedNotes(currentTask, gd.tracks)}></Piano>
+                <Piano keys={ getKeys(resizeTrigger) } sandbox={sandbox || currentTask.getMode().modeName() === modeName.play} instrument={piano} {lessonNotes} {position} scoreKeeper={gd.scorer} on:playingNotes={gd.handlePlayingNotes} usedNotes={getUsedNotes(currentTask, gd.tracks)} mode={currentTask.getMode().modeName()}></Piano>
             </div>
         {/if}
         
-        {#await gd.instrumentsLoaded}
-            <div class="loading" out:fade>
-                <Loader></Loader>
-            </div>
+        {#await new Promise(r => setTimeout(r, 200))}
+            {#await gd.instrumentsLoaded}
+                <div class="loading" out:fade in:fade>
+                    <Loader></Loader>
+                </div>
+            {/await}
         {/await}
     </div>
 </div>

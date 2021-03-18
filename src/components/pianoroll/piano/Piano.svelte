@@ -2,32 +2,33 @@
     import { createEventDispatcher,onDestroy,onMount } from "svelte";
     import type { InputEventNoteoff,InputEventNoteon } from "webmidi";
     import WebMidi from "webmidi";
+    import { modeName } from "../../../lib/gameplay/mode/mode";
     import type { scorer } from "../../../lib/gameplay/score/score";
     import { getKeyState, occupationTracker } from "../../../lib/gameplay/score/stateTracking";
     import type { Note } from "../../../lib/music/theory/notes";
     import { Line,NewNote } from "../../../lib/music/theory/notes";
-    import { getSettings,inputType } from "../../../lib/storage";
+    import { getSettings, inputType } from "../../../lib/storage";
     import type { SoundFont } from "../../../lib/track/soundfont";
     import { handleErrors } from "../../../lib/util";
     import { noteState } from "../../../stores/track";
     import Key from "./Key/Key.svelte";
     import { blackAndGhostBetween,Ghost,keyboardInputNote,label,regularWhiteWidth,whiteWidths } from "./pianoHelpers";
 
-
-
     export let keys:Array<Note>;
     // TODO: use Map<Note, boolean>
     export let usedNotes:Map<string, boolean> = new Map();
+
     export let lessonNotes: Map<Note, noteState> = new Map();
     export let sandbox: boolean = false; // sandbox pianos are just for playing, and aren't used to test one on a task
     export let instrument: SoundFont;
     export let position;
     export let scoreKeeper: scorer;
     export let midiOnly = false;
+    export let mode: modeName;
 
     let midiConnected = false
-    let un = new Map();
-    let labelsOn = false
+    let settingsQwerty = false
+    $: labelsOn = settingsQwerty && !midiOnly && mode !== modeName.play
     $: labels = labelsOn ? label(new Line(keys)) : new Map();
 
     // TODO: move to stateTracking.ts
@@ -147,7 +148,7 @@
     onMount(() => {
         handleErrors(window)
 
-        labelsOn = getSettings() === inputType.qwerty && !midiOnly
+        settingsQwerty = getSettings() === inputType.qwerty
 
         enableWebMidi()
 
@@ -173,7 +174,7 @@
         }
     }
 
-    function getLabel(labels, note) {
+    function getLabel(labels, usedNotes, note) {
         if (usedNotes.size == 0) {
             return labels.get(note.string()) ? labels.get(note.string()) : ""
         } else if (usedNotes.has(note.string())) {
@@ -206,7 +207,7 @@
 <div> 
     <div class="rapper" id="LilPeep">
         {#each whiteWidths(notes.white()) as {note, width}}
-            <Key width={width} {note} state={getKeyState(note, activeMap, lessonNotes, occupation, sandbox, scoreKeeper, position)} on:noteOn={touchNoteEvent} on:noteOff={touchNoteEvent} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
+            <Key width={width} {note} state={getKeyState(note, activeMap, lessonNotes, occupation, sandbox, scoreKeeper, position)} on:noteOn={touchNoteEvent} on:noteOff={touchNoteEvent} label={getLabel(labels, usedNotes, note)}></Key>
         {/each}
     </div>
     <div style="--blackMargin: {regularWhiteWidth(notes.white())*100/4}%;" class="rapper" id="JuiceWrld">
@@ -214,7 +215,7 @@
             {#if note instanceof Ghost}
                 <Key ghost={true} width={regularWhiteWidth(notes.white())*100 * (2/4)}></Key>
             {:else}
-                <Key width={regularWhiteWidth(notes.white())*100} {note} state={getKeyState(note, activeMap, lessonNotes, occupation, sandbox, scoreKeeper, position)} on:noteOn={touchNoteEvent} on:noteOff={touchNoteEvent} label={getLabel(labels, note)} used={un.has(note.string())}></Key>
+                <Key width={regularWhiteWidth(notes.white())*100} {note} state={getKeyState(note, activeMap, lessonNotes, occupation, sandbox, scoreKeeper, position)} on:noteOn={touchNoteEvent} on:noteOff={touchNoteEvent} label={getLabel(labels, usedNotes, note)}></Key>
             {/if}
         {/each}
     </div>
