@@ -1,15 +1,15 @@
 <script lang="ts">
-import { createEventDispatcher } from "svelte";
-import { rangeDefintion } from "../../lib/gameplay/curriculum/methodology/builder";
-
-    import { NewNote, Note } from "../../lib/music/theory/notes";
+    import { createEventDispatcher } from "svelte";
+    import { rangeDefintion } from "../../lib/gameplay/curriculum/methodology/builder";
+    import { NewNote } from "../../lib/music/theory/notes";
+    import type { Note } from "../../lib/music/theory/notes";
 
     export let defaultRange: boolean = true;
     export let lowest: Note; 
     export let highest: Note; 
 
-    let lowestStr = lowest.string()
-    let highestStr = highest.string()
+    $: lowestStr = lowest.string()
+    $: highestStr = highest.string()
 
     function handleLowestChange() {
         try {
@@ -55,7 +55,6 @@ import { rangeDefintion } from "../../lib/gameplay/curriculum/methodology/builde
         let l = split(lowest.string())
         let h = split(highest.string())
         let def = new rangeDefintion(defaultRange, l[0], l[1], h[0], h[1])
-        console.log(def)
         dispatch("edit", def)
     }
 </script>

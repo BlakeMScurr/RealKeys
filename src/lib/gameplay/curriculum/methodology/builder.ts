@@ -28,14 +28,14 @@ export class rangeDefintion {
     lowestPitch: string;
     lowestOctave: number;
     highestPitch: string;
-    highestNumber: number;
+    highestOctave: number;
  
-    constructor(defaultRange: boolean, lowestPitch: string, lowestOctave: number, highestPitch: string, highestNumber: number) {
+    constructor(defaultRange: boolean, lowestPitch: string, lowestOctave: number, highestPitch: string, highestOctave: number) {
         this.defaultRange = defaultRange;
         this.lowestPitch = lowestPitch;
         this.lowestOctave = lowestOctave;
         this.highestPitch = highestPitch;
-        this.highestNumber = highestNumber;
+        this.highestOctave = highestOctave;
     }
 }
 

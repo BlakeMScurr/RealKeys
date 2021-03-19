@@ -3,7 +3,9 @@
     import { modeName } from "../lib/gameplay/mode/mode";
     import { mapStringifyReplacer, mapStringifyReviver } from "../lib/util";
     import Dependencies from "../components/editor/Dependencies.svelte";
-    import { section } from "../lib/gameplay/curriculum/methodology/builder";
+    import { rangeDefintion, section } from "../lib/gameplay/curriculum/methodology/builder";
+    import Range from "../components/editor/Range.svelte";
+import { NewNote } from "../lib/music/theory/notes";
 
     let mounted
     onMount(() => {
@@ -16,6 +18,7 @@
     let curriculae = new Array<string>();
     let sections: Map<string, Array<section>> = new Map([["mock", []]])
     let sequential = new Map<string, boolean>();
+    let ranges = new Map<string, rangeDefintion>();
 
     let startBar = 0;
     let endBar = 10000;
@@ -39,6 +42,7 @@
                             if (priorState.curriculae) curriculae = priorState.curriculae
                             if (priorState.deps) deps = priorState.deps
                             if (priorState.sequential) sequential = priorState.sequential
+                            if (priorState.ranges) ranges = priorState.ranges
                         } else if (file.name.includes(".musicxml")){
                             // TODO: make musicxml rendering component
                             let parser = new DOMParser();
@@ -65,6 +69,7 @@
                             if (!priorState) {
                                 sections.set(filename, theseSections)
                                 sections = sections
+
                             }
     
                             xmlfiles.set(filename, new XMLSerializer().serializeToString(xmlDoc))
@@ -129,6 +134,17 @@
     let currSequential = false
     $: {
         sequential.set(currentFile, currSequential)
+    }
+
+
+    // Range stuff
+    let currRange
+    $: {
+        if (ranges.has(currentFile)) {
+            currRange = ranges.get(currentFile)
+        } else {
+            currRange = new rangeDefintion(true, "c", 4, "c", 5)
+        }
     }
 </script>
 
@@ -207,12 +223,15 @@
     <label for="musicxml" class="btn">Import</label>
     <input type="file" class="fileinput" id="musicxml" multiple={true} on:input={handleMusicXMLInput} bind:this={musicXMLInput}>
 
-    <div class="btn" on:click={()=>{download(JSON.stringify({sections: sections, deps: deps, curriculae: curriculae, sequential: sequential}, mapStringifyReplacer), 'tutorial.txt', 'text/plain')}}>Export</div>
+    <div class="btn" on:click={()=>{download(JSON.stringify({sections: sections, deps: deps, curriculae: curriculae, sequential: sequential, ranges: ranges}, mapStringifyReplacer), 'tutorial.txt', 'text/plain')}}>Export</div>
     <a href="" id="exporter">{dltext}</a>
 </div>
 
 <Dependencies bind:deps bind:curriculae on:select={(e)=>{currSequential=sequential.get(e.detail); currentFile = e.detail; rerender()}}></Dependencies>
 
+<Range defaultRange={currRange.defaultRange} highest={NewNote(currRange.highestPitch, currRange.highestOctave)} lowest={NewNote(currRange.lowestPitch, currRange.lowestOctave)} on:edit={(e) => {
+    ranges.set(currentFile, e.detail);
+}}></Range>
 
 {#if sections.get(currentFile).length !== 0}
     <h1>Sections</h1>
