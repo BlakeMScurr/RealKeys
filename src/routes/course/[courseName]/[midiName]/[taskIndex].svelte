@@ -13,20 +13,30 @@
     import type { task } from "../../../../lib/gameplay/curriculum/task";
     import { goto } from "@sapper/app"
     import { writable } from "svelte/store";
+    import { NewNote } from "../../../../lib/music/theory/notes";
+    import type { Note } from "../../../../lib/music/theory/notes";
 
     export let courseName;
     export let midiName;
     export let taskIndex;
 
-    let taskPromise = new Promise<[task, string, Curriculum]>(()=>{})
+    let taskPromise = new Promise<[task, string, Curriculum, Note, Note]>(()=>{})
     onMount(() => {
         taskPromise = tp(taskIndex)
     })
 
-    function tp(i):Promise<[task, string, Curriculum]> {
+    function tp(i):Promise<[task, string, Curriculum, Note, Note]> {
         return build(courseName).then((bp) => {
+            let rangeDef = bp.ranges.get(midiName)
+            let h: Note;
+            let l: Note;
+            if (!rangeDef.defaultRange) {
+                h = NewNote(rangeDef.highestPitch, rangeDef.highestOctave)
+                l = NewNote(rangeDef.lowestPitch, rangeDef.lowestOctave)
+            }
+
             let c = bp.Curriculum()
-            return [c.getLesson(midiName)[i], bp.sections.get(midiName)[i].text, c]
+            return [c.getLesson(midiName)[i], bp.sections.get(midiName)[i].text, c, h, l]
         })
     }
 
@@ -34,7 +44,7 @@
 </script>
 
 {#await taskPromise then gameDesc}
-    <Game currentTask={gameDesc[0]} text={gameDesc[1]} {courseName} {forward} curriculum={gameDesc[2]} next={()=>{
+    <Game currentTask={gameDesc[0]} text={gameDesc[1]} {courseName} {forward} highest={gameDesc[3]} lowest={gameDesc[4]} curriculum={gameDesc[2]} next={()=>{
         let next = parseInt(taskIndex)+1
         if (gameDesc[2].getLesson(midiName).length > next) {
             goto(`/course/${courseName}/${midiName}/${next}`);

@@ -44,12 +44,14 @@ export class blueprints {
     curriculumNames: Array<string>
     deps:  Array<[number, number]>
     sequential: Map<string, boolean>
+    ranges: Map<string, rangeDefintion>
 
-    constructor(sections: Map<string, Array<section>>, curriculumNames: Array<string>, deps:  Array<[number, number]>, sequential: Map<string, boolean>) {
+    constructor(sections: Map<string, Array<section>>, curriculumNames: Array<string>, deps:  Array<[number, number]>, sequential: Map<string, boolean>, ranges: Map<string, rangeDefintion>) {
         this.sections = sections
         this.curriculumNames = curriculumNames
         this.deps = deps
         this.sequential = sequential
+        this.ranges = ranges
     }
 
     Curriculum():Curriculum {
@@ -80,6 +82,6 @@ export function build (courseName: string):Promise<blueprints> {
         return f.text()
     }).then((f) => {
         let j = JSON.parse(f, mapStringifyReviver)
-        return new blueprints(j.sections, j.curriculae, j.deps, j.sequential)
+        return new blueprints(j.sections, j.curriculae, j.deps, j.sequential, j.ranges)
     })
 }

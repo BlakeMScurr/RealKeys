@@ -15,6 +15,7 @@
     import type { task } from "../lib/gameplay/curriculum/task";
     import { modeName } from '../lib/gameplay/mode/mode';
     import type { scorer } from '../lib/gameplay/score/score';
+    import { notesBetween } from "../lib/music/theory/notes";
     import type { Note } from "../lib/music/theory/notes";
     import { highestPianoNote,lowestPianoNote } from "../lib/music/theory/notes";
     import { getProgress, getSettings } from "../lib/storage";
@@ -32,6 +33,8 @@
     export let curriculum: Curriculum;
     export let next = ()=>{}
     export let forward: Readable<[task, string, Curriculum]>
+    export let highest: Note;
+    export let lowest: Note;
 
     const { session, page } = stores();
 
@@ -150,6 +153,10 @@
     })
 
     function getKeys(resizeTrigger):Note[] {
+        console.log(highest, lowest)
+        if (highest && lowest) {
+            return notesBetween(lowest, highest)
+        }
         return range(gd.lowest, gd.highest, highestPianoNote, lowestPianoNote, screenWidth, keyHeight)
     }
 </script>
