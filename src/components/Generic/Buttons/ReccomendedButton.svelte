@@ -27,7 +27,9 @@ import { getSettings, inputType } from "../../../lib/storage";
     })
 
     onDestroy(() => {
-        document.removeEventListener("keypress", keyBoardShortCutCatcher)
+        if (typeof document !== "undefined") {
+            document.removeEventListener("keypress", keyBoardShortCutCatcher)
+        }
     })
 </script>
 
