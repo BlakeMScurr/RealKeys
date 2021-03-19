@@ -36,6 +36,12 @@ import ScoreBar from "../../components/Generic/ScoreBar.svelte";
             goto(taskUrl)
         }
     }
+
+    function averageScore(c: Curriculum, tasks: Array<task>):number {
+        return tasks.reduce((sum: number, t: task):number => {
+            return sum + c.getScore(t) / tasks.length
+        }, 0)
+    }
 </script>
 
 <style lang="scss">
@@ -80,11 +86,11 @@ import ScoreBar from "../../components/Generic/ScoreBar.svelte";
                 <!-- TODO: replace lesson[0] by aggregating the average scores of the lessons - should be an easy reduce function -->
                 <div class="vert">
                     <h4>{lesson[0].getLessonURL()}</h4>
-                    <ScoreBar value={curriculum.getScore(lesson[0])}></ScoreBar>
+                    <ScoreBar value={averageScore(curriculum, lesson)}></ScoreBar>
                 </div>
 
                 {#if curriculum.unlocked(lesson[0])}
-                    {#if curriculum.getScore(lesson[0]) === 100}
+                    {#if averageScore(curriculum, lesson) === 100}
                         <OptionButton text="Practice" on:click={gotoSubcurriculum(lesson[0])}></OptionButton>
                     {:else}
                         <ReccomendedButton text="LEARN" on:click={gotoSubcurriculum(lesson[0])}></ReccomendedButton>

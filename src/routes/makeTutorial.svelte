@@ -213,6 +213,7 @@
 
 <Dependencies bind:deps bind:curriculae on:select={(e)=>{currSequential=sequential.get(e.detail); currentFile = e.detail; rerender()}}></Dependencies>
 
+
 {#if sections.get(currentFile).length !== 0}
     <h1>Sections</h1>
 

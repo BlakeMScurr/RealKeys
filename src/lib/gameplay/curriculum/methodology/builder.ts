@@ -23,6 +23,22 @@ export class section {
     }
 }
 
+export class rangeDefintion {
+    defaultRange: boolean;
+    lowestPitch: string;
+    lowestOctave: number;
+    highestPitch: string;
+    highestNumber: number;
+ 
+    constructor(defaultRange: boolean, lowestPitch: string, lowestOctave: number, highestPitch: string, highestNumber: number) {
+        this.defaultRange = defaultRange;
+        this.lowestPitch = lowestPitch;
+        this.lowestOctave = lowestOctave;
+        this.highestPitch = highestPitch;
+        this.highestNumber = highestNumber;
+    }
+}
+
 export class blueprints {
     sections: Map<string, Array<section>>
     curriculumNames: Array<string>
