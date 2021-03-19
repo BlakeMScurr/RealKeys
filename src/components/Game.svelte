@@ -153,7 +153,6 @@
     })
 
     function getKeys(resizeTrigger):Note[] {
-        console.log(highest, lowest)
         if (highest && lowest) {
             return notesBetween(lowest, highest)
         }
