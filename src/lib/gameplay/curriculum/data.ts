@@ -1,7 +1,7 @@
-import type { curriculum } from "./curriculum";
-import { PieceBreakdown, SequentialCurriculum } from "./methodology";
+import type { Curriculum } from "./curriculum";
+import { PieceBreakdown, SequentialCurriculum } from "./methodology/sequential";
 
-export function defaultLessons():curriculum {
+export function defaultLessons():Curriculum {
     return new SequentialCurriculum([
         new PieceBreakdown("Mary Had A Little Lamb", [[1, 5, 9], [1, 9]]),
         new PieceBreakdown("Alouette", [[1, 3, 5], [1, 5]]),

@@ -1,6 +1,6 @@
 // TODO: prevent double testing. When we import something from the other test suites, it
 
-import { hand, makeHand, urlToTask, handEqualOrHarder } from "../task"
+import { hand, makeHand, urlToTask, handEqualOrHarder, NewTask } from "../task"
 import { trivialTask } from "./testutil"
 
 test("task.equals", () => {
@@ -14,8 +14,8 @@ test("task.equalOrHarder", () => {
 })
 
 test("task.queryString", () => {
-    expect(trivialTask().queryString()).toBe("startBar=1&endBar=2&hand=Right&lessonURL=mockTask&mode=wait")
-    expect(trivialTask(12345, 67890).queryString()).toBe("startBar=12345&endBar=67890&hand=Right&lessonURL=mockTask&mode=wait")
+    expect(trivialTask().queryString()).toBe("startBar=1&endBar=2&hand=Right&lessonURL=mockTask&mode=wait&methodology=none")
+    expect(trivialTask(12345, 67890).queryString()).toBe("startBar=12345&endBar=67890&hand=Right&lessonURL=mockTask&mode=wait&methodology=none")
 })
 
 test("task.urlToTask", () => {
@@ -51,4 +51,12 @@ test("handEqualOrHarder", () => {
 
     expect(handEqualOrHarder(hand.Right, hand.Both)).toBe(false)
     expect(handEqualOrHarder(hand.Both, hand.Right)).toBe(true)
+})
+
+test("referenceEquality", () => {
+    expect(trivialTask()).toBe(trivialTask())
+    expect(trivialTask(600, 876)).toBe(trivialTask(600, 876))
+
+    let m = new Map([[trivialTask(), 5]])
+    expect(m.get(trivialTask())).toBe(5)
 })

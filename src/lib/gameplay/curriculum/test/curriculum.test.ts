@@ -1,10 +1,18 @@
 import { modeFactory, modeName } from "../../mode/mode"
-import { curriculum, splitByHand, splitByMode, splitBySection, unlockCheckerFactory, UnlockCheckerType } from "../curriculum"
-import { hand, task } from "../task"
+import { StrictCurriculum, splitByHand, splitByMode, splitBySection } from "../curriculum"
+import { hand, NewTask } from "../task"
 import { trivialCurriculum, trivialTask as newTask, twoPartCurriculum } from "./testutil"
 
 test("curriculum.constructor", () => {
     expect(()=>{ trivialCurriculum() }).not.toThrow()
+})
+
+test("curriculum.getLessons", () => {
+    expect(trivialCurriculum().getLessons()).toEqual(["mockTask"])
+})
+
+test("curriculum.getLesson", () => {
+    expect(trivialCurriculum().getLesson("mockTask")).toEqual([{"endBar": 2, "hand": "Right", "lessonURL": "mockTask", "mode": {}, "startBar": 1, "methodology": "none"}])
 })
 
 test("curriculum.recordScore", () => {
@@ -41,21 +49,21 @@ test("curriculum.next", () => {
     expect(c.next().equals(newTask(1,3))).toBe(true)
 })
 
-test("curriculum.unlocked", () => {
+test("curriculum.unlocked/basic", () => {
     let c = twoPartCurriculum()
     expect(c.unlocked(newTask(1,3))).toBe(false)
 
     c.recordScore(newTask(), 100)
-    expect(c.unlocked(newTask(2,3))).toBe(true)
+    expect(c.unlocked(newTask(1,3))).toBe(true)
 })
 
-test("curriculum.unlocked/lenient/linear", () => {
+test("curriculum.unlocked/strict/linear", () => {
     // A -> B -> C
-    let c = new curriculum([
+    let c = StrictCurriculum([
         newTask(1,2),
         newTask(1,3),
         newTask(1,4),
-    ], unlockCheckerFactory(UnlockCheckerType.Lenient))
+    ])
 
     expect(c.unlocked(newTask(1,2))).toBe(true)
     expect(c.unlocked(newTask(1,3))).toBe(false)
@@ -74,15 +82,15 @@ test("curriculum.unlocked/lenient/linear", () => {
     expect(c.unlocked(newTask(1,4))).toBe(true)
 })
 
-test("curriculum.unlocked/lenient/fork", () => {
+test("curriculum.unlocked/strict/fork", () => {
     // A ---v
     // B -> C
     let make = () => {
-        return new curriculum([
+        return StrictCurriculum([
             newTask(1,2),
             newTask(2,3),
             newTask(1,3),
-        ], unlockCheckerFactory(UnlockCheckerType.Lenient))
+        ])
     }
     let c = make()
 
@@ -94,9 +102,8 @@ test("curriculum.unlocked/lenient/fork", () => {
 
     expect(c.unlocked(newTask(1,2))).toBe(true)
     expect(c.unlocked(newTask(2,3))).toBe(true)
-    expect(c.unlocked(newTask(1,3))).toBe(true)
+    expect(c.unlocked(newTask(1,3))).toBe(false)
 
-    c = make()
     c.recordScore(newTask(2,3), 100)
 
     expect(c.unlocked(newTask(1,2))).toBe(true)
@@ -104,16 +111,16 @@ test("curriculum.unlocked/lenient/fork", () => {
     expect(c.unlocked(newTask(1,3))).toBe(true)
 })
 
-test("curriculum.unlocked/lenient/wonkyfork", () => {
+test("curriculum.unlocked/strict/wonkyfork", () => {
     // A --------v
     // B -> C -> D
     let make = () => {
-        return new curriculum([
+        return StrictCurriculum([
             newTask(1,2), // A
             newTask(2,3), // B
             newTask(2,4), // C
             newTask(1,4), // D
-        ], unlockCheckerFactory(UnlockCheckerType.Lenient))
+        ])
     }
     let c = make()
 
@@ -127,7 +134,7 @@ test("curriculum.unlocked/lenient/wonkyfork", () => {
     expect(c.unlocked(newTask(1,2))).toBe(true)
     expect(c.unlocked(newTask(2,3))).toBe(true)
     expect(c.unlocked(newTask(2,4))).toBe(false)
-    expect(c.unlocked(newTask(1,4))).toBe(true)
+    expect(c.unlocked(newTask(1,4))).toBe(false)
 
     c = make()
     c.recordScore(newTask(2,3), 100)
@@ -139,61 +146,93 @@ test("curriculum.unlocked/lenient/wonkyfork", () => {
 })
 
 test("splitBySection", () => {
-    let c = new curriculum([
+    let c = StrictCurriculum([
         newTask(1,2, hand.Left),
         newTask(1,2),
         newTask(1,3, hand.Left),
         newTask(1,3),
-    ], unlockCheckerFactory(UnlockCheckerType.Strict))
+    ])
 
-    expect(splitBySection(c.tasks.map((t)=>t.task))).toEqual([
+    expect(splitBySection(Array.from(c.getTasks().keys()))).toEqual([
         [
-            {"endBar": 2, "hand": "Left", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
-            {"endBar": 2, "hand": "Right", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1}
-        ], 
-        [
-            {"endBar": 3, "hand": "Left", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
-            {"endBar": 3, "hand": "Right", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1}
+            newTask(1,2, hand.Left),
+            newTask(1,2),
+        ],[
+            newTask(1,3, hand.Left),
+            newTask(1,3),
         ]
     ])
 })
 
 test("splitbyHand", () => {
-    let c = new curriculum([
+    let c = StrictCurriculum([
         newTask(1,2, hand.Left),
         newTask(1,2),
         newTask(1,3, hand.Left),
         newTask(1,3),
-    ], unlockCheckerFactory(UnlockCheckerType.Strict))
+    ])
 
-    expect(splitByHand(c.tasks.map((t)=>t.task))).toEqual([
+    expect(splitByHand(Array.from(c.getTasks().keys()))).toEqual([
         [
-            {"endBar": 2, "hand": "Right", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
-            {"endBar": 3, "hand": "Right", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
-        ], 
-        [
-            {"endBar": 2, "hand": "Left", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
-            {"endBar": 3, "hand": "Left", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
+            newTask(1,2),
+            newTask(1,3),
+        ],[
+            newTask(1,2, hand.Left),
+            newTask(1,3, hand.Left),
         ]
     ])
 })
 
 test("splitbyMode", () => {
-    let c = new curriculum([
+    let c = StrictCurriculum([
         newTask(3,4, hand.Right, modeFactory(modeName.atSpeed, 100)),
         newTask(1,2, hand.Right),
         newTask(4,5, hand.Right, modeFactory(modeName.atSpeed, 100)),
         newTask(2,3, hand.Right),
-    ], unlockCheckerFactory(UnlockCheckerType.Strict))
+    ])
 
-    expect(splitByMode(c.tasks.map((t)=>t.task))).toEqual([
+    expect(splitByMode(Array.from(c.getTasks().keys()))).toEqual([
         [
-            {"endBar": 2, "hand": "Right", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 1},
-            {"endBar": 3, "hand": "Right", "lessonURL": "mockTask", "mode": { "modeID": "wait"}, "startBar": 2}
-        ], 
+            newTask(1,2, hand.Right),
+            newTask(2,3, hand.Right),
+        ],
         [
-            {"endBar": 4, "hand": "Right", "lessonURL": "mockTask", "mode": {"speed": 100, "modeID": "atSpeed100"}, "startBar": 3},
-            {"endBar": 5, "hand": "Right", "lessonURL": "mockTask", "mode": {"speed": 100, "modeID": "atSpeed100"}, "startBar": 4}
+            newTask(3,4, hand.Right, modeFactory(modeName.atSpeed, 100)),
+            newTask(4,5, hand.Right, modeFactory(modeName.atSpeed, 100)),
         ]
     ])
+})
+
+test("minmax", () => {
+    // A -> B
+    // C -> D
+    let twoTrack = StrictCurriculum([
+        newTask(1,2), // A
+        newTask(1,3), // B
+        newTask(3,4), // C
+        newTask(3,5), // D
+    ])
+    expect(twoTrack.minimalTasks()).toEqual([newTask(1,2), newTask(3,4)]) // A, C
+    expect(twoTrack.maximalTasks()).toEqual([newTask(1,3), newTask(3,5)]) // B, D
+
+    // A ---v
+    // B -> C
+    let fork = StrictCurriculum([
+        newTask(1,2), // A
+        newTask(2,3), // B
+        newTask(1,3), // C
+    ])
+    expect(fork.minimalTasks()).toEqual([newTask(1,2), newTask(2,3)]) // A, B
+    expect(fork.maximalTasks()).toEqual([newTask(1,3)]) // C
+
+    // A --------v
+    // B -> C -> D
+    let wonky = StrictCurriculum([
+        newTask(1,2), // A
+        newTask(2,3), // B
+        newTask(2,4), // C
+        newTask(1,4), // D
+    ])
+    expect(wonky.minimalTasks()).toEqual([newTask(1,2), newTask(2,3)]) // A, B
+    expect(wonky.maximalTasks()).toEqual([newTask(1,4)]) // D
 })

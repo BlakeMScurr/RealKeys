@@ -26,7 +26,7 @@
 
     let transposeUp = -1
     let error = ""
-    onMount(async () => {
+    onMount(() => {
         fetch("api/ug?path=" + user + "/" + tabname).then(resp => {
             resp.json().then((json) => {
                 if (typeof json.transposeUp !== "undefined") {

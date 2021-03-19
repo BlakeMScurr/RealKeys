@@ -6,7 +6,7 @@ import type { GameMaster } from './stores';
 
 // TODO: make everything in this file a method off GameMaster
 
-export function handleNotes(gm: GameMaster, stateSetter: Writable<Map<Note, string>>, activeTrack: TimedNotes) {
+export function handleNotes(gm: GameMaster, activeTrack: TimedNotes) {
     return function(event) {
         let nextNotes = nextWaitModeNote(gm, activeTrack)
         if (nextNotes.sameStart.length >= 1) {

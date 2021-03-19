@@ -5,6 +5,7 @@ import { get } from "../lib/util"
 import { TimedNote, TimedNotes } from "../lib/music/timed/timed";
 import { NewNote, Note } from "../lib/music/theory/notes";
 import { MockInstrument } from "../lib/track/instrument";
+import { noteState } from "./track";
 
 // Normal user flows:
 // - Seek back and forwards a little
@@ -32,7 +33,7 @@ test("basicNoteSubscription", (done) => {
     gm.tracks.newPlaybackTrack("1", new TimedNotes([
         new TimedNote(0, 0.5, NewNote("C", 4)),
     ]), new MockInstrument(), gm)
-    let states = []
+    let states: Array<string> = []
     gm.tracks.subscribeToNotesOfTracks(["1"], (notes) => {
         states.push(JSON.stringify([...notes]))
     })
@@ -43,9 +44,9 @@ test("basicNoteSubscription", (done) => {
         // TODO: expect proper thing
         expect(states).toEqual([
             "[]",
-            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"softstart\"]]",
+            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"softStart\"]]",
             "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"strict\"]]",
-            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"softend\"]]",
+            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"softEnd\"]]",
             "[]",
             "[]",
         ])
@@ -62,7 +63,7 @@ test("twoNoteOneTrackSubscription", (done) => {
     ]), new MockInstrument(), gm)
 
 
-    let states = []
+    let states: Array<string> = []
     gm.tracks.subscribeToNotesOfTracks(["1"], (notes) => {
         states.push(JSON.stringify([...notes]))
     })
@@ -73,13 +74,13 @@ test("twoNoteOneTrackSubscription", (done) => {
         // TODO: expect proper thing
         expect(states).toEqual([
             "[]",
-            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"softstart\"]]",
+            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"softStart\"]]",
             "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"strict\"]]",
-            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"softend\"]]",
+            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"softEnd\"]]",
             "[]",
-            "[[{\"abstract\":{\"letter\":\"b\",\"accidental\":false},\"octave\":4},\"softstart\"]]",
+            "[[{\"abstract\":{\"letter\":\"b\",\"accidental\":false},\"octave\":4},\"softStart\"]]",
             "[[{\"abstract\":{\"letter\":\"b\",\"accidental\":false},\"octave\":4},\"strict\"]]",
-            "[[{\"abstract\":{\"letter\":\"b\",\"accidental\":false},\"octave\":4},\"softend\"]]",
+            "[[{\"abstract\":{\"letter\":\"b\",\"accidental\":false},\"octave\":4},\"softEnd\"]]",
             "[]",
             "[]",
         ])
@@ -99,7 +100,7 @@ test("twoTrackNoteSubscription", (done) => {
     ]), new MockInstrument(), gm)
 
 
-    let states = []
+    let states: Array<string> = []
     gm.tracks.subscribeToNotesOfTracks(["1", "2"], (notes) => {
         states.push(JSON.stringify([...notes]))
     })
@@ -111,13 +112,13 @@ test("twoTrackNoteSubscription", (done) => {
         expect(states).toEqual([
             "[]",
             "[]",
-            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"softstart\"]]",
+            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"softStart\"]]",
             "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"strict\"]]",
-            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"softend\"]]",
+            "[[{\"abstract\":{\"letter\":\"c\",\"accidental\":false},\"octave\":4},\"softEnd\"]]",
             "[]",
-            "[[{\"abstract\":{\"letter\":\"b\",\"accidental\":false},\"octave\":4},\"softstart\"]]",
+            "[[{\"abstract\":{\"letter\":\"b\",\"accidental\":false},\"octave\":4},\"softStart\"]]",
             "[[{\"abstract\":{\"letter\":\"b\",\"accidental\":false},\"octave\":4},\"strict\"]]",
-            "[[{\"abstract\":{\"letter\":\"b\",\"accidental\":false},\"octave\":4},\"softend\"]]",
+            "[[{\"abstract\":{\"letter\":\"b\",\"accidental\":false},\"octave\":4},\"softEnd\"]]",
             "[]",
             "[]",
             "[]",
@@ -130,35 +131,35 @@ test("twoTrackNoteSubscription", (done) => {
 test("StateSquash", () => {
     let sq = new squasher();
 
-    expect(sq.state()).toEqual(new Map<Note, string>())
+    expect(sq.state()).toEqual(new Map<Note, noteState>())
 
-    sq.updateState("chan1", new Map<Note, string>([[NewNote("C", 4), "soft"]]))
-    expect(sq.state()).toEqual(new Map<Note, string>(new Map<Note, string>([[NewNote("C", 4), "soft"]])))
+    sq.updateState("chan1", new Map<Note, noteState>([[NewNote("C", 4), noteState.soft]]))
+    expect(sq.state()).toEqual(new Map<Note, noteState>(new Map<Note, noteState>([[NewNote("C", 4), noteState.soft]])))
     
-    sq.updateState("chan2", new Map<Note, string>([[NewNote("D", 4), "soft"]]))
-    expect(sq.state()).toEqual(new Map<Note, string>(new Map<Note, string>([
-        [NewNote("C", 4), "soft"],
-        [NewNote("D", 4), "soft"],
+    sq.updateState("chan2", new Map<Note, noteState>([[NewNote("D", 4), noteState.soft]]))
+    expect(sq.state()).toEqual(new Map<Note, noteState>(new Map<Note, noteState>([
+        [NewNote("C", 4), noteState.soft],
+        [NewNote("D", 4), noteState.soft],
     ])))
 
-    sq.updateState("chan3", new Map<Note, string>([[NewNote("D", 4), "soft"]]))
-    expect(sq.state()).toEqual(new Map<Note, string>(new Map<Note, string>([
-        [NewNote("C", 4), "soft"],
-        [NewNote("D", 4), "soft"],
+    sq.updateState("chan3", new Map<Note, noteState>([[NewNote("D", 4), noteState.soft]]))
+    expect(sq.state()).toEqual(new Map<Note, noteState>(new Map<Note, noteState>([
+        [NewNote("C", 4), noteState.soft],
+        [NewNote("D", 4), noteState.soft],
     ])))
 
-    sq.updateState("chan2", new Map<Note, string>())
-    expect(sq.state()).toEqual(new Map<Note, string>(new Map<Note, string>([
-        [NewNote("C", 4), "soft"],
-        [NewNote("D", 4), "soft"],
+    sq.updateState("chan2", new Map<Note, noteState>())
+    expect(sq.state()).toEqual(new Map<Note, noteState>(new Map<Note, noteState>([
+        [NewNote("C", 4), noteState.soft],
+        [NewNote("D", 4), noteState.soft],
     ])))
 
-    sq.updateState("chan1", new Map<Note, string>())
-    expect(sq.state()).toEqual(new Map<Note, string>(new Map<Note, string>([
-        [NewNote("D", 4), "soft"],
+    sq.updateState("chan1", new Map<Note, noteState>())
+    expect(sq.state()).toEqual(new Map<Note, noteState>(new Map<Note, noteState>([
+        [NewNote("D", 4), noteState.soft],
     ])))
 
-    sq.updateState("chan3", new Map<Note, string>())
-    expect(sq.state()).toEqual(new Map<Note, string>(new Map<Note, string>()))
+    sq.updateState("chan3", new Map<Note, noteState>())
+    expect(sq.state()).toEqual(new Map<Note, noteState>(new Map<Note, noteState>()))
 
 })

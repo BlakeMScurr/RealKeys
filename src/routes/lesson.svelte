@@ -6,9 +6,11 @@
     import { goto } from '@sapper/app'
     import { getProgress } from "../lib/storage";
     import { onMount } from "svelte";
-    import { describeHand, task } from "../lib/gameplay/curriculum/task";
+    import { describeHand } from "../lib/gameplay/curriculum/task";
+    import type { task } from "../lib/gameplay/curriculum/task";
     import { splitByHand, splitBySection } from "../lib/gameplay/curriculum/curriculum";
     import type { Curriculum } from "../lib/gameplay/curriculum/curriculum";
+import { defaultLessons } from "../lib/gameplay/curriculum/data";
 
     const { page } = stores();
     const query = $page.query;
@@ -16,7 +18,7 @@
     let lesson: Array<task> = []
     let curric: Curriculum;
     onMount(()=>{
-        curric = getProgress()
+        curric = getProgress(defaultLessons())
         lesson = curric.getLesson(query.lesson)
     })
 
@@ -74,16 +76,16 @@
         {#if section.length > 0}
         <div class="section">
             <div class="description">
-                <h3>Bars {section[0].startBar}-{section[0].endBar}</h3>
+                <h3>Bars {section[0].getStartBar()}-{section[0].getEndBar()}</h3>
                 <div class="handholder">
                     {#each splitByHand(section) as hand}
                         <div class="hand">
-                            <h4>{describeHand(hand[0].hand)}</h4>
+                            <h4>{describeHand(hand[0].getHand())}</h4>
     
                             {#each hand as speed}
                                 <div class="task">
                                     <div>
-                                        <p>{speed.mode.description()}</p>
+                                        <p>{speed.getMode().description()}</p>
                                         <ScoreBar value={curric.getScore(speed)}></ScoreBar>
                                     </div>
                                     <div class="button">

@@ -3,8 +3,9 @@
     import type { Note } from "../../../../lib/music/theory/notes";
     import { colour } from "./helper"
     import EventHandler from "./EventHandler.svelte"
+    import type { keyState } from "../pianoHelpers";
     
-    export let state:string;
+    export let state:keyState;
     export let note:Note;
     export let label: String = "";
     export let used: Boolean = false;

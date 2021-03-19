@@ -2,65 +2,83 @@ import { hand, task } from "./task"
 
 export interface Curriculum {
     recordScore(t: task, score: number)
+    copyInScore(t: task, score: number)
     unlocked(t: task):boolean
     next(constraint?: (t:task) => boolean):task
     getScore(t: task):number
     getLessons():Array<string>
     getLesson(lessonURL: string):Array<task>
+    getTasks():Map<task, number>
+    maximalTasks():Array<task>
+    minimalTasks():Array<task>
+    getDependencies():Map<task, Array<task>>
 }
 
 // A curriculum is a set of a tasks, your progress through them, and way to determine whether you're ready for a given task
 export class curriculum {
-    tasks: Array<progress>; // Your progress through the tasks in the curriculum
-    private checkUnlocked: unlockChecker;
+    // TODO: replace with a
+    tasks:  Map<task, number>;
+    private dependencies: Map<task, Array<task>>;
 
-    constructor(tasks: Array<task>, checkUnlocked: unlockChecker) {
-        this.checkUnlocked = checkUnlocked
-        this.tasks = new Array<progress>()
+    constructor(tasks: Array<task>, dependencies: Map<task, Array<task>>) {
+        this.dependencies = dependencies
+        this.tasks = new Map<task, number>()
         tasks.forEach((t)=> {
-            this.tasks.push(new progress(t))
+            this.tasks.set(t, 0)
         })
     }
 
     // Applies a certain amount of progress to a curriculum, and shows the all the tasks including those incomplete
     recordScore(t: task, score: number) {
-        let i = indexOfTask(t, this.tasks)
-        if (i < 0) {
-            throw new Error(`Couldn't find task ${t} in curriculum ${this}`)
+        if (!this.tasks.has(t)) {
+            throw new Error(`Couldn't find task ${JSON.stringify(t)} in curriculum ${JSON.stringify(this)}`)
         }
-        if (this.tasks[i].score < score) {
-            this.tasks[i].score = score
+        if (this.tasks.get(t) < score) {
+            this.tasks.set(t, score)
 
             // complete tasks that are easier than this one, so the user doesn't have to redo their effort
             if (score >= 100) {
-                this.tasks.forEach((incompleteTask)=>{
-                    if (t.equalOrHarder(incompleteTask.task)) {
-                        incompleteTask.score = 100
-                    }
-                })
+               this.backwardsCompletion(t)
             }
         }
     }
 
-    copyInScore(t: task, score: number) {
-        let i = indexOfTask(t, this.tasks)
-        if (i < 0) {
-            throw new Error(`Couldn't find task ${t} in curriculum ${this}`)
+    // complete all this task's deps and all its deps' deps etc
+    // TODO: prevent infinite recursion on cycles
+    private backwardsCompletion(t: task) {
+        let deps = this.dependencies.get(t)
+            if (deps) {
+                deps.forEach((dep) => {
+                this.tasks.set(dep, 100)
+                this.backwardsCompletion(dep)
+            })
         }
-        this.tasks[i].score = score
+    }
+
+    copyInScore(t: task, score: number) {
+        if (!this.tasks.has(t)) {
+            throw new Error(`Couldn't find task ${JSON.stringify(t)} in curriculum ${JSON.stringify(this)}`)
+        }
+        this.tasks.set(t, score)
     }
 
     unlocked(t: task):boolean{
-       return this.checkUnlocked(t, this.tasks)
+        let deps = this.dependencies.get(t)
+        if (!deps) return true
+        for (let i = 0; i < deps.length; i++) {
+            const dep: task = deps[i];
+            if (this.getScore(dep) !== 100) {
+                return false
+            }
+        }
+        return true
     }
 
-    // TODO: reduce from 0(n^2) complexity (n^3 for lenient procession) - memoising unlocked makes it O(n), and it may be memoised to 0(1) itself
+    // TODO: reduce complexity from O(nd), where d is the average number of dependencies per task. Not high priority.
     next(constraint: (t:task) => boolean = ()=>{return true}):task {
-        for (let i = 0; i < this.tasks.length; i++) {
-            const t = this.tasks[i].task;
-
-            if (this.unlocked(t) && this.tasks[i].score !== 100 && constraint(t)) {
-                return t
+        for (const ts of this.tasks) {
+            if (ts[1] !== 100 && constraint(ts[0]) && this.unlocked(ts[0]) ) {
+                return ts[0]
             }
         }
 
@@ -68,14 +86,14 @@ export class curriculum {
     }
 
     getScore(t: task):number {
-        return this.tasks[indexOfTask(t, this.tasks)].score
+        return this.tasks.get(t)
     }
 
     getLessons():Array<string> {
         let lessons = []
-        this.tasks.forEach((p) => {
-            if (lessons.indexOf(p.task.lessonURL) === -1) {
-                lessons.push(p.task.lessonURL)
+        this.tasks.forEach((_, t) => {
+            if (lessons.indexOf(t.getLessonURL()) === -1) {
+                lessons.push(t.getLessonURL())
             }
         })
         return lessons
@@ -83,110 +101,94 @@ export class curriculum {
 
     getLesson(lessonURL: string):Array<task> {
         let tasks = []
-        this.tasks.forEach((p) => {
-            if (p.task.lessonURL === lessonURL) {
-                tasks.push(p.task)
+        this.tasks.forEach((_, t) => {
+            if (t.getLessonURL() === lessonURL) {
+                tasks.push(t)
             }
         })
         return tasks
     }
-}
 
-function indexOfTask(t: task, p: progress[]):number {
-    // TODO: binary search
-    for (let i = 0; i < p.length; i++) {
-        if (t.equals(p[i].task)) {
-            return i
-        }
-    }
-    console.log("bout to throw an error not having found the index of a task")
-    throw new Error(`Couldn't find task ${JSON.stringify(t)}`)
-}
-
-// progress gives your score on a given task
-export class progress {
-    constructor(t: task) {
-        this.task = t
-        this.score = 0
+    getTasks():Map<task, number> {
+        return this.tasks
     }
 
-    task: task;
-    score: number;
-}
+    // Tasks on which nothing else in the curriculum depends
+    // To be understood in the sense of a poset https://en.wikipedia.org/wiki/Partially_ordered_set#Extrema
+    // TODO: make this one a bit let computationally expensive - to be fair though, it's basically only used when merging curriculae right now, which is a one off or irregular occurrence, so it's probably OK
+    maximalTasks():Array<task> {
+        let nonMaxes = new Map<task, boolean>()
+        this.dependencies.forEach((deps) => {
+            deps.forEach(dep => {
+                nonMaxes.set(dep, true)
+            })
+        })
 
+        let maxes = new Array<task>()
+        this.tasks.forEach((_, t) => {
+            if (!nonMaxes.has(t)) maxes.push(t)
+        })
 
-// A unlockChecker determines whether you can try some task given your current progress
-// TODO: make unlockChecker a far stricter type that is more like a relation on the graph of task dependencies. This will make it more declarative and less error prone.
-type unlockChecker = (t: task, p: progress[]) => boolean
-
-export enum UnlockCheckerType {
-    Strict = 1,
-    Lenient,
-}
-
-export function unlockCheckerFactory(typ: UnlockCheckerType):unlockChecker {
-    switch (typ) {
-        case UnlockCheckerType.Strict:
-            return proceedStrictly
-        case UnlockCheckerType.Lenient:
-            return proceedLeniently
+        return maxes
     }
-}
 
-// When proceeding strictly, we only move onto a task once all tasks that are easier than it are done
-function proceedStrictly(t: task, p: progress[]):boolean {
-    for (let i = 0; i < p.length; i++) {
-        let comp = p[i]
-        // a task is valid iff there is no other task that is strictly easier and is incomplete
-        // thus we set valid to false if we find an easier incomplete task
-        if (t.strictlyHarder(comp.task) && comp.score < 100) {
-            return false
-        }
-    }
-    return true
-}
-
-// When proceeding leniently, we move onto a task (C) if there is any easier task (A) where there is no middling task between them (B), or there is no easier task (A) at all.
-function proceedLeniently(c: task, p: progress[]):boolean {
-    // Proceed if there exists an A with no B between C and 
-    for (let i = 0; i < p.length; i++) {
-        let a = p[i].task
-        let aScore = p[i].score
-        if (c.strictlyHarder(a) && aScore >= 100) {
-            let bBetween = false
-            for (let j = 0; j < p.length; j++) {
-                let b = p[j].task
-                if (c.strictlyHarder(b) && b.strictlyHarder(a)) bBetween = true
+    // Tasks which depend on nothing
+    minimalTasks():Array<task> {
+        let mins = new Array<task>();
+        this.tasks.forEach((_, t) => {
+            if (!this.dependencies.has(t) || this.dependencies.get(t).length === 0) {
+                mins.push(t)
             }
-            
-            if (!bBetween) return true
-        }
+        })
+        return mins
     }
 
-    // Proceed if there are no tasks easier than A
-    for (let i = 0; i < p.length; i++) {
-        if (c.strictlyHarder(p[i].task)) return false
+    getDependencies():Map<task, Array<task>> {
+        return this.dependencies
     }
-    return true
+}
+
+// TODO: should this function live at the methodology level?
+export function StrictCurriculum(tasks: Array<task>):Curriculum {
+    let deps = new Map<task, Array<task>>();
+
+    tasks.forEach((t) => {
+        deps.set(t, new Array<task>())
+        tasks.forEach((dep) => {
+            if (t.strictlyHarder(dep)) {
+                deps.get(t).push(dep)
+            }
+        })
+    })
+
+    return new curriculum(tasks, deps)
 }
 
 // functions that split up tasks to be viewed better
 
+export function splitByName(tasks: Array<task>) {
+    return splitByX(tasks, (a: task,b: task):number=>{
+        if(a.getLessonURL() < b.getLessonURL()) { return -1; }
+        if(a.getLessonURL() > b.getLessonURL()) { return 1; }
+        return 0;
+    })
+}
+
 export function splitBySection(tasks: Array<task>) {
     return splitByX(tasks, (a: task,b: task):number=>{
-        let sizeDifference = (a.startBar - a.endBar) - (b.startBar - b.endBar)
+        let sizeDifference = (a.getStartBar() - a.getEndBar()) - (b.getStartBar() - b.getEndBar())
         if (sizeDifference != 0) {
             return -sizeDifference // larger last
         }
-        if (a.startBar != b.startBar) {
-            return a.startBar - b.startBar
+        if (a.getStartBar() != b.getStartBar()) {
+            return a.getStartBar() - b.getStartBar()
         }
-        return a.endBar - b.endBar
+        return a.getEndBar() - b.getEndBar()
     })
 }
 
 function handIndex(t: task) {
-    switch (t.hand) {
+    switch (t.getHand()) {
         case hand.Right:
             return 0
         case hand.Left:
@@ -203,7 +205,7 @@ export function splitByHand(tasks: Array<task>) {
 
 export function splitByMode(tasks: Array<task>) {
     return splitByX(tasks, (a: task,b: task):number=>{
-        return a.mode.getSpeed() - b.mode.getSpeed()
+        return a.getMode().getSpeed() - b.getMode().getSpeed()
     })
 }
 

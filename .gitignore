@@ -11,3 +11,4 @@ yarn-error.log
 /assets/midi/filelist.json
 /assets/midi/files/*
 !/assets/midi/files/Tutorials
+!/assets/midi/files/chords

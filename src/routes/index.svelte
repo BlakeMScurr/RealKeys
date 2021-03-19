@@ -4,6 +4,7 @@
     import OptionButton from "../components/Generic/Buttons/OptionButton.svelte";
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
     import type { Curriculum } from "../lib/gameplay/curriculum/curriculum";
+import { defaultLessons } from "../lib/gameplay/curriculum/data";
     import { emptyProgress,getProgress } from "../lib/storage";
     import { handleErrors } from "../lib/util";
 
@@ -20,7 +21,7 @@
     onMount(()=>{
         handleErrors(window)
 
-        lessons = getProgress()
+        lessons = getProgress(defaultLessons())
     })
 </script>
 
