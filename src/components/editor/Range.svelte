@@ -8,8 +8,16 @@
     export let lowest: Note; 
     export let highest: Note; 
 
-    $: lowestStr = lowest.string()
-    $: highestStr = highest.string()
+    let lowestStr = lowest.string()
+    let highestStr = highest.string()
+
+    // TODO: remove Uggo hack, which serves as an alternative to having lowestStr reactively depend on lowest.string() like:
+    // $: lowestStr = lowest.string()
+    // That was triggering even when only the lowestStr was updated, so lowestStr could never be changed as it'd immediately change back
+    function setLow(n: Note) { lowestStr = n.string() }
+    function setHigh(n: Note) { highestStr = n.string()}
+    $: { setLow(lowest) }
+    $: { setHigh(highest) }
 
     function handleLowestChange() {
         try {
