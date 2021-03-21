@@ -11,21 +11,21 @@
     import ScoreCircle from "../../components/Generic/ScoreCircle.svelte";
     import { splitByName } from "../../lib/gameplay/curriculum/curriculum";
     import type { Curriculum } from "../../lib/gameplay/curriculum/curriculum";
-    import { build } from "../../lib/gameplay/curriculum/methodology/builder";
+    import { blueprints, build } from "../../lib/gameplay/curriculum/methodology/builder";
     import OptionButton from "../../components/Generic/Buttons/OptionButton.svelte";
     import { goto } from "@sapper/app";
     import type { task } from "../../lib/gameplay/curriculum/task";
-import { methodologyName } from "../../lib/gameplay/curriculum/methodology/methodology";
-import { getProgress } from "../../lib/storage";
-import ScoreBar from "../../components/Generic/ScoreBar.svelte";
+    import { methodologyName } from "../../lib/gameplay/curriculum/methodology/methodology";
+    import { getProgress } from "../../lib/storage";
+    import ScoreBar from "../../components/Generic/ScoreBar.svelte";
 
     export let courseName;
 
-    let curriculumPromise = new Promise<Curriculum>(()=>{});
+    let blueprintsPromise = new Promise<[Curriculum, blueprints]>(()=>{});
 
     onMount(() => {
-        curriculumPromise = build(courseName).then((b) => {
-            return getProgress(b.Curriculum())
+        blueprintsPromise = build(courseName).then((b) => {
+            return [getProgress(b.Curriculum()), b]
         })
     })
 
@@ -79,18 +79,18 @@ import ScoreBar from "../../components/Generic/ScoreBar.svelte";
 <!-- TODO: paramaterise -->
 <h2>Basic Chords</h2>
 
-{#await curriculumPromise then curriculum }
+{#await blueprintsPromise then bp }
     <div>
-        {#each splitByName(Array.from(curriculum.getTasks().keys())) as lesson}
+        {#each bp[1].curriculumNames.map((n) => { return bp[0].getLesson(n)}) as lesson}
             <div>
                 <!-- TODO: replace lesson[0] by aggregating the average scores of the lessons - should be an easy reduce function -->
                 <div class="vert">
                     <h4>{lesson[0].getLessonURL()}</h4>
-                    <ScoreBar value={averageScore(curriculum, lesson)}></ScoreBar>
+                    <ScoreBar value={averageScore(bp[0], lesson)}></ScoreBar>
                 </div>
 
-                {#if curriculum.unlocked(lesson[0])}
-                    {#if averageScore(curriculum, lesson) === 100}
+                {#if bp[0].unlocked(lesson[0])}
+                    {#if averageScore(bp[0], lesson) === 100}
                         <OptionButton text="Practice" on:click={gotoSubcurriculum(lesson[0])}></OptionButton>
                     {:else}
                         <ReccomendedButton text="LEARN" on:click={gotoSubcurriculum(lesson[0])}></ReccomendedButton>
