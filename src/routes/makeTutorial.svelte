@@ -69,12 +69,11 @@ import { NewNote } from "../lib/music/theory/notes";
                             if (!priorState) {
                                 sections.set(filename, theseSections)
                                 sections = sections
-
+                                curriculae = Array.from(xmlfiles.keys())
                             }
     
                             xmlfiles.set(filename, new XMLSerializer().serializeToString(xmlDoc))
                             xmlfiles = xmlfiles
-                            curriculae = Array.from(xmlfiles.keys())
     
                             if (i === 0) {
                                 currentFile = filename
@@ -223,7 +222,7 @@ import { NewNote } from "../lib/music/theory/notes";
     <label for="musicxml" class="btn">Import</label>
     <input type="file" class="fileinput" id="musicxml" multiple={true} on:input={handleMusicXMLInput} bind:this={musicXMLInput}>
 
-    <div class="btn" on:click={()=>{download(JSON.stringify({sections: sections, deps: deps, curriculae: curriculae, sequential: sequential, ranges: ranges}, mapStringifyReplacer), 'tutorial.txt', 'text/plain')}}>Export</div>
+    <div class="btn" on:click={()=>{download(JSON.stringify({sections: sections, deps: deps, curriculae: curriculae, sequential: sequential, ranges: ranges}, mapStringifyReplacer, "\t"), 'tutorial.txt', 'text/plain')}}>Export</div>
     <a href="" id="exporter">{dltext}</a>
 </div>
 
