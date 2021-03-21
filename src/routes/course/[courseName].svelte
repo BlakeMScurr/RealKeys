@@ -18,6 +18,7 @@
     import { methodologyName } from "../../lib/gameplay/curriculum/methodology/methodology";
     import { getProgress } from "../../lib/storage";
     import ScoreBar from "../../components/Generic/ScoreBar.svelte";
+import { OneTo100 } from "../../lib/util";
 
     export let courseName;
 
@@ -90,7 +91,7 @@
                 </div>
 
                 {#if bp[0].unlocked(lesson[0])}
-                    {#if averageScore(bp[0], lesson) === 100}
+                    {#if averageScore(bp[0], lesson) >= 100}
                         <OptionButton text="Practice" on:click={gotoSubcurriculum(lesson[0])}></OptionButton>
                     {:else}
                         <ReccomendedButton text="LEARN" on:click={gotoSubcurriculum(lesson[0])}></ReccomendedButton>

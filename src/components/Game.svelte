@@ -112,7 +112,7 @@
                         getProgress(curriculum).recordScore(currentTask, score)
                         finalScore = score
                         sandbox = true // Let you play around after finishing
-                        if (currentTask.getMode().modeName() === modeName.wait) {
+                        if (currentTask.getMode().modeName() === modeName.wait && score === 100) {
                             next()
                         }
                     }
