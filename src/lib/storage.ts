@@ -22,9 +22,9 @@ export enum inputType {
 
 const progressKey = "progress"
 export function getProgress(c: Curriculum):Curriculum {
-    restoreProgress().forEach((t) => {
+    restoreProgress().forEach((score, t) => {
         try {
-            c.copyInScore(t[0], t[1])
+            c.copyInScore(t, score)
         } catch (e) {
             // console.warn("Failed to copy in score for task" + JSON.stringify(t) + e)
         }
@@ -32,7 +32,7 @@ export function getProgress(c: Curriculum):Curriculum {
     return new curriculumWrapper(c)
 }
 
-function restoreProgress():Array<[task, number]> {
+function restoreProgress():Map<task, number> {
     let tasks: Array<[task, number]> = []
     let p = localStorage.getItem(progressKey)
     if (p) {
@@ -42,7 +42,16 @@ function restoreProgress():Array<[task, number]> {
             tasks.push(nt)
         })
     }
-    return tasks
+
+    let topScores = new Map<task, number>()
+    tasks.forEach(t => {
+        if (t[1] > 0) {
+            if (!topScores.has(t[0]) || topScores.get(t[0]) < t[1]) {
+                topScores.set(t[0], t[1])
+            }
+        }
+    });
+    return topScores
 }
 
 class curriculumWrapper {
@@ -64,14 +73,13 @@ class curriculumWrapper {
             }
         })
 
+
         // save in the old state too
         // TODO: do this in place, somehow
-        restoreProgress().forEach((t) => {
-            if (t[1] > 0) {
-                serialisable.push({
-                    task: t[0].serialisable(),
-                    score: t[1],
-                })
+        restoreProgress().forEach((score, t) => {
+            serialisable.push({
+                task: t.serialisable(),
+                score: score,
             }
         })
 
