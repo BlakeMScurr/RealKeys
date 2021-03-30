@@ -3,14 +3,13 @@
     import type { InputEventNoteoff,InputEventNoteon } from "webmidi";
     import WebMidi from "webmidi";
     import { modeName } from "../../../lib/gameplay/mode/mode";
-    import type { scorer } from "../../../lib/gameplay/score/score";
-    import { getKeyState, occupationTracker } from "../../../lib/gameplay/score/stateTracking";
+    import { getKeyState } from "../../../lib/gameplay/score/stateTracking";
     import type { Note } from "../../../lib/music/theory/notes";
     import { Line,NewNote } from "../../../lib/music/theory/notes";
     import { getSettings, inputType } from "../../../lib/storage";
     import type { SoundFont } from "../../../lib/track/soundfont";
     import { handleErrors } from "../../../lib/util";
-    import { noteState } from "../../../stores/track";
+    import type { noteState } from "../../../stores/track";
     import Key from "./Key/Key.svelte";
     import { blackAndGhostBetween,Ghost,keyboardInputNote,label,regularWhiteWidth,whiteWidths } from "./pianoHelpers";
 
@@ -18,11 +17,9 @@
     // TODO: use Map<Note, boolean>
     export let usedNotes:Map<string, boolean> = new Map();
 
-    export let lessonNotes: Map<Note, noteState> = new Map();
     export let sandbox: boolean = false; // sandbox pianos are just for playing, and aren't used to test one on a task
     export let instrument: SoundFont;
     export let position;
-    export let scoreKeeper: scorer;
     export let midiOnly = false;
     export let mode: modeName;
 
@@ -30,39 +27,6 @@
     let settingsQwerty = false
     $: labelsOn = settingsQwerty && !midiOnly && mode !== modeName.play
     $: labels = labelsOn ? label(new Line(keys)) : new Map();
-
-    // TODO: move to stateTracking.ts
-    // If a new note arrives, and the current depression of its key was due to a previous note, then the note should be invalid
-    // Played map records whether a given note has been played yet
-    let occupation: occupationTracker = new occupationTracker();
-    let previousStates = new Map<Note, noteState>();
-    $: {
-        let newPreviousStates = new Map<Note, noteState>();
-        if (lessonNotes) {
-            scoreKeeper.expect(lessonNotes)
-            lessonNotes.forEach((value, note) => {
-                if (value === noteState.softStart) {
-                    if (!previousStates.has(note)) {
-                        occupation.expect(note)
-                    } else {
-                        if (previousStates.get(note) !== noteState.softStart) {
-                            occupation.unexpect(note)
-                            occupation.expect(note)
-                        }
-                    }
-                }
-                newPreviousStates.set(note, value)
-            })
-        }
-
-        previousStates.forEach((_, note) => {
-            if (!newPreviousStates.has(note)) {
-                occupation.unexpect(note)
-            }
-        })
-
-        previousStates = newPreviousStates
-    }
 
     function touchNoteEvent(e) {
         if (!midiOnly) {
@@ -73,7 +37,6 @@
     const dispatch = createEventDispatcher();
     // TODO: this is a misnomer, this is actually the thing that plays all notes
     function forward(e) {
-        scoreKeeper.inputChange()
         let note: Note = e.detail
         activeMap.set(note, e.type === "noteOn")
         activeMap = activeMap
@@ -87,10 +50,8 @@
 
         if (e.type === "noteOn") {
             instrument.play(note)
-            occupation.play(note)
         } else {
             instrument.stop(note)
-            occupation.stop(note)
         }
     
         dispatch("playingNotes", playingNotes)
@@ -207,7 +168,7 @@
 <div> 
     <div class="rapper" id="LilPeep">
         {#each whiteWidths(notes.white()) as {note, width}}
-            <Key width={width} {note} state={getKeyState(note, activeMap, lessonNotes, occupation, sandbox, scoreKeeper, position)} on:noteOn={touchNoteEvent} on:noteOff={touchNoteEvent} label={getLabel(labels, usedNotes, note)}></Key>
+            <Key width={width} {note} state={getKeyState(note, activeMap)} on:noteOn={touchNoteEvent} on:noteOff={touchNoteEvent} label={getLabel(labels, usedNotes, note)}></Key>
         {/each}
     </div>
     <div style="--blackMargin: {regularWhiteWidth(notes.white())*100/4}%;" class="rapper" id="JuiceWrld">
@@ -215,7 +176,7 @@
             {#if note instanceof Ghost}
                 <Key ghost={true} width={regularWhiteWidth(notes.white())*100 * (2/4)}></Key>
             {:else}
-                <Key width={regularWhiteWidth(notes.white())*100} {note} state={getKeyState(note, activeMap, lessonNotes, occupation, sandbox, scoreKeeper, position)} on:noteOn={touchNoteEvent} on:noteOff={touchNoteEvent} label={getLabel(labels, usedNotes, note)}></Key>
+                <Key width={regularWhiteWidth(notes.white())*100} {note} state={getKeyState(note, activeMap)} on:noteOn={touchNoteEvent} on:noteOff={touchNoteEvent} label={getLabel(labels, usedNotes, note)}></Key>
             {/if}
         {/each}
     </div>

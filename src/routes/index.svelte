@@ -1,12 +1,12 @@
 <script lang="ts">
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
-    import { abstractNotes } from "../lib/music/theory/notes"
-    import { scales } from "../lib/music/theory/scales";
+    import { abstractNotes, NewAbstractNote } from "../lib/music/theory/notes"
+    import { allScales } from "../lib/music/theory/scales";
     import { goto } from '@sapper/app'
     import { level } from "../lib/level";
     import { objToURLArgs } from "../lib/util";
 
-    let key = "C"
+    let key = NewAbstractNote("C")
     let tonality = "Major"
     let phraseLength = 2
     let notePoolSize = 2
@@ -61,7 +61,7 @@
                 {/each}
             </select>
             <select bind:value={tonality}>
-                {#each scales() as scale}
+                {#each allScales() as scale}
                     <option value={scale}>
                         {scale}
                     </option>
@@ -86,6 +86,6 @@
     </div>
 
     <div class="btnHolder">
-        <ReccomendedButton text="Go" on:click={goto("play?" + objToURLArgs(new level(key, tonality, phraseLength, notePoolSize, maxInterval)))}></ReccomendedButton>
+        <ReccomendedButton text="Go" on:click={goto("play?" + objToURLArgs(new level(key.enharmonicEquivalent(), tonality, phraseLength, notePoolSize, maxInterval)))}></ReccomendedButton>
     </div>
 </div>

@@ -76,46 +76,8 @@ export enum occupationStatus {
 
 // getKeyState combines the expected noteState from the track with user input, to determine whether the user is currently playing the note correctly or not.
 // TODO: surely make it more concise, especially removing arguments
-export function getKeyState(note: Note, activeMap: Map<Note, boolean>, lessonNotes: Map<Note, noteState>, occupation: occupationTracker, sandbox: boolean, scoreKeeper: scorer, position: number):keyState {
-    let stateString = ():keyState => {
-        if (sandbox) {
-            if (lessonNotes.has(note) && lessonNotes.get(note) === noteState.expecting) {
-                return activeMap.get(note) ? keyState.right : keyState.expecting
-            }
-            return activeMap.get(note) ? keyState.active : keyState.inactive
-        } else {
-            if (lessonNotes.has(note)) {
-                let val = lessonNotes.get(note)
-                if (val == noteState.strict) {
-                    return activeMap.get(note) && !occupation.occupiedPrevious(note) ? keyState.right : keyState.wrong
-                } else if (isSoft(val)) {
-                    return activeMap.get(note) && !occupation.occupiedPrevious(note) ? keyState.right : keyState.inactive
-                } else if (val == noteState.expecting) {
-                    return activeMap.get(note) ? keyState.right : keyState.expecting
-                }
-                throw new Error("unexpected note state value " + val)
-            } else {
-                return activeMap.get(note) ? keyState.wrong : keyState.inactive
-            }
-         }
-    }
-
-    let ss = stateString()
-
-    try {
-        switch (ss) {
-            case keyState.right:
-                scoreKeeper.recordNoteState(note, state.valid, position)
-                break
-            case keyState.wrong:
-                scoreKeeper.recordNoteState(note, state.invalid, position)
-                break
-            default:
-                scoreKeeper.recordNoteState(note, state.indifferent, position)
-        }
-    } catch(e) {}
-
-    return ss
+export function getKeyState(note: Note, activeMap: Map<Note, boolean>) {
+    return activeMap.get(note) ? keyState.active : keyState.inactive
 }
 
 export enum keyState {
