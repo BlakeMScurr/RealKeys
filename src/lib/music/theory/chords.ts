@@ -1,7 +1,7 @@
 import { Note, NewAbstractNote, NoteOrder, NewNote } from "./notes";
 
 // TODO: replace with enum, fix weird "cannot find name" error
-const semitonesIn: Map<string, number> = new Map([
+export const semitonesIn: Map<string, number> = new Map([
     ["Semitone", 1],
     ["Tone", 2],
     ["Minor3rd", 3],

@@ -83,6 +83,11 @@ export function NewAbstractNote(name: string):AbstractNote {
     throw new Error("note " + name + " is not a valid note")
 }
 
+// returns all the notes in the 12 note equal tempered system
+export function abstractNotes():Array<AbstractNote> {
+    return notelist.map((str) => { return NewAbstractNote(str) })
+}
+
 export interface Note {
     lowerThan(note: Note):boolean
     next():Note
