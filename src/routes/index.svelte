@@ -4,7 +4,6 @@
     import { allScales } from "../lib/music/theory/scales";
     import { goto } from '@sapper/app'
     import { level } from "../lib/level";
-    import { objToURLArgs } from "../lib/util";
 
     let key = NewAbstractNote("C")
     let tonality = "Major"
@@ -86,6 +85,6 @@
     </div>
 
     <div class="btnHolder">
-        <ReccomendedButton text="Go" on:click={goto("play?" + objToURLArgs(new level(key.enharmonicEquivalent(), tonality, phraseLength, notePoolSize, maxInterval)))}></ReccomendedButton>
+        <ReccomendedButton text="Go" on:click={goto((new level(key.enharmonicEquivalent(), tonality, phraseLength, notePoolSize, maxInterval)).playURL())}></ReccomendedButton>
     </div>
 </div>

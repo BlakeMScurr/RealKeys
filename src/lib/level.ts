@@ -9,8 +9,8 @@ export class level {
     maxInterval: number;
 
     // calculated, not part of the definition
-    private scale: scale;
-    private notes: Array<Note>;
+    scale: scale;
+    notes: Array<Note>;
 
     constructor(key: string, tonality: string, phraseLength: number, notePoolSize: number, maxInterval: number) {
         this.key = key
@@ -20,8 +20,7 @@ export class level {
         this.maxInterval = maxInterval
 
         this.scale = new scale(NewNote(key, 4), tonality)
-        let notes = this.scale.notes.slice()
-        notes.splice(notePoolSize)
+        let notes = nNoteScale(this.scale.notes, notePoolSize)
         this.notes = notes
     }
 
@@ -46,6 +45,22 @@ export class level {
         }
         return phrase
     }
+
+    playURL():string {
+        return "play?key=" + this.key + "&tonality=" + this.tonality + "&phraseLength=" + this.phraseLength + "&notePoolSize=" + this.notePoolSize + "&maxInterval=" + this.maxInterval
+    }
+}
+
+function nNoteScale(scale: Array<Note>, n: number):Array<Note> {
+    let notes = new Array<Note>();
+    let i = 0
+    while (i < n) {
+        let noteIndex = i % scale.length
+        let octave = Math.floor(i / scale.length)
+        notes.push(scale[noteIndex].jump(12 * octave))
+        i++
+    }
+    return notes
 }
 
 export function levelFromURL(query):level {

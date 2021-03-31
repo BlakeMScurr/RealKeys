@@ -22,6 +22,7 @@
     export let position;
     export let midiOnly = false;
     export let mode: modeName;
+    export let on = true;
 
     let midiConnected = false
     let settingsQwerty = false
@@ -48,7 +49,7 @@
             }
         })
 
-        if (e.type === "noteOn") {
+        if (e.type === "noteOn" && on) {
             instrument.play(note)
         } else {
             instrument.stop(note)
@@ -168,7 +169,7 @@
 <div> 
     <div class="rapper" id="LilPeep">
         {#each whiteWidths(notes.white()) as {note, width}}
-            <Key width={width} {note} state={getKeyState(note, activeMap)} on:noteOn={touchNoteEvent} on:noteOff={touchNoteEvent} label={getLabel(labels, usedNotes, note)}></Key>
+            <Key width={width} {note} state={getKeyState(note, activeMap, usedNotes, on)} on:noteOn={touchNoteEvent} on:noteOff={touchNoteEvent} label={getLabel(labels, usedNotes, note)}></Key>
         {/each}
     </div>
     <div style="--blackMargin: {regularWhiteWidth(notes.white())*100/4}%;" class="rapper" id="JuiceWrld">
@@ -176,7 +177,7 @@
             {#if note instanceof Ghost}
                 <Key ghost={true} width={regularWhiteWidth(notes.white())*100 * (2/4)}></Key>
             {:else}
-                <Key width={regularWhiteWidth(notes.white())*100} {note} state={getKeyState(note, activeMap)} on:noteOn={touchNoteEvent} on:noteOff={touchNoteEvent} label={getLabel(labels, usedNotes, note)}></Key>
+                <Key width={regularWhiteWidth(notes.white())*100} {note} state={getKeyState(note, activeMap, usedNotes, on)} on:noteOn={touchNoteEvent} on:noteOff={touchNoteEvent} label={getLabel(labels, usedNotes, note)}></Key>
             {/if}
         {/each}
     </div>

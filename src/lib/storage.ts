@@ -17,7 +17,7 @@ export function setSettings(t: inputType) {
 export enum inputType {
     midi = "MIDI Keyboard",
     qwerty = "QWERTY Keyboard",
-    touch = "Touch Screen",
+    touch = "Touch/Click",
 }
 
 const progressKey = "progress"

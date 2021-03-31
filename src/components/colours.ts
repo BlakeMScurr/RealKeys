@@ -3,9 +3,8 @@ import distinctColors from 'distinct-colors'
 // TODO: do this in scss
 
 export const niceBlue = "#38A3FA";
-export const rightGreen = "#42c966"
-export const wrongRed = "#eb4236"
-export const expectingOrange = "#f58f00"
+export const blackHighlight = "#104979";
+export const whiteHighlight = "#dceefd";
 export const white = "#ffffff"
 export const black = "#000000"
 export const whiteNum = 0xffffff // TODO: only use one format, or perhaps one class with multiple formats

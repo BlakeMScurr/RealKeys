@@ -1,19 +1,16 @@
 // TODO: get typescript definition and replace all references to "any" type in this file with "Fraction", or whatever the type is
 import Fraction from 'fraction.js';
 import type { VirtualInstrument } from "../../lib/track/instrument";
-import { Note, NewNote, notesBetween } from "../../lib/music/theory/notes";
+import { Note, notesBetween } from "../../lib/music/theory/notes";
 
-// gives a range of keys to present a given set of notes
-// - should work with no notes
-// - should work with a single note
-// - should not be smaller than the absolute minimum size required to keep it pretty
-// - must have white notes at top and bottom
-const minimumKeyWidth = 80
-const defaultStartingNote = NewNote("C", 4) // middle C
 export function range(lowest: Note, highest: Note):Array<Note> {
     // Make sure each end of the piano is a white note and extend
     if (lowest.getAbstract().accidental) {
         lowest = lowest.nextLowest()
+    }
+
+    if (lowest.intervalTo(highest) < 12) {
+        highest = lowest.jump(12)
     }
 
     if (highest.getAbstract().accidental) {
@@ -23,7 +20,7 @@ export function range(lowest: Note, highest: Note):Array<Note> {
     return notesBetween(lowest, highest)
 }
 
-// TODO: merge this will all the places we're using bars in the ZoomBars thign
+// TODO: merge this will all the places we're using bars in the ZoomBars thing
 export class Bars {
     bars: Array<any>;
     constructor(bars: Array<any>) {
