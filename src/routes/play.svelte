@@ -8,6 +8,8 @@
     import { range } from "../components/pianoroll/pianoRollHelpers";
     import DOMRoll from "../components/pianoroll/roll/DOMRoll.svelte";
     import { levelFromURL } from "../lib/level";
+    import { objToURLArgs } from "../lib/util";
+    import { getSettings } from "../lib/storage";
     import { TimedNote, TimedNotes } from "../lib/music/timed/timed";
     import { newPiano } from "../lib/track/instrument";
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
@@ -16,7 +18,8 @@
     import { goto } from '@sapper/app'
     import type { VirtualInstrument } from "../lib/track/instrument";
 
-    const { page } = stores();
+    const { session, page } = stores();
+
     const query = $page.query;
     let level = levelFromURL(query)
     let notes = level.notes
@@ -50,6 +53,11 @@
     let mechanicalPianoPromise = new Promise<VirtualInstrument>((resolve)=>{});
     let userPiano
     onMount(() => {
+        if (!getSettings()) {
+            session.set({"redirect": $page.path + "?" + objToURLArgs($page.query)})
+            goto("/settings")
+        }
+
         userPiano = newPiano("User Piano", ()=>{})
 
         mechanicalPianoPromise = new Promise((resolve) => {
@@ -146,7 +154,6 @@
                     notes = level.notes
                     startingScore = level.phraseLength * 2
                     passingScore = level.phraseLength * 5
-                    console.log("Going to", level.playURL())
                     goto(level.playURL())
 
                     // Listening

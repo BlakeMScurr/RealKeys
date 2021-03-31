@@ -2,7 +2,6 @@
     import { onDestroy, onMount } from "svelte";
     import Loader from "../../components/loader/Loader.svelte";
     import Piano from "../../components/pianoroll/piano/Piano.svelte";
-    import { untimedScoreKeeper } from "../../lib/gameplay/score/score";
     import { NewNote, notesBetween } from "../../lib/music/theory/notes";
     import type { Note } from "../../lib/music/theory/notes";
     import { newPiano } from "../../lib/track/instrument";
@@ -82,6 +81,6 @@
         </div>
     {/if}
     <div class="pianoHolder">
-        <Piano lessonNotes={new Map([[NewNote("C", 4), "expecting"]])} keys={notesBetween(NewNote("G", 3), NewNote("C", 5))} scoreKeeper={new untimedScoreKeeper()} instrument={piano} sandbox={true} midiOnly={true} on:playingNotes={handlePlayingNotes}></Piano>
+        <Piano lessonNotes={new Map([[NewNote("C", 4), "expecting"]])} keys={notesBetween(NewNote("G", 3), NewNote("C", 5))} instrument={piano} sandbox={true} midiOnly={true} on:playingNotes={handlePlayingNotes}></Piano>
     </div>
 </div>

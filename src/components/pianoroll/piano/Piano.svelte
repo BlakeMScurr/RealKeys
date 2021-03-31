@@ -2,14 +2,12 @@
     import { createEventDispatcher,onDestroy,onMount } from "svelte";
     import type { InputEventNoteoff,InputEventNoteon } from "webmidi";
     import WebMidi from "webmidi";
-    import { modeName } from "../../../lib/gameplay/mode/mode";
     import { getKeyState } from "../../../lib/gameplay/score/stateTracking";
     import type { Note } from "../../../lib/music/theory/notes";
     import { Line,NewNote } from "../../../lib/music/theory/notes";
     import { getSettings, inputType } from "../../../lib/storage";
     import type { SoundFont } from "../../../lib/track/soundfont";
     import { handleErrors } from "../../../lib/util";
-    import type { noteState } from "../../../stores/track";
     import Key from "./Key/Key.svelte";
     import { blackAndGhostBetween,Ghost,keyboardInputNote,label,regularWhiteWidth,whiteWidths } from "./pianoHelpers";
 
@@ -21,12 +19,11 @@
     export let instrument: SoundFont;
     export let position;
     export let midiOnly = false;
-    export let mode: modeName;
     export let on = true;
 
     let midiConnected = false
     let settingsQwerty = false
-    $: labelsOn = settingsQwerty && !midiOnly && mode !== modeName.play
+    $: labelsOn = settingsQwerty && !midiOnly
     $: labels = labelsOn ? label(new Line(keys)) : new Map();
 
     function touchNoteEvent(e) {

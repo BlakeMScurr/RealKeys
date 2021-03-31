@@ -1,12 +1,8 @@
 <script lang="ts">
-    import { OneTo100 } from "../../lib/util";
-
     export let size: string = "small";
     export let value: number = 0;
     export let showValue: boolean = false;
     export let denominator: number = 100;
-
-    $: v = OneTo100(value)
 
     if (size !== "small" && size !== "medium" && size !== "large" && size !== "flex") size = "small"
     if (size === "small") showValue = false
@@ -50,8 +46,8 @@
     }
 </style>
 
-<div class={size} style="--width: {100*v/denominator}%; --color: {v >= denominator ? "#1CBE02" : "#FFA800"}">
+<div class={size} style="--width: {100*value/denominator}%; --color: {value >= denominator ? "#1CBE02" : "#FFA800"}">
     {#if showValue}
-        <p class="robotic">{v}/{denominator}</p>
+        <p class="robotic">{value}/{denominator}</p>
     {/if}
 </div>

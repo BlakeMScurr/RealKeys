@@ -1,5 +1,18 @@
-import { semitonesIn } from "./chords"
 import type { Note } from "./notes";
+
+export const semitonesIn: Map<string, number> = new Map([
+    ["Semitone", 1],
+    ["Tone", 2],
+    ["Minor3rd", 3],
+    ["Major3rd", 4],
+    ["Perfect4th", 5],
+    ["Augmented4th", 6],
+    ["Perfect5th", 7],
+    ["Minor6th", 8],
+    ["Major6th", 9],
+    ["Minor7th", 10],
+    ["Major7th", 11],
+])
 
 export class scaleType {
     intervals: Array<number>;

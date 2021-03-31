@@ -3,13 +3,32 @@
     import { abstractNotes, NewAbstractNote } from "../lib/music/theory/notes"
     import { allScales } from "../lib/music/theory/scales";
     import { goto } from '@sapper/app'
-    import { level } from "../lib/level";
+    import { historyKey, level } from "../lib/level";
+    import { getSettings } from "../lib/storage";
+    import { stores } from "@sapper/app";
+    import { onMount } from "svelte";
+
+    const { session, page } = stores();
 
     let key = NewAbstractNote("C")
     let tonality = "Major"
     let phraseLength = 4
     let notePoolSize = 2
     let maxInterval = 2
+
+    onMount(() => {
+        let historyStr = localStorage.getItem(historyKey)
+        if (historyStr) {
+            let history = JSON.parse(historyStr)
+            let lastLevel = history.levels[history.levels.length -1]
+            key = NewAbstractNote(lastLevel.key)
+            tonality = lastLevel.tonality
+            phraseLength = lastLevel.phraseLength
+            notePoolSize = lastLevel.notePoolSize
+            maxInterval = lastLevel.maxInterval
+        }
+
+    })
 
     function validate() {
         if (maxInterval > notePoolSize) maxInterval = notePoolSize
@@ -85,6 +104,16 @@
     </div>
 
     <div class="btnHolder">
-        <ReccomendedButton text="Go" on:click={goto((new level(key.enharmonicEquivalent(), tonality, phraseLength, notePoolSize, maxInterval)).playURL())}></ReccomendedButton>
+        <ReccomendedButton text="Go" on:click={
+            () => {
+                let nextStop = (new level(key.enharmonicEquivalent(), tonality, phraseLength, notePoolSize, maxInterval)).playURL()
+                if (getSettings()) {
+                    goto(nextStop)
+                } else  {
+                    session.set({"redirect": nextStop})
+                    goto("/settings")
+                }
+            }
+        }></ReccomendedButton>
     </div>
 </div>

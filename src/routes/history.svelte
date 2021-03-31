@@ -1,7 +1,8 @@
 <script lang="ts">
     import { Chart } from "chart.js";
     import { onMount } from "svelte"
-    import { historyKey } from "../lib/level";
+    import { goto } from "@sapper/app"
+    import { historyKey, level } from "../lib/level";
 
     let borderColours = [
         'rgba(255, 99, 132, 1)',
@@ -21,6 +22,7 @@
             let data = history.levels.map((event) => {
                 return {
                     tonality: event.key + " " + event.tonality,
+                    level: new level(event.key, event.tonality, event.phraseLength, event.notePoolSize, event.maxInterval),
                     x: new Date(event.time),
                     y: event.phraseLength + event.notePoolSize + event.maxInterval,
                 }
@@ -60,6 +62,10 @@
                         yAxes: [{
                             ticks: {
                                 beginAtZero: true,
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'Difficulty (phrase length + note pool + max interval)'
                             }
                         }],
                         xAxes: [{
@@ -67,6 +73,20 @@
                         }]
                     },
                     maintainAspectRatio: false,
+                    onClick: (e, items) => {
+                        if (items.length > 0) {
+                            let shortest = Math.abs(items[0]._model.x - e.offsetX) + Math.abs(items[0]._model.y - e.offsetY)
+                            let closest = {ds: items[0]._datasetIndex, i: items[0]._index}
+                            items.forEach(item => {
+                                let dist = Math.abs(item._model.x - e.offsetX) + Math.abs(item._model.y - e.offsetY)
+                                if (dist < shortest) {
+                                    shortest = dist
+                                    closest = {ds: item._datasetIndex, i: item._index}
+                                }
+                            });
+                            goto(dataSets[closest.ds].data[closest.i].level.playURL())
+                        }
+                    },
                 }
             });
         } else {
