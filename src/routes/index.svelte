@@ -7,7 +7,7 @@
 
     let key = NewAbstractNote("C")
     let tonality = "Major"
-    let phraseLength = 2
+    let phraseLength = 4
     let notePoolSize = 2
     let maxInterval = 2
 

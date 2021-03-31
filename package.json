@@ -20,6 +20,7 @@
     "@tonejs/piano": "^0.2.1",
     "@types/mocha": "^8.2.1",
     "abort-controller": "^3.0.0",
+    "chart.js": "^2.9.4",
     "class-transformer": "^0.3.2",
     "compression": "^1.7.1",
     "css-element-queries": "^1.2.3",

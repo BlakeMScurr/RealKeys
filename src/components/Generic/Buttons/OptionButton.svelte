@@ -16,6 +16,7 @@
         border: 1px solid black;
         color: black;
         display: inline-block;
+        background-color: white;
         
         &:hover {
             color: white;
@@ -42,6 +43,6 @@
 
 <div on:click={handleClick}>
     <div>
-        <h6 class="robotic">{text.toLocaleUpperCase()}</h6>
+        <h6 class="robotic noselect">{text.toLocaleUpperCase()}</h6>
     </div>
 </div>

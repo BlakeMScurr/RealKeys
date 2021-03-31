@@ -1,7 +1,6 @@
 <script lang="ts">
     import { createEventDispatcher, onDestroy, onMount } from "svelte";
     import { fade } from 'svelte/transition';
-import { getSettings, inputType } from "../../../lib/storage";
 
     let dispatch = createEventDispatcher()
     function handleClick() {
@@ -11,6 +10,7 @@ import { getSettings, inputType } from "../../../lib/storage";
     export let text: string;
     export let defaultAction: boolean = false;
 
+
     let lowerText;
     function keyBoardShortCutCatcher(event) {
         if (event.key === "Enter") {
@@ -18,7 +18,7 @@ import { getSettings, inputType } from "../../../lib/storage";
         }
     }
     onMount(()=>{
-        if (defaultAction && getSettings() !== inputType.touch) {
+        if (defaultAction) {
             document.addEventListener("keypress", keyBoardShortCutCatcher)
             setTimeout(() => {
                 lowerText = "(enter)"
@@ -84,7 +84,7 @@ import { getSettings, inputType } from "../../../lib/storage";
 <div class="parent">
     <div class="button" on:click={handleClick}>
         <div>
-            <h6 class="robotic">{text.toLocaleUpperCase()}</h6>
+            <h6 class="robotic noselect">{text.toLocaleUpperCase()}</h6>
         </div>
     </div>
     {#if defaultAction}

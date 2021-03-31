@@ -1,5 +1,5 @@
 import { semitonesIn } from "./chords"
-import { AbstractNote, NewNote, Note } from "./notes";
+import type { Note } from "./notes";
 
 export class scaleType {
     intervals: Array<number>;
@@ -53,8 +53,9 @@ const scales: Map<string, scaleType> = new Map([
     ["Minor", new scaleType("Minor", transposeUp(major(), 5).slice(0, -1))],
     ["Phrygian", new scaleType("Phrygian", transposeUp(major(), 2).slice(0, -1))],
     ["Locrian", new scaleType("Locrian", transposeUp(major(), 6).slice(0, -1))],
-    ["Whole Tone", new scaleType("Whole", new Array(6).fill("Tone").slice(0, -1))],
+    ["Whole Tone", new scaleType("Whole", new Array(5).fill("Tone"))],
     ["Diminished", new scaleType("Diminished", new Array(8).fill("").map((_, i) => { return i % 2 ===0? "Semitone": "Tone"}).slice(0, -1))],
+    ["Chromatic", new scaleType("Chromatic", new Array(11).fill("Semitone"))],
 ])
 
 export function allScales():Array<string> {

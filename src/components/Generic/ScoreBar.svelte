@@ -4,6 +4,7 @@
     export let size: string = "small";
     export let value: number = 0;
     export let showValue: boolean = false;
+    export let denominator: number = 100;
 
     $: v = OneTo100(value)
 
@@ -49,8 +50,8 @@
     }
 </style>
 
-<div class={size} style="--width: {v}%; --color: {v === 100 ? "#1CBE02" : "#FFA800"}">
+<div class={size} style="--width: {100*v/denominator}%; --color: {v >= denominator ? "#1CBE02" : "#FFA800"}">
     {#if showValue}
-        <p class="robotic">{v}</p>
+        <p class="robotic">{v}/{denominator}</p>
     {/if}
 </div>

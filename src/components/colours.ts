@@ -14,8 +14,8 @@ export const barLineGrey = 0xAAAAAA
 export const niceBlueNum = 0x38A3FA
 
 const trackColours = [
-    0x38A3FA,
-    0xD55672,
+    0x42c966,
+    0xeb4236,
     0x48D5D5,
     0x0075F2,
     0xFFFF82,

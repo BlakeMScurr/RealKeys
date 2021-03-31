@@ -1,6 +1,8 @@
 import { NewNote, Note } from "./music/theory/notes";
 import { scale } from "./music/theory/scales";
 
+export const historyKey = "historyKey"
+
 export class level {
     key: string;
     tonality: string;
@@ -48,6 +50,55 @@ export class level {
 
     playURL():string {
         return "play?key=" + this.key + "&tonality=" + this.tonality + "&phraseLength=" + this.phraseLength + "&notePoolSize=" + this.notePoolSize + "&maxInterval=" + this.maxInterval
+    }
+
+    longerPhrases():level {
+        return new level(this.key, this.tonality, this.phraseLength + 1, this.notePoolSize, this.maxInterval)
+    }
+
+    shorterPhrases():level {
+        return new level(this.key, this.tonality, this.phraseLength - 1, this.notePoolSize, this.maxInterval)
+    }
+    moreNotes():level {
+        return new level(this.key, this.tonality, this.phraseLength, this.notePoolSize + 1, this.maxInterval)
+    }
+
+    fewerNotes():level {
+        return new level(this.key, this.tonality, this.phraseLength, this.notePoolSize - 1, this.maxInterval)
+    }
+
+    longerIntervals():level {
+        return new level(this.key, this.tonality, this.phraseLength, this.notePoolSize, this.maxInterval + 1)
+    }
+
+    shorterIntervals():level {
+        return new level(this.key, this.tonality, this.phraseLength + 1, this.notePoolSize, this.maxInterval - 1)
+    }
+
+    succeed() {
+        let history = localStorage.getItem(historyKey)
+        if (!history) {
+            localStorage.setItem(historyKey, JSON.stringify({
+                levels: [
+                    this.definition(),
+                ],
+            }))
+        } else {
+            let parsedHistory = JSON.parse(history)
+            parsedHistory.levels.push(this.definition())
+            localStorage.setItem(historyKey, JSON.stringify(parsedHistory))
+        }
+    }
+
+    definition() {
+        return {
+            key: this.key,
+            tonality: this.tonality,
+            phraseLength: this.phraseLength,
+            notePoolSize: this.notePoolSize,
+            maxInterval: this.maxInterval,
+            time: new Date(),
+        }
     }
 }
 
