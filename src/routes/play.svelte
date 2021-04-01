@@ -264,7 +264,7 @@
                 <div>
                     <p>or</p>
                 </div>
-                <div><OptionButton text="Retry"></OptionButton></div>
+                <div><OptionButton text="Retry" on:click={() => {gameState = gameStates.Before; score = startingScore}}></OptionButton></div>
             </div>
             {/if}
         {/if}
