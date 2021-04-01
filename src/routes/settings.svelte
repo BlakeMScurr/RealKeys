@@ -77,7 +77,7 @@
         <div>
             <div>
                 <h4>Setup MIDI keyboard</h4>
-                <p>Connect your digital piano and play songs of any range.</p>
+                <p>Connect your digital piano and play a full range of notes.</p>
             </div>
             <ReccomendedButton on:click={setInputType(inputType.midi)} text="Setup"></ReccomendedButton>
         </div>
@@ -90,8 +90,8 @@
         </div>
         <div>
             <div>
-                <h4>Use touch screen</h4>
-                <p>Use your touch screen to simulate a small piano with an octave of range.</p>
+                <h4>Use Click/Touch</h4>
+                <p>Use your touch screen to simulate a small piano, or use a mouse.</p>
             </div>
             <OptionButton on:click={setInputType(inputType.touch)} text="Go"></OptionButton>
         </div>
