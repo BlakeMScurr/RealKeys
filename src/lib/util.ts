@@ -35,3 +35,17 @@ export function get<T>(store: Readable<T>):T {
 export function objToURLArgs(x) {
     return Object.entries(x).map((a)=>{return a[0] + "=" + a[1]}).join("&")
 }
+
+// https://stackoverflow.com/a/9039885
+export function iOS() {
+    return [
+      'iPad Simulator',
+      'iPhone Simulator',
+      'iPod Simulator',
+      'iPad',
+      'iPhone',
+      'iPod'
+    ].includes(navigator.platform)
+    // iPad on iOS 13 detection
+    || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+  }
