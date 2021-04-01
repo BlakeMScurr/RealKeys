@@ -87,6 +87,16 @@
                             goto(dataSets[closest.ds].data[closest.i].level.playURL())
                         }
                     },
+                    tooltips: {
+                        // Disable the on-canvas tooltip
+                        enabled: true,
+                        callbacks: {
+                            afterBody: function(a) {
+                                let level = dataSets[a[0].datasetIndex].data[a[0].index].level
+                                return `Phrase length: ${level.phraseLength}\nNote pool size: ${level.notePoolSize}\nMax interval: ${level.maxInterval}`
+                            }
+                        }
+                    },
                 }
             });
         } else {
