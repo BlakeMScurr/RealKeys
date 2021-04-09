@@ -1,6 +1,6 @@
 import { highestPianoNote, lowestPianoNote, Note } from '../music/theory/notes';
 import type { TimedNotes } from '../music/timed/timed';
-import { SoundFont } from './soundfont';
+import { toneInstrument } from './tone';
 
 export interface Player {
     Seek(time: number);
@@ -12,7 +12,8 @@ export interface Player {
 }
 
 export function NewInstrument(GeneralMidiInstrumentNumber: number, name: string, percusive:Boolean, onload: (succeeded: boolean) => void, notes?: Array<Note>):VirtualInstrument {
-    return new SoundFont(GeneralMidiInstrumentNumber, name, percusive, onload, notes)
+    onload(true)
+    return new toneInstrument(name)
 }
 
 // TODO: create new pianos from a pool of pianos ready that last a session to avoid lag every time we open a new game
