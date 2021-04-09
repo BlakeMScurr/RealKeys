@@ -7,7 +7,6 @@
     import { getSettings } from "../lib/storage";
     import { stores } from "@sapper/app";
     import { onMount } from "svelte";
-import { iOS } from "../lib/util";
 
     const { session, page } = stores();
 
@@ -17,13 +16,7 @@ import { iOS } from "../lib/util";
     let notePoolSize = 2
     let maxInterval = 2
 
-    let ios = false
     onMount(() => {
-        try {
-            ios = iOS()
-        } catch (e) {
-            console.warn(e)
-        }
         let historyStr = localStorage.getItem(historyKey)
         if (historyStr) {
             let history = JSON.parse(historyStr)
@@ -72,59 +65,55 @@ import { iOS } from "../lib/util";
     }
 </style>
 
-{#if ios}
-    <h2>Sorry, RealKeys doesn't work on iOS</h2>
-{:else}
-    <h2>Train Your Ear</h2>
+<h2>Train Your Ear</h2>
 
+<div>
     <div>
+        <h3>Key</h3>
         <div>
-            <h3>Key</h3>
-            <div>
-                <select bind:value={key}>
-                    {#each abstractNotes() as note}
-                        <option value={note}>
-                            {note.prettyString()}
-                        </option>
-                    {/each}
-                </select>
-                <select bind:value={tonality}>
-                    {#each allScales() as scale}
-                        <option value={scale}>
-                            {scale}
-                        </option>
-                    {/each}
-                </select>
-            </div>
-        </div>
-
-        <div>
-            <h3>Phrase Length</h3>
-            <input bind:value={phraseLength} type="number" min=2 step=1 on:change={validate}>
-        </div>
-
-        <div>
-            <h3>Note pool size</h3>
-            <input bind:value={notePoolSize} type="number" min=2 step=1 on:change={validate}>
-        </div>
-
-        <div>
-            <h3>Max interval</h3>
-            <input bind:value={maxInterval} type="number" min=2 step=1 max={notePoolSize} on:change={validate}>
-        </div>
-
-        <div class="btnHolder">
-            <ReccomendedButton text="Go" on:click={
-                () => {
-                    let nextStop = (new level(key.enharmonicEquivalent(), tonality, phraseLength, notePoolSize, maxInterval)).playURL()
-                    if (getSettings()) {
-                        goto(nextStop)
-                    } else  {
-                        session.set({"redirect": nextStop})
-                        goto("/settings")
-                    }
-                }
-            }></ReccomendedButton>
+            <select bind:value={key}>
+                {#each abstractNotes() as note}
+                    <option value={note}>
+                        {note.prettyString()}
+                    </option>
+                {/each}
+            </select>
+            <select bind:value={tonality}>
+                {#each allScales() as scale}
+                    <option value={scale}>
+                        {scale}
+                    </option>
+                {/each}
+            </select>
         </div>
     </div>
-{/if}
+
+    <div>
+        <h3>Phrase Length</h3>
+        <input bind:value={phraseLength} type="number" min=2 step=1 on:change={validate}>
+    </div>
+
+    <div>
+        <h3>Note pool size</h3>
+        <input bind:value={notePoolSize} type="number" min=2 step=1 on:change={validate}>
+    </div>
+
+    <div>
+        <h3>Max interval</h3>
+        <input bind:value={maxInterval} type="number" min=2 step=1 max={notePoolSize} on:change={validate}>
+    </div>
+
+    <div class="btnHolder">
+        <ReccomendedButton text="Go" on:click={
+            () => {
+                let nextStop = (new level(key.enharmonicEquivalent(), tonality, phraseLength, notePoolSize, maxInterval)).playURL()
+                if (getSettings()) {
+                    goto(nextStop)
+                } else  {
+                    session.set({"redirect": nextStop})
+                    goto("/settings")
+                }
+            }
+        }></ReccomendedButton>
+    </div>
+</div>

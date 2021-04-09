@@ -1,5 +1,6 @@
 <script lang="ts">
     import Button from "../components/Generic/Buttons/Button.svelte";
+    import * as Tone from 'tone'
     import { stores } from "@sapper/app";
     import { onMount } from "svelte";
     import { fade } from 'svelte/transition';
@@ -28,7 +29,6 @@
     let passingScore = level.phraseLength * 5
     let score = startingScore
 
-    
     let usedNotes = new Map<string, boolean>()
     function setUsedNotes(notes) {
         let newsedNotes = new Map<string, boolean>()
@@ -53,6 +53,11 @@
     let mechanicalPianoPromise = new Promise<VirtualInstrument>((resolve)=>{});
     let userPiano
     onMount(() => {
+        document.addEventListener("keypress", () => {Tone.start()})
+        document.addEventListener("click", () => {Tone.start()})
+        document.addEventListener("keydown", () => {Tone.start()})
+        document.addEventListener("touchstart", () => {Tone.start()})
+
         if (!getSettings()) {
             session.set({"redirect": $page.path + "?" + objToURLArgs($page.query)})
             goto("/settings")
