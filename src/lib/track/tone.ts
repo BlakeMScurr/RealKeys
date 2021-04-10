@@ -22,7 +22,11 @@ export class toneInstrument {
     }
 
     play(note: Note, duration: number, volume: number) {
-        this.underlying.triggerAttack(note.string())
+        if (duration) {
+            this.underlying.triggerAttackRelease(note.string(), duration / 1000)
+        } else {
+            this.underlying.triggerAttack(note.string())
+        }
     }
 
     stop(note: Note) {
