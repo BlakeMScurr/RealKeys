@@ -43,6 +43,8 @@
     }
 
     let keys = range(notes[0], notes[notes.length-1])
+    let userPiano
+    let mechanicalPiano
 
     let duration = 5000
     let tracks = new Map<string, TimedNotes>([
@@ -50,8 +52,6 @@
         ["wrong", new TimedNotes([])],
     ]);
 
-    let mechanicalPianoPromise = new Promise<VirtualInstrument>((resolve)=>{});
-    let userPiano
     onMount(() => {
         document.addEventListener("keypress", () => {Tone.start()})
         document.addEventListener("click", () => {Tone.start()})
@@ -64,13 +64,7 @@
         }
 
         userPiano = newPiano("User Piano", ()=>{})
-
-        mechanicalPianoPromise = new Promise((resolve) => {
-            let mechanicalPiano: VirtualInstrument;
-            mechanicalPiano = newPiano("MechanicalPiano", () => {
-                resolve(mechanicalPiano)
-            })
-        })
+        mechanicalPiano = newPiano("MechanicalPiano", ()=>{})
     })
 
     let roll;
@@ -145,8 +139,6 @@
     <ScoreBar size="medium" value={score} showValue={true} denominator={passingScore}></ScoreBar>
 </div>
 <div class="content">
-    {#await mechanicalPianoPromise}
-    {:then mechanicalPiano}
         {#if gameState === gameStates.Before}
             <div transition:fade>
                 <ReccomendedButton text="listen" defaultAction={true} on:click={() => {
@@ -273,7 +265,6 @@
             </div>
             {/if}
         {/if}
-    {/await}
 </div>
 <div class="roll" bind:this={roll}>
     <DOMRoll {keys} {tracks} colourer={new Colourer(2)} {duration} position={0} heightElement={roll}></DOMRoll>
