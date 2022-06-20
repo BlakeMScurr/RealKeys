@@ -1,3 +1,3 @@
 # RealKeys
 
-Train your ear at http://www.realkeys.co/
+Train your ear at [realkeys.co](https://www.realkeys.co/)
