@@ -4,7 +4,8 @@
 /src/node_modules/@sapper/
 yarn-error.log
 /cypress/screenshots/
-/__sapper__/
+/__sapper__/build
+/__sapper__/dev
 # this is where we store actual production audiofiles
 /src/backend/db/audioFiles
 /static/bundle.css
