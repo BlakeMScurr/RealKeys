@@ -1,3 +1,5 @@
+<base href="/RealKeys">
+
 <script lang="ts">
     import ReccomendedButton from "../components/Generic/Buttons/ReccomendedButton.svelte";
     import { abstractNotes, NewAbstractNote } from "../lib/music/theory/notes"
