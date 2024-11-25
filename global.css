@@ -1,0 +1,79 @@
+/* font-family: Alegreya, Arial, serif; */
+/* color: green; */
+h1, h2, h3 {
+  font-family: Playfair Display;
+  font-style: normal;
+  font-weight: normal;
+}
+
+h4, h5, h6, p {
+  font-family: Alegreya;
+  font-weight: normal;
+}
+
+.robotic {
+  font-family: sans-serif;
+}
+
+h1 {
+  font-size: 22px;
+}
+
+h2 {
+  font-size: 20px;
+  text-align: center;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+p {
+  font-size: 12px;
+}
+
+body {
+  margin: 0;
+  position: relative;
+}
+
+html,
+#sapper,
+body {
+  height: 100%;
+  overflow-x: hidden;
+}
+
+a {
+  text-decoration: inherit;
+  cursor: auto;
+}
+
+.everfreshlink {
+  color: inherit;
+}
+
+a:hover {
+  color: white;
+  background-color: black;
+  cursor: pointer;
+}
+
+/* from https://stackoverflow.com/a/4407335 */
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Edge, Opera and Firefox */
+}
